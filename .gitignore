@@ -35,6 +35,12 @@ archives/
 *.wma
 *.aac
 
+# Generated output (reproducible)
+*.docx
+*.bpmn
+*.svg
+*_audio/
+
 # Secrets
 .env
 *.key
@@ -43,3 +49,6 @@ config_local.yaml
 # Logs
 *.log
 logs/
+
+# Claude worktrees
+.claude/worktrees/

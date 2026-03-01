@@ -113,28 +113,47 @@ def _call_llm(config: dict, system: str, user_prompt: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _parse_json_response(text: str) -> dict:
-    """Extract JSON from LLM response, handling markdown code blocks."""
+    """Extract JSON from LLM response, handling markdown code blocks and common LLM quirks."""
     # Try to extract from ```json ... ``` or ``` ... ``` blocks
     code_block = re.search(r"```(?:json)?\s*(.*?)```", text, re.DOTALL)
     if code_block:
         text = code_block.group(1).strip()
 
+    # Fix common LLM quirk: double braces {{ ... }}
+    cleaned = text.strip()
+    if cleaned.startswith("{{") and cleaned.endswith("}}"):
+        cleaned = cleaned[1:-1]
+
     # Try direct parse
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        # Try to find JSON object in text
-        brace_start = text.find("{")
-        brace_end = text.rfind("}")
-        if brace_start != -1 and brace_end != -1:
+    for candidate in [cleaned, text]:
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            pass
+
+    # Try to find JSON object in text
+    brace_start = text.find("{")
+    brace_end = text.rfind("}")
+    if brace_start != -1 and brace_end != -1:
+        json_str = text[brace_start:brace_end + 1]
+        # Fix double braces within extracted JSON
+        if json_str.startswith("{{"):
+            json_str = json_str[1:]
+        if json_str.endswith("}}"):
+            json_str = json_str[:-1]
+        try:
+            return json.loads(json_str)
+        except json.JSONDecodeError:
+            # Try original without double-brace fix
             try:
                 return json.loads(text[brace_start:brace_end + 1])
             except json.JSONDecodeError:
                 pass
-        raise LLMResponseError(
-            f"Не удалось извлечь JSON из ответа LLM. "
-            f"Начало ответа: {text[:200]}..."
-        )
+
+    raise LLMResponseError(
+        f"Не удалось извлечь JSON из ответа LLM. "
+        f"Начало ответа: {text[:200]}..."
+    )
 
 
 def _call_llm_with_retry(config: dict, system: str, user_prompt: str, max_retries: int = 3) -> str:
@@ -153,7 +172,7 @@ def _call_llm_with_retry(config: dict, system: str, user_prompt: str, max_retrie
                 user_prompt = (
                     f"{user_prompt}\n\n"
                     "ВАЖНО: Ответь ТОЛЬКО валидным JSON без пояснений. "
-                    "Начни ответ с {{ и закончи }}."
+                    'Начни ответ с одной открывающей фигурной скобки и закончи одной закрывающей.'
                 )
         except LLMConnectionError:
             raise  # Don't retry on connection issues
@@ -187,12 +206,15 @@ def check_ollama_available(config: dict) -> None:
     except requests.Timeout:
         raise LLMConnectionError(f"Ollama не отвечает по адресу {url}.")
 
-    # Check model availability
-    available = [m.get("name", "").split(":")[0] for m in resp.json().get("models", [])]
-    if model not in available:
+    # Check model availability (compare both full name and base name)
+    models_data = resp.json().get("models", [])
+    available_full = [m.get("name", "") for m in models_data]
+    available_base = [m.get("name", "").split(":")[0] for m in models_data]
+    model_base = model.split(":")[0]
+    if model not in available_full and model_base not in available_base:
         raise LLMConnectionError(
             f"Модель '{model}' не найдена в Ollama.\n"
-            f"Доступные модели: {', '.join(available) or 'нет'}\n"
+            f"Доступные модели: {', '.join(available_full) or 'нет'}\n"
             f"Скачайте модель: ollama pull {model}"
         )
 

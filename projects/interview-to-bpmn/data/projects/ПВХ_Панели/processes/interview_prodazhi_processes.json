@@ -1,0 +1,430 @@
+{
+  "department": "Менеджмент продаж",
+  "respondent": "Директор по продажам",
+  "processes": [
+    {
+      "id": "proc_1",
+      "name": "Принятие заказов от дилеров",
+      "type": "as_is",
+      "trigger": "Звонок или письмо от дилера",
+      "result": "Формирование заказа в Excel-таблице",
+      "frequency": "по событию",
+      "participants": [
+        {
+          "role": "Менеджер по продажам",
+          "department": "Менеджмент продаж"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step_1",
+          "name": "Звонок или письмо от дилера",
+          "description": "Получение информации о заказе от дилера",
+          "performer": "Менеджер по продажам",
+          "type": "task",
+          "documents_in": [
+            "письмо от дилера"
+          ],
+          "documents_out": []
+        },
+        {
+          "id": "step_2",
+          "name": "Формирование заказа в Excel-таблице",
+          "description": "Заполнение информации о заказе в Excel-таблице",
+          "performer": "Менеджер по продажам",
+          "type": "task",
+          "documents_in": [],
+          "documents_out": [
+            "Excel-таблица с заказом"
+          ]
+        }
+      ],
+      "decisions": [
+        {
+          "id": "dec_1",
+          "question": "Есть ли у дилера история общения?",
+          "after_step": "step_2",
+          "options": [
+            {
+              "condition": "да",
+              "next_step": "step_3"
+            },
+            {
+              "condition": "нет",
+              "next_step": "step_4"
+            }
+          ]
+        }
+      ],
+      "exceptions": [
+        {
+          "description": "Нет связи с дилером",
+          "handling": "Повторный звонок или письмо"
+        }
+      ],
+      "pain_points": [
+        {
+          "description": "Нет единого канала общения с дилерами",
+          "impact": "низкая скорость принятия заказов",
+          "severity": "high"
+        },
+        {
+          "description": "Нет истории общения с клиентами",
+          "impact": "потеря клиентов из-за низкой скорости",
+          "severity": "high"
+        }
+      ],
+      "integrations": [
+        {
+          "system": "CRM-система",
+          "type": "интеграция с CRM",
+          "description": "автоматизация принятия заказов и истории общения"
+        }
+      ]
+    },
+    {
+      "id": "proc_2",
+      "name": "Формирование прайс-листа",
+      "type": "as_is",
+      "trigger": "Обновление себестоимости или изменение цен",
+      "result": "Прайс-лист в Excel-таблице",
+      "frequency": "по событию",
+      "participants": [
+        {
+          "role": "Директор по продажам",
+          "department": "Менеджмент продаж"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step_1",
+          "name": "Обновление себестоимости или изменение цен",
+          "description": "Получение информации о новой себестоимости или ценах",
+          "performer": "Директор по продажам",
+          "type": "task",
+          "documents_in": [],
+          "documents_out": []
+        },
+        {
+          "id": "step_2",
+          "name": "Формирование прайс-листа в Excel-таблице",
+          "description": "Заполнение информации о прайс-листе в Excel-таблице",
+          "performer": "Директор по продажам",
+          "type": "task",
+          "documents_in": [],
+          "documents_out": [
+            "Excel-таблица с прайс-листом"
+          ]
+        }
+      ],
+      "decisions": [
+        {
+          "id": "dec_1",
+          "question": "Есть ли у дилера история общения?",
+          "after_step": "step_2",
+          "options": [
+            {
+              "condition": "да",
+              "next_step": "step_3"
+            },
+            {
+              "condition": "нет",
+              "next_step": "step_4"
+            }
+          ]
+        }
+      ],
+      "exceptions": [
+        {
+          "description": "Нет связи с дилером",
+          "handling": "Повторный звонок или письмо"
+        }
+      ],
+      "pain_points": [
+        {
+          "description": "Нет единого канала общения с дилерами",
+          "impact": "низкая скорость принятия заказов",
+          "severity": "high"
+        },
+        {
+          "description": "Нет истории общения с клиентами",
+          "impact": "потеря клиентов из-за низкой скорости",
+          "severity": "high"
+        }
+      ],
+      "integrations": [
+        {
+          "system": "CRM-система",
+          "type": "интеграция с CRM",
+          "description": "автоматизация принятия заказов и истории общения"
+        }
+      ]
+    },
+    {
+      "id": "proc_3",
+      "name": "Формирование счета на оплату",
+      "type": "as_is",
+      "trigger": "Получение заказа от дилера",
+      "result": "Счет на оплату в 1С",
+      "frequency": "по событию",
+      "participants": [
+        {
+          "role": "Менеджер по продажам",
+          "department": "Менеджмент продаж"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step_1",
+          "name": "Получение заказа от дилера",
+          "description": "Получение информации о заказе от дилера",
+          "performer": "Менеджер по продажам",
+          "type": "task",
+          "documents_in": [
+            "письмо от дилера"
+          ],
+          "documents_out": []
+        },
+        {
+          "id": "step_2",
+          "name": "Формирование счета на оплату в 1С",
+          "description": "Заполнение информации о счете на оплату в 1С",
+          "performer": "Менеджер по продажам",
+          "type": "task",
+          "documents_in": [],
+          "documents_out": [
+            "счет на оплату в 1С"
+          ]
+        }
+      ],
+      "decisions": [
+        {
+          "id": "dec_1",
+          "question": "Есть ли у дилера история общения?",
+          "after_step": "step_2",
+          "options": [
+            {
+              "condition": "да",
+              "next_step": "step_3"
+            },
+            {
+              "condition": "нет",
+              "next_step": "step_4"
+            }
+          ]
+        }
+      ],
+      "exceptions": [
+        {
+          "description": "Нет связи с дилером",
+          "handling": "Повторный звонок или письмо"
+        }
+      ],
+      "pain_points": [
+        {
+          "description": "Нет единого канала общения с дилерами",
+          "impact": "низкая скорость принятия заказов",
+          "severity": "high"
+        },
+        {
+          "description": "Нет истории общения с клиентами",
+          "impact": "потеря клиентов из-за низкой скорости",
+          "severity": "high"
+        }
+      ],
+      "integrations": [
+        {
+          "system": "CRM-система",
+          "type": "интеграция с CRM",
+          "description": "автоматизация принятия заказов и истории общения"
+        }
+      ]
+    },
+    {
+      "id": "proc_4",
+      "name": "Обработка оплаты",
+      "type": "as_is",
+      "trigger": "Получение платежа от дилера",
+      "result": "Уплата в 1С",
+      "frequency": "по событию",
+      "participants": [
+        {
+          "role": "Менеджер по продажам",
+          "department": "Менеджмент продаж"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step_1",
+          "name": "Получение платежа от дилера",
+          "description": "Получение информации о платеже от дилера",
+          "performer": "Менеджер по продажам",
+          "type": "task",
+          "documents_in": [
+            "письмо от дилера"
+          ],
+          "documents_out": []
+        },
+        {
+          "id": "step_2",
+          "name": "Уплата в 1С",
+          "description": "Заполнение информации о уплате в 1С",
+          "performer": "Менеджер по продажам",
+          "type": "task",
+          "documents_in": [],
+          "documents_out": [
+            "уплата в 1С"
+          ]
+        }
+      ],
+      "decisions": [
+        {
+          "id": "dec_1",
+          "question": "Есть ли у дилера история общения?",
+          "after_step": "step_2",
+          "options": [
+            {
+              "condition": "да",
+              "next_step": "step_3"
+            },
+            {
+              "condition": "нет",
+              "next_step": "step_4"
+            }
+          ]
+        }
+      ],
+      "exceptions": [
+        {
+          "description": "Нет связи с дилером",
+          "handling": "Повторный звонок или письмо"
+        }
+      ],
+      "pain_points": [
+        {
+          "description": "Нет единого канала общения с дилерами",
+          "impact": "низкая скорость принятия заказов",
+          "severity": "high"
+        },
+        {
+          "description": "Нет истории общения с клиентами",
+          "impact": "потеря клиентов из-за низкой скорости",
+          "severity": "high"
+        }
+      ],
+      "integrations": [
+        {
+          "system": "CRM-система",
+          "type": "интеграция с CRM",
+          "description": "автоматизация принятия заказов и истории общения"
+        }
+      ]
+    },
+    {
+      "id": "proc_5",
+      "name": "Формирование отчетности",
+      "type": "as_is",
+      "trigger": "Получение данных о продажах",
+      "result": "Отчетность в Excel-таблице",
+      "frequency": "ежемесячно",
+      "participants": [
+        {
+          "role": "Аналитик",
+          "department": "Аналитика"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step_1",
+          "name": "Получение данных о продажах",
+          "description": "Получение информации о продажах из 1С",
+          "performer": "Аналитик",
+          "type": "task",
+          "documents_in": [
+            "данные о продажах в 1С"
+          ],
+          "documents_out": []
+        },
+        {
+          "id": "step_2",
+          "name": "Формирование отчетности в Excel-таблице",
+          "description": "Заполнение информации о отчетности в Excel-таблице",
+          "performer": "Аналитик",
+          "type": "task",
+          "documents_in": [],
+          "documents_out": [
+            "отчетность в Excel-таблице"
+          ]
+        }
+      ],
+      "decisions": [
+        {
+          "id": "dec_1",
+          "question": "Есть ли у дилера история общения?",
+          "after_step": "step_2",
+          "options": [
+            {
+              "condition": "да",
+              "next_step": "step_3"
+            },
+            {
+              "condition": "нет",
+              "next_step": "step_4"
+            }
+          ]
+        }
+      ],
+      "exceptions": [
+        {
+          "description": "Нет связи с дилером",
+          "handling": "Повторный звонок или письмо"
+        }
+      ],
+      "pain_points": [
+        {
+          "description": "Нет единого канала общения с дилерами",
+          "impact": "низкая скорость принятия заказов",
+          "severity": "high"
+        },
+        {
+          "description": "Нет истории общения с клиентами",
+          "impact": "потеря клиентов из-за низкой скорости",
+          "severity": "high"
+        }
+      ],
+      "integrations": [
+        {
+          "system": "CRM-система",
+          "type": "интеграция с CRM",
+          "description": "автоматизация принятия заказов и истории общения"
+        }
+      ]
+    }
+  ],
+  "general_issues": [
+    {
+      "description": "Нет единого канала общения с дилерами",
+      "category": "общая проблема"
+    },
+    {
+      "description": "Нет истории общения с клиентами",
+      "category": "общая проблема"
+    }
+  ],
+  "automation_requests": [
+    {
+      "description": "Автоматизация принятия заказов и истории общения",
+      "priority": "high"
+    },
+    {
+      "description": "Автоматизация формирования отчетности",
+      "priority": "medium"
+    }
+  ],
+  "transcript_metadata": {
+    "source": "interview_prodazhi.txt",
+    "type": "text_import",
+    "duration_seconds": 0,
+    "language": "ru"
+  }
+}

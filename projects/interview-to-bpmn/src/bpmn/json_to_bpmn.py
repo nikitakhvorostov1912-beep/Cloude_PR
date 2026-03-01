@@ -1,9 +1,23 @@
 """Convert BPMN JSON to standard BPMN 2.0 XML."""
+import json
 from pathlib import Path
 
 from lxml import etree
 
 from src.bpmn.layout import auto_layout
+
+
+def _ensure_str(value, default="") -> str:
+    """Ensure a value is a string — LLM sometimes returns dicts or lists instead."""
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        return value.get("name", value.get("text", json.dumps(value, ensure_ascii=False)))
+    if isinstance(value, (list, tuple)):
+        return ", ".join(_ensure_str(v) for v in value)
+    return str(value)
 
 # BPMN 2.0 namespaces
 BPMN_NS = "http://www.omg.org/spec/BPMN/20100524/MODEL"
@@ -84,8 +98,8 @@ def bpmn_json_to_xml(bpmn_json: dict) -> str:
         },
     )
 
-    process_id = bpmn_json.get("process_id", "Process_1")
-    process_name = bpmn_json.get("process_name", "Process")
+    process_id = _ensure_str(bpmn_json.get("process_id", "Process_1"))
+    process_name = _ensure_str(bpmn_json.get("process_name", "Process"))
 
     # Check if we have pools
     pools = bpmn_json.get("pools", [])
@@ -100,9 +114,9 @@ def bpmn_json_to_xml(bpmn_json: dict) -> str:
             etree.SubElement(
                 collaboration,
                 f"{{{BPMN_NS}}}participant",
-                id=pool["id"],
-                name=pool.get("name", ""),
-                processRef=f"{process_id}_{pool['id']}",
+                id=_ensure_str(pool.get("id", "pool_1")),
+                name=_ensure_str(pool.get("name", "")),
+                processRef=f"{process_id}_{_ensure_str(pool.get('id', 'pool_1'))}",
             )
 
     # Create process
@@ -124,42 +138,44 @@ def bpmn_json_to_xml(bpmn_json: dict) -> str:
                     lane_elem = etree.SubElement(
                         lane_set,
                         f"{{{BPMN_NS}}}lane",
-                        id=lane["id"],
-                        name=lane.get("name", ""),
+                        id=_ensure_str(lane.get("id", "lane_1")),
+                        name=_ensure_str(lane.get("name", "")),
                     )
                     for elem_id in lane.get("elements", []):
                         flow_node_ref = etree.SubElement(lane_elem, f"{{{BPMN_NS}}}flowNodeRef")
-                        flow_node_ref.text = elem_id
+                        flow_node_ref.text = _ensure_str(elem_id)
 
     # Add elements
     elements = bpmn_json.get("elements", [])
     for elem in elements:
-        tag = ELEMENT_TAG_MAP.get(elem.get("type"), "task")
+        elem_type = _ensure_str(elem.get("type", "task"))
+        tag = ELEMENT_TAG_MAP.get(elem_type, "task")
         elem_xml = etree.SubElement(
             process,
             f"{{{BPMN_NS}}}{tag}",
-            id=elem["id"],
-            name=elem.get("name", ""),
+            id=_ensure_str(elem.get("id", "elem_1")),
+            name=_ensure_str(elem.get("name", "")),
         )
 
         # Add incoming/outgoing references
         for incoming in elem.get("incoming", []):
             inc = etree.SubElement(elem_xml, f"{{{BPMN_NS}}}incoming")
-            inc.text = incoming
+            inc.text = _ensure_str(incoming)
         for outgoing in elem.get("outgoing", []):
             out = etree.SubElement(elem_xml, f"{{{BPMN_NS}}}outgoing")
-            out.text = outgoing
+            out.text = _ensure_str(outgoing)
 
     # Add sequence flows
     flows = bpmn_json.get("flows", [])
     for flow in flows:
         flow_attrib = {
-            "id": flow["id"],
-            "sourceRef": flow["source"],
-            "targetRef": flow["target"],
+            "id": _ensure_str(flow.get("id", "flow_1")),
+            "sourceRef": _ensure_str(flow.get("source", flow.get("sourceRef", ""))),
+            "targetRef": _ensure_str(flow.get("target", flow.get("targetRef", ""))),
         }
-        if flow.get("name"):
-            flow_attrib["name"] = flow["name"]
+        flow_name = flow.get("name")
+        if flow_name:
+            flow_attrib["name"] = _ensure_str(flow_name)
 
         flow_xml = etree.SubElement(
             process, f"{{{BPMN_NS}}}sequenceFlow", **flow_attrib
@@ -171,7 +187,7 @@ def bpmn_json_to_xml(bpmn_json: dict) -> str:
                 f"{{{BPMN_NS}}}conditionExpression",
                 attrib={f"{{{XSI_NS}}}type": "bpmn:tFormalExpression"},
             )
-            condition.text = flow["condition"]
+            condition.text = _ensure_str(flow["condition"])
 
     # Add diagram information (DI)
     positions = auto_layout(bpmn_json)
@@ -200,7 +216,7 @@ def _add_diagram(definitions, process_id, bpmn_json, positions):
 
     # Add shapes for elements
     for elem in bpmn_json.get("elements", []):
-        eid = elem["id"]
+        eid = _ensure_str(elem.get("id", "elem_1"))
         pos = positions.get(eid, {"x": 100, "y": 100, "width": 100, "height": 80})
 
         shape = etree.SubElement(
@@ -221,9 +237,11 @@ def _add_diagram(definitions, process_id, bpmn_json, positions):
 
     # Add edges for flows
     for flow in bpmn_json.get("flows", []):
-        fid = flow["id"]
-        source_pos = positions.get(flow["source"], {"x": 100, "y": 140})
-        target_pos = positions.get(flow["target"], {"x": 300, "y": 140})
+        fid = _ensure_str(flow.get("id", "flow_1"))
+        source_key = _ensure_str(flow.get("source", flow.get("sourceRef", "")))
+        target_key = _ensure_str(flow.get("target", flow.get("targetRef", "")))
+        source_pos = positions.get(source_key, {"x": 100, "y": 140})
+        target_pos = positions.get(target_key, {"x": 300, "y": 140})
 
         edge = etree.SubElement(
             plane,

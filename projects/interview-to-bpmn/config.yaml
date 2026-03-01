@@ -47,10 +47,10 @@ analysis:
   # Ollama settings (локальный LLM)
   ollama:
     url: "http://localhost:11434"
-    # Модели: "gemma2" (~5GB), "mistral" (~4GB), "llama3.1" (~4.7GB)
-    model: "mistral"
+    # Модели: "gemma2" (~5GB), "mistral" (~4GB), "llama3.1:8b" (~4.7GB)
+    model: "llama3.1:8b"
     # Таймаут запроса в секундах (LLM может долго думать на CPU)
-    timeout: 900
+    timeout: 600
 
   # Anthropic settings (платный, оставлено как fallback)
   anthropic:
