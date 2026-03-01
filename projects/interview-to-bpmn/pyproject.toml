@@ -1,0 +1,22 @@
+[project]
+name = "interview-to-bpmn"
+version = "1.0.0"
+description = "Audio interview to BPMN diagrams and Word documentation pipeline"
+requires-python = ">=3.10"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
