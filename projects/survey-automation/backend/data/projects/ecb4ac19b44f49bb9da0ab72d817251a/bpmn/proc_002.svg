@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2498" height="1020" viewBox="0 0 2498 1020">
+<defs>
+  <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+    <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+  </marker>
+</defs>
+<rect width="2498" height="1020" fill="#fff" />
+<rect x="80.0" y="60" width="2358.0" height="300.0" fill="#f9f9f9" stroke="#ccc" stroke-width="1" />
+<text x="94.0" y="210.0" text-anchor="middle" font-size="11" fill="#666" transform="rotate(-90 94.0 210.0)">lane___________________</text>
+<rect x="80.0" y="360.0" width="2358.0" height="200.0" fill="#f9f9f9" stroke="#ccc" stroke-width="1" />
+<text x="94.0" y="460.0" text-anchor="middle" font-size="11" fill="#666" transform="rotate(-90 94.0 460.0)">lane________</text>
+<rect x="80.0" y="560.0" width="2358.0" height="200.0" fill="#f9f9f9" stroke="#ccc" stroke-width="1" />
+<text x="94.0" y="660.0" text-anchor="middle" font-size="11" fill="#666" transform="rotate(-90 94.0 660.0)">lane__________</text>
+<rect x="80.0" y="760.0" width="2358.0" height="200.0" fill="#f9f9f9" stroke="#ccc" stroke-width="1" />
+<text x="94.0" y="860.0" text-anchor="middle" font-size="11" fill="#666" transform="rotate(-90 94.0 860.0)">lane_____________________</text>
+<polyline points="198.0,160.0 320.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="440.0,160.0 555.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="605.0,160.0 662.5,160.0 662.5,90.0 720.0,90.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="605.0,160.0 662.5,160.0 662.5,230.0 720.0,230.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="840.0,90.0 897.5,90.0 897.5,160.0 955.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="840.0,230.0 897.5,230.0 897.5,160.0 955.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="1005.0,160.0 1120.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="1240.0,160.0 1320.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="1440.0,160.0 1480.0,160.0 1480.0,360.0 1520.0,360.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="1640.0,360.0 1680.0,360.0 1680.0,160.0 1720.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="1840.0,160.0 1880.0,160.0 1880.0,560.0 1920.0,560.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<polyline points="2040.0,560.0 2101.0,560.0 2101.0,160.0 2162.0,160.0" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)" />
+<circle cx="180.0" cy="160.0" r="18.0" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" />
+<text x="180.0" y="192.0" text-anchor="middle" font-size="10" fill="#333">Прибытие транспорта с товаром от постав…</text>
+<rect x="320.0" y="120.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="380.0" y="153.0" text-anchor="middle" font-size="11" fill="#333">Получение</text>
+<text x="380.0" y="167.0" text-anchor="middle" font-size="11" fill="#333">документов</text>
+<polygon points="580.0,135.0 605.0,160.0 580.0,185.0 555.0,160.0" fill="#fff3e0" stroke="#ff9800" stroke-width="2" />
+<text x="580.0" y="165.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">X</text>
+<text x="580.0" y="199.0" text-anchor="middle" font-size="9" fill="#666">Фактическое количество или состоян…</text>
+<rect x="720.0" y="50.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="780.0" y="83.0" text-anchor="middle" font-size="11" fill="#333">Составление акта</text>
+<text x="780.0" y="97.0" text-anchor="middle" font-size="11" fill="#333">расхождения,…</text>
+<rect x="720.0" y="190.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="780.0" y="223.0" text-anchor="middle" font-size="11" fill="#333">Размещение на</text>
+<text x="780.0" y="237.0" text-anchor="middle" font-size="11" fill="#333">складе</text>
+<polygon points="980.0,135.0 1005.0,160.0 980.0,185.0 955.0,160.0" fill="#fff3e0" stroke="#ff9800" stroke-width="2" />
+<text x="980.0" y="165.0" text-anchor="middle" font-size="14" font-weight="bold" fill="#e65100">X</text>
+<rect x="1120.0" y="120.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="1180.0" y="153.0" text-anchor="middle" font-size="11" fill="#333">Физическая приёмка</text>
+<text x="1180.0" y="167.0" text-anchor="middle" font-size="11" fill="#333">и пересчёт</text>
+<rect x="1320.0" y="120.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="1380.0" y="153.0" text-anchor="middle" font-size="11" fill="#333">Фиксация</text>
+<text x="1380.0" y="167.0" text-anchor="middle" font-size="11" fill="#333">расхождений</text>
+<rect x="1520.0" y="320.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="1580.0" y="353.0" text-anchor="middle" font-size="11" fill="#333">Размещение на</text>
+<text x="1580.0" y="367.0" text-anchor="middle" font-size="11" fill="#333">складе</text>
+<rect x="1720.0" y="120.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="1780.0" y="153.0" text-anchor="middle" font-size="11" fill="#333">Обновление</text>
+<text x="1780.0" y="167.0" text-anchor="middle" font-size="11" fill="#333">складского учёта</text>
+<rect x="1920.0" y="520.0" width="120.0" height="80.0" rx="8" ry="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="1.5" />
+<text x="1980.0" y="560.0" text-anchor="middle" font-size="11" fill="#333">Проведение в 1С</text>
+<circle cx="2180.0" cy="160.0" r="18.0" fill="#ffebee" stroke="#f44336" stroke-width="3" />
+<text x="2180.0" y="192.0" text-anchor="middle" font-size="10" fill="#333">Оприходованный товар с актуальными оста…</text>
+</svg>
