@@ -5,25 +5,24 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import {
   Download,
-  FileType,
   FileSpreadsheet,
   FileText,
   Image,
   FolderOpen,
   Archive,
   Workflow,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { SvgPreviewDialog } from "@/components/svg-preview-dialog";
+import { OpenInServiceMenu } from "@/components/open-in-service-menu";
 import { dataApi, exportApi } from "@/lib/api";
+
+type ServiceFileType = "bpmn" | "visio" | "docx" | "xlsx";
 
 interface FileCard {
   name: string;
@@ -31,11 +30,21 @@ interface FileCard {
   ext: string;
   url: string;
   icon: React.ElementType;
+  processId?: string;
+  processName?: string;
+  previewable?: boolean;
+  serviceType?: ServiceFileType;
 }
 
 export default function FilesPage() {
   const params = useParams<{ id: string }>();
   const projectId = params.id;
+
+  // State for SVG preview dialog
+  const [previewProcess, setPreviewProcess] = React.useState<{
+    processId: string;
+    processName: string;
+  } | null>(null);
 
   const { data: processesData, isLoading: processesLoading } = useQuery({
     queryKey: ["processes", projectId],
@@ -48,18 +57,29 @@ export default function FilesPage() {
 
   // Build file groups from available data
   const fileGroups = React.useMemo(() => {
-    const groups: { title: string; icon: React.ElementType; files: FileCard[] }[] = [];
+    const groups: {
+      title: string;
+      icon: React.ElementType;
+      files: FileCard[];
+    }[] = [];
 
-    // Visio files
-    const visioFiles: FileCard[] = processes
-      .filter((p) => p.bpmn_xml)
-      .map((p) => ({
-        name: `${p.name}.vsdx`,
-        type: "Visio",
-        ext: ".vsdx",
-        url: exportApi.visio(projectId, p.id),
-        icon: Workflow,
-      }));
+    // Filter out _bpmn duplicates — only real processes with names
+    const realProcesses = processes.filter(
+      (p) => !p.id.endsWith("_bpmn") && p.name,
+    );
+
+    // Visio files — for all real processes
+    const visioFiles: FileCard[] = realProcesses.map((p) => ({
+      name: `${p.name}.vsdx`,
+      type: "Visio",
+      ext: ".vsdx",
+      url: exportApi.visio(projectId, p.id),
+      icon: Workflow,
+      processId: p.id,
+      processName: p.name,
+      previewable: true,
+      serviceType: "visio" as ServiceFileType,
+    }));
     if (visioFiles.length > 0) {
       groups.push({
         title: "Visio файлы",
@@ -68,16 +88,18 @@ export default function FilesPage() {
       });
     }
 
-    // BPMN / SVG files
-    const bpmnFiles: FileCard[] = processes
-      .filter((p) => p.bpmn_xml)
-      .map((p) => ({
-        name: `${p.name}.bpmn`,
-        type: "BPMN",
-        ext: ".bpmn",
-        url: exportApi.visio(projectId, p.id),
-        icon: Image,
-      }));
+    // BPMN files — for all real processes
+    const bpmnFiles: FileCard[] = realProcesses.map((p) => ({
+      name: `${p.name}.bpmn`,
+      type: "BPMN",
+      ext: ".bpmn",
+      url: exportApi.bpmn(projectId, p.id),
+      icon: Image,
+      processId: p.id,
+      processName: p.name,
+      previewable: true,
+      serviceType: "bpmn" as ServiceFileType,
+    }));
     if (bpmnFiles.length > 0) {
       groups.push({
         title: "BPMN-диаграммы",
@@ -94,6 +116,7 @@ export default function FilesPage() {
         ext: ".docx",
         url: exportApi.processDoc(projectId),
         icon: FileText,
+        serviceType: "docx" as ServiceFileType,
       },
       {
         name: "Требования.docx",
@@ -101,6 +124,7 @@ export default function FilesPage() {
         ext: ".docx",
         url: exportApi.requirementsWord(projectId),
         icon: FileText,
+        serviceType: "docx" as ServiceFileType,
       },
     ];
     groups.push({
@@ -117,6 +141,7 @@ export default function FilesPage() {
         ext: ".xlsx",
         url: exportApi.requirementsExcel(projectId),
         icon: FileSpreadsheet,
+        serviceType: "xlsx" as ServiceFileType,
       },
       {
         name: "GAP-отчёт.xlsx",
@@ -124,6 +149,7 @@ export default function FilesPage() {
         ext: ".xlsx",
         url: exportApi.gapReport(projectId),
         icon: FileSpreadsheet,
+        serviceType: "xlsx" as ServiceFileType,
       },
     ];
     groups.push({
@@ -188,12 +214,16 @@ export default function FilesPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {group.files.map((file, idx) => (
-              <Card key={idx} className="transition-colors hover:bg-accent/50">
+              <Card
+                key={idx}
+                className="transition-colors hover:bg-accent/50"
+              >
                 <CardContent className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3 min-w-0">
                     <div
                       className={`flex size-10 shrink-0 items-center justify-center rounded-md ${
-                        extColor[file.ext] ?? "bg-muted text-muted-foreground"
+                        extColor[file.ext] ??
+                        "bg-muted text-muted-foreground"
                       }`}
                     >
                       <file.icon className="size-5" />
@@ -212,15 +242,52 @@ export default function FilesPage() {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" asChild className="shrink-0 ml-2">
-                    <a
-                      href={file.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-0.5 shrink-0 ml-2">
+                    {/* Preview button — only for BPMN/Visio */}
+                    {file.previewable && file.processId && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        title="Просмотр диаграммы"
+                        onClick={() =>
+                          setPreviewProcess({
+                            processId: file.processId!,
+                            processName: file.processName ?? file.name,
+                          })
+                        }
+                      >
+                        <Eye className="size-4" />
+                      </Button>
+                    )}
+
+                    {/* Open in service menu */}
+                    {file.serviceType && (
+                      <OpenInServiceMenu
+                        downloadUrl={file.url}
+                        fileType={file.serviceType}
+                      />
+                    )}
+
+                    {/* Download button */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      asChild
+                      className="size-8"
+                      title="Скачать"
                     >
-                      <Download className="size-4" />
-                    </a>
-                  </Button>
+                      <a
+                        href={file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Download className="size-4" />
+                      </a>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -237,6 +304,19 @@ export default function FilesPage() {
             Файлы появятся после обработки данных проекта
           </p>
         </div>
+      )}
+
+      {/* SVG Preview Dialog */}
+      {previewProcess && (
+        <SvgPreviewDialog
+          open={!!previewProcess}
+          onOpenChange={(open) => {
+            if (!open) setPreviewProcess(null);
+          }}
+          projectId={projectId}
+          processId={previewProcess.processId}
+          processName={previewProcess.processName}
+        />
       )}
     </div>
   );

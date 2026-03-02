@@ -83,9 +83,12 @@ class ProcessResponse(BaseModel):
 
     id: str = Field(..., description="Идентификатор процесса")
     name: str = Field(..., description="Название процесса")
+    department: str = Field(default="", description="Подразделение")
+    description: str = Field(default="", description="Описание процесса")
+    status: str = Field(default="draft", description="Статус процесса: draft, reviewed, approved")
     trigger: str = Field(default="", description="Триггер запуска процесса")
     result: str = Field(default="", description="Ожидаемый результат процесса")
-    participants: list[str] = Field(
+    participants: list[dict[str, Any] | str] = Field(
         default_factory=list, description="Участники процесса"
     )
     steps: list[dict[str, Any]] = Field(
@@ -94,7 +97,7 @@ class ProcessResponse(BaseModel):
     decisions: list[dict[str, Any]] = Field(
         default_factory=list, description="Точки принятия решений"
     )
-    pain_points: list[str] = Field(
+    pain_points: list[dict[str, Any] | str] = Field(
         default_factory=list, description="Проблемные точки"
     )
     integrations: list[str] = Field(
@@ -109,6 +112,9 @@ class ProcessUpdate(BaseModel):
     """Запрос на обновление процесса (все поля опциональны)."""
 
     name: str | None = Field(default=None, description="Название процесса")
+    department: str | None = Field(default=None, description="Подразделение")
+    description: str | None = Field(default=None, description="Описание процесса")
+    status: str | None = Field(default=None, description="Статус процесса")
     trigger: str | None = Field(default=None, description="Триггер запуска процесса")
     result: str | None = Field(default=None, description="Ожидаемый результат процесса")
     participants: list[str] | None = Field(default=None, description="Участники процесса")
@@ -167,20 +173,35 @@ class RequirementResponse(BaseModel):
 # ----------------------------------------------------------------------
 
 
+class StageInfoResponse(BaseModel):
+    """Информация о стадии пайплайна."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    name: str = Field(description="Код стадии")
+    label: str = Field(description="Название стадии")
+    status: str = Field(default="pending", description="Статус стадии")
+    progress: float = Field(default=0.0, description="Прогресс стадии")
+    error: str | None = Field(default=None, description="Ошибка")
+    completed: bool = Field(default=False, description="Завершена ли стадия")
+
+
 class PipelineStatusResponse(BaseModel):
     """Ответ со статусом пайплайна обработки."""
 
     model_config = ConfigDict(from_attributes=True)
 
-    stage: str = Field(default="idle", description="Текущий этап пайплайна")
-    progress: float = Field(default=0.0, ge=0.0, le=100.0, description="Прогресс в процентах")
+    project_id: str = Field(default="", description="ID проекта")
+    current_stage: str | None = Field(default=None, description="Текущий этап пайплайна")
+    stages: list[StageInfoResponse] = Field(
+        default_factory=list, description="Информация по стадиям"
+    )
     completed_stages: list[str] = Field(
         default_factory=list, description="Завершённые этапы"
     )
-    current_stage_status: str = Field(
-        default="idle", description="Статус текущего этапа"
+    overall_progress: float = Field(
+        default=0.0, ge=0.0, le=100.0, description="Общий прогресс в процентах"
     )
-    error: str | None = Field(default=None, description="Описание ошибки (если есть)")
 
 
 class PipelineStageRequest(BaseModel):

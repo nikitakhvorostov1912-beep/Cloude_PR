@@ -253,4 +253,29 @@ export const exportApi = {
   all(projectId: string): string {
     return `${API_BASE}/api/projects/${projectId}/export/all`;
   },
+
+  /** URL для inline-просмотра SVG-диаграммы процесса */
+  svgPreview(projectId: string, processId: string): string {
+    return `${API_BASE}/api/projects/${projectId}/export/svg/${processId}`;
+  },
+
+  /** URL для скачивания BPMN XML файла */
+  bpmn(projectId: string, processId: string): string {
+    return `${API_BASE}/api/projects/${projectId}/export/bpmn/${processId}`;
+  },
 };
+
+/**
+ * Загружает содержимое SVG как текст для inline-рендеринга.
+ */
+export async function fetchSvgContent(
+  projectId: string,
+  processId: string,
+): Promise<string> {
+  const url = exportApi.svgPreview(projectId, processId);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить SVG: ${response.status}`);
+  }
+  return response.text();
+}

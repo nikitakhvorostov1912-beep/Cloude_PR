@@ -13,6 +13,13 @@ import {
   Users,
   Building,
   Zap,
+  Eye,
+  Play,
+  Target,
+  Clock,
+  BarChart3,
+  Link2,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,6 +43,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { dataApi } from "@/lib/api";
+import { SvgPreviewDialog } from "@/components/svg-preview-dialog";
 import type { Process, ProcessStep, PainPoint } from "@/lib/types";
 
 const severityColors: Record<string, string> = {
@@ -58,6 +66,10 @@ export default function ProcessesPage() {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [editData, setEditData] = React.useState<Partial<Process>>({});
+  const [previewProcess, setPreviewProcess] = React.useState<{
+    processId: string;
+    processName: string;
+  } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["processes", projectId],
@@ -79,7 +91,9 @@ export default function ProcessesPage() {
     },
   });
 
-  const processes = data?.processes ?? [];
+  const processes = (data?.processes ?? []).filter(
+    (p) => !p.id.endsWith("_bpmn") && p.name,
+  );
 
   const startEdit = (process: Process) => {
     setEditingId(process.id);
@@ -202,14 +216,29 @@ export default function ProcessesPage() {
                         </Button>
                       </>
                     ) : (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => startEdit(process)}
-                      >
-                        <Pencil className="mr-1 size-3" />
-                        Редактировать
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            setPreviewProcess({
+                              processId: process.id,
+                              processName: process.name,
+                            })
+                          }
+                        >
+                          <Eye className="mr-1 size-3" />
+                          Диаграмма
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => startEdit(process)}
+                        >
+                          <Pencil className="mr-1 size-3" />
+                          Редактировать
+                        </Button>
+                      </>
                     )}
                   </div>
 
@@ -280,6 +309,114 @@ export default function ProcessesPage() {
                     )}
                   </div>
 
+                  {/* Trigger & Result */}
+                  {(process.trigger || process.result) && (
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {process.trigger && (
+                        <div className="flex items-start gap-2 rounded-md border border-green-500/20 bg-green-500/5 p-3">
+                          <Play className="mt-0.5 size-4 shrink-0 text-green-500" />
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground">Триггер</p>
+                            <p className="mt-0.5 text-sm">{process.trigger}</p>
+                          </div>
+                        </div>
+                      )}
+                      {process.result && (
+                        <div className="flex items-start gap-2 rounded-md border border-blue-500/20 bg-blue-500/5 p-3">
+                          <Target className="mt-0.5 size-4 shrink-0 text-blue-500" />
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground">Результат</p>
+                            <p className="mt-0.5 text-sm">{process.result}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Metrics */}
+                  {process.metrics && Object.keys(process.metrics).length > 0 && (
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                        <BarChart3 className="size-3" /> Метрики процесса
+                      </label>
+                      <div className="mt-1 grid gap-2 sm:grid-cols-3">
+                        {process.metrics.frequency && (
+                          <div className="rounded-md border p-2 text-center">
+                            <p className="text-xs text-muted-foreground">Частота</p>
+                            <p className="text-sm font-semibold">{process.metrics.frequency}</p>
+                          </div>
+                        )}
+                        {process.metrics.duration && (
+                          <div className="rounded-md border p-2 text-center">
+                            <p className="text-xs text-muted-foreground">Длительность</p>
+                            <p className="text-sm font-semibold">{process.metrics.duration}</p>
+                          </div>
+                        )}
+                        {process.metrics.participants_count && (
+                          <div className="rounded-md border p-2 text-center">
+                            <p className="text-xs text-muted-foreground">Участников</p>
+                            <p className="text-sm font-semibold">{process.metrics.participants_count}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Integrations */}
+                  {process.integrations && process.integrations.length > 0 && (
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                        <Link2 className="size-3" /> Используемые системы
+                      </label>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {process.integrations.map((sys, i) => (
+                          <Badge key={i} variant="outline" className="text-xs border-primary/30 text-primary">
+                            {sys}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Analysis summary */}
+                  {(process.steps.length > 0 || process.pain_points.length > 0) && (
+                    <div className="rounded-md border border-primary/20 bg-primary/5 p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="size-4 text-primary" />
+                        <h4 className="text-sm font-semibold">Аналитическая сводка</h4>
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p>
+                          Процесс включает <strong className="text-foreground">{process.steps.length} шагов</strong> с участием{" "}
+                          <strong className="text-foreground">{process.participants.length} ролей</strong>.
+                          {process.decisions.length > 0 && (
+                            <> Содержит <strong className="text-foreground">{process.decisions.length} точк{process.decisions.length === 1 ? "у" : process.decisions.length < 5 ? "и" : ""} принятия решений</strong>, что увеличивает сложность маршрутизации.</>
+                          )}
+                        </p>
+                        {process.pain_points.length > 0 && (() => {
+                          const critical = process.pain_points.filter(pp => {
+                            const obj = typeof pp === "string" ? null : pp;
+                            return obj && (obj.severity === "critical" || obj.severity === "high");
+                          }).length;
+                          return (
+                            <p>
+                              Выявлено <strong className="text-foreground">{process.pain_points.length} проблемных зон</strong>
+                              {critical > 0 && (
+                                <>, из них <strong className="text-destructive">{critical} критических/высокого приоритета</strong></>
+                              )}. Рекомендуется приоритизировать автоматизацию узких мест.
+                            </p>
+                          );
+                        })()}
+                        {process.integrations && process.integrations.length > 1 && (
+                          <p>
+                            Процесс затрагивает <strong className="text-foreground">{process.integrations.length} информационных систем</strong>,
+                            что требует проработки интеграционных сценариев при внедрении.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Participants */}
                   {process.participants.length > 0 && (
                     <div>
@@ -287,11 +424,15 @@ export default function ProcessesPage() {
                         Участники
                       </label>
                       <div className="mt-1 flex flex-wrap gap-1">
-                        {process.participants.map((p, i) => (
-                          <Badge key={i} variant="secondary" className="text-xs">
-                            {p}
-                          </Badge>
-                        ))}
+                        {process.participants.map((p, i) => {
+                          const label = typeof p === "string" ? p : (p as { role?: string; department?: string }).role ?? JSON.stringify(p);
+                          const dept = typeof p === "object" ? (p as { department?: string }).department : undefined;
+                          return (
+                            <Badge key={i} variant="secondary" className="text-xs">
+                              {label}{dept ? ` (${dept})` : ""}
+                            </Badge>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -317,10 +458,10 @@ export default function ProcessesPage() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {process.steps
+                            {[...process.steps]
                               .sort((a, b) => a.order - b.order)
-                              .map((step) => (
-                                <TableRow key={step.id}>
+                              .map((step, i) => (
+                                <TableRow key={`${process.id}-step-${step.order}-${step.name}`}>
                                   <TableCell className="font-mono text-xs">
                                     {step.order}
                                   </TableCell>
@@ -350,23 +491,33 @@ export default function ProcessesPage() {
                         Точки принятия решений
                       </h4>
                       <div className="space-y-2">
-                        {process.decisions.map((d) => (
-                          <Card key={d.id}>
+                        {process.decisions.map((d, i) => (
+                          <Card key={d.id ?? i}>
                             <CardContent className="p-3">
                               <div className="flex items-start gap-2">
                                 <Zap className="mt-0.5 size-4 shrink-0 text-yellow-500" />
                                 <div>
                                   <p className="text-sm font-medium">
-                                    {d.question}
+                                    {d.condition ?? d.question ?? "Решение"}
                                   </p>
                                   <div className="mt-1 flex flex-wrap gap-1">
-                                    {d.options.map((opt, i) => (
+                                    {d.yes_branch && (
+                                      <Badge variant="outline" className="text-xs text-green-400 border-green-400/30">
+                                        Да: {d.yes_branch}
+                                      </Badge>
+                                    )}
+                                    {d.no_branch && (
+                                      <Badge variant="outline" className="text-xs text-red-400 border-red-400/30">
+                                        Нет: {d.no_branch}
+                                      </Badge>
+                                    )}
+                                    {d.options?.map((opt: { label?: string }, j: number) => (
                                       <Badge
-                                        key={i}
+                                        key={j}
                                         variant="outline"
                                         className="text-xs"
                                       >
-                                        {opt.label}
+                                        {opt.label ?? String(opt)}
                                       </Badge>
                                     ))}
                                   </div>
@@ -386,33 +537,38 @@ export default function ProcessesPage() {
                         Проблемные зоны
                       </h4>
                       <div className="space-y-2">
-                        {process.pain_points.map((pp) => (
-                          <div
-                            key={pp.id}
-                            className={`flex items-start gap-2 rounded-md border p-3 ${severityColors[pp.severity] ?? ""}`}
-                          >
-                            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm">{pp.description}</p>
-                              <div className="mt-1 flex gap-2">
-                                <Badge
-                                  variant="outline"
-                                  className="text-xs"
-                                >
-                                  {severityLabels[pp.severity] ?? pp.severity}
-                                </Badge>
-                                {pp.category && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-xs"
-                                  >
-                                    {pp.category}
-                                  </Badge>
-                                )}
+                        {process.pain_points.map((pp, i) => {
+                          const ppObj = typeof pp === "string" ? { description: pp } as unknown as PainPoint : pp;
+                          return (
+                            <div
+                              key={ppObj.id ?? `pp-${i}`}
+                              className={`flex items-start gap-2 rounded-md border p-3 ${severityColors[ppObj.severity] ?? ""}`}
+                            >
+                              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm">{ppObj.description}</p>
+                                <div className="mt-1 flex gap-2">
+                                  {ppObj.severity && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      {severityLabels[ppObj.severity] ?? ppObj.severity}
+                                    </Badge>
+                                  )}
+                                  {ppObj.category && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs"
+                                    >
+                                      {ppObj.category}
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -422,6 +578,19 @@ export default function ProcessesPage() {
           );
         })}
       </Accordion>
+
+      {/* SVG Preview Dialog */}
+      {previewProcess && (
+        <SvgPreviewDialog
+          open={!!previewProcess}
+          onOpenChange={(open) => {
+            if (!open) setPreviewProcess(null);
+          }}
+          projectId={projectId}
+          processId={previewProcess.processId}
+          processName={previewProcess.processName}
+        />
+      )}
     </div>
   );
 }

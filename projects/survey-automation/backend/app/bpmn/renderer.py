@@ -57,11 +57,12 @@ _PADDING: float = 30.0
 # Размер стрелки
 _ARROW_SIZE: float = 10.0
 
-# Максимальная длина текста в одной строке (символы)
-_MAX_LABEL_LINE_LEN: int = 18
+# Максимальная длина текста в одной строке (символы).
+# Для кириллицы ~7px/символ при font-size 12px → 14 × 7 = 98px < 120px (ширина задачи).
+_MAX_LABEL_LINE_LEN: int = 14
 
 # Высота строки текста
-_LINE_HEIGHT: float = 14.0
+_LINE_HEIGHT: float = 15.0
 
 # ----------------------------------------------------------------------
 # Типы элементов BPMN
@@ -427,6 +428,7 @@ class BPMNRenderer:
 
     def _render(self, definitions: etree._Element) -> str:
         """Рендерит дерево ``<definitions>`` в SVG-строку."""
+        BPMNRenderer._clip_counter = 0
         # Индекс bpmnElement -> локальное имя тега процесса
         bpmn_element_types: dict[str, str] = self._index_bpmn_elements(
             definitions,
@@ -822,8 +824,10 @@ class BPMNRenderer:
 
     # --- Задачи (Task) ---
 
-    @staticmethod
-    def _draw_task(parent: etree._Element, shape: dict[str, Any]) -> None:
+    _clip_counter: int = 0
+
+    @classmethod
+    def _draw_task(cls, parent: etree._Element, shape: dict[str, Any]) -> None:
         """Рисует задачу — прямоугольник со скруглёнными углами и текстом."""
         x = shape["x"]
         y = shape["y"]
@@ -845,15 +849,52 @@ class BPMNRenderer:
         )
 
         if name:
-            lines = _wrap_text(name)
+            # Clip text to task bounds
+            cls._clip_counter += 1
+            clip_id = f"clip-task-{cls._clip_counter}"
+            defs = g.getparent()
+            # Find or create defs
+            svg_root = defs
+            while svg_root.getparent() is not None:
+                svg_root = svg_root.getparent()
+            defs_el = svg_root.find(f"{{{SVG_NS}}}defs")
+            if defs_el is not None:
+                clip_path = _svg_element(defs_el, "clipPath", id=clip_id)
+                _svg_element(
+                    clip_path, "rect",
+                    x=f"{x + 2:.1f}",
+                    y=f"{y + 2:.1f}",
+                    width=f"{w - 4:.1f}",
+                    height=f"{h - 4:.1f}",
+                    rx="6",
+                    ry="6",
+                )
+
+            # Расчёт максимальной ширины строки в символах
+            # исходя из ширины задачи (≈7px на символ для кириллицы)
+            max_chars = max(8, int(w / 7.5))
+            lines = _wrap_text(name, max_len=max_chars)
+
+            # Ограничиваем количество строк
+            max_lines = max(2, int((h - 10) / _LINE_HEIGHT))
+            if len(lines) > max_lines:
+                lines = lines[:max_lines]
+                last = lines[-1]
+                if len(last) > 3:
+                    lines[-1] = last[:-1] + "…"
+
             cx = x + w / 2
             cy = y + h / 2
             total_height = len(lines) * _LINE_HEIGHT
             start_y = cy - total_height / 2 + _LINE_HEIGHT / 2
 
+            text_group = _svg_element(g, "g")
+            if defs_el is not None:
+                text_group.set("clip-path", f"url(#{clip_id})")
+
             for i, line in enumerate(lines):
                 text_elem = _svg_element(
-                    g, "text",
+                    text_group, "text",
                     x=f"{cx:.1f}",
                     y=f"{start_y + i * _LINE_HEIGHT:.1f}",
                     class_name="bpmn-task-label",
@@ -915,7 +956,7 @@ class BPMNRenderer:
             else:
                 label_x = cx
 
-            lines = _wrap_text(name, max_len=20)
+            lines = _wrap_text(name, max_len=16)
             for i, line in enumerate(lines):
                 text_elem = _svg_element(
                     g, "text",
@@ -1030,7 +1071,7 @@ class BPMNRenderer:
             else:
                 label_x = cx
 
-            lines = _wrap_text(name, max_len=20)
+            lines = _wrap_text(name, max_len=16)
             for i, line in enumerate(lines):
                 text_elem = _svg_element(
                     g, "text",

@@ -44,28 +44,28 @@ ANNOTATION_WIDTH: int = 120
 ANNOTATION_HEIGHT: int = 40
 
 #: Высота дорожки по умолчанию
-LANE_HEIGHT: int = 200
+LANE_HEIGHT: int = 350
 
 #: Минимальная ширина дорожки
 LANE_MIN_WIDTH: int = 600
 
-#: Отступ меток дорожек (левый блок с названием)
-LANE_LABEL_WIDTH: int = 40
+#: Отступ меток дорожек (левый блок с названием, ≥ header_w в direct_vsdx)
+LANE_LABEL_WIDTH: int = 100
 
 #: Горизонтальный отступ между элементами
-HORIZONTAL_SPACING: int = 80
+HORIZONTAL_SPACING: int = 160
 
 #: Вертикальный отступ между элементами (при ветвлении)
-VERTICAL_SPACING: int = 60
+VERTICAL_SPACING: int = 180
 
 #: Начальный отступ от левого края
 LEFT_MARGIN: int = 80
 
 #: Начальный отступ от верхнего края
-TOP_MARGIN: int = 60
+TOP_MARGIN: int = 80
 
 #: Вертикальный отступ внутри дорожки (от верхнего и нижнего края)
-LANE_PADDING: int = 40
+LANE_PADDING: int = 100
 
 #: Отступ между пулом и первой дорожкой
 POOL_PADDING: int = 20

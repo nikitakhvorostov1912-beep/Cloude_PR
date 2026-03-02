@@ -16,10 +16,11 @@ from typing import Annotated
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
 
 from app.api.deps import get_export_service, get_project_service
 from app.api.models import ErrorResponse
+from app.bpmn.renderer import BPMNRenderer
 from app.config import get_project_dir
 from app.exceptions import AppError, NotFoundError
 from app.services.export_service import ExportService
@@ -34,6 +35,12 @@ def _make_content_disposition(filename: str) -> str:
     """Формирует заголовок Content-Disposition с поддержкой UTF-8 имён файлов."""
     encoded = quote(filename)
     return f"attachment; filename*=UTF-8''{encoded}"
+
+
+def _make_inline_disposition(filename: str) -> str:
+    """Формирует заголовок Content-Disposition для inline-отображения в браузере."""
+    encoded = quote(filename)
+    return f"inline; filename*=UTF-8''{encoded}"
 
 
 # ----------------------------------------------------------------------
@@ -94,6 +101,142 @@ async def download_visio(
         )
         raise AppError(
             f"Не удалось экспортировать Visio-файл: {process_id}",
+            detail=str(exc),
+        ) from exc
+
+
+# ----------------------------------------------------------------------
+# SVG Preview (inline)
+# ----------------------------------------------------------------------
+
+
+@router.get(
+    "/svg/{process_id}",
+    summary="Просмотр SVG-диаграммы",
+    description="Отдаёт SVG-файл диаграммы процесса для отображения в браузере.",
+    responses={
+        404: {"model": ErrorResponse, "description": "SVG-файл не найден"},
+        500: {"model": ErrorResponse, "description": "Внутренняя ошибка сервера"},
+    },
+)
+async def preview_svg(
+    project_id: str,
+    process_id: str,
+    project_service: Annotated[ProjectService, Depends(get_project_service)],
+) -> Response:
+    """Рендерит SVG-диаграмму из BPMN XML для inline-просмотра в браузере."""
+    logger.info(
+        "Просмотр SVG для процесса %s проекта %s", process_id, project_id
+    )
+
+    try:
+        await project_service.get_project(project_id)
+    except AppError:
+        raise
+
+    try:
+        project_dir = get_project_dir(project_id)
+        bpmn_path = project_dir.bpmn / f"{process_id}.bpmn"
+
+        if not bpmn_path.is_file():
+            # Fallback to pre-generated SVG
+            svg_path = project_dir.bpmn / f"{process_id}.svg"
+            if not svg_path.is_file():
+                raise NotFoundError(
+                    f"BPMN-диаграмма не найдена для процесса: {process_id}",
+                    detail="Сначала выполните этап генерации BPMN-диаграмм",
+                )
+            return FileResponse(
+                path=str(svg_path),
+                media_type="image/svg+xml",
+                headers={
+                    "Content-Disposition": _make_inline_disposition(
+                        f"{process_id}.svg"
+                    ),
+                    "Access-Control-Allow-Origin": "*",
+                },
+            )
+
+        # Render SVG dynamically from BPMN XML
+        bpmn_xml = bpmn_path.read_text(encoding="utf-8")
+        renderer = BPMNRenderer()
+        svg_content = renderer.render_svg(bpmn_xml)
+
+        return Response(
+            content=svg_content,
+            media_type="image/svg+xml",
+            headers={
+                "Content-Disposition": _make_inline_disposition(
+                    f"{process_id}.svg"
+                ),
+                "Access-Control-Allow-Origin": "*",
+            },
+        )
+    except AppError:
+        raise
+    except Exception as exc:
+        logger.exception(
+            "Ошибка при рендеринге SVG для процесса %s: %s", process_id, exc
+        )
+        raise AppError(
+            f"Не удалось загрузить SVG-диаграмму: {process_id}",
+            detail=str(exc),
+        ) from exc
+
+
+# ----------------------------------------------------------------------
+# BPMN XML Download
+# ----------------------------------------------------------------------
+
+
+@router.get(
+    "/bpmn/{process_id}",
+    summary="Скачать BPMN XML",
+    description="Скачивает BPMN 2.0 XML-файл для указанного процесса.",
+    responses={
+        404: {"model": ErrorResponse, "description": "BPMN-файл не найден"},
+        500: {"model": ErrorResponse, "description": "Внутренняя ошибка сервера"},
+    },
+)
+async def download_bpmn(
+    project_id: str,
+    process_id: str,
+    project_service: Annotated[ProjectService, Depends(get_project_service)],
+) -> FileResponse:
+    """Скачивает BPMN 2.0 XML-файл."""
+    logger.info(
+        "Скачивание BPMN для процесса %s проекта %s", process_id, project_id
+    )
+
+    try:
+        await project_service.get_project(project_id)
+    except AppError:
+        raise
+
+    try:
+        project_dir = get_project_dir(project_id)
+        bpmn_path = project_dir.bpmn / f"{process_id}.bpmn"
+
+        if not bpmn_path.is_file():
+            raise NotFoundError(
+                f"BPMN-файл не найден для процесса: {process_id}",
+                detail="Сначала выполните этап генерации BPMN-диаграмм",
+            )
+
+        filename = f"{process_id}.bpmn"
+        return FileResponse(
+            path=str(bpmn_path),
+            media_type="application/xml",
+            headers={"Content-Disposition": _make_content_disposition(filename)},
+        )
+    except AppError:
+        raise
+    except Exception as exc:
+        logger.exception(
+            "Ошибка при отдаче BPMN для процесса %s: %s", process_id, exc
+        )
+        raise AppError(
+            f"Не удалось загрузить BPMN-файл: {process_id}",
             detail=str(exc),
         ) from exc
 

@@ -1,8 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(unzip:*)",
-      "Bash(pip show:*)"
+      "Bash(.venv/Scripts/python.exe -c \"from app.config import get_config; print\\(''Config OK:'', get_config\\(\\).app.title\\)\")",
+      "Bash(.venv/Scripts/python.exe -c \"from main import create_app; print\\(''App OK''\\)\")",
+      "Bash(C:/tools/nodejs/node-v22.14.0-win-x64/npm.cmd run build)",
+      "Bash(git status -u)"
     ]
   }
 }

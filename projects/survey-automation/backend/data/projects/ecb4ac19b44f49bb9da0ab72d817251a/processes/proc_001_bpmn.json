@@ -1,0 +1,290 @@
+{
+  "process_id": "proc_001",
+  "process_name": "Обработка заказа клиента",
+  "elements": [
+    {
+      "id": "proc_001_start",
+      "type": "startEvent",
+      "name": "Обращение клиента (телефон/email/сайт)",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_task_1",
+      "type": "userTask",
+      "name": "Приём заявки",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_gw_split_1",
+      "type": "exclusiveGateway",
+      "name": "Проверка остатков в Excel-таблице …",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_yes_1",
+      "type": "task",
+      "name": "Расчёт стоимости",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_no_1",
+      "type": "task",
+      "name": "Согласование сроков поставки …",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_gw_merge_1",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_task_2",
+      "type": "serviceTask",
+      "name": "Проверка остатков",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_gw_split_2",
+      "type": "exclusiveGateway",
+      "name": "Запрос клиента на скидку превышает…",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_yes_2",
+      "type": "task",
+      "name": "Согласование коммерческим дир…",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_no_2",
+      "type": "task",
+      "name": "Утверждение руководителем отд…",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_gw_merge_2",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_task_3",
+      "type": "userTask",
+      "name": "Расчёт стоимости",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_gw_split_3",
+      "type": "exclusiveGateway",
+      "name": "Получен положительный ответ от кли…",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_yes_3",
+      "type": "task",
+      "name": "Внутреннее согласование",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_no_3",
+      "type": "task",
+      "name": "Корректировка КП или закрытие…",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_gw_merge_3",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_task_4",
+      "type": "userTask",
+      "name": "Отправка КП клиенту",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_task_5",
+      "type": "userTask",
+      "name": "Получение подтверждения от клиента",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_task_6",
+      "type": "userTask",
+      "name": "Внутреннее согласование",
+      "lane": "lane___________________________"
+    },
+    {
+      "id": "proc_001_task_7",
+      "type": "serviceTask",
+      "name": "Передача заказа в работу",
+      "lane": "lane_____________________"
+    },
+    {
+      "id": "proc_001_end",
+      "type": "endEvent",
+      "name": "Подтверждённый заказ с рассчитанной сто…",
+      "lane": "lane_____________________"
+    }
+  ],
+  "flows": [
+    {
+      "id": "proc_001_flow_proc_001_start_to_proc_001_task_1",
+      "source": "proc_001_start",
+      "target": "proc_001_task_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_1_to_proc_001_gw_split_1",
+      "source": "proc_001_task_1",
+      "target": "proc_001_gw_split_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_1_to_proc_001_yes_1",
+      "source": "proc_001_gw_split_1",
+      "target": "proc_001_yes_1",
+      "name": "Да",
+      "condition": "Проверка остатков в Excel-таблице кладовщика и 1С:Бухгалтерия"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_1_to_proc_001_no_1",
+      "source": "proc_001_gw_split_1",
+      "target": "proc_001_no_1",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_001_flow_proc_001_yes_1_to_proc_001_gw_merge_1",
+      "source": "proc_001_yes_1",
+      "target": "proc_001_gw_merge_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_no_1_to_proc_001_gw_merge_1",
+      "source": "proc_001_no_1",
+      "target": "proc_001_gw_merge_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_merge_1_to_proc_001_task_2",
+      "source": "proc_001_gw_merge_1",
+      "target": "proc_001_task_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_2_to_proc_001_gw_split_2",
+      "source": "proc_001_task_2",
+      "target": "proc_001_gw_split_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_2_to_proc_001_yes_2",
+      "source": "proc_001_gw_split_2",
+      "target": "proc_001_yes_2",
+      "name": "Да",
+      "condition": "Запрос клиента на скидку превышает 5% от прайсовой цены"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_2_to_proc_001_no_2",
+      "source": "proc_001_gw_split_2",
+      "target": "proc_001_no_2",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_001_flow_proc_001_yes_2_to_proc_001_gw_merge_2",
+      "source": "proc_001_yes_2",
+      "target": "proc_001_gw_merge_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_no_2_to_proc_001_gw_merge_2",
+      "source": "proc_001_no_2",
+      "target": "proc_001_gw_merge_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_merge_2_to_proc_001_task_3",
+      "source": "proc_001_gw_merge_2",
+      "target": "proc_001_task_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_3_to_proc_001_gw_split_3",
+      "source": "proc_001_task_3",
+      "target": "proc_001_gw_split_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_3_to_proc_001_yes_3",
+      "source": "proc_001_gw_split_3",
+      "target": "proc_001_yes_3",
+      "name": "Да",
+      "condition": "Получен положительный ответ от клиента на коммерческое предложение"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_3_to_proc_001_no_3",
+      "source": "proc_001_gw_split_3",
+      "target": "proc_001_no_3",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_001_flow_proc_001_yes_3_to_proc_001_gw_merge_3",
+      "source": "proc_001_yes_3",
+      "target": "proc_001_gw_merge_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_no_3_to_proc_001_gw_merge_3",
+      "source": "proc_001_no_3",
+      "target": "proc_001_gw_merge_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_merge_3_to_proc_001_task_4",
+      "source": "proc_001_gw_merge_3",
+      "target": "proc_001_task_4"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_4_to_proc_001_task_5",
+      "source": "proc_001_task_4",
+      "target": "proc_001_task_5"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_5_to_proc_001_task_6",
+      "source": "proc_001_task_5",
+      "target": "proc_001_task_6"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_6_to_proc_001_task_7",
+      "source": "proc_001_task_6",
+      "target": "proc_001_task_7"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_7_to_proc_001_end",
+      "source": "proc_001_task_7",
+      "target": "proc_001_end"
+    }
+  ],
+  "participants": [
+    {
+      "id": "proc_001_pool",
+      "name": "Обработка заказа клиента",
+      "processRef": "proc_001"
+    },
+    {
+      "id": "lane_____________________",
+      "name": "Менеджер по продажам",
+      "lane_id": "lane_____________________"
+    },
+    {
+      "id": "lane___________________________",
+      "name": "Руководитель отдела продаж",
+      "lane_id": "lane___________________________"
+    },
+    {
+      "id": "lane______________________",
+      "name": "Коммерческий директор",
+      "lane_id": "lane______________________"
+    },
+    {
+      "id": "lane___________________",
+      "name": "Заведующий складом",
+      "lane_id": "lane___________________"
+    }
+  ],
+  "annotations": [],
+  "associations": [],
+  "message_flows": [],
+  "data_objects": [],
+  "data_stores": []
+}

@@ -1,56 +1,63 @@
 @echo off
 chcp 65001 >nul
-echo ╔══════════════════════════════════════════════╗
-echo ║   Survey Automation — Запуск приложения      ║
-echo ╚══════════════════════════════════════════════╝
+echo ========================================
+echo   Survey Automation - Zapusk
+echo ========================================
 echo.
 
-:: Check Python
-python --version >nul 2>&1
-if errorlevel 1 (
-    echo [ОШИБКА] Python не найден. Установите Python 3.11+
-    pause
-    exit /b 1
-)
+set "SCRIPT_DIR=%~dp0"
+set "BACKEND_DIR=%SCRIPT_DIR%backend"
+set "FRONTEND_DIR=%SCRIPT_DIR%frontend"
+set "VENV_PYTHON=%BACKEND_DIR%\.venv\Scripts\python.exe"
+set "NODE_DIR=C:\tools\nodejs\node-v22.14.0-win-x64"
+set "PATH=%NODE_DIR%;%PATH%"
 
-:: Check Node.js
-node --version >nul 2>&1
-if errorlevel 1 (
-    echo [ОШИБКА] Node.js не найден. Установите Node.js 18+
-    pause
-    exit /b 1
-)
+if not exist "%VENV_PYTHON%" goto no_venv
+goto check_node
 
-:: Create data directory
-if not exist "backend\data\projects" mkdir "backend\data\projects"
+:no_venv
+echo [ERROR] Python venv not found: %VENV_PYTHON%
+pause
+exit /b 1
 
-echo [1/2] Запуск Backend (FastAPI)...
-cd backend
-start "Survey-Backend" cmd /c "python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
-cd ..
+:check_node
+if not exist "%NODE_DIR%\node.exe" goto no_node
+goto check_modules
 
-echo [2/2] Запуск Frontend (Next.js)...
-cd frontend
-start "Survey-Frontend" cmd /c "npm run dev"
-cd ..
+:no_node
+echo [ERROR] Node.js not found: %NODE_DIR%
+pause
+exit /b 1
+
+:check_modules
+if exist "%FRONTEND_DIR%\node_modules" goto start_servers
+echo Installing frontend dependencies...
+pushd "%FRONTEND_DIR%"
+call npm install
+popd
+
+:start_servers
+if not exist "%BACKEND_DIR%\data\projects" mkdir "%BACKEND_DIR%\data\projects"
+
+echo [1/2] Starting Backend...
+start "Survey-Backend" cmd /k "cd /d %BACKEND_DIR% && %VENV_PYTHON% -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+
+echo [2/2] Starting Frontend...
+start "Survey-Frontend" cmd /k "cd /d %FRONTEND_DIR% && npm run dev"
 
 echo.
-echo ✅ Серверы запускаются...
-echo    Backend:  http://localhost:8000
-echo    Frontend: http://localhost:3000
-echo    API docs: http://localhost:8000/docs
+echo Backend:  http://localhost:8000
+echo Frontend: http://localhost:3000
 echo.
-echo Ожидание запуска...
-timeout /t 5 /nobreak >nul
+echo Waiting 8 sec...
+timeout /t 8 /nobreak >nul
 
-:: Open browser
 start http://localhost:3000
 
 echo.
-echo Нажмите любую клавишу для остановки серверов...
+echo Press any key to stop servers...
 pause >nul
 
-:: Kill servers
 taskkill /FI "WINDOWTITLE eq Survey-Backend" /F >nul 2>&1
 taskkill /FI "WINDOWTITLE eq Survey-Frontend" /F >nul 2>&1
-echo Серверы остановлены.
+echo Servers stopped.

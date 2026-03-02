@@ -213,3 +213,57 @@ class TestBpmnConverter:
         xml = converter.convert(bpmn_json)
         assert "exclusiveGateway" in xml
         assert "gateway_proc" in xml
+
+
+# -------------------------------------------------------------------
+# _visual_text_width — расчёт визуальной ширины текста
+# -------------------------------------------------------------------
+
+
+class TestVisualTextWidth:
+    """Тесты для _visual_text_width (учёт emoji и пробелов)."""
+
+    def test_pure_cyrillic(self):
+        """Кириллица: 1 символ = 1.0 visual unit."""
+        from app.visio.direct_vsdx import _visual_text_width
+        w = _visual_text_width("Привет", char_coeff=1.0)
+        assert w == 6.0
+
+    def test_emoji_counted_double(self):
+        """Emoji: 1 символ = 2.0 visual units."""
+        from app.visio.direct_vsdx import _visual_text_width
+        w = _visual_text_width("\U0001F4E4", char_coeff=1.0)
+        assert w == 2.0
+
+    def test_space_half(self):
+        """Пробел: 0.5 visual units."""
+        from app.visio.direct_vsdx import _visual_text_width
+        w = _visual_text_width(" ", char_coeff=1.0)
+        assert w == 0.5
+
+    def test_mixed_emoji_and_cyrillic(self):
+        """Смешанный текст: emoji(2) + space(0.5) + 4 буквы(4)."""
+        from app.visio.direct_vsdx import _visual_text_width
+        w = _visual_text_width("\U0001F4E4 Тест", char_coeff=1.0)
+        assert w == 6.5
+
+    def test_gear_emoji(self):
+        """⚙ (U+2699) считается как emoji (Symbol Other)."""
+        from app.visio.direct_vsdx import _visual_text_width
+        w = _visual_text_width("\u2699", char_coeff=1.0)
+        assert w == 2.0
+
+    def test_badge_wider_than_naive(self):
+        """_badge_w даёт ширину больше наивного len() * coeff."""
+        from app.visio.direct_vsdx import DirectVsdxGenerator
+        gen = DirectVsdxGenerator()
+        text = "\U0001F4E4 Финансовое подтверждение"
+        badge_w = gen._badge_w(text)
+        naive_w = len(text) * 0.085
+        assert badge_w > naive_w
+
+    def test_coefficient_applied(self):
+        """Коэффициент применяется к визуальным единицам."""
+        from app.visio.direct_vsdx import _visual_text_width
+        w = _visual_text_width("АБВ", char_coeff=0.1)
+        assert abs(w - 0.3) < 0.001

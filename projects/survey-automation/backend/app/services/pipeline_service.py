@@ -74,7 +74,35 @@ class PipelineService:
         self._export = export_service or ExportService()
 
     # ------------------------------------------------------------------
-    # Публичные методы
+    # Публичные методы — обёртки для каждой стадии
+    # ------------------------------------------------------------------
+
+    async def run_transcription(self, project_id: str) -> dict[str, Any]:
+        """Запускает стадию транскрипции."""
+        return await self.run_stage(project_id, "transcribe")
+
+    async def run_extraction(self, project_id: str) -> dict[str, Any]:
+        """Запускает стадию извлечения процессов."""
+        return await self.run_stage(project_id, "extract")
+
+    async def run_bpmn_generation(self, project_id: str) -> dict[str, Any]:
+        """Запускает стадию генерации BPMN."""
+        return await self.run_stage(project_id, "generate-bpmn")
+
+    async def run_gap_analysis(self, project_id: str, erp_config: dict | None = None) -> dict[str, Any]:
+        """Запускает стадию GAP-анализа."""
+        return await self.run_stage(project_id, "gap-analysis")
+
+    async def run_tobe_generation(self, project_id: str) -> dict[str, Any]:
+        """Запускает стадию генерации TO-BE."""
+        return await self.run_stage(project_id, "generate-tobe")
+
+    async def run_doc_generation(self, project_id: str) -> dict[str, Any]:
+        """Запускает стадию генерации документации."""
+        return await self.run_stage(project_id, "generate-docs")
+
+    # ------------------------------------------------------------------
+    # Общий метод запуска стадии
     # ------------------------------------------------------------------
 
     async def run_stage(
@@ -189,13 +217,18 @@ class PipelineService:
         stages_info: list[dict[str, Any]] = []
         for stage_name in PIPELINE_STAGES:
             stage_data = pipeline_state.get(f"stage_{stage_name}", {})
+            is_completed = stage_name in completed
+            status = stage_data.get("status", "pending")
+            # Если стадия в completed_stages, гарантируем статус completed
+            if is_completed and status != "completed":
+                status = "completed"
             stages_info.append({
                 "name": stage_name,
                 "label": STAGE_LABELS.get(stage_name, stage_name),
-                "status": stage_data.get("status", "pending"),
-                "progress": stage_data.get("progress", 0),
+                "status": status,
+                "progress": 100.0 if is_completed else stage_data.get("progress", 0),
                 "error": stage_data.get("error"),
-                "completed": stage_name in completed,
+                "completed": is_completed,
             })
 
         # Определяем текущую стадию

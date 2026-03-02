@@ -1,0 +1,50 @@
+{
+  "id": "ecb4ac19b44f49bb9da0ab72d817251a",
+  "name": "TestPipeline",
+  "description": "Full pipeline run",
+  "created_at": "2026-03-01T21:01:20.410091+00:00",
+  "updated_at": "2026-03-01T21:05:23.857320+00:00",
+  "status": "new",
+  "pipeline_state": {
+    "stage": "generate-docs",
+    "progress": 100,
+    "completed_stages": [
+      "transcribe",
+      "extract",
+      "generate-bpmn",
+      "gap-analysis",
+      "generate-tobe",
+      "generate-docs"
+    ],
+    "stage_transcribe": {
+      "status": "completed",
+      "progress": 100,
+      "error": null,
+      "updated_at": "2026-03-01T21:01:30.904734+00:00"
+    },
+    "stage_extract": {
+      "status": "completed",
+      "progress": 100,
+      "error": null,
+      "updated_at": "2026-03-01T21:02:00.000000+00:00"
+    },
+    "stage_generate-bpmn": {
+      "status": "completed",
+      "progress": 100,
+      "error": null,
+      "updated_at": "2026-03-01T21:02:10.000000+00:00"
+    },
+    "stage_gap-analysis": {
+      "status": "completed",
+      "progress": 100,
+      "error": null,
+      "updated_at": "2026-03-01T21:02:20.000000+00:00"
+    },
+    "stage_generate-docs": {
+      "status": "completed",
+      "progress": 100,
+      "error": null,
+      "updated_at": "2026-03-01T21:05:23.848697+00:00"
+    }
+  }
+}

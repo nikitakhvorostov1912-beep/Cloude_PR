@@ -229,6 +229,9 @@ class BpmnConverter:
                 attrib={"id": collaboration_id},
             )
             for part in participants:
+                # Участники с lane_id — это дорожки, не пулы
+                if part.get("lane_id"):
+                    continue
                 part_attrib: dict[str, str] = {
                     "id": part["id"],
                     "processRef": process_id,
@@ -588,8 +591,11 @@ class BpmnConverter:
         lane_positions = layout.get("lanes") or {}
         participant_positions = layout.get("participants") or {}
 
-        # Участники (пулы)
+        # Участники (пулы) — только те, у кого нет lane_id (настоящие пулы)
+        # Участники с lane_id — это дорожки, их shapes создаются ниже
         for part in bpmn_json.get("participants") or []:
+            if part.get("lane_id"):
+                continue  # Дорожка — shape создастся в секции "Дорожки"
             pos = participant_positions.get(part["id"], {})
             self._add_shape_di(plane, part["id"], pos)
 

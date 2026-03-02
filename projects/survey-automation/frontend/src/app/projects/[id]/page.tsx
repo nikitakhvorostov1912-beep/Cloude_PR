@@ -39,10 +39,10 @@ const stageConfig: {
 }[] = [
   { name: "transcribe", label: "Транскрипция", icon: FileText },
   { name: "extract", label: "Извлечение процессов", icon: FileSearch },
-  { name: "generate_bpmn", label: "BPMN / Visio", icon: Workflow },
-  { name: "gap_analysis", label: "GAP-анализ", icon: GitCompareArrows },
-  { name: "generate_tobe", label: "TO-BE", icon: RefreshCw },
-  { name: "generate_docs", label: "Документы", icon: FileText },
+  { name: "generate-bpmn", label: "BPMN / Visio", icon: Workflow },
+  { name: "gap-analysis", label: "GAP-анализ", icon: GitCompareArrows },
+  { name: "generate-tobe", label: "TO-BE", icon: RefreshCw },
+  { name: "generate-docs", label: "Документы", icon: FileText },
 ];
 
 const statusLabels: Record<StageStatus, string> = {
@@ -66,10 +66,10 @@ function getStageRunner(stage: PipelineStage) {
     upload: async () => {},
     transcribe: (id) => pipelineApi.transcribe(id),
     extract: (id) => pipelineApi.extract(id),
-    generate_bpmn: (id) => pipelineApi.generateBpmn(id),
-    gap_analysis: (id) => pipelineApi.gapAnalysis(id),
-    generate_tobe: (id) => pipelineApi.generateTobe(id),
-    generate_docs: (id) => pipelineApi.generateDocs(id),
+    "generate-bpmn": (id) => pipelineApi.generateBpmn(id),
+    "gap-analysis": (id) => pipelineApi.gapAnalysis(id),
+    "generate-tobe": (id) => pipelineApi.generateTobe(id),
+    "generate-docs": (id) => pipelineApi.generateDocs(id),
   };
   return runners[stage];
 }

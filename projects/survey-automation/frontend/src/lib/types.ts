@@ -48,10 +48,10 @@ export type PipelineStage =
   | "upload"
   | "transcribe"
   | "extract"
-  | "generate_bpmn"
-  | "gap_analysis"
-  | "generate_tobe"
-  | "generate_docs";
+  | "generate-bpmn"
+  | "gap-analysis"
+  | "generate-tobe"
+  | "generate-docs";
 
 export type StageStatus =
   | "pending"
@@ -110,10 +110,14 @@ export interface Process {
   name: string;
   description: string;
   department: string;
-  participants: string[];
+  trigger: string;
+  result: string;
+  participants: (string | { role?: string; department?: string })[];
   steps: ProcessStep[];
   decisions: Decision[];
-  pain_points: PainPoint[];
+  pain_points: (PainPoint | string)[];
+  integrations: string[];
+  metrics: Record<string, string | number>;
   source_transcript_ids: string[];
   bpmn_xml: string | null;
   status: "draft" | "reviewed" | "approved";
@@ -138,6 +142,9 @@ export interface Decision {
   id: string;
   after_step_id: string;
   question: string;
+  condition?: string;
+  yes_branch?: string;
+  no_branch?: string;
   options: DecisionOption[];
 }
 

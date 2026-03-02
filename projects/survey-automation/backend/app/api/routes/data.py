@@ -234,7 +234,6 @@ async def get_transcript(
 
 @router.get(
     "/processes",
-    response_model=list[ProcessResponse],
     summary="Список процессов",
     description="Возвращает список извлечённых бизнес-процессов проекта.",
     responses={
@@ -245,7 +244,7 @@ async def get_transcript(
 async def list_processes(
     project_id: str,
     service: Annotated[ProjectService, Depends(get_project_service)],
-) -> list[ProcessResponse]:
+) -> dict[str, Any]:
     """Возвращает список бизнес-процессов проекта."""
     logger.info("Запрос списка процессов для проекта %s", project_id)
 
@@ -276,6 +275,9 @@ async def list_processes(
                         processes.append(ProcessResponse(
                             id=proc_id,
                             name=proc.get("name", ""),
+                            department=proc.get("department", ""),
+                            description=proc.get("description", ""),
+                            status=proc.get("status", "draft"),
                             trigger=proc.get("trigger", ""),
                             result=proc.get("result", ""),
                             participants=proc.get("participants", []),
@@ -289,6 +291,9 @@ async def list_processes(
                     processes.append(ProcessResponse(
                         id=data.get("id", json_path.stem),
                         name=data.get("name", ""),
+                        department=data.get("department", ""),
+                        description=data.get("description", ""),
+                        status=data.get("status", "draft"),
                         trigger=data.get("trigger", ""),
                         result=data.get("result", ""),
                         participants=data.get("participants", []),
@@ -304,7 +309,7 @@ async def list_processes(
                 )
                 continue
 
-        return processes
+        return {"processes": processes, "total": len(processes)}
     except AppError:
         raise
     except Exception as exc:
@@ -431,7 +436,6 @@ async def update_process(
 
 @router.get(
     "/gaps",
-    response_model=list[GapResponse],
     summary="Результаты GAP-анализа",
     description="Возвращает результаты GAP-анализа процессов.",
     responses={
@@ -442,7 +446,7 @@ async def update_process(
 async def get_gaps(
     project_id: str,
     service: Annotated[ProjectService, Depends(get_project_service)],
-) -> list[GapResponse]:
+) -> dict[str, Any]:
     """Возвращает результаты GAP-анализа."""
     logger.info("Запрос GAP-анализа для проекта %s", project_id)
 
@@ -453,30 +457,45 @@ async def get_gaps(
 
     try:
         project_dir = get_project_dir(project_id)
-        gaps_path = project_dir.output / "gap_analysis.json"
 
+        # Ищем GAP-данные в нескольких местах
+        gaps_path = project_dir.root / "gaps" / "gap_analysis.json"
         if not gaps_path.is_file():
-            return []
+            gaps_path = project_dir.output / "gap_analysis.json"
+        if not gaps_path.is_file():
+            gaps_path = project_dir.processes / "_gap_analysis.json"
+        if not gaps_path.is_file():
+            return {"gaps": [], "total": 0, "summary": {}}
 
-        data = _load_json(gaps_path)
-        gap_items = data.get("gaps", [])
-        if not isinstance(gap_items, list):
-            gap_items = [gap_items] if gap_items else []
+        with open(gaps_path, "r", encoding="utf-8") as f:
+            raw_data = json.load(f)
 
-        result: list[GapResponse] = []
+        # Данные могут быть dict с ключом "gaps" или list
+        gap_items: list[dict[str, Any]] = []
+        summary: dict[str, Any] = {}
+        if isinstance(raw_data, dict):
+            gap_items = raw_data.get("gaps", [])
+            summary = raw_data.get("summary", {})
+        elif isinstance(raw_data, list):
+            gap_items = raw_data
+
+        result: list[dict[str, Any]] = []
         for i, gap in enumerate(gap_items):
-            result.append(GapResponse(
-                id=gap.get("id", f"gap_{i}"),
-                process_name=gap.get("process_name", ""),
-                function_name=gap.get("function_name", ""),
-                coverage=gap.get("coverage", ""),
-                erp_module=gap.get("erp_module", ""),
-                gap_description=gap.get("gap_description", ""),
-                recommendation=gap.get("recommendation", ""),
-                effort=gap.get("effort", ""),
-            ))
+            result.append({
+                "id": gap.get("id", f"gap_{i}"),
+                "process_id": gap.get("process_id", ""),
+                "process_name": gap.get("process_name", ""),
+                "function_name": gap.get("function_name", ""),
+                "coverage": gap.get("coverage", 0),
+                "erp_module": gap.get("erp_module", ""),
+                "erp_document": gap.get("erp_document", ""),
+                "gap_description": gap.get("gap_description", ""),
+                "recommendation": gap.get("recommendation", ""),
+                "effort_days": gap.get("effort_days", 0),
+                "priority": gap.get("priority", ""),
+            })
 
-        return result
+        return {"gaps": result, "total": len(result), "summary": summary}
     except AppError:
         raise
     except Exception as exc:
@@ -494,7 +513,6 @@ async def get_gaps(
 
 @router.get(
     "/requirements",
-    response_model=list[RequirementResponse],
     summary="Список требований",
     description="Возвращает список требований, сформированных по результатам анализа.",
     responses={
@@ -505,7 +523,7 @@ async def get_gaps(
 async def get_requirements(
     project_id: str,
     service: Annotated[ProjectService, Depends(get_project_service)],
-) -> list[RequirementResponse]:
+) -> dict[str, Any]:
     """Возвращает список требований проекта."""
     logger.info("Запрос требований для проекта %s", project_id)
 
@@ -516,29 +534,27 @@ async def get_requirements(
 
     try:
         project_dir = get_project_dir(project_id)
-        requirements_path = project_dir.output / "requirements.json"
 
+        # Ищем требования в нескольких местах
+        requirements_path = project_dir.processes / "_requirements.json"
         if not requirements_path.is_file():
-            return []
+            requirements_path = project_dir.output / "requirements.json"
+        if not requirements_path.is_file():
+            requirements_path = project_dir.root / "requirements" / "requirements.json"
+        if not requirements_path.is_file():
+            return {"requirements": [], "total": 0}
 
-        data = _load_json(requirements_path)
-        req_items = data.get("requirements", [])
-        if not isinstance(req_items, list):
-            req_items = [req_items] if req_items else []
+        with open(requirements_path, "r", encoding="utf-8") as f:
+            raw_data = json.load(f)
 
-        result: list[RequirementResponse] = []
-        for i, req in enumerate(req_items):
-            result.append(RequirementResponse(
-                id=req.get("id", f"req_{i}"),
-                type=req.get("type", ""),
-                module=req.get("module", ""),
-                description=req.get("description", ""),
-                priority=req.get("priority", ""),
-                source=req.get("source", ""),
-                effort=req.get("effort", ""),
-            ))
+        # Данные могут быть dict с ключом "requirements" или list
+        req_items: list[dict[str, Any]] = []
+        if isinstance(raw_data, dict):
+            req_items = raw_data.get("requirements", [raw_data])
+        elif isinstance(raw_data, list):
+            req_items = raw_data
 
-        return result
+        return {"requirements": req_items, "total": len(req_items)}
     except AppError:
         raise
     except Exception as exc:

@@ -1,0 +1,1273 @@
+{
+  "process_id": "proc_purchase",
+  "process_name": "Закупка товаров и материалов",
+  "elements": [
+    {
+      "id": "proc_purchase_start",
+      "type": "startEvent",
+      "name": "Формирование потребности в материалах",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_task_1",
+      "type": "serviceTask",
+      "name": "Формирование заявки на закупку",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_gw_split_1",
+      "type": "exclusiveGateway",
+      "name": "Заявка обоснована?",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_yes_1",
+      "type": "task",
+      "name": "Проверка бюджета",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_no_1",
+      "type": "task",
+      "name": "Возврат инициатору",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_gw_merge_1",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_task_2",
+      "type": "serviceTask",
+      "name": "Согласование руководителем",
+      "lane": "lane_e3662fa8"
+    },
+    {
+      "id": "proc_purchase_gw_split_2",
+      "type": "exclusiveGateway",
+      "name": "Бюджет достаточен?",
+      "lane": "lane_e3662fa8"
+    },
+    {
+      "id": "proc_purchase_yes_2",
+      "type": "task",
+      "name": "Поиск поставщиков",
+      "lane": "lane_e3662fa8"
+    },
+    {
+      "id": "proc_purchase_no_2",
+      "type": "task",
+      "name": "Запрос доп. финансирования",
+      "lane": "lane_e3662fa8"
+    },
+    {
+      "id": "proc_purchase_gw_merge_2",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_e3662fa8"
+    },
+    {
+      "id": "proc_purchase_task_3",
+      "type": "serviceTask",
+      "name": "Проверка бюджета",
+      "lane": "lane_1dd149e8"
+    },
+    {
+      "id": "proc_purchase_gw_split_3",
+      "type": "exclusiveGateway",
+      "name": "Сумма > 500 тыс?",
+      "lane": "lane_1dd149e8"
+    },
+    {
+      "id": "proc_purchase_yes_3",
+      "type": "task",
+      "name": "Тендер",
+      "lane": "lane_1dd149e8"
+    },
+    {
+      "id": "proc_purchase_no_3",
+      "type": "task",
+      "name": "Прямая закупка",
+      "lane": "lane_1dd149e8"
+    },
+    {
+      "id": "proc_purchase_gw_merge_3",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_1dd149e8"
+    },
+    {
+      "id": "proc_purchase_task_4",
+      "type": "serviceTask",
+      "name": "Поиск и выбор поставщиков",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_gw_split_4",
+      "type": "exclusiveGateway",
+      "name": "Товар соответствует?",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_yes_4",
+      "type": "task",
+      "name": "Оприходование",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_no_4",
+      "type": "task",
+      "name": "Рекламация",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_gw_merge_4",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_task_5",
+      "type": "userTask",
+      "name": "Проведение тендера",
+      "lane": "lane_6aecdb2a"
+    },
+    {
+      "id": "proc_purchase_task_6",
+      "type": "userTask",
+      "name": "Согласование договора",
+      "lane": "lane_4ffdee75"
+    },
+    {
+      "id": "proc_purchase_task_7",
+      "type": "serviceTask",
+      "name": "Подписание договора",
+      "lane": "lane_6aecdb2a"
+    },
+    {
+      "id": "proc_purchase_task_8",
+      "type": "serviceTask",
+      "name": "Формирование заказа поставщику",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_task_9",
+      "type": "serviceTask",
+      "name": "Контроль сроков поставки",
+      "lane": "lane_94feb930"
+    },
+    {
+      "id": "proc_purchase_task_10",
+      "type": "serviceTask",
+      "name": "Приёмка товара на складе",
+      "lane": "lane_3ee1b33d"
+    },
+    {
+      "id": "proc_purchase_task_11",
+      "type": "userTask",
+      "name": "Контроль качества",
+      "lane": "lane_3fc1c4ff"
+    },
+    {
+      "id": "proc_purchase_task_12",
+      "type": "serviceTask",
+      "name": "Оприходование на склад",
+      "lane": "lane_3ee1b33d"
+    },
+    {
+      "id": "proc_purchase_task_13",
+      "type": "serviceTask",
+      "name": "Обработка оплаты",
+      "lane": "lane_1dd149e8"
+    },
+    {
+      "id": "proc_purchase_end",
+      "type": "endEvent",
+      "name": "Товар оприходован на склад",
+      "lane": "lane_3fc1c4ff"
+    }
+  ],
+  "flows": [
+    {
+      "id": "proc_purchase_flow_proc_purchase_start_to_proc_purchase_task_1",
+      "source": "proc_purchase_start",
+      "target": "proc_purchase_task_1"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_1_to_proc_purchase_gw_split_1",
+      "source": "proc_purchase_task_1",
+      "target": "proc_purchase_gw_split_1"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_yes_1",
+      "source": "proc_purchase_gw_split_1",
+      "target": "proc_purchase_yes_1",
+      "name": "Да",
+      "condition": "Заявка обоснована?"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_no_1",
+      "source": "proc_purchase_gw_split_1",
+      "target": "proc_purchase_no_1",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_yes_1_to_proc_purchase_gw_merge_1",
+      "source": "proc_purchase_yes_1",
+      "target": "proc_purchase_gw_merge_1"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_no_1_to_proc_purchase_gw_merge_1",
+      "source": "proc_purchase_no_1",
+      "target": "proc_purchase_gw_merge_1"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_merge_1_to_proc_purchase_task_2",
+      "source": "proc_purchase_gw_merge_1",
+      "target": "proc_purchase_task_2"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_2_to_proc_purchase_gw_split_2",
+      "source": "proc_purchase_task_2",
+      "target": "proc_purchase_gw_split_2"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_yes_2",
+      "source": "proc_purchase_gw_split_2",
+      "target": "proc_purchase_yes_2",
+      "name": "Да",
+      "condition": "Бюджет достаточен?"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_no_2",
+      "source": "proc_purchase_gw_split_2",
+      "target": "proc_purchase_no_2",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_yes_2_to_proc_purchase_gw_merge_2",
+      "source": "proc_purchase_yes_2",
+      "target": "proc_purchase_gw_merge_2"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_no_2_to_proc_purchase_gw_merge_2",
+      "source": "proc_purchase_no_2",
+      "target": "proc_purchase_gw_merge_2"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_merge_2_to_proc_purchase_task_3",
+      "source": "proc_purchase_gw_merge_2",
+      "target": "proc_purchase_task_3"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_3_to_proc_purchase_gw_split_3",
+      "source": "proc_purchase_task_3",
+      "target": "proc_purchase_gw_split_3"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_yes_3",
+      "source": "proc_purchase_gw_split_3",
+      "target": "proc_purchase_yes_3",
+      "name": "Да",
+      "condition": "Сумма > 500 тыс?"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_no_3",
+      "source": "proc_purchase_gw_split_3",
+      "target": "proc_purchase_no_3",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_yes_3_to_proc_purchase_gw_merge_3",
+      "source": "proc_purchase_yes_3",
+      "target": "proc_purchase_gw_merge_3"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_no_3_to_proc_purchase_gw_merge_3",
+      "source": "proc_purchase_no_3",
+      "target": "proc_purchase_gw_merge_3"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_merge_3_to_proc_purchase_task_4",
+      "source": "proc_purchase_gw_merge_3",
+      "target": "proc_purchase_task_4"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_4_to_proc_purchase_gw_split_4",
+      "source": "proc_purchase_task_4",
+      "target": "proc_purchase_gw_split_4"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_yes_4",
+      "source": "proc_purchase_gw_split_4",
+      "target": "proc_purchase_yes_4",
+      "name": "Да",
+      "condition": "Товар соответствует?"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_no_4",
+      "source": "proc_purchase_gw_split_4",
+      "target": "proc_purchase_no_4",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_yes_4_to_proc_purchase_gw_merge_4",
+      "source": "proc_purchase_yes_4",
+      "target": "proc_purchase_gw_merge_4"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_no_4_to_proc_purchase_gw_merge_4",
+      "source": "proc_purchase_no_4",
+      "target": "proc_purchase_gw_merge_4"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_gw_merge_4_to_proc_purchase_task_5",
+      "source": "proc_purchase_gw_merge_4",
+      "target": "proc_purchase_task_5"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_5_to_proc_purchase_task_6",
+      "source": "proc_purchase_task_5",
+      "target": "proc_purchase_task_6"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_6_to_proc_purchase_task_7",
+      "source": "proc_purchase_task_6",
+      "target": "proc_purchase_task_7"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_7_to_proc_purchase_task_8",
+      "source": "proc_purchase_task_7",
+      "target": "proc_purchase_task_8"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_8_to_proc_purchase_task_9",
+      "source": "proc_purchase_task_8",
+      "target": "proc_purchase_task_9"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_9_to_proc_purchase_task_10",
+      "source": "proc_purchase_task_9",
+      "target": "proc_purchase_task_10"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_10_to_proc_purchase_task_11",
+      "source": "proc_purchase_task_10",
+      "target": "proc_purchase_task_11"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_11_to_proc_purchase_task_12",
+      "source": "proc_purchase_task_11",
+      "target": "proc_purchase_task_12"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_12_to_proc_purchase_task_13",
+      "source": "proc_purchase_task_12",
+      "target": "proc_purchase_task_13"
+    },
+    {
+      "id": "proc_purchase_flow_proc_purchase_task_13_to_proc_purchase_end",
+      "source": "proc_purchase_task_13",
+      "target": "proc_purchase_end"
+    }
+  ],
+  "participants": [
+    {
+      "id": "proc_purchase_pool",
+      "name": "Закупка товаров и материалов",
+      "processRef": "proc_purchase"
+    },
+    {
+      "id": "lane_3fc1c4ff",
+      "name": "Инициатор заявки",
+      "lane_id": "lane_3fc1c4ff"
+    },
+    {
+      "id": "lane_e3662fa8",
+      "name": "Руководитель подразделения",
+      "lane_id": "lane_e3662fa8"
+    },
+    {
+      "id": "lane_94feb930",
+      "name": "Менеджер по закупкам",
+      "lane_id": "lane_94feb930"
+    },
+    {
+      "id": "lane_6aecdb2a",
+      "name": "Руководитель отдела закупок",
+      "lane_id": "lane_6aecdb2a"
+    },
+    {
+      "id": "lane_1dd149e8",
+      "name": "Финансовый контролёр",
+      "lane_id": "lane_1dd149e8"
+    },
+    {
+      "id": "lane_4ffdee75",
+      "name": "Юрист",
+      "lane_id": "lane_4ffdee75"
+    },
+    {
+      "id": "lane_3ee1b33d",
+      "name": "Кладовщик",
+      "lane_id": "lane_3ee1b33d"
+    }
+  ],
+  "annotations": [],
+  "associations": [],
+  "message_flows": [],
+  "data_objects": [],
+  "data_stores": [],
+  "layout": {
+    "elements": {
+      "proc_purchase_start": {
+        "x": 222.0,
+        "y": 237.0,
+        "width": 36.0,
+        "height": 36.0
+      },
+      "proc_purchase_task_1": {
+        "x": 460.0,
+        "y": 215.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_split_1": {
+        "x": 775.0,
+        "y": 230.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_yes_1": {
+        "x": 1020.0,
+        "y": 85.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_no_1": {
+        "x": 1020.0,
+        "y": 345.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_merge_1": {
+        "x": 1335.0,
+        "y": 230.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_task_2": {
+        "x": 1580.0,
+        "y": 565.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_split_2": {
+        "x": 1895.0,
+        "y": 580.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_yes_2": {
+        "x": 2140.0,
+        "y": 435.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_no_2": {
+        "x": 2140.0,
+        "y": 695.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_merge_2": {
+        "x": 2455.0,
+        "y": 580.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_task_3": {
+        "x": 2700.0,
+        "y": 1615.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_split_3": {
+        "x": 3015.0,
+        "y": 1630.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_yes_3": {
+        "x": 3260.0,
+        "y": 1485.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_no_3": {
+        "x": 3260.0,
+        "y": 1745.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_merge_3": {
+        "x": 3575.0,
+        "y": 1630.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_task_4": {
+        "x": 3820.0,
+        "y": 915.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_split_4": {
+        "x": 4135.0,
+        "y": 930.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_yes_4": {
+        "x": 4380.0,
+        "y": 785.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_no_4": {
+        "x": 4380.0,
+        "y": 1045.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_gw_merge_4": {
+        "x": 4695.0,
+        "y": 930.0,
+        "width": 50.0,
+        "height": 50.0
+      },
+      "proc_purchase_task_5": {
+        "x": 4940.0,
+        "y": 1265.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_6": {
+        "x": 5220.0,
+        "y": 1965.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_7": {
+        "x": 5500.0,
+        "y": 1265.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_8": {
+        "x": 5780.0,
+        "y": 915.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_9": {
+        "x": 6060.0,
+        "y": 915.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_10": {
+        "x": 6340.0,
+        "y": 2315.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_11": {
+        "x": 6620.0,
+        "y": 215.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_12": {
+        "x": 6900.0,
+        "y": 2315.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_task_13": {
+        "x": 7180.0,
+        "y": 1615.0,
+        "width": 120.0,
+        "height": 80.0
+      },
+      "proc_purchase_end": {
+        "x": 7502.0,
+        "y": 237.0,
+        "width": 36.0,
+        "height": 36.0
+      }
+    },
+    "flows": {
+      "proc_purchase_flow_proc_purchase_start_to_proc_purchase_task_1": [
+        {
+          "x": 258.0,
+          "y": 255.0
+        },
+        {
+          "x": 460.0,
+          "y": 255.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_1_to_proc_purchase_gw_split_1": [
+        {
+          "x": 580.0,
+          "y": 255.0
+        },
+        {
+          "x": 775.0,
+          "y": 255.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_yes_1": [
+        {
+          "x": 825.0,
+          "y": 255.0
+        },
+        {
+          "x": 922.5,
+          "y": 255.0
+        },
+        {
+          "x": 922.5,
+          "y": 125.0
+        },
+        {
+          "x": 1020.0,
+          "y": 125.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_no_1": [
+        {
+          "x": 825.0,
+          "y": 255.0
+        },
+        {
+          "x": 922.5,
+          "y": 255.0
+        },
+        {
+          "x": 922.5,
+          "y": 385.0
+        },
+        {
+          "x": 1020.0,
+          "y": 385.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_yes_1_to_proc_purchase_gw_merge_1": [
+        {
+          "x": 1140.0,
+          "y": 125.0
+        },
+        {
+          "x": 1237.5,
+          "y": 125.0
+        },
+        {
+          "x": 1237.5,
+          "y": 255.0
+        },
+        {
+          "x": 1335.0,
+          "y": 255.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_no_1_to_proc_purchase_gw_merge_1": [
+        {
+          "x": 1140.0,
+          "y": 385.0
+        },
+        {
+          "x": 1237.5,
+          "y": 385.0
+        },
+        {
+          "x": 1237.5,
+          "y": 255.0
+        },
+        {
+          "x": 1335.0,
+          "y": 255.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_merge_1_to_proc_purchase_task_2": [
+        {
+          "x": 1385.0,
+          "y": 255.0
+        },
+        {
+          "x": 1482.5,
+          "y": 255.0
+        },
+        {
+          "x": 1482.5,
+          "y": 605.0
+        },
+        {
+          "x": 1580.0,
+          "y": 605.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_2_to_proc_purchase_gw_split_2": [
+        {
+          "x": 1700.0,
+          "y": 605.0
+        },
+        {
+          "x": 1895.0,
+          "y": 605.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_yes_2": [
+        {
+          "x": 1945.0,
+          "y": 605.0
+        },
+        {
+          "x": 2042.5,
+          "y": 605.0
+        },
+        {
+          "x": 2042.5,
+          "y": 475.0
+        },
+        {
+          "x": 2140.0,
+          "y": 475.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_no_2": [
+        {
+          "x": 1945.0,
+          "y": 605.0
+        },
+        {
+          "x": 2042.5,
+          "y": 605.0
+        },
+        {
+          "x": 2042.5,
+          "y": 735.0
+        },
+        {
+          "x": 2140.0,
+          "y": 735.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_yes_2_to_proc_purchase_gw_merge_2": [
+        {
+          "x": 2260.0,
+          "y": 475.0
+        },
+        {
+          "x": 2357.5,
+          "y": 475.0
+        },
+        {
+          "x": 2357.5,
+          "y": 605.0
+        },
+        {
+          "x": 2455.0,
+          "y": 605.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_no_2_to_proc_purchase_gw_merge_2": [
+        {
+          "x": 2260.0,
+          "y": 735.0
+        },
+        {
+          "x": 2357.5,
+          "y": 735.0
+        },
+        {
+          "x": 2357.5,
+          "y": 605.0
+        },
+        {
+          "x": 2455.0,
+          "y": 605.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_merge_2_to_proc_purchase_task_3": [
+        {
+          "x": 2505.0,
+          "y": 605.0
+        },
+        {
+          "x": 2602.5,
+          "y": 605.0
+        },
+        {
+          "x": 2602.5,
+          "y": 1655.0
+        },
+        {
+          "x": 2700.0,
+          "y": 1655.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_3_to_proc_purchase_gw_split_3": [
+        {
+          "x": 2820.0,
+          "y": 1655.0
+        },
+        {
+          "x": 3015.0,
+          "y": 1655.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_yes_3": [
+        {
+          "x": 3065.0,
+          "y": 1655.0
+        },
+        {
+          "x": 3162.5,
+          "y": 1655.0
+        },
+        {
+          "x": 3162.5,
+          "y": 1525.0
+        },
+        {
+          "x": 3260.0,
+          "y": 1525.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_no_3": [
+        {
+          "x": 3065.0,
+          "y": 1655.0
+        },
+        {
+          "x": 3162.5,
+          "y": 1655.0
+        },
+        {
+          "x": 3162.5,
+          "y": 1785.0
+        },
+        {
+          "x": 3260.0,
+          "y": 1785.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_yes_3_to_proc_purchase_gw_merge_3": [
+        {
+          "x": 3380.0,
+          "y": 1525.0
+        },
+        {
+          "x": 3477.5,
+          "y": 1525.0
+        },
+        {
+          "x": 3477.5,
+          "y": 1655.0
+        },
+        {
+          "x": 3575.0,
+          "y": 1655.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_no_3_to_proc_purchase_gw_merge_3": [
+        {
+          "x": 3380.0,
+          "y": 1785.0
+        },
+        {
+          "x": 3477.5,
+          "y": 1785.0
+        },
+        {
+          "x": 3477.5,
+          "y": 1655.0
+        },
+        {
+          "x": 3575.0,
+          "y": 1655.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_merge_3_to_proc_purchase_task_4": [
+        {
+          "x": 3625.0,
+          "y": 1655.0
+        },
+        {
+          "x": 3722.5,
+          "y": 1655.0
+        },
+        {
+          "x": 3722.5,
+          "y": 955.0
+        },
+        {
+          "x": 3820.0,
+          "y": 955.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_4_to_proc_purchase_gw_split_4": [
+        {
+          "x": 3940.0,
+          "y": 955.0
+        },
+        {
+          "x": 4135.0,
+          "y": 955.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_yes_4": [
+        {
+          "x": 4185.0,
+          "y": 955.0
+        },
+        {
+          "x": 4282.5,
+          "y": 955.0
+        },
+        {
+          "x": 4282.5,
+          "y": 825.0
+        },
+        {
+          "x": 4380.0,
+          "y": 825.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_no_4": [
+        {
+          "x": 4185.0,
+          "y": 955.0
+        },
+        {
+          "x": 4282.5,
+          "y": 955.0
+        },
+        {
+          "x": 4282.5,
+          "y": 1085.0
+        },
+        {
+          "x": 4380.0,
+          "y": 1085.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_yes_4_to_proc_purchase_gw_merge_4": [
+        {
+          "x": 4500.0,
+          "y": 825.0
+        },
+        {
+          "x": 4597.5,
+          "y": 825.0
+        },
+        {
+          "x": 4597.5,
+          "y": 955.0
+        },
+        {
+          "x": 4695.0,
+          "y": 955.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_no_4_to_proc_purchase_gw_merge_4": [
+        {
+          "x": 4500.0,
+          "y": 1085.0
+        },
+        {
+          "x": 4597.5,
+          "y": 1085.0
+        },
+        {
+          "x": 4597.5,
+          "y": 955.0
+        },
+        {
+          "x": 4695.0,
+          "y": 955.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_gw_merge_4_to_proc_purchase_task_5": [
+        {
+          "x": 4745.0,
+          "y": 955.0
+        },
+        {
+          "x": 4842.5,
+          "y": 955.0
+        },
+        {
+          "x": 4842.5,
+          "y": 1305.0
+        },
+        {
+          "x": 4940.0,
+          "y": 1305.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_5_to_proc_purchase_task_6": [
+        {
+          "x": 5060.0,
+          "y": 1305.0
+        },
+        {
+          "x": 5140.0,
+          "y": 1305.0
+        },
+        {
+          "x": 5140.0,
+          "y": 2005.0
+        },
+        {
+          "x": 5220.0,
+          "y": 2005.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_6_to_proc_purchase_task_7": [
+        {
+          "x": 5340.0,
+          "y": 2005.0
+        },
+        {
+          "x": 5420.0,
+          "y": 2005.0
+        },
+        {
+          "x": 5420.0,
+          "y": 1305.0
+        },
+        {
+          "x": 5500.0,
+          "y": 1305.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_7_to_proc_purchase_task_8": [
+        {
+          "x": 5620.0,
+          "y": 1305.0
+        },
+        {
+          "x": 5700.0,
+          "y": 1305.0
+        },
+        {
+          "x": 5700.0,
+          "y": 955.0
+        },
+        {
+          "x": 5780.0,
+          "y": 955.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_8_to_proc_purchase_task_9": [
+        {
+          "x": 5900.0,
+          "y": 955.0
+        },
+        {
+          "x": 6060.0,
+          "y": 955.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_9_to_proc_purchase_task_10": [
+        {
+          "x": 6180.0,
+          "y": 955.0
+        },
+        {
+          "x": 6260.0,
+          "y": 955.0
+        },
+        {
+          "x": 6260.0,
+          "y": 2355.0
+        },
+        {
+          "x": 6340.0,
+          "y": 2355.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_10_to_proc_purchase_task_11": [
+        {
+          "x": 6460.0,
+          "y": 2355.0
+        },
+        {
+          "x": 6540.0,
+          "y": 2355.0
+        },
+        {
+          "x": 6540.0,
+          "y": 255.0
+        },
+        {
+          "x": 6620.0,
+          "y": 255.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_11_to_proc_purchase_task_12": [
+        {
+          "x": 6740.0,
+          "y": 255.0
+        },
+        {
+          "x": 6820.0,
+          "y": 255.0
+        },
+        {
+          "x": 6820.0,
+          "y": 2355.0
+        },
+        {
+          "x": 6900.0,
+          "y": 2355.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_12_to_proc_purchase_task_13": [
+        {
+          "x": 7020.0,
+          "y": 2355.0
+        },
+        {
+          "x": 7100.0,
+          "y": 2355.0
+        },
+        {
+          "x": 7100.0,
+          "y": 1655.0
+        },
+        {
+          "x": 7180.0,
+          "y": 1655.0
+        }
+      ],
+      "proc_purchase_flow_proc_purchase_task_13_to_proc_purchase_end": [
+        {
+          "x": 7300.0,
+          "y": 1655.0
+        },
+        {
+          "x": 7401.0,
+          "y": 1655.0
+        },
+        {
+          "x": 7401.0,
+          "y": 255.0
+        },
+        {
+          "x": 7502.0,
+          "y": 255.0
+        }
+      ]
+    },
+    "lanes": {
+      "lane_3fc1c4ff": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 540.0
+      },
+      "lane_e3662fa8": {
+        "x": 80.0,
+        "y": 620.0,
+        "width": 7778.0,
+        "height": 540.0
+      },
+      "lane_94feb930": {
+        "x": 80.0,
+        "y": 1160.0,
+        "width": 7778.0,
+        "height": 540.0
+      },
+      "lane_6aecdb2a": {
+        "x": 80.0,
+        "y": 1700.0,
+        "width": 7778.0,
+        "height": 350.0
+      },
+      "lane_1dd149e8": {
+        "x": 80.0,
+        "y": 2050.0,
+        "width": 7778.0,
+        "height": 540.0
+      },
+      "lane_4ffdee75": {
+        "x": 80.0,
+        "y": 2590.0,
+        "width": 7778.0,
+        "height": 350.0
+      },
+      "lane_3ee1b33d": {
+        "x": 80.0,
+        "y": 2940.0,
+        "width": 7778.0,
+        "height": 350.0
+      }
+    },
+    "participants": {
+      "proc_purchase_pool": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_3fc1c4ff": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_e3662fa8": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_94feb930": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_6aecdb2a": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_1dd149e8": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_4ffdee75": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      },
+      "lane_3ee1b33d": {
+        "x": 80.0,
+        "y": 80,
+        "width": 7778.0,
+        "height": 3210.0
+      }
+    }
+  }
+}

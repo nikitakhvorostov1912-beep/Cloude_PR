@@ -1,0 +1,232 @@
+{
+  "process_id": "proc_003",
+  "process_name": "Отгрузка товара клиенту",
+  "elements": [
+    {
+      "id": "proc_003_start",
+      "type": "startEvent",
+      "name": "Получение заявки на отгрузку от менедже…",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_task_1",
+      "type": "userTask",
+      "name": "Получение заявки на отгрузку",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_gw_split_1",
+      "type": "exclusiveGateway",
+      "name": "Проверка фактического наличия всех…",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_yes_1",
+      "type": "task",
+      "name": "Комплектация заказа",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_no_1",
+      "type": "task",
+      "name": "Уведомление менеджера по прод…",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_gw_merge_1",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_task_2",
+      "type": "userTask",
+      "name": "Комплектация заказа",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_gw_split_2",
+      "type": "exclusiveGateway",
+      "name": "Сверка собранного заказа с заявкой",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_yes_2",
+      "type": "task",
+      "name": "Оформление документов",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_no_2",
+      "type": "task",
+      "name": "Исправление комплектации",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_gw_merge_2",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_task_3",
+      "type": "userTask",
+      "name": "Проверка комплектности",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_task_4",
+      "type": "serviceTask",
+      "name": "Оформление документов",
+      "lane": "lane__________"
+    },
+    {
+      "id": "proc_003_task_5",
+      "type": "userTask",
+      "name": "Погрузка и отправка",
+      "lane": "lane________"
+    },
+    {
+      "id": "proc_003_task_6",
+      "type": "userTask",
+      "name": "Обновление складского учёта",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_003_end",
+      "type": "endEvent",
+      "name": "Отгруженный товар с оформленными докуме…",
+      "lane": "lane___________________"
+    }
+  ],
+  "flows": [
+    {
+      "id": "proc_003_flow_proc_003_start_to_proc_003_task_1",
+      "source": "proc_003_start",
+      "target": "proc_003_task_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_1_to_proc_003_gw_split_1",
+      "source": "proc_003_task_1",
+      "target": "proc_003_gw_split_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_1_to_proc_003_yes_1",
+      "source": "proc_003_gw_split_1",
+      "target": "proc_003_yes_1",
+      "name": "Да",
+      "condition": "Проверка фактического наличия всех позиций из заявки на складе"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_1_to_proc_003_no_1",
+      "source": "proc_003_gw_split_1",
+      "target": "proc_003_no_1",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_003_flow_proc_003_yes_1_to_proc_003_gw_merge_1",
+      "source": "proc_003_yes_1",
+      "target": "proc_003_gw_merge_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_no_1_to_proc_003_gw_merge_1",
+      "source": "proc_003_no_1",
+      "target": "proc_003_gw_merge_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_merge_1_to_proc_003_task_2",
+      "source": "proc_003_gw_merge_1",
+      "target": "proc_003_task_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_2_to_proc_003_gw_split_2",
+      "source": "proc_003_task_2",
+      "target": "proc_003_gw_split_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_2_to_proc_003_yes_2",
+      "source": "proc_003_gw_split_2",
+      "target": "proc_003_yes_2",
+      "name": "Да",
+      "condition": "Сверка собранного заказа с заявкой"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_2_to_proc_003_no_2",
+      "source": "proc_003_gw_split_2",
+      "target": "proc_003_no_2",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_003_flow_proc_003_yes_2_to_proc_003_gw_merge_2",
+      "source": "proc_003_yes_2",
+      "target": "proc_003_gw_merge_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_no_2_to_proc_003_gw_merge_2",
+      "source": "proc_003_no_2",
+      "target": "proc_003_gw_merge_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_merge_2_to_proc_003_task_3",
+      "source": "proc_003_gw_merge_2",
+      "target": "proc_003_task_3"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_3_to_proc_003_task_4",
+      "source": "proc_003_task_3",
+      "target": "proc_003_task_4"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_4_to_proc_003_task_5",
+      "source": "proc_003_task_4",
+      "target": "proc_003_task_5"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_5_to_proc_003_task_6",
+      "source": "proc_003_task_5",
+      "target": "proc_003_task_6"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_6_to_proc_003_end",
+      "source": "proc_003_task_6",
+      "target": "proc_003_end"
+    }
+  ],
+  "participants": [
+    {
+      "id": "proc_003_pool",
+      "name": "Отгрузка товара клиенту",
+      "processRef": "proc_003"
+    },
+    {
+      "id": "lane___________________",
+      "name": "Заведующий складом",
+      "lane_id": "lane___________________"
+    },
+    {
+      "id": "lane________",
+      "name": "Грузчик",
+      "lane_id": "lane________"
+    },
+    {
+      "id": "lane_____________________",
+      "name": "Менеджер по продажам",
+      "lane_id": "lane_____________________"
+    },
+    {
+      "id": "lane__________",
+      "name": "Бухгалтер",
+      "lane_id": "lane__________"
+    },
+    {
+      "id": "lane_________",
+      "name": "Водитель",
+      "lane_id": "lane_________"
+    }
+  ],
+  "annotations": [],
+  "associations": [],
+  "message_flows": [],
+  "data_objects": [],
+  "data_stores": []
+}

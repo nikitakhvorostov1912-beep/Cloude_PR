@@ -1,0 +1,175 @@
+{
+  "process_id": "proc_002",
+  "process_name": "Приёмка товара на склад",
+  "elements": [
+    {
+      "id": "proc_002_start",
+      "type": "startEvent",
+      "name": "Прибытие транспорта с товаром от постав…",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_task_1",
+      "type": "userTask",
+      "name": "Получение документов",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_gw_split_1",
+      "type": "exclusiveGateway",
+      "name": "Фактическое количество или состоян…",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_yes_1",
+      "type": "task",
+      "name": "Составление акта расхождения,…",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_no_1",
+      "type": "task",
+      "name": "Размещение на складе",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_gw_merge_1",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_task_2",
+      "type": "userTask",
+      "name": "Физическая приёмка и пересчёт",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_task_3",
+      "type": "userTask",
+      "name": "Фиксация расхождений",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_task_4",
+      "type": "userTask",
+      "name": "Размещение на складе",
+      "lane": "lane________"
+    },
+    {
+      "id": "proc_002_task_5",
+      "type": "userTask",
+      "name": "Обновление складского учёта",
+      "lane": "lane___________________"
+    },
+    {
+      "id": "proc_002_task_6",
+      "type": "serviceTask",
+      "name": "Проведение в 1С",
+      "lane": "lane__________"
+    },
+    {
+      "id": "proc_002_end",
+      "type": "endEvent",
+      "name": "Оприходованный товар с актуальными оста…",
+      "lane": "lane___________________"
+    }
+  ],
+  "flows": [
+    {
+      "id": "proc_002_flow_proc_002_start_to_proc_002_task_1",
+      "source": "proc_002_start",
+      "target": "proc_002_task_1"
+    },
+    {
+      "id": "proc_002_flow_proc_002_task_1_to_proc_002_gw_split_1",
+      "source": "proc_002_task_1",
+      "target": "proc_002_gw_split_1"
+    },
+    {
+      "id": "proc_002_flow_proc_002_gw_split_1_to_proc_002_yes_1",
+      "source": "proc_002_gw_split_1",
+      "target": "proc_002_yes_1",
+      "name": "Да",
+      "condition": "Фактическое количество или состояние товара не соответствует данным в ТТН"
+    },
+    {
+      "id": "proc_002_flow_proc_002_gw_split_1_to_proc_002_no_1",
+      "source": "proc_002_gw_split_1",
+      "target": "proc_002_no_1",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_002_flow_proc_002_yes_1_to_proc_002_gw_merge_1",
+      "source": "proc_002_yes_1",
+      "target": "proc_002_gw_merge_1"
+    },
+    {
+      "id": "proc_002_flow_proc_002_no_1_to_proc_002_gw_merge_1",
+      "source": "proc_002_no_1",
+      "target": "proc_002_gw_merge_1"
+    },
+    {
+      "id": "proc_002_flow_proc_002_gw_merge_1_to_proc_002_task_2",
+      "source": "proc_002_gw_merge_1",
+      "target": "proc_002_task_2"
+    },
+    {
+      "id": "proc_002_flow_proc_002_task_2_to_proc_002_task_3",
+      "source": "proc_002_task_2",
+      "target": "proc_002_task_3"
+    },
+    {
+      "id": "proc_002_flow_proc_002_task_3_to_proc_002_task_4",
+      "source": "proc_002_task_3",
+      "target": "proc_002_task_4"
+    },
+    {
+      "id": "proc_002_flow_proc_002_task_4_to_proc_002_task_5",
+      "source": "proc_002_task_4",
+      "target": "proc_002_task_5"
+    },
+    {
+      "id": "proc_002_flow_proc_002_task_5_to_proc_002_task_6",
+      "source": "proc_002_task_5",
+      "target": "proc_002_task_6"
+    },
+    {
+      "id": "proc_002_flow_proc_002_task_6_to_proc_002_end",
+      "source": "proc_002_task_6",
+      "target": "proc_002_end"
+    }
+  ],
+  "participants": [
+    {
+      "id": "proc_002_pool",
+      "name": "Приёмка товара на склад",
+      "processRef": "proc_002"
+    },
+    {
+      "id": "lane___________________",
+      "name": "Заведующий складом",
+      "lane_id": "lane___________________"
+    },
+    {
+      "id": "lane________",
+      "name": "Грузчик",
+      "lane_id": "lane________"
+    },
+    {
+      "id": "lane__________",
+      "name": "Бухгалтер",
+      "lane_id": "lane__________"
+    },
+    {
+      "id": "lane_____________________",
+      "name": "Менеджер по закупкам",
+      "lane_id": "lane_____________________"
+    }
+  ],
+  "annotations": [],
+  "associations": [],
+  "message_flows": [],
+  "data_objects": [],
+  "data_stores": []
+}
