@@ -8,7 +8,6 @@ import {
   Filter,
   FileSpreadsheet,
   FileText,
-  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +29,6 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { dataApi, exportApi } from "@/lib/api";
-import type { Requirement } from "@/lib/types";
 
 const typeLabels: Record<string, string> = {
   functional: "FR",
@@ -40,13 +38,6 @@ const typeLabels: Record<string, string> = {
   security: "SR",
 };
 
-const typeFullLabels: Record<string, string> = {
-  functional: "Функциональное",
-  non_functional: "Нефункциональное",
-  integration: "Интеграционное",
-  data: "Данные",
-  security: "Безопасность",
-};
 
 const priorityLabels: Record<string, string> = {
   critical: "Must",
@@ -81,7 +72,7 @@ export default function RequirementsPage() {
     enabled: !!projectId,
   });
 
-  const requirements = data?.requirements ?? [];
+  const requirements = React.useMemo(() => data?.requirements ?? [], [data]);
 
   const filtered = React.useMemo(() => {
     let result = requirements;
@@ -173,10 +164,10 @@ export default function RequirementsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Все приоритеты</SelectItem>
-            <SelectItem value="critical">Must</SelectItem>
-            <SelectItem value="high">Should</SelectItem>
-            <SelectItem value="medium">Could</SelectItem>
-            <SelectItem value="low">Won't</SelectItem>
+            <SelectItem value="critical">Обязательно (Must)</SelectItem>
+            <SelectItem value="high">Желательно (Should)</SelectItem>
+            <SelectItem value="medium">Возможно (Could)</SelectItem>
+            <SelectItem value="low">Не требуется (Won&apos;t)</SelectItem>
           </SelectContent>
         </Select>
         {(typeFilter !== "all" || priorityFilter !== "all") && (

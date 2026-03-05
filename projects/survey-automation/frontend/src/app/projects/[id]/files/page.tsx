@@ -52,7 +52,7 @@ export default function FilesPage() {
     enabled: !!projectId,
   });
 
-  const processes = processesData?.processes ?? [];
+  const processes = React.useMemo(() => processesData?.processes ?? [], [processesData]);
   const isLoading = processesLoading;
 
   // Build file groups from available data

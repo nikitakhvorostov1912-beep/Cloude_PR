@@ -20,55 +20,61 @@ logger = logging.getLogger(__name__)
 # ----------------------------------------------------------------------
 
 #: Размеры событий (start, end, intermediate)
-EVENT_WIDTH: int = 36
-EVENT_HEIGHT: int = 36
+EVENT_WIDTH: int = 30
+EVENT_HEIGHT: int = 30
 
 #: Размеры задач (task, userTask, serviceTask и т.д.)
 TASK_WIDTH: int = 120
-TASK_HEIGHT: int = 80
+TASK_HEIGHT: int = 60
 
 #: Размеры шлюзов (exclusive, parallel, inclusive, eventBased)
-GATEWAY_WIDTH: int = 50
-GATEWAY_HEIGHT: int = 50
+GATEWAY_WIDTH: int = 40
+GATEWAY_HEIGHT: int = 40
 
 #: Размеры подпроцессов
-SUBPROCESS_WIDTH: int = 200
-SUBPROCESS_HEIGHT: int = 120
+SUBPROCESS_WIDTH: int = 160
+SUBPROCESS_HEIGHT: int = 100
 
 #: Размеры объектов данных
-DATA_OBJECT_WIDTH: int = 40
-DATA_OBJECT_HEIGHT: int = 50
+DATA_OBJECT_WIDTH: int = 36
+DATA_OBJECT_HEIGHT: int = 44
 
 #: Размеры аннотаций
-ANNOTATION_WIDTH: int = 120
-ANNOTATION_HEIGHT: int = 40
+ANNOTATION_WIDTH: int = 100
+ANNOTATION_HEIGHT: int = 36
 
-#: Высота дорожки по умолчанию
-LANE_HEIGHT: int = 350
+#: Высота дорожки по умолчанию (для дорожки с 1 задачей + бейджами)
+LANE_HEIGHT: int = 250
+
+#: Минимальная высота пустой дорожки (без элементов)
+LANE_HEIGHT_EMPTY: int = 80
 
 #: Минимальная ширина дорожки
 LANE_MIN_WIDTH: int = 600
 
-#: Отступ меток дорожек (левый блок с названием, ≥ header_w в direct_vsdx)
-LANE_LABEL_WIDTH: int = 100
+#: Отступ меток дорожек (левый блок с названием, = _LANE_HEADER_W в direct_vsdx)
+LANE_LABEL_WIDTH: int = 50
 
-#: Горизонтальный отступ между элементами
-HORIZONTAL_SPACING: int = 160
+#: Горизонтальный отступ между элементами (0.83" — место для подписей)
+HORIZONTAL_SPACING: int = 80
 
-#: Вертикальный отступ между элементами (при ветвлении)
-VERTICAL_SPACING: int = 180
+#: Вертикальный отступ между элементами при ветвлении (0.83")
+VERTICAL_SPACING: int = 80
 
-#: Начальный отступ от левого края
-LEFT_MARGIN: int = 80
+#: Начальный отступ от левого края (0.31")
+LEFT_MARGIN: int = 30
 
-#: Начальный отступ от верхнего края
-TOP_MARGIN: int = 80
+#: Начальный отступ от верхнего края (0.31")
+TOP_MARGIN: int = 30
 
-#: Вертикальный отступ внутри дорожки (от верхнего и нижнего края)
-LANE_PADDING: int = 100
+#: Вертикальный отступ внутри дорожки (от верхнего и нижнего края, 0.52")
+LANE_PADDING: int = 50
 
 #: Отступ между пулом и первой дорожкой
-POOL_PADDING: int = 20
+POOL_PADDING: int = 10
+
+#: Вертикальное пространство под задачей для бейджей (система, входы, выходы)
+BADGE_SPACE: int = 140
 
 # ----------------------------------------------------------------------
 # Таблица размеров по типу элемента
@@ -158,14 +164,16 @@ class BpmnLayout:
         # Сгруппировать элементы по дорожкам
         elem_by_lane = self._group_by_lane(elements, lane_ids)
 
-        # Вычислить позиции элементов
-        element_positions = self._compute_positions(
+        # Вычислить позиции элементов И lane geometry одновременно
+        element_positions, lane_geometry = self._compute_positions(
             order, elements, adjacency, elem_by_lane, lane_ids,
         )
 
-        # Вычислить размеры и позиции дорожек
+        # Вычислить размеры и позиции дорожек используя
+        # ТУ ЖЕ геометрию что и для позиционирования элементов
         lane_positions = self._compute_lane_positions(
             lane_ids, lanes, element_positions, elements,
+            lane_geometry=lane_geometry,
         )
 
         # Вычислить размеры и позиции участников (пулов)
@@ -321,13 +329,18 @@ class BpmnLayout:
         adjacency: dict[str, list[str]],
         elem_by_lane: dict[str, list[str]],
         lane_ids: list[str],
-    ) -> dict[str, dict[str, float]]:
+    ) -> tuple[dict[str, dict[str, float]], dict[str, dict[str, float]]]:
         """Вычисляет координаты каждого элемента.
 
         Алгоритм:
-        1. Назначает каждому элементу «колонку» (column) по топологическому порядку.
-        2. Элементы одной колонки в одной дорожке размещаются вертикально.
-        3. X определяется колонкой, Y — дорожкой и позицией внутри неё.
+        1. Назначает каждому элементу колонку по топологическому порядку.
+        2. Предвычисляет высоту каждой дорожки по максимальному стеку элементов.
+        3. Стекует дорожки с правильными высотами.
+        4. Элементы размещаются вертикально по центру своей дорожки.
+
+        Returns:
+            Кортеж (element_positions, lane_geometry), где lane_geometry
+            содержит вычисленные y-offset и height для каждой дорожки.
         """
         elem_map: dict[str, dict[str, Any]] = {
             e["id"]: e for e in elements if "id" in e
@@ -347,14 +360,8 @@ class BpmnLayout:
             else:
                 columns[eid] = 0
 
-        # Определить вертикальное расположение дорожек
-        lane_y_offsets: dict[str, float] = {}
-        current_y: float = TOP_MARGIN
         effective_lane_ids = lane_ids if lane_ids else ["_default"]
-
-        for lane_id in effective_lane_ids:
-            lane_y_offsets[lane_id] = current_y
-            current_y += LANE_HEIGHT
+        effective_set = set(effective_lane_ids)
 
         # Подсчитать количество элементов в каждой (колонка, дорожка) ячейке
         cell_counts: dict[tuple[int, str], int] = defaultdict(int)
@@ -362,12 +369,50 @@ class BpmnLayout:
 
         for eid in order:
             lane = elem_map.get(eid, {}).get("lane", "_default")
-            if lane not in lane_y_offsets:
-                lane = "_default" if "_default" in lane_y_offsets else effective_lane_ids[0]
+            if lane not in effective_set:
+                lane = "_default" if "_default" in effective_set else effective_lane_ids[0]
             col = columns.get(eid, 0)
             key = (col, lane)
             cell_indices[eid] = cell_counts[key]
             cell_counts[key] += 1
+
+        # Предвычисляем высоту каждой дорожки по макс. стеку элементов.
+        # Это гарантирует, что lane offsets согласованы с lane heights,
+        # и элементы всегда попадают внутрь своих дорожек.
+        lane_max_stack: dict[str, int] = {lid: 0 for lid in effective_lane_ids}
+        for (col, lid), count in cell_counts.items():
+            if lid in lane_max_stack:
+                lane_max_stack[lid] = max(lane_max_stack[lid], count)
+
+        lane_heights: dict[str, float] = {}
+        for lane_id in effective_lane_ids:
+            max_stack = lane_max_stack.get(lane_id, 0)
+            if max_stack == 0:
+                # Пустая дорожка -- компактная высота
+                lane_heights[lane_id] = float(LANE_HEIGHT_EMPTY)
+            else:
+                # Каждый элемент + место для бейджей под ним
+                content_h = (
+                    max_stack * (TASK_HEIGHT + BADGE_SPACE)
+                    + (max_stack - 1) * VERTICAL_SPACING
+                    + 2 * LANE_PADDING
+                )
+                lane_heights[lane_id] = max(float(LANE_HEIGHT), content_h)
+
+        # Стекуем дорожки с правильными высотами
+        lane_y_offsets: dict[str, float] = {}
+        current_y: float = TOP_MARGIN
+        for lane_id in effective_lane_ids:
+            lane_y_offsets[lane_id] = current_y
+            current_y += lane_heights[lane_id]
+
+        # Сохраняем lane geometry для использования в _compute_lane_positions
+        lane_geometry: dict[str, dict[str, float]] = {}
+        for lane_id in effective_lane_ids:
+            lane_geometry[lane_id] = {
+                "y": lane_y_offsets[lane_id],
+                "height": lane_heights[lane_id],
+            }
 
         # Вычислить координаты
         positions: dict[str, dict[str, float]] = {}
@@ -385,6 +430,7 @@ class BpmnLayout:
                 lane = "_default" if "_default" in lane_y_offsets else effective_lane_ids[0]
 
             lane_y = lane_y_offsets[lane]
+            lane_h = lane_heights[lane]
             idx_in_cell = cell_indices.get(eid, 0)
             total_in_cell = cell_counts.get((col, lane), 1)
 
@@ -394,14 +440,20 @@ class BpmnLayout:
             # Центрируем элемент по горизонтали в слоте, если он уже задачи
             x += (TASK_WIDTH - width) / 2
 
-            # Y: позиция в дорожке с учётом количества элементов в ячейке
-            lane_center_y = lane_y + LANE_HEIGHT / 2
+            # Y: позиция в дорожке с учётом реальной высоты дорожки
+            lane_center_y = lane_y + lane_h / 2
             total_block_height = (
                 total_in_cell * height
                 + (total_in_cell - 1) * VERTICAL_SPACING
             )
             start_y = lane_center_y - total_block_height / 2
             y = start_y + idx_in_cell * (height + VERTICAL_SPACING)
+
+            # ГАРАНТИЯ: элемент не выходит за границы дорожки
+            if y < lane_y + LANE_PADDING:
+                y = lane_y + LANE_PADDING
+            if y + height > lane_y + lane_h - LANE_PADDING:
+                y = lane_y + lane_h - LANE_PADDING - height
 
             positions[eid] = {
                 "x": round(x, 1),
@@ -410,7 +462,7 @@ class BpmnLayout:
                 "height": float(height),
             }
 
-        return positions
+        return positions, lane_geometry
 
     # ------------------------------------------------------------------
     # Позиции дорожек
@@ -422,8 +474,23 @@ class BpmnLayout:
         lanes: list[dict[str, Any]],
         element_positions: dict[str, dict[str, float]],
         elements: list[dict[str, Any]],
+        *,
+        lane_geometry: dict[str, dict[str, float]] | None = None,
     ) -> dict[str, dict[str, float]]:
-        """Вычисляет координаты и размеры дорожек."""
+        """Вычисляет координаты и размеры дорожек.
+
+        Использует lane_geometry из _compute_positions для гарантии
+        согласованности между позициями элементов и границами дорожек.
+
+        Args:
+            lane_ids: Список идентификаторов дорожек.
+            lanes: Список описаний дорожек.
+            element_positions: Координаты элементов.
+            elements: Список элементов BPMN.
+            lane_geometry: Предвычисленная геометрия дорожек из
+                _compute_positions (y, height). Если передана, используется
+                ВМЕСТО пересчёта -- это устраняет рассогласование.
+        """
         if not lane_ids:
             return {}
 
@@ -437,37 +504,57 @@ class BpmnLayout:
         total_width = max_right + HORIZONTAL_SPACING + LEFT_MARGIN
 
         lane_positions: dict[str, dict[str, float]] = {}
-        current_y: float = TOP_MARGIN
 
-        for lane_id in lane_ids:
-            # Подсчитать количество элементов в этой дорожке
-            lane_elems = [
-                e for e in elements
-                if e.get("lane") == lane_id and e["id"] in element_positions
-            ]
+        if lane_geometry:
+            # ИСПОЛЬЗУЕМ ТУ ЖЕ ГЕОМЕТРИЮ что и для позиционирования элементов
+            # Это ГАРАНТИРУЕТ что элементы не выходят за границы дорожек
+            for lane_id in lane_ids:
+                geo = lane_geometry.get(lane_id)
+                if geo:
+                    lane_positions[lane_id] = {
+                        "x": float(LEFT_MARGIN),
+                        "y": round(geo["y"], 1),
+                        "width": round(total_width, 1),
+                        "height": round(geo["height"], 1),
+                    }
+                else:
+                    # Fallback для дорожек без геометрии
+                    lane_positions[lane_id] = {
+                        "x": float(LEFT_MARGIN),
+                        "y": 0.0,
+                        "width": round(total_width, 1),
+                        "height": float(LANE_HEIGHT_EMPTY),
+                    }
+        else:
+            # Legacy fallback: пересчёт по содержимому
+            current_y: float = TOP_MARGIN
+            for lane_id in lane_ids:
+                lane_elems = [
+                    e for e in elements
+                    if e.get("lane") == lane_id and e["id"] in element_positions
+                ]
 
-            # Определить реальную высоту по содержимому
-            if lane_elems:
-                min_y = min(
-                    element_positions[e["id"]]["y"] for e in lane_elems
-                )
-                max_y = max(
-                    element_positions[e["id"]]["y"]
-                    + element_positions[e["id"]]["height"]
-                    for e in lane_elems
-                )
-                content_height = max_y - min_y + 2 * LANE_PADDING
-                lane_height = max(LANE_HEIGHT, content_height)
-            else:
-                lane_height = LANE_HEIGHT
+                if lane_elems:
+                    min_y = min(
+                        element_positions[e["id"]]["y"] for e in lane_elems
+                    )
+                    max_y = max(
+                        element_positions[e["id"]]["y"]
+                        + element_positions[e["id"]]["height"]
+                        for e in lane_elems
+                    )
+                    content_height = max_y - min_y + 2 * LANE_PADDING + BADGE_SPACE
+                    lane_height = max(LANE_HEIGHT, content_height)
+                else:
+                    lane_height = LANE_HEIGHT_EMPTY
 
-            lane_positions[lane_id] = {
-                "x": float(LEFT_MARGIN),
-                "y": round(current_y, 1),
-                "width": round(total_width, 1),
-                "height": float(lane_height),
-            }
-            current_y += lane_height
+                lane_positions[lane_id] = {
+                    "x": float(LEFT_MARGIN),
+                    "y": round(current_y, 1),
+                    "width": round(total_width, 1),
+                    "height": float(lane_height),
+                }
+                current_y += lane_height
 
         return lane_positions
 

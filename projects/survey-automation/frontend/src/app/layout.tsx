@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: "Survey Automation — Предпроектное обследование",
   description:
     "Автоматизация предпроектного обследования: от интервью до BPMN-диаграмм и ТЗ",
+  themeColor: "#242438",
 };
 
 export default function RootLayout({

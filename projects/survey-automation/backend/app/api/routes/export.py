@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import io
 import logging
-import tempfile
 import zipfile
 from pathlib import Path
 from typing import Annotated
@@ -22,9 +21,23 @@ from app.api.deps import get_export_service, get_project_service
 from app.api.models import ErrorResponse
 from app.bpmn.renderer import BPMNRenderer
 from app.config import get_project_dir
-from app.exceptions import AppError, NotFoundError
+from app.exceptions import AppError, NotFoundError, ValidationError
 from app.services.export_service import ExportService
 from app.services.project_service import ProjectService
+
+import re
+
+_SAFE_ID_RE = re.compile(r"^[\w\-]+$")
+
+
+def _validate_resource_id(value: str, label: str = "ID") -> str:
+    """Проверяет, что ID не содержит компонентов пути."""
+    if not value or not _SAFE_ID_RE.match(value):
+        raise ValidationError(
+            f"Некорректный {label}: {value!r}",
+            detail="Допустимы только буквы, цифры, дефис и подчёркивание",
+        )
+    return value
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +85,8 @@ async def download_visio(
         await project_service.get_project(project_id)
     except AppError:
         raise
+
+    _validate_resource_id(process_id, "ID процесса")
 
     try:
         project_dir = get_project_dir(project_id)
@@ -133,6 +148,8 @@ async def preview_svg(
         await project_service.get_project(project_id)
     except AppError:
         raise
+
+    _validate_resource_id(process_id, "ID процесса")
 
     try:
         project_dir = get_project_dir(project_id)
@@ -212,6 +229,8 @@ async def download_bpmn(
         await project_service.get_project(project_id)
     except AppError:
         raise
+
+    _validate_resource_id(process_id, "ID процесса")
 
     try:
         project_dir = get_project_dir(project_id)

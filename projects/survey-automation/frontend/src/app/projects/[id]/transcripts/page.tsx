@@ -17,7 +17,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { dataApi } from "@/lib/api";
-import type { Transcript, TranscriptSegment } from "@/lib/types";
 
 const speakerColors = [
   "text-blue-400",
@@ -65,7 +64,7 @@ export default function TranscriptsPage() {
     enabled: !!projectId && !!selectedId,
   });
 
-  const transcripts = data?.transcripts ?? [];
+  const transcripts = React.useMemo(() => data?.transcripts ?? [], [data]);
 
   // Auto-select first transcript
   React.useEffect(() => {

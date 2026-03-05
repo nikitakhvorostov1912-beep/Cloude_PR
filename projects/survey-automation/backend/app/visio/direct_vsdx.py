@@ -71,10 +71,10 @@ COLORS = {
 
 # Маркеры типов задач — символы Unicode для обозначения типа
 TASK_MARKERS = {
-    "userTask": "\U0001F464",       # 👤 пользователь
-    "serviceTask": "\u2699",        # ⚙ шестерёнка
-    "scriptTask": "\u2328",         # ⌨ клавиатура
-    "manualTask": "\u270B",         # ✋ рука
+    "userTask": "\u2261",           # ≡ (три линии — человек)
+    "serviceTask": "\u2022",        # • (точка — сервис)
+    "scriptTask": "\u2022",         # • (точка — скрипт)
+    "manualTask": "\u2261",         # ≡ (три линии — ручной)
     "task": "",
 }
 
@@ -205,7 +205,7 @@ def _geom_ellipse(d: float) -> str:
 
 
 # Ширина заголовка дорожки (дюймы) — используется и в _lane_shapes, и для clamp labels
-_LANE_HEADER_W = 0.80
+_LANE_HEADER_W = 0.50
 
 
 class DirectVsdxGenerator:
@@ -358,8 +358,8 @@ class DirectVsdxGenerator:
             bottom = _px(pos.get("y", 0) + pos.get("height", 0))
             max_x = max(max_x, right)
             max_y = max(max_y, bottom)
-        self._page_width = max(11.0, max_x + 2.0)
-        self._page_height = max(8.5, max_y + 2.0)
+        self._page_width = max(11.0, max_x + 0.75)
+        self._page_height = max(8.5, max_y + 0.75)
 
     def _next_id(self) -> int:
         self._shape_id += 1
@@ -386,7 +386,7 @@ class DirectVsdxGenerator:
             x, y, w, h,
             fill=COLORS["lane_fill"],
             line=COLORS["lane_line"],
-            line_weight=0.01,
+            line_weight=0.010,
         ))
 
         # Заголовок слева — повёрнутый текстовый блок
@@ -423,7 +423,7 @@ class DirectVsdxGenerator:
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillPattern" V="1"/>\n'
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + f'      <Cell N="LineWeight" V="0.01"/>\n'
+            + f'      <Cell N="LineWeight" V="0.012"/>\n'
             + f'      <Cell N="LinePattern" V="1"/>\n'
             + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
             + f'      <Cell N="Char.Size" V="0.09"/>\n'
@@ -473,15 +473,14 @@ class DirectVsdxGenerator:
             ))
             # Подпись под событием — ограниченная ширина + word wrap
             if name:
-                label_w, label_h = self._label_dims(name, 0.09, 0.08)
-                # Clamp: label не залезает на заголовок дорожки
-                min_lx = _px(80) + _LANE_HEADER_W + 0.05  # LEFT_MARGIN + header + gap
+                label_w, label_h = self._label_dims(name, 0.07, 0.065, max_w=1.4)
+                min_lx = _px(30) + _LANE_HEADER_W + 0.03
                 label_x = max(min_lx, x + w / 2 - label_w / 2)
                 parts.append(self._make_label(
                     label_x,
-                    y + _px(pos.get("height", 36)) + 0.12,
+                    y + _px(pos.get("height", 36)) + 0.10,
                     label_w, label_h,
-                    text=name, font_size=0.08,
+                    text=name, font_size=0.065,
                     text_color="#375623",
                 ))
 
@@ -499,14 +498,14 @@ class DirectVsdxGenerator:
                 text_color="#FFFFFF",
             ))
             if name:
-                label_w, label_h = self._label_dims(name, 0.09, 0.08)
-                min_lx = _px(80) + _LANE_HEADER_W + 0.05
+                label_w, label_h = self._label_dims(name, 0.07, 0.065, max_w=1.4)
+                min_lx = _px(30) + _LANE_HEADER_W + 0.03
                 label_x = max(min_lx, x + w / 2 - label_w / 2)
                 parts.append(self._make_label(
                     label_x,
-                    y + _px(pos.get("height", 36)) + 0.12,
+                    y + _px(pos.get("height", 36)) + 0.10,
                     label_w, label_h,
-                    text=name, font_size=0.08,
+                    text=name, font_size=0.065,
                     text_color="#C00000",
                 ))
 
@@ -526,13 +525,13 @@ class DirectVsdxGenerator:
             ))
             # Подпись шлюза — ограниченная ширина + word wrap
             if name:
-                label_w, label_h = self._label_dims(name, 0.09, 0.07)
-                label_w = max(label_w, w + 0.4)  # мин: шлюз + 0.4"
+                label_w, label_h = self._label_dims(name, 0.07, 0.06)
+                label_w = max(label_w, w + 0.2)  # мин: шлюз + 0.2"
                 parts.append(self._make_label(
                     x + w / 2 - label_w / 2,
-                    y + h + 0.10,
+                    y + h + 0.04,
                     label_w, label_h,
-                    text=name, font_size=0.07,
+                    text=name, font_size=0.06,
                     text_color="#806000",
                     italic=True,
                 ))
@@ -547,48 +546,45 @@ class DirectVsdxGenerator:
                 etype, (COLORS["task_fill"], COLORS["task_line"]),
             )
 
-            # Основной прямоугольник задачи (текст без иконки)
+            # Иконка типа встраивается в текст (надёжнее отдельного shape)
             marker = TASK_MARKERS.get(etype, "")
+            display_name = f"{marker} {name}" if marker else name
+
             parts.append(self._make_rect(
                 x, y, w, h,
                 fill=fill, line=line_c,
-                text=name,
+                text=display_name,
                 text_color=COLORS["task_text"],
-                rounding=0.08,
-                line_weight=0.015,
-                font_size=0.1,
-                left_margin=0.06,
-                right_margin=0.06,
-                top_margin=0.05,
-                bottom_margin=0.04,
+                rounding=0.06,
+                line_weight=0.012,
+                font_size=0.075,
+                left_margin=0.04,
+                right_margin=0.04,
+                top_margin=0.03,
+                bottom_margin=0.03,
             ))
-
-            # Иконка типа задачи — отдельный shape в верхнем-левом углу
-            if marker:
-                parts.append(self._make_task_icon(
-                    x + 0.03, y + 0.03, 0.18, marker,
-                ))
 
             # === Бейджи под задачей (вертикальный стек) ===
             badge_y = y + h + 0.12  # начало стека под задачей
+            max_badge_w = w  # бейджи не шире задачи
 
             # Системная метка
             system = self._step_systems.get(name, "")
             if system:
-                sys_text = f"\u2699 {system}"  # ⚙ + название системы
-                sys_w = self._badge_w(sys_text)
+                sys_text = system  # просто название системы (цвет отличает)
+                sys_w = min(self._badge_w(sys_text), max_badge_w)
                 sys_h = self._badge_h(sys_text, sys_w)
                 parts.append(self._make_system_badge(
                     x + w / 2 - sys_w / 2, badge_y,
                     sys_text, sys_w, sys_h,
                 ))
-                badge_y += sys_h + 0.06  # высота бейджа + зазор
+                badge_y += sys_h + 0.10  # зазор между бейджами
 
             # Входные документы
             inputs_list = self._step_inputs.get(name, [])
             if inputs_list:
-                doc_text = f"\U0001F4E5 {inputs_list[0]}"  # 📥 + название
-                doc_w = self._badge_w(doc_text)
+                doc_text = inputs_list[0]  # просто название (цвет отличает)
+                doc_w = min(self._badge_w(doc_text), max_badge_w)
                 doc_h = self._badge_h(doc_text, doc_w)
                 parts.append(self._make_doc_badge(
                     x + w / 2 - doc_w / 2,
@@ -596,13 +592,13 @@ class DirectVsdxGenerator:
                     doc_text, doc_w, doc_h,
                     is_input=True,
                 ))
-                badge_y += doc_h + 0.06
+                badge_y += doc_h + 0.10
 
             # Выходные документы
             outputs = self._step_outputs.get(name, [])
             if outputs:
-                doc_text = f"\U0001F4E4 {outputs[0]}"  # 📤 + название
-                doc_w = self._badge_w(doc_text)
+                doc_text = outputs[0]  # просто название (цвет отличает)
+                doc_w = min(self._badge_w(doc_text), max_badge_w)
                 doc_h = self._badge_h(doc_text, doc_w)
                 parts.append(self._make_doc_badge(
                     x + w / 2 - doc_w / 2,
@@ -739,7 +735,7 @@ class DirectVsdxGenerator:
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
             + f'      <Cell N="LineWeight" V="0.0139"/>\n'
             + f'      <Cell N="LinePattern" V="1"/>\n'
-            + f'      <Cell N="Char.Size" V="0.18"/>\n'
+            + f'      <Cell N="Char.Size" V="0.14"/>\n'
             + f'      <Cell N="Char.Style" V="1"/>\n'
             + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
             + f'      <Cell N="VerticalAlign" V="1"/>\n'
@@ -825,10 +821,10 @@ class DirectVsdxGenerator:
     @staticmethod
     def _label_dims(
         text: str,
-        char_coeff: float = 0.09,
-        font_size: float = 0.08,
-        max_w: float = 2.5,
-        min_w: float = 1.2,
+        char_coeff: float = 0.07,
+        font_size: float = 0.065,
+        max_w: float = 1.8,
+        min_w: float = 0.8,
     ) -> tuple[float, float]:
         """Вычисляет (width, height) для текстовой метки с word wrap.
 
@@ -846,25 +842,26 @@ class DirectVsdxGenerator:
 
     @staticmethod
     def _badge_w(text: str) -> float:
-        """Ширина бейджа: visual_text_width + padding 0.15"."""
-        text_w = _visual_text_width(text, char_coeff=0.085)
-        return max(text_w + 0.15, 0.9)
+        """Ширина бейджа: visual_text_width + padding 0.14"."""
+        text_w = _visual_text_width(text, char_coeff=0.075)
+        return max(text_w + 0.14, 0.8)
 
     @staticmethod
     def _badge_h(
-        text: str, badge_w: float, font_size: float = 0.065,
+        text: str, badge_w: float, font_size: float = 0.06,
     ) -> float:
         """Динамическая высота бейджа: 0.22" для 1 строки, больше для 2+.
 
-        Вычисляет количество строк текста, которые поместятся
-        в бейдж данной ширины, и возвращает соответствующую высоту.
+        Учитывает word-wrap в Visio: текст переносится по словам,
+        а не по символам, что увеличивает кол-во строк.
         """
-        usable = badge_w - 0.15  # padding
-        char_w = font_size * 0.75  # примерная ширина символа
-        chars_per_line = max(1, int(usable / char_w))
-        visual_len = _visual_text_width(text, char_coeff=1.0)  # в unit'ах
-        lines = max(1, math.ceil(visual_len / chars_per_line))
-        return max(0.22, font_size * 1.3 * lines + 0.08)
+        # Фактическая ширина текстовой области в Visio (за вычетом LeftMargin + RightMargin)
+        usable = badge_w - 0.08
+        # word-wrap penalty ~20%: Visio переносит по словам, теряя место
+        effective_per_line = max(1, int(usable / 0.075 * 0.80))
+        visual_len = _visual_text_width(text, char_coeff=1.0)
+        lines = max(1, math.ceil(visual_len / effective_per_line))
+        return max(0.22, font_size * 2.0 * lines + 0.10)
 
     # ------------------------------------------------------------------
     # Бейджи
@@ -889,16 +886,18 @@ class DirectVsdxGenerator:
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillPattern" V="1"/>\n'
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + f'      <Cell N="LineWeight" V="0.005"/>\n'
+            + f'      <Cell N="LineWeight" V="0.006"/>\n'
             + f'      <Cell N="LinePattern" V="1"/>\n'
             + f'      <Cell N="Rounding" V="0.05"/>\n'
             + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-            + f'      <Cell N="Char.Size" V="0.065"/>\n'
+            + f'      <Cell N="Char.Size" V="0.06"/>\n'
             + f'      <Cell N="Char.Style" V="1"/>\n'
             + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
             + f'      <Cell N="VerticalAlign" V="1"/>\n'
             + f'      <Cell N="LeftMargin" V="0.04"/>\n'
             + f'      <Cell N="RightMargin" V="0.04"/>\n'
+            + f'      <Cell N="TopMargin" V="0.02"/>\n'
+            + f'      <Cell N="BottomMargin" V="0.02"/>\n'
             + f'      <Cell N="ObjType" V="1"/>\n'
             + GEOM_RECT
             + f"      <Text>{xml_escape(system)}</Text>\n"
@@ -934,16 +933,18 @@ class DirectVsdxGenerator:
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillPattern" V="1"/>\n'
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + f'      <Cell N="LineWeight" V="0.005"/>\n'
+            + f'      <Cell N="LineWeight" V="0.006"/>\n'
             + f'      <Cell N="LinePattern" V="1"/>\n'
             + f'      <Cell N="Rounding" V="0.05"/>\n'
             + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-            + f'      <Cell N="Char.Size" V="0.065"/>\n'
+            + f'      <Cell N="Char.Size" V="0.06"/>\n'
             + f'      <Cell N="Char.Style" V="2"/>\n'  # Italic
             + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
             + f'      <Cell N="VerticalAlign" V="1"/>\n'
             + f'      <Cell N="LeftMargin" V="0.04"/>\n'
             + f'      <Cell N="RightMargin" V="0.04"/>\n'
+            + f'      <Cell N="TopMargin" V="0.02"/>\n'
+            + f'      <Cell N="BottomMargin" V="0.02"/>\n'
             + f'      <Cell N="ObjType" V="1"/>\n'
             + GEOM_RECT
             + f"      <Text>{xml_escape(text)}</Text>\n"
@@ -1055,8 +1056,8 @@ class DirectVsdxGenerator:
             # Позиция метки — середина пути коннектора
             mid = len(vis_pts) // 2
             mx, my = vis_pts[mid]
-            label_w = max(_visual_text_width(text, char_coeff=0.07), 0.4)
-            label_h = 0.2
+            label_w = max(_visual_text_width(text, char_coeff=0.055), 0.3)
+            label_h = 0.16
             lsid = self._next_id()
 
             # Определяем направление сегмента для правильного offset
@@ -1066,12 +1067,12 @@ class DirectVsdxGenerator:
             dy = abs(p_curr[1] - p_prev[1])
             if dy > dx:
                 # Вертикальный сегмент — смещаем вправо от линии
-                label_cx = mx + label_w / 2 + 0.08
+                label_cx = mx + label_w / 2 + 0.05
                 label_cy = my
             else:
                 # Горизонтальный — смещаем вверх от линии
                 label_cx = mx
-                label_cy = my + 0.14
+                label_cy = my + 0.10
             text_v = _vis_color("#404040")
             fill_v = _vis_color(COLORS["lane_fill"])
             labels.append(
@@ -1083,7 +1084,7 @@ class DirectVsdxGenerator:
                 + f'      <Cell N="LineWeight" V="0.001"/>\n'
                 + f'      <Cell N="LinePattern" V="1"/>\n'
                 + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-                + f'      <Cell N="Char.Size" V="0.07"/>\n'
+                + f'      <Cell N="Char.Size" V="0.055"/>\n'
                 + f'      <Cell N="Char.Style" V="2"/>\n'
                 + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
                 + f'      <Cell N="VerticalAlign" V="1"/>\n'

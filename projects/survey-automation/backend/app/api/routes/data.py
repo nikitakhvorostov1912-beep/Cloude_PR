@@ -17,10 +17,8 @@ from fastapi import APIRouter, Depends
 from app.api.deps import get_project_service
 from app.api.models import (
     ErrorResponse,
-    GapResponse,
     ProcessResponse,
     ProcessUpdate,
-    RequirementResponse,
     TranscriptResponse,
 )
 from app.config import get_project_dir

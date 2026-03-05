@@ -30,9 +30,7 @@ export interface ProjectListResponse {
   total: number;
 }
 
-export interface ProjectResponse {
-  project: Project;
-}
+export type ProjectResponse = Project;
 
 // --- Pipeline ---
 

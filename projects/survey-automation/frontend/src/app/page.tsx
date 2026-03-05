@@ -78,7 +78,7 @@ export default function ProjectsPage() {
       setDialogOpen(false);
       setName("");
       setDescription("");
-      router.push(`/projects/${res.project.id}`);
+      router.push(`/projects/${res.id}`);
     },
     onError: (err: Error) => {
       toast.error(err.message);

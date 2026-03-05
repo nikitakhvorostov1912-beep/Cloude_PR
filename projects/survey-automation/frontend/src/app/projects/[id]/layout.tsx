@@ -33,7 +33,7 @@ export default function ProjectLayout({
     queryFn: () => projectsApi.list(),
   });
 
-  const project = projectData as any;
+  const project = projectData;
   const projects = projectsData?.projects ?? [];
 
   const handleProjectSelect = (id: string) => {

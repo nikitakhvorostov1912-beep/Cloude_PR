@@ -16,7 +16,6 @@ import {
   Eye,
   Play,
   Target,
-  Clock,
   BarChart3,
   Link2,
   FileText,
@@ -44,7 +43,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { dataApi } from "@/lib/api";
 import { SvgPreviewDialog } from "@/components/svg-preview-dialog";
-import type { Process, ProcessStep, PainPoint } from "@/lib/types";
+import type { Process, PainPoint } from "@/lib/types";
 
 const severityColors: Record<string, string> = {
   low: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
@@ -460,7 +459,7 @@ export default function ProcessesPage() {
                           <TableBody>
                             {[...process.steps]
                               .sort((a, b) => a.order - b.order)
-                              .map((step, i) => (
+                              .map((step) => (
                                 <TableRow key={`${process.id}-step-${step.order}-${step.name}`}>
                                   <TableCell className="font-mono text-xs">
                                     {step.order}

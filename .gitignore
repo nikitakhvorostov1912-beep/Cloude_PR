@@ -52,3 +52,25 @@ logs/
 
 # Claude worktrees
 .claude/worktrees/
+
+# Temp debug artifacts (visio screenshots, test images)
+projects/survey-automation/proc_*.png
+projects/survey-automation/visio_*.png
+projects/survey-automation/v6*.png
+projects/survey-automation/nul
+projects/survey-automation/backend/nul
+projects/survey-automation/test_visio.vsdx
+projects/survey-automation/vsdx_check/
+projects/survey-automation/view_visio_com.py
+projects/survey-automation/crop_visio.py
+projects/survey-automation/export_proc001.py
+projects/survey-automation/inspect_visio.py
+projects/survey-automation/zoom_visio.ps1
+projects/survey-automation/zoom_all_visio.ps1
+projects/survey-automation/view_visio.ps1
+projects/survey-automation/capture_visio.ps1
+projects/survey-automation/fit_visio.ps1
+projects/survey-automation/verify_*.ps1
+projects/survey-automation/start_debug.bat
+projects/survey-automation/test_run.bat
+projects/survey-automation/regenerate_all.py

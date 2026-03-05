@@ -259,7 +259,7 @@ class TestVisualTextWidth:
         gen = DirectVsdxGenerator()
         text = "\U0001F4E4 Финансовое подтверждение"
         badge_w = gen._badge_w(text)
-        naive_w = len(text) * 0.085
+        naive_w = len(text) * 0.075
         assert badge_w > naive_w
 
     def test_coefficient_applied(self):

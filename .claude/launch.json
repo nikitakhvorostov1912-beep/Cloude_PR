@@ -14,6 +14,13 @@
       "runtimeArgs": ["D:\\Cloude_PR\\projects\\survey-automation\\frontend\\node_modules\\next\\dist\\bin\\next", "dev", "--port", "3000"],
       "port": 3000,
       "cwd": "D:\\Cloude_PR\\projects\\survey-automation\\frontend"
+    },
+    {
+      "name": "visual",
+      "runtimeExecutable": "D:\\Cloude_PR\\projects\\survey-automation\\backend\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "D:\\Cloude_PR\\projects\\survey-automation\\backend\\data\\visual"],
+      "port": 8765,
+      "cwd": "D:\\Cloude_PR\\projects\\survey-automation\\backend\\data\\visual"
     }
   ]
 }

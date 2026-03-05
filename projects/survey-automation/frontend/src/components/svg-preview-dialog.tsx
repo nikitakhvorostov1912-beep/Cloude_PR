@@ -18,7 +18,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { fetchSvgContent, exportApi } from "@/lib/api";
 
 interface SvgPreviewDialogProps {
@@ -32,6 +31,20 @@ interface SvgPreviewDialogProps {
 const ZOOM_STEP = 0.25;
 const ZOOM_MIN = 0.25;
 const ZOOM_MAX = 3;
+
+function sanitizeSvg(raw: string): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(raw, "image/svg+xml");
+  doc.querySelectorAll("script").forEach((el) => el.remove());
+  doc.querySelectorAll("*").forEach((el) => {
+    for (const attr of Array.from(el.attributes)) {
+      if (attr.name.startsWith("on")) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  });
+  return new XMLSerializer().serializeToString(doc);
+}
 
 export function SvgPreviewDialog({
   open,
@@ -222,12 +235,12 @@ export function SvgPreviewDialog({
           {svgContent && (
             <div className="flex min-h-full items-start justify-center p-6">
               <div
-                className="rounded-lg bg-white p-4 shadow-sm transition-transform"
+                className="rounded-lg bg-card p-4 shadow-sm transition-transform"
                 style={{
                   transform: `scale(${zoom})`,
                   transformOrigin: "top center",
                 }}
-                dangerouslySetInnerHTML={{ __html: svgContent }}
+                dangerouslySetInnerHTML={{ __html: sanitizeSvg(svgContent) }}
               />
             </div>
           )}

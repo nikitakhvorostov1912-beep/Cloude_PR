@@ -10,7 +10,6 @@ import {
   XCircle,
   Clock,
   Loader2,
-  Upload,
   FileSearch,
   Workflow,
   GitCompareArrows,
@@ -111,7 +110,7 @@ export default function ProjectOverviewPage() {
     },
   });
 
-  const project = projectData?.project;
+  const project = projectData;
   const stages = statusData?.stages ?? [];
   const overallProgress = statusData?.overall_progress ?? 0;
 
