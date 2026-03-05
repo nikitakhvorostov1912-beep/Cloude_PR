@@ -1,0 +1,24 @@
+{
+  "name": "survey-automation-desktop",
+  "version": "1.0.0",
+  "description": "Survey Automation — настольное приложение для автоматизации обследований",
+  "main": "src/main/index.js",
+  "author": "Survey Automation",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder --win",
+    "build:dir": "electron-builder --win --dir"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "electron": "^33.4.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "extends": "./electron-builder.yml"
+  }
+}

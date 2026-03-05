@@ -53,6 +53,12 @@ logs/
 # Claude worktrees
 .claude/worktrees/
 
+# Desktop app build artifacts
+desktop/node_modules/
+desktop/dist/
+desktop/resources/python/
+desktop/.cache/
+
 # Temp debug artifacts (visio screenshots, test images)
 projects/survey-automation/proc_*.png
 projects/survey-automation/visio_*.png

@@ -1,0 +1,73 @@
+appId: com.surveyautomation.desktop
+productName: Survey Automation
+copyright: Copyright © 2025 Survey Automation
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - src/**/*
+  - renderer/**/*
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,readme.md,readme}"
+  - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+  - "!**/node_modules/.bin"
+  - "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}"
+  - "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}"
+  - "!**/._*"
+  - "!**/{__pycache__,.venv}"
+
+extraResources:
+  - from: ../projects/survey-automation/backend
+    to: backend
+    filter:
+      - "**/*"
+      - "!.venv/**"
+      - "!__pycache__/**"
+      - "!*.pyc"
+      - "!*.pyo"
+      - "!data/**"
+      - "!tests/**"
+      - "!scripts/**"
+      - "!*.ps1"
+      - "!*.bat"
+      - "!nul"
+  - from: ../projects/survey-automation/frontend
+    to: frontend
+    filter:
+      - "package.json"
+      - "package-lock.json"
+      - "next.config.*"
+      - "tsconfig.json"
+      - "postcss.config.*"
+      - "tailwind.config.*"
+      - "src/**"
+      - "public/**"
+      - ".next/**"
+  - from: resources/python
+    to: python
+    filter:
+      - "**/*"
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: "SurveyAutomation-Setup-${version}.${ext}"
+
+nsis:
+  oneClick: false
+  allowDirChange: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Survey Automation
+  installerLanguages:
+    - "Russian"
+  language: "1049"
+  include: build/installer.nsh
+  deleteAppDataOnUninstall: false
+  uninstallDisplayName: Survey Automation
+
+publish: null

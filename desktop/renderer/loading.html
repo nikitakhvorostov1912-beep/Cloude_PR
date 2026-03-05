@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'" />
+  <title>Survey Automation — Загрузка</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-app-region: drag;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 32px;
+    }
+
+    .progress-container {
+      width: 320px;
+    }
+
+    .progress-bar-bg {
+      background: #1e293b;
+      border-radius: 8px;
+      height: 6px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      border-radius: 8px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .status-text {
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+      min-height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .first-run-notice {
+      margin-top: 16px;
+      padding: 10px 16px;
+      background: #1e293b;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      font-size: 11px;
+      color: #94a3b8;
+      text-align: center;
+      display: none;
+    }
+
+    .first-run-notice.visible {
+      display: block;
+    }
+
+    .error-container {
+      display: none;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #1a0a0a;
+      border: 1px solid #7f1d1d;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #fca5a5;
+      text-align: center;
+      max-width: 360px;
+    }
+
+    .error-container.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">📊</div>
+  <h1>Survey Automation</h1>
+  <p class="subtitle">Автоматизация предпроектных обследований</p>
+
+  <div class="progress-container">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <p class="status-text" id="statusText">Инициализация...</p>
+  </div>
+
+  <div class="first-run-notice" id="firstRunNotice">
+    ⏳ Первый запуск: установка зависимостей (~3–5 мин).<br/>
+    Последующие запуски будут быстрее.
+  </div>
+
+  <div class="error-container" id="errorContainer"></div>
+
+  <script>
+    const progressFill = document.getElementById('progressFill')
+    const statusText = document.getElementById('statusText')
+    const firstRunNotice = document.getElementById('firstRunNotice')
+    const errorContainer = document.getElementById('errorContainer')
+
+    let currentPercent = 0
+
+    function setProgress(percent) {
+      if (percent !== null && percent >= 0) {
+        currentPercent = percent
+      }
+      progressFill.style.width = currentPercent + '%'
+    }
+
+    // Pulse animation for indeterminate progress
+    let pulseInterval = null
+    function startPulse() {
+      if (pulseInterval) return
+      pulseInterval = setInterval(() => {
+        currentPercent = Math.min(currentPercent + 0.5, 79)
+        progressFill.style.width = currentPercent + '%'
+      }, 200)
+    }
+    function stopPulse() {
+      if (pulseInterval) {
+        clearInterval(pulseInterval)
+        pulseInterval = null
+      }
+    }
+
+    if (window.electronAPI) {
+      window.electronAPI.onProgress((data) => {
+        const { step, text, percent } = data
+
+        if (step === 'error') {
+          stopPulse()
+          statusText.textContent = 'Ошибка!'
+          errorContainer.textContent = text
+          errorContainer.classList.add('visible')
+          return
+        }
+
+        // Показать уведомление о первом запуске
+        if (step === 'setup' || step === 'deps' || step === 'pip') {
+          firstRunNotice.classList.add('visible')
+          startPulse()
+        } else {
+          stopPulse()
+        }
+
+        if (text) {
+          // Обрезать длинные строки
+          statusText.textContent = text.length > 60 ? text.substring(0, 60) + '…' : text
+        }
+
+        if (percent !== null && percent >= 0) {
+          stopPulse()
+          setProgress(percent)
+        }
+      })
+    }
+  </script>
+</body>
+</html>

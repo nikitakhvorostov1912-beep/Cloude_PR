@@ -240,16 +240,31 @@ def _load_config_from_yaml(path: Path) -> dict:
 
 @functools.lru_cache(maxsize=1)
 def get_config() -> AppConfig:
-    """Загружает и кэширует конфигурацию приложения из config.yaml.
+    """Загружает и кэширует конфигурацию приложения из config.yaml и env переменных.
 
-    Конфигурация загружается один раз при первом вызове.
-    Файл config.yaml ищется в корне backend-директории.
+    Env переменные (Desktop режим):
+      SURVEY_DATA_DIR  — абсолютный путь к директории данных пользователя
+      BACKEND_PORT     — порт backend сервера
 
     Returns:
         AppConfig с загруженными настройками.
     """
+    import os
+
     config_path = BACKEND_DIR / "config.yaml"
     raw = _load_config_from_yaml(config_path)
+
+    # Поддержка env переменных для desktop режима
+    if "SURVEY_DATA_DIR" in os.environ:
+        data_dir = os.environ["SURVEY_DATA_DIR"]
+        raw.setdefault("app", {})["data_dir"] = str(Path(data_dir) / "projects")
+
+    if "BACKEND_PORT" in os.environ:
+        try:
+            raw.setdefault("app", {})["port"] = int(os.environ["BACKEND_PORT"])
+        except ValueError:
+            pass
+
     return AppConfig(**raw)
 
 
