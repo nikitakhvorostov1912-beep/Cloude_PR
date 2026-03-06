@@ -16,18 +16,6 @@
     ]
   },
   "hooks": {
-    "UserPromptSubmit": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Analyze the user's prompt: $USER_PROMPT\n\nDetermine if this prompt requires deep web research BEFORE answering. Research IS required if the prompt contains ANY of these patterns:\n- Comparing technologies, tools, or approaches (\"X vs Y\", \"X или Y\", \"что лучше\")\n- Asking to choose between options (\"какой выбрать\", \"какую выбрать\", \"что использовать\")\n- Requesting alternatives or variants (\"варианты\", \"альтернативы\", \"аналоги\", \"alternatives\")\n- Architecture or approach decisions (\"какой подход\", \"какая архитектура\", \"как лучше реализовать\")\n- Asking for comparison or review of tools (\"сравни\", \"сравнение\", \"comparison\", \"обзор технологий\")\n- Exploring best practices for unfamiliar topic (\"best practices\", \"лучшие практики\")\n\nResearch is NOT required if:\n- Simple bug fix or code edit request\n- Commit, push, or git operations\n- Running tests or builds\n- Reading or explaining existing code\n- UI changes to existing components\n- The user already specified exactly what to do\n- Quick factual questions with known answers\n- URL sharing or link analysis\n- Installation requests\n\nIf research IS required, respond with JSON:\n{\"decision\": \"block\", \"reason\": \"Research required\", \"systemMessage\": \"ОБЯЗАТЕЛЬНО: Перед ответом на этот вопрос ты ДОЛЖЕН запустить агент deep-researcher через Task tool (subagent_type: deep-researcher) в БЛОКИРУЮЩЕМ режиме. НЕ отвечай из головы — дождись отчёта агента. Передай агенту тему из запроса пользователя. После получения отчёта покажи его пользователю полностью.\"}\n\nIf research is NOT required, respond with JSON:\n{\"decision\": \"approve\"}",
-            "timeout": 15
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "matcher": "*",

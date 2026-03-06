@@ -87,6 +87,36 @@ Understanding what persists helps you compact with confidence:
 | Git state (commits, branches) | Tool call history and counts |
 | Files on disk | Nuanced user preferences stated verbally |
 
+## 5-Question Reboot Test (после compaction)
+
+После каждого `/compact` или при потере контекста — ОБЯЗАТЕЛЬНО ответь на 5 вопросов:
+
+| # | Вопрос | Где искать ответ |
+|---|--------|-----------------|
+| 1 | **Где я?** Какой проект, ветка, файл | `git status`, CLAUDE.md |
+| 2 | **Куда иду?** Какая текущая фаза/задача | TodoWrite, `.claude/plans/task_plan.md` |
+| 3 | **Какая цель?** Конечный результат задачи | task_plan.md → Цель |
+| 4 | **Что я узнал?** Ключевые находки | `.claude/plans/findings.md`, memory/ |
+| 5 | **Что я сделал?** Завершённые действия | `.claude/plans/progress.md`, git log |
+
+**НЕ продолжай работу, пока не ответил на все 5 вопросов!**
+
+Это предотвращает:
+- Повторение уже выполненной работы
+- Потерю направления после compaction
+- Забывание важных решений и находок
+
+## Read Before Decide (Перечитай перед решением)
+
+Перед любым важным решением (выбор подхода, архитектура, рефакторинг):
+
+1. **Перечитай task_plan.md** — какие решения уже приняты?
+2. **Перечитай findings.md** — что уже исследовано?
+3. **Перечитай progress.md** — какие ошибки уже были?
+4. **Только потом** — принимай решение
+
+Зачем: после compaction контекст теряется, но файлы остаются. Решение без перечитывания = решение на неполных данных.
+
 ## Best Practices
 
 1. **Compact after planning** — Once plan is finalized in TodoWrite, compact to start fresh
@@ -95,6 +125,8 @@ Understanding what persists helps you compact with confidence:
 4. **Read the suggestion** — The hook tells you *when*, you decide *if*
 5. **Write before compacting** — Save important context to files or memory before compacting
 6. **Use `/compact` with a summary** — Add a custom message: `/compact Focus on implementing auth middleware next`
+7. **5-Question Reboot** — После compaction пройди 5-Question Reboot Test
+8. **Read Before Decide** — Перечитай файлы планирования перед важными решениями
 
 ## Related
 
