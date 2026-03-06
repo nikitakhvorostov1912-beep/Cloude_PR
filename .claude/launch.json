@@ -21,6 +21,13 @@
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "D:\\Cloude_PR\\projects\\survey-automation\\backend\\data\\visual"],
       "port": 8765,
       "cwd": "D:\\Cloude_PR\\projects\\survey-automation\\backend\\data\\visual"
+    },
+    {
+      "name": "presentation",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8090", "--directory", "D:\\Cloude_PR\\voice-agent-1c\\presentation"],
+      "port": 8090,
+      "cwd": "D:\\Cloude_PR\\voice-agent-1c\\presentation"
     }
   ]
 }

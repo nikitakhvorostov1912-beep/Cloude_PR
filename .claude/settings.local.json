@@ -4,7 +4,53 @@
       "Bash(.venv/Scripts/python.exe -c \"from app.config import get_config; print\\(''Config OK:'', get_config\\(\\).app.title\\)\")",
       "Bash(.venv/Scripts/python.exe -c \"from main import create_app; print\\(''App OK''\\)\")",
       "Bash(C:/tools/nodejs/node-v22.14.0-win-x64/npm.cmd run build)",
-      "Bash(git status -u)"
+      "Bash(git status -u)",
+      "Bash(cmd.exe /c \"npx @smithery/cli@latest skill add smithery-ai/cli --agent claude-code\")",
+      "Bash(start \"\" \"D:/Cloude_PR/projects/survey-automation/backend/data/visual/index.html\")",
+      "Bash(start \"\" \"https://chromewebstore.google.com/detail/claude-in-chrome/oikgofnpkceophcmojldkjfbappfgklf\")",
+      "Bash(python -m http.server 8765)",
+      "Bash(start chrome \"https://chromewebstore.google.com/detail/claude-in-chrome/oikgofnpkceophcmojldkjfbappfgklf\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/index.html)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python -c \":*)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Analyze the user's prompt: $USER_PROMPT\n\nDetermine if this prompt requires deep web research BEFORE answering. Research IS required if the prompt contains ANY of these patterns:\n- Comparing technologies, tools, or approaches (\"X vs Y\", \"X или Y\", \"что лучше\")\n- Asking to choose between options (\"какой выбрать\", \"какую выбрать\", \"что использовать\")\n- Requesting alternatives or variants (\"варианты\", \"альтернативы\", \"аналоги\", \"alternatives\")\n- Architecture or approach decisions (\"какой подход\", \"какая архитектура\", \"как лучше реализовать\")\n- Asking for comparison or review of tools (\"сравни\", \"сравнение\", \"comparison\", \"обзор технологий\")\n- Exploring best practices for unfamiliar topic (\"best practices\", \"лучшие практики\")\n\nResearch is NOT required if:\n- Simple bug fix or code edit request\n- Commit, push, or git operations\n- Running tests or builds\n- Reading or explaining existing code\n- UI changes to existing components\n- The user already specified exactly what to do\n- Quick factual questions with known answers\n- URL sharing or link analysis\n- Installation requests\n\nIf research IS required, respond with JSON:\n{\"decision\": \"block\", \"reason\": \"Research required\", \"systemMessage\": \"ОБЯЗАТЕЛЬНО: Перед ответом на этот вопрос ты ДОЛЖЕН запустить агент deep-researcher через Task tool (subagent_type: deep-researcher) в БЛОКИРУЮЩЕМ режиме. НЕ отвечай из головы — дождись отчёта агента. Передай агенту тему из запроса пользователя. После получения отчёта покажи его пользователю полностью.\"}\n\nIf research is NOT required, respond with JSON:\n{\"decision\": \"approve\"}",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if Claude is about to stop prematurely. Evaluate:\n\n1. Did the user ask for code changes? If yes - was code actually written/edited?\n2. Did the user ask to run tests? If yes - were tests actually executed?\n3. Did the user ask for multiple things? If yes - were ALL of them addressed?\n4. Is there a TodoWrite list with pending items? If yes - those should be completed first.\n5. Did Claude promise to do something and hasn't done it yet?\n\nIf ALL tasks are genuinely complete, respond: {\"decision\": \"approve\"}\n\nIf something is incomplete, respond:\n{\"decision\": \"block\", \"reason\": \"Incomplete\", \"systemMessage\": \"Ты не завершил все задачи. Проверь: [конкретно что не сделано]. Заверши ВСЁ перед остановкой.\"}",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Verify subagent task completion. Check:\n1. Did the subagent produce a concrete result (not just analysis)?\n2. If the subagent was asked to fix something - was it actually fixed?\n3. Is the output in the expected format?\n\nIf complete: {\"decision\": \"approve\"}\nIf incomplete: {\"decision\": \"block\", \"reason\": \"Subagent didn't finish\", \"systemMessage\": \"Субагент не завершил задачу. Продолжай работу.\"}",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }
