@@ -12,7 +12,18 @@
       "Bash(start chrome \"https://chromewebstore.google.com/detail/claude-in-chrome/oikgofnpkceophcmojldkjfbappfgklf\")",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/index.html)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(python -c \":*)"
+      "Bash(python -c \":*)",
+      "WebFetch(domain:www.emerge.haus)",
+      "WebFetch(domain:www.braydoncoyer.dev)",
+      "Bash(python -c \"import asyncio; import edge_tts; voices = asyncio.run\\(edge_tts.list_voices\\(\\)\\); ru = [v for v in voices if ''ru-RU'' in v[''ShortName'']]; [print\\(v[''ShortName''], v[''Gender'']\\) for v in ru]\")",
+      "Bash(python scripts/generate-voices.py --engine edge)",
+      "Bash(for f in marina_v2_bright.wav marina_v2_max.wav alena_v2_alive.wav)",
+      "Bash(do echo \"=== $f ===\")",
+      "Bash(ffmpeg -i \"$f\" -af \"volumedetect\" -f null -)",
+      "Bash(done)",
+      "WebFetch(domain:developer.chrome.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "hooks": {
@@ -28,6 +39,7 @@
         ]
       }
     ],
+    "UserPromptSubmit": [],
     "SubagentStop": [
       {
         "matcher": "*",

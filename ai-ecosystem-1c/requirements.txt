@@ -1,0 +1,31 @@
+# Core
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+aiosqlite==0.20.0
+alembic==1.14.1
+
+# Redis
+redis[hiredis]==5.2.1
+
+# AI
+anthropic==0.43.0
+
+# HTTP client
+httpx==0.28.1
+
+# Speech
+grpcio==1.69.0
+grpcio-tools==1.69.0
+
+# Logging
+structlog==24.4.0
+
+# Utilities
+python-multipart==0.0.20
+websockets==14.1

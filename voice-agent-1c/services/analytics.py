@@ -13,8 +13,9 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from database.models import CallLog
+from database.models import CallLog, Transcript
 
 logger = logging.getLogger(__name__)
 
@@ -179,3 +180,47 @@ class AnalyticsService:
             )
             for r in rows
         ]
+
+    async def get_call_detail(self, call_id: str) -> dict | None:
+        """Получает детали конкретного звонка по mango_call_id."""
+        q = (
+            select(CallLog)
+            .options(selectinload(CallLog.transcripts))
+            .where(CallLog.mango_call_id == call_id)
+        )
+        result = await self._session.execute(q)
+        call = result.scalar_one_or_none()
+        if call is None:
+            return None
+
+        transcript_data = None
+        if call.transcripts:
+            t = call.transcripts[0]
+            transcript_data = {
+                "id": t.id,
+                "full_text": t.full_text,
+                "segments": t.segments,
+                "classification": t.classification,
+                "confidence": t.confidence,
+            }
+
+        return {
+            "id": call.id,
+            "mango_call_id": call.mango_call_id,
+            "caller_number": call.caller_number,
+            "called_number": call.called_number,
+            "client_id": call.client_id,
+            "client_name": call.client_name,
+            "is_known_client": call.is_known_client or False,
+            "task_id": call.task_id,
+            "department": call.department,
+            "priority": call.priority,
+            "duration_seconds": call.duration_seconds,
+            "event_type": call.event_type,
+            "call_state": call.call_state,
+            "direction": call.direction,
+            "call_started_at": call.call_started_at.isoformat() if call.call_started_at else None,
+            "call_ended_at": call.call_ended_at.isoformat() if call.call_ended_at else None,
+            "created_at": call.created_at.isoformat() if call.created_at else None,
+            "transcript": transcript_data,
+        }

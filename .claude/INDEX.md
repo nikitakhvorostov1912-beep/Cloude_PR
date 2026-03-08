@@ -6,99 +6,116 @@
 
 ```
 .claude/
-├── INDEX.md              ← Этот файл
-├── BACKLOG.md            ← Список инструментов к установке / на заметке
-├── launch.json           ← Конфигурация dev-серверов (Preview)
-├── settings.local.json   ← Локальные настройки Claude Code
+├── INDEX.md              <- Этот файл
+├── BACKLOG.md            <- Список инструментов к установке / на заметке
+├── launch.json           <- Конфигурация dev-серверов (Preview)
+├── settings.local.json   <- Локальные настройки Claude Code
 │
-├── agents/               ← Субагенты (33 шт.)
-│   ├── *.md              ← 17 кастомных агентов
-│   └── ecc/              ← 16 агентов из Everything Claude Code
+├── agents/               <- Субагенты (42 шт.)
+│   ├── *.md              <- 26 кастомных агентов
+│   └── ecc/              <- 16 агентов из Everything Claude Code
 │
-├── commands/             ← Slash-команды
-│   └── ecc/              ← 40 команд ECC (/ecc:plan, /ecc:tdd, /ecc:claw...)
+├── commands/             <- Slash-команды
+│   └── ecc/              <- 40 команд ECC (/ecc:plan, /ecc:tdd, /ecc:claw...)
 │
-├── skills/               ← Скиллы (141 шт.)
-│   ├── [custom]/         ← 44 кастомных скилла
-│   ├── ecc/              ← 65 скиллов ECC
-│   └── marketing/        ← 32 маркетинговых скилла
+├── skills/               <- Скиллы (222 шт.)
+│   ├── [custom]/         <- 125 кастомных скиллов
+│   ├── ecc/              <- 65 скиллов ECC
+│   └── marketing/        <- 32 маркетинговых скилла
 │
-├── rules/                ← Правила кодинга
-│   └── ecc/common/       ← Coding style, testing, security, git...
+├── rules/                <- Правила кодинга (34 файла)
+│   ├── knowledge-router.md  <- Маршрутизатор памяти
+│   ├── 1c/               <- 1С: стандарты BSL, оркестрация скиллов, UI
+│   └── ecc/              <- common (9) + python/ts/go/swift (по 5)
 │
-├── memory/               ← Долгосрочная память (3 уровня)
-│   └── categories/       ← tech-stack, preferences, decisions, credentials
+├── memory/               <- Долгосрочная память (3 уровня)
+│   └── categories/       <- tech-stack, preferences, decisions, credentials
 │
-├── plans/                ← Сессионное планирование (шаблоны)
+├── plans/                <- Сессионное планирование
+│   └── _templates/       <- task_plan, findings, progress
 │
-├── hooks/                ← Хуки (Stop, SubagentStop)
-│   └── ecc/
+├── examples/             <- Шаблоны CLAUDE.md для новых проектов
+│   ├── CLAUDE.md         <- Общий шаблон
+│   ├── CLAUDE-python.md  <- Python (FastAPI/Django)
+│   ├── CLAUDE-nodejs.md  <- Node.js (Next.js/Express)
+│   └── CLAUDE-1c.md      <- 1С:Предприятие
 │
-├── scripts/              ← Скрипты (CI, хуки, кодмэпы)
-│   └── ecc/
-│
-├── plugins/              ← Плагины (Composio)
+├── plugins/              <- Плагины (Composio)
 │   └── connect-apps-plugin/
 │
-├── mcp-configs/          ← MCP-серверы
+├── mcp-configs/          <- MCP-серверы
 │   └── mcp-servers.json
 │
-├── examples/             ← Примеры CLAUDE.md для разных стеков
-└── worktrees/            ← Рабочие деревья git
+└── worktrees/            <- Рабочие деревья git
 ```
 
 ---
 
-## Агенты (33)
+## Агенты (42)
 
-### Кастомные (17) — `.claude/agents/`
+### Кастомные (26) — `.claude/agents/`
 
 | Агент | Когда использовать |
 |-------|-------------------|
-| **code-reviewer** | После написания кода — полный ревью 🔴🟡🟢 |
-| **bug-hunter** | Баг, тест падает, что-то не работает |
-| **code-scout** | ПЕРЕД задачей — разведка архитектуры |
-| **deep-researcher** | Глубокое исследование любой темы (5+ запросов) |
-| **research-fetcher** | Субагент deep-researcher для batch-загрузки URL |
-| **pre-commit-guard** | Автопроверка перед коммитом (pytest, build, console.error) |
-| **performance-engineer** | Узкие места, профилирование, нагрузочное тестирование |
-| **api-designer** | REST/GraphQL дизайн, OpenAPI, версионирование |
-| **docker-expert** | Docker оптимизация, multi-stage, безопасность |
-| **mcp-developer** | MCP-серверы и клиенты |
-| **devops-engineer** | CI/CD, IaC, контейнеризация |
-| **prompt-engineer** | Дизайн и оптимизация промптов |
-| **artifact-validator** | Валидация BPMN JSON, Visio |
-| **bpm-architect** | Полный аудит и исправление BPMN-процессов |
-| **bpm-json-auditor** | Глубокий аудит BPMN JSON |
-| **bpm-svg-validator** | Проверка SVG-диаграмм |
-| **bpm-visio-checker** | Проверка Visio (.vsdx) файлов |
+| **1С-разработка** | |
+| `1c-code-architect` | Проектирование архитектуры 1С |
+| `1c-code-explorer` | Анализ существующего кода 1С |
+| `1c-code-reviewer` | Ревью кода 1С (+ MCP bsl-context) |
+| `1c-code-simplifier` | Упрощение кода 1С |
+| `1c-code-writer` | Написание BSL-кода 1С |
+| **Разведка и исследование** | |
+| `code-scout` | ПЕРЕД задачей — разведка архитектуры |
+| `deep-researcher` | Глубокое исследование любой темы (5+ запросов) |
+| `research-fetcher` | Субагент deep-researcher для batch-загрузки URL |
+| **Код и ревью** | |
+| `code-reviewer` | После написания кода — полный ревью |
+| `bug-hunter` | Баг, тест падает, что-то не работает |
+| `pre-commit-guard` | Автопроверка перед коммитом (pytest, build) |
+| `rapid-prototyper` | Быстрое прототипирование |
+| **Инфраструктура** | |
+| `api-designer` | REST/GraphQL дизайн, OpenAPI |
+| `docker-expert` | Docker оптимизация, multi-stage |
+| `devops-engineer` | CI/CD, IaC, контейнеризация |
+| `mcp-developer` | MCP-серверы и клиенты |
+| `performance-engineer` | Профилирование, нагрузочное тестирование |
+| `ai-engineer` | AI/ML инженерия |
+| `prompt-engineer` | Дизайн и оптимизация промптов |
+| **BPMN / визуализация** | |
+| `bpm-architect` | Полный аудит и исправление BPMN-процессов |
+| `bpm-json-auditor` | Глубокий аудит BPMN JSON |
+| `bpm-svg-validator` | Проверка SVG-диаграмм |
+| `bpm-visio-checker` | Проверка Visio (.vsdx) файлов |
+| `artifact-validator` | Валидация BPMN JSON, Visio |
+| **Оркестрация** | |
+| `nexus-orchestrator` | Главный оркестратор |
+| `sprint-prioritizer` | Приоритизация задач |
 
 ### ECC (16) — `.claude/agents/ecc/`
 
 | Агент | Когда использовать |
 |-------|-------------------|
-| **planner** | Планирование сложных фич |
-| **architect** | Архитектурные решения |
-| **tdd-guide** | TDD-подход: тесты → код |
-| **code-reviewer** | Ревью кода (ECC версия) |
-| **security-reviewer** | Безопасность перед коммитами |
-| **build-error-resolver** | Когда билд падает |
-| **e2e-runner** | E2E-тесты (Playwright) |
-| **refactor-cleaner** | Удаление мёртвого кода |
-| **doc-updater** | Обновление документации |
-| **database-reviewer** | PostgreSQL, оптимизация SQL |
-| **python-reviewer** | Python code review (PEP 8) |
-| **go-reviewer** | Go code review |
-| **go-build-resolver** | Go build ошибки |
-| **chief-of-staff** | Email/Slack/Messenger триаж |
-| **harness-optimizer** | Оптимизация agent harness |
-| **loop-operator** | Управление автономными циклами |
+| `planner` | Планирование сложных фич |
+| `architect` | Архитектурные решения |
+| `tdd-guide` | TDD-подход: тесты -> код |
+| `code-reviewer` | Ревью кода (ECC версия) |
+| `security-reviewer` | Безопасность перед коммитами |
+| `build-error-resolver` | Когда билд падает |
+| `e2e-runner` | E2E-тесты (Playwright) |
+| `refactor-cleaner` | Удаление мёртвого кода |
+| `doc-updater` | Обновление документации |
+| `database-reviewer` | PostgreSQL, оптимизация SQL |
+| `python-reviewer` | Python code review (PEP 8) |
+| `go-reviewer` | Go code review |
+| `go-build-resolver` | Go build ошибки |
+| `chief-of-staff` | Email/Slack/Messenger триаж |
+| `harness-optimizer` | Оптимизация agent harness |
+| `loop-operator` | Управление автономными циклами |
 
 ---
 
 ## Скиллы — Ключевые
 
-### Наши кастомные (Survey Automation)
+### Аналитика и обследование
 
 | Скилл | Описание |
 |-------|---------|
@@ -107,9 +124,26 @@
 | `gap-analysis` | GAP-анализ AS-IS vs типовой функционал |
 | `to-be-optimization` | Оптимизация TO-BE процессов |
 | `requirements-list` | FR/NFR/IR с MoSCoW приоритизацией |
-| `quality-gate` | Полная проверка проекта — PASS/FAIL |
-| `health-check` | Быстрая проверка: сервер, фронт, API |
-| `memory-management` | 3-уровневая система памяти + сессионное планирование |
+| `erp-configuration-advisor` | Подбор конфигурации 1С |
+| `brainstorm` | Предварительная проработка идеи |
+
+### 1С-экосистема (67 cc-1c-skills)
+
+| Группа | Скиллы | Назначение |
+|--------|--------|-----------|
+| EPF | `epf-init`, `epf-add-form`, `epf-bsp-init`, `epf-bsp-add-command`, `epf-build`, `epf-dump`, `epf-validate` | Внешние обработки |
+| ERF | `erf-init`, `erf-build`, `erf-dump`, `erf-validate` | Внешние отчёты |
+| Form | `form-add`, `form-compile`, `form-edit`, `form-info`, `form-patterns`, `form-remove`, `form-validate` | Управляемые формы |
+| SKD | `skd-compile`, `skd-edit`, `skd-info`, `skd-validate` | СКД |
+| DB | `db-create`, `db-list`, `db-load-cf`, `db-load-xml`, `db-load-git`, `db-dump-cf`, `db-dump-xml`, `db-run`, `db-update` | Базы данных |
+| CF | `cf-init`, `cf-edit`, `cf-info`, `cf-validate` | Конфигурации |
+| CFE | `cfe-init`, `cfe-borrow`, `cfe-diff`, `cfe-patch-method`, `cfe-validate` | Расширения |
+| Meta | `meta-compile`, `meta-edit`, `meta-info`, `meta-remove`, `meta-validate` | Объекты метаданных |
+| Web | `web-info`, `web-publish`, `web-stop`, `web-test`, `web-unpublish` | Веб-публикация |
+| Role | `role-compile`, `role-info`, `role-validate` | Роли и права |
+| Subsystem | `subsystem-compile`, `subsystem-edit`, `subsystem-info`, `subsystem-validate` | Подсистемы |
+| MXL | `mxl-compile`, `mxl-decompile`, `mxl-info`, `mxl-validate` | Табличные документы |
+| Прочие | `help-add`, `img-grid`, `interface-edit`, `interface-validate`, `template-add`, `template-remove` | Справка, макеты |
 
 ### Генерация документов
 
@@ -119,8 +153,9 @@
 | `excel-generation` | Excel (.xlsx) через openpyxl |
 | `pptx-generation` | PowerPoint через python-pptx |
 | `visio-generation` | Visio (.vsdx) BPMN-диаграммы |
+| `d3js-visualization` | D3.js интерактивные визуализации |
 
-### Разработка
+### Разработка и качество
 
 | Скилл | Описание |
 |-------|---------|
@@ -130,29 +165,25 @@
 | `lint-check` | Линтинг Python + TypeScript |
 | `e2e-test` | E2E-тесты Playwright |
 | `ui-ux-review` | Проверка UI/UX |
+| `quality-gate` | Полная проверка проекта — PASS/FAIL |
+| `health-check` | Быстрая проверка: сервер, фронт, API |
 | `research` | Глубокое исследование темы |
-
-### ECC — Ключевые
-
-| Скилл | Описание |
-|-------|---------|
-| `ecc/strategic-compact` | Стратегическое сжатие контекста + 5-Question Reboot |
-| `ecc/continuous-learning` | Извлечение паттернов + 3-Strike Protocol |
-| `ecc/tdd-workflow` | TDD-процесс RED→GREEN→REFACTOR |
-| `ecc/python-patterns` | Паттерны Python |
-| `ecc/frontend-patterns` | Паттерны фронтенда |
-| `ecc/security-review` | Безопасность |
+| `project-init` | Инициализация нового проекта |
+| `memory-management` | 3-уровневая система памяти |
 
 ---
 
 ## Как добавить
 
+### Новый проект
+```bash
+/project-init
+# Выбрать стек -> создаст структуру + CLAUDE.md
+```
+
 ### Новый агент
 ```bash
-# Создать файл в agents/
-.claude/agents/my-agent.md
-
-# Формат:
+# Создать файл .claude/agents/my-agent.md
 ---
 name: my-agent
 description: "Когда использовать этот агент"
@@ -165,10 +196,7 @@ maxTurns: 25
 
 ### Новый скилл
 ```bash
-# Создать папку и SKILL.md
-.claude/skills/my-skill/SKILL.md
-
-# Формат:
+# Создать папку .claude/skills/my-skill/SKILL.md
 ---
 name: my-skill
 description: Краткое описание для автообнаружения
@@ -178,8 +206,8 @@ description: Краткое описание для автообнаружени
 
 ### Новая запись в память
 ```bash
-# Факт → memory/categories/[тема].md
-# Или новый файл в memory/categories/
+# Факт -> memory/categories/[тема].md
+# Или новый файл в memory/ + ссылка в knowledge-router.md
 ```
 
 ### Новый инструмент в бэклог
@@ -188,10 +216,10 @@ description: Краткое описание для автообнаружени
 ### N. Название — Краткое описание
 - **Репо:** URL
 - **Что:** ...
-- **Приоритет:** 🔴 Высокий | 🟡 Средний | 🔵 Низкий
-- **Статус:** ⏳ На заметке
+- **Приоритет:** Высокий | Средний | Низкий
+- **Статус:** Ожидает
 ```
 
 ---
 
-*Обновлено: 2026-03-06 | Агентов: 33 | Скиллов: 141 | Команд: 40*
+*Обновлено: 2026-03-09 | Агентов: 42 | Скиллов: 222 | Правил: 34 | Команд: 40*

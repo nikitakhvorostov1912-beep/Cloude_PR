@@ -29,7 +29,12 @@ class SessionManager:
     async def _get_redis(self) -> aioredis.Redis:
         if self._redis is None:
             settings = get_settings()
-            self._redis = aioredis.from_url(settings.redis.redis_url)
+            url = settings.redis.redis_url
+            if url.startswith("fake://"):
+                import fakeredis.aioredis
+                self._redis = fakeredis.aioredis.FakeRedis()
+            else:
+                self._redis = aioredis.from_url(url)
         return self._redis
 
     async def save_session(self, session: CallSession) -> None:

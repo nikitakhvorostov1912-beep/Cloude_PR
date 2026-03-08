@@ -54,6 +54,9 @@ logs/
 # Claude worktrees
 .claude/worktrees/
 
+# Claude memory credentials (sensitive data)
+.claude/memory/categories/credentials.md
+
 # Session plans (temporary, per-task)
 .claude/plans/task_plan.md
 .claude/plans/findings.md

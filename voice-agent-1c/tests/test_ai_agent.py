@@ -1,7 +1,7 @@
 """Тесты AI Agent (Claude function calling)."""
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -102,7 +102,7 @@ class TestProcessInput:
         mock_response = _mock_text_response("Расскажите подробнее о проблеме.")
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             result = await ai_agent.process_input(
                 "У нас проблема с документами", dialog_context
@@ -142,7 +142,7 @@ class TestProcessInput:
         mock_response = _mock_text_response("Понял")
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             await ai_agent.process_input("Привет", dialog_context)
 
@@ -156,7 +156,7 @@ class TestProcessInput:
         mock_response = _mock_text_response("Какой продукт?")
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             await ai_agent.process_input("Привет", dialog_context)
 
@@ -185,7 +185,7 @@ class TestFunctionCalling:
         )
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             result = await ai_agent.process_input(
                 "Документы не проводятся с утра!", dialog_context
@@ -215,7 +215,7 @@ class TestFunctionCalling:
         )
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             result = await ai_agent.process_input(
                 "Что-то не работает", dialog_context
@@ -236,7 +236,7 @@ class TestFunctionCalling:
         )
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             result = await ai_agent.process_input(
                 "Позовите живого человека!", dialog_context
@@ -254,7 +254,7 @@ class TestFunctionCalling:
         )
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             result = await ai_agent.process_input(
                 "Проблема", dialog_context
@@ -276,11 +276,11 @@ class TestAPIErrors:
         with patch.object(
             ai_agent._client.messages,
             "create",
-            side_effect=anthropic.APIError(
+            new=AsyncMock(side_effect=anthropic.APIError(
                 message="test error",
                 request=MagicMock(),
                 body=None,
-            ),
+            )),
         ):
             result = await ai_agent.process_input(
                 "Привет", dialog_context
@@ -295,7 +295,7 @@ class TestAPIErrors:
         mock_response = _mock_text_response("OK")
 
         with patch.object(
-            ai_agent._client.messages, "create", return_value=mock_response
+            ai_agent._client.messages, "create", new=AsyncMock(return_value=mock_response)
         ):
             result = await ai_agent.process_input("Test", dialog_context)
 

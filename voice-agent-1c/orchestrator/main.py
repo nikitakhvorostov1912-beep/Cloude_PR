@@ -31,9 +31,18 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     logger.info("Запуск %s v%s", settings.app_title, settings.app_version)
 
     # Инициализация БД
-    from database.session import close_db, init_db
+    from database.session import close_db, init_db, engine
 
     init_db()
+
+    # Для SQLite: создаём таблицы автоматически
+    from database.session import engine as db_engine
+    if db_engine and "sqlite" in str(db_engine.url):
+        from database.models import Base
+        async with db_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("SQLite таблицы созданы")
+
     logger.info("База данных инициализирована")
 
     # Инициализация Redis-менеджера сессий
@@ -120,17 +129,18 @@ def create_app() -> FastAPI:
             "голосовой диалог (STT + Claude + TTS), маршрутизация обращений."
         ),
         lifespan=lifespan,
-        docs_url="/docs",
-        redoc_url="/redoc",
+        docs_url="/docs" if settings.debug else None,
+        redoc_url="/redoc" if settings.debug else None,
     )
 
-    # CORS
+    # CORS — в production задать ALLOWED_ORIGINS через env
+    cors_origins = settings.allowed_origins if settings.allowed_origins else ["http://localhost:3000", "http://localhost:3001"]
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=cors_origins,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type", "Authorization"],
     )
 
     # Роутеры
@@ -147,6 +157,11 @@ def create_app() -> FastAPI:
     from api.routes.dashboard import router as dashboard_router
 
     application.include_router(dashboard_router)
+
+    # Voice Preview API
+    from api.routes.voices import router as voices_router
+
+    application.include_router(voices_router)
 
     # Эндпоинты системы
     @application.get("/", tags=["Система"])
@@ -180,5 +195,5 @@ if __name__ == "__main__":
         "orchestrator.main:app",
         host=cfg.host,
         port=cfg.port,
-        reload=True,
+        reload=cfg.debug,
     )

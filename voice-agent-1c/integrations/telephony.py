@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json as json_lib
 import logging
 from datetime import datetime, timezone
@@ -39,15 +40,15 @@ def verify_mango_signature(
 
     Алгоритм: sha256(vpbx_api_key + json_data + api_salt)
     """
-    if vpbx_api_key != expected_key:
-        logger.warning("Неверный vpbx_api_key: %s", vpbx_api_key)
+    if not hmac.compare_digest(vpbx_api_key, expected_key):
+        logger.warning("Неверный vpbx_api_key: %s", vpbx_api_key[:8] + "...")
         return False
 
     expected_sign = hashlib.sha256(
         (vpbx_api_key + json_data + api_salt).encode("utf-8")
     ).hexdigest()
 
-    return expected_sign == sign
+    return hmac.compare_digest(expected_sign, sign)
 
 
 @router.post(

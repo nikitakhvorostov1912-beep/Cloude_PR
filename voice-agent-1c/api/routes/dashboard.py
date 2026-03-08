@@ -6,7 +6,7 @@ GET /api/dashboard/departments — распределение по отдела�
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.session import get_session
@@ -84,3 +84,19 @@ async def dashboard_departments(
             for d in breakdown
         ],
     }
+
+
+@router.get("/calls/{call_id}")
+async def dashboard_call_detail(
+    call_id: str,
+    session: AsyncSession = Depends(get_session),
+):
+    """Детали конкретного звонка."""
+    analytics = AnalyticsService(session)
+    detail = await analytics.get_call_detail(call_id)
+    if detail is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Звонок не найден",
+        )
+    return detail

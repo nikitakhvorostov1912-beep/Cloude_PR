@@ -35,9 +35,9 @@ class OneCSettings(BaseSettings):
 
 
 class DatabaseSettings(BaseSettings):
-    """Настройки PostgreSQL."""
+    """Настройки PostgreSQL / SQLite."""
 
-    model_config = SettingsConfigDict(populate_by_name=True)
+    model_config = SettingsConfigDict(populate_by_name=True, env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     database_url: str = Field(
         default="postgresql+asyncpg://voice_agent:voice_agent@localhost:5432/voice_agent",
@@ -46,9 +46,9 @@ class DatabaseSettings(BaseSettings):
 
 
 class RedisSettings(BaseSettings):
-    """Настройки Redis."""
+    """Настройки Redis / FakeRedis."""
 
-    model_config = SettingsConfigDict(populate_by_name=True)
+    model_config = SettingsConfigDict(populate_by_name=True, env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     redis_url: str = Field(default="redis://localhost:6379", alias="REDIS_URL")
 
@@ -110,6 +110,11 @@ class AppSettings(BaseSettings):
     port: int = Field(default=8000)
     debug: bool = Field(default=False)
     log_level: str = Field(default="INFO")
+    allowed_origins: list[str] = Field(
+        default_factory=list,
+        alias="ALLOWED_ORIGINS",
+        description="CORS origins через запятую. Пусто = localhost:3000",
+    )
 
     mango: MangoSettings = Field(default_factory=MangoSettings)
     onec: OneCSettings = Field(default_factory=OneCSettings)

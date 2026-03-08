@@ -28,6 +28,28 @@
       "runtimeArgs": ["-m", "http.server", "8090", "--directory", "D:\\Cloude_PR\\voice-agent-1c\\presentation"],
       "port": 8090,
       "cwd": "D:\\Cloude_PR\\voice-agent-1c\\presentation"
+    },
+    {
+      "name": "voice-backend",
+      "runtimeExecutable": "D:\\Cloude_PR\\voice-agent-1c\\venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "orchestrator.main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"],
+      "port": 8001,
+      "cwd": "D:\\Cloude_PR\\voice-agent-1c",
+      "env": {"PYTHONPATH": "D:\\Cloude_PR\\voice-agent-1c"}
+    },
+    {
+      "name": "voice-dashboard",
+      "runtimeExecutable": "C:\\tools\\nodejs\\node-v22.14.0-win-x64\\node.exe",
+      "runtimeArgs": ["D:\\Cloude_PR\\voice-agent-1c\\dashboard\\node_modules\\next\\dist\\bin\\next", "dev", "--port", "3001"],
+      "port": 3001,
+      "cwd": "D:\\Cloude_PR\\voice-agent-1c\\dashboard"
+    },
+    {
+      "name": "ai-ecosystem-dashboard",
+      "runtimeExecutable": "C:\\tools\\nodejs\\node-v22.14.0-win-x64\\node.exe",
+      "runtimeArgs": ["D:\\Cloude_PR\\ai-ecosystem-1c\\dashboard\\node_modules\\next\\dist\\bin\\next", "dev", "--port", "3002"],
+      "port": 3002,
+      "cwd": "D:\\Cloude_PR\\ai-ecosystem-1c\\dashboard"
     }
   ]
 }

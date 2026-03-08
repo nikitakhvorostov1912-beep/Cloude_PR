@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>ElevenLabs голоса для Авроры</title>
+<style>
+  body { background: #0a0a1a; color: #e0e0e0; font-family: system-ui; padding: 40px; max-width: 700px; margin: 0 auto; }
+  h1 { color: #a78bfa; }
+  h2 { color: #7c3aed; margin-top: 30px; }
+  .voice { background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 12px 0; }
+  .voice h3 { margin: 0 0 6px; color: #c4b5fd; }
+  .voice p { margin: 0 0 10px; color: #888; font-size: 14px; }
+  audio { width: 100%; margin-top: 8px; }
+  .status { font-size: 13px; color: #666; margin-top: 6px; }
+  .loading { color: #f59e0b; }
+  .done { color: #10b981; }
+  .error { color: #ef4444; }
+  button { background: #7c3aed; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 20px 0; }
+  button:hover { background: #6d28d9; }
+  button:disabled { background: #444; cursor: not-allowed; }
+  .download-btn { background: #10b981; font-size: 13px; padding: 6px 14px; margin-top: 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<h1>ElevenLabs - женские голоса</h1>
+<p>Нажми кнопку — голоса сгенерируются через API прямо в браузере (VPN).</p>
+<button id="generate" onclick="generateAll()">Сгенерировать все голоса</button>
+<div id="voices"></div>
+
+<script>
+const API_KEY = '310556c90922d282590ae5e63169bbf8e59c1cdb2b70b9a32653d206496bc365';
+const TEXT = 'Добрый день! Вас приветствует Аврора — AI-ассистент компании ИнтерСофт. Расскажите, что у вас случилось, я помогу разобраться.';
+
+// Popular ElevenLabs female voices (premade)
+const VOICES = [
+  { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', desc: 'Тёплый, спокойный, разговорный' },
+  { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', desc: 'Мягкий, молодой, нежный' },
+  { id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli', desc: 'Молодой, чистый' },
+  { id: 'XB0fDUnXU5powFXDhCwa', name: 'Charlotte', desc: 'Выразительный, уверенный' },
+  { id: 'pFZP5JQG7iQjIQuC4Bku', name: 'Lily', desc: 'Нежный, тёплый, женственный' },
+  { id: 'jBpfAFnaylXS3vKKmkZZ', name: 'Aria', desc: 'Естественный, мягкий' },
+  { id: 'cgSgspJ2msm6clMCkdW9', name: 'Jessica', desc: 'Дружелюбный, разговорный' },
+  { id: 'FGY2WhTYpPnrIDTdsKH5', name: 'Laura', desc: 'Спокойный, уравновешенный' },
+  { id: 'XrExE9yKIg1WjnnlVkGX', name: 'Matilda', desc: 'Тёплый, дружелюбный' },
+  { id: 'sarah_voice_id_placeholder', name: 'Sarah', desc: 'Мягкий, нежный' },
+];
+
+function renderVoices() {
+  const container = document.getElementById('voices');
+  container.innerHTML = VOICES.map((v, i) => `
+    <div class="voice" id="voice-${i}">
+      <h3>${i+1}. ${v.name}</h3>
+      <p>${v.desc}</p>
+      <div class="status" id="status-${i}">Ожидание...</div>
+      <div id="audio-${i}"></div>
+    </div>
+  `).join('');
+}
+
+async function generateVoice(voice, index) {
+  const statusEl = document.getElementById(`status-${index}`);
+  const audioEl = document.getElementById(`audio-${index}`);
+  statusEl.className = 'status loading';
+  statusEl.textContent = 'Генерация...';
+
+  try {
+    const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice.id}`, {
+      method: 'POST',
+      headers: {
+        'xi-api-key': API_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: TEXT,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75,
+          style: 0.3,
+        }
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.text();
+      throw new Error(`HTTP ${resp.status}: ${err.substring(0, 100)}`);
+    }
+
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const sizeKb = (blob.size / 1024).toFixed(0);
+
+    audioEl.innerHTML = `
+      <audio controls src="${url}"></audio>
+      <br><a class="download-btn" href="${url}" download="elevenlabs_${voice.name.toLowerCase()}.mp3"
+        style="display:inline-block;background:#10b981;color:white;text-decoration:none;padding:6px 14px;border-radius:6px;margin-top:8px;font-size:13px;">
+        Скачать (${sizeKb} KB)
+      </a>
+    `;
+    statusEl.className = 'status done';
+    statusEl.textContent = `Готово (${sizeKb} KB)`;
+  } catch (e) {
+    statusEl.className = 'status error';
+    statusEl.textContent = `Ошибка: ${e.message}`;
+  }
+}
+
+async function generateAll() {
+  const btn = document.getElementById('generate');
+  btn.disabled = true;
+  btn.textContent = 'Генерация...';
+
+  // Generate sequentially to avoid rate limits
+  for (let i = 0; i < VOICES.length; i++) {
+    await generateVoice(VOICES[i], i);
+  }
+
+  btn.textContent = 'Готово!';
+}
+
+renderVoices();
+</script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Голоса Авроры v7</title>
+<style>
+  body { background: #0a0a1a; color: #e0e0e0; font-family: system-ui; padding: 20px; max-width: 700px; margin: 0 auto; padding-bottom: 160px; }
+  h1 { color: #a78bfa; font-size: 22px; }
+  .ver { color: #555; font-size: 11px; }
+  h2 { color: #7c3aed; margin-top: 30px; border-bottom: 1px solid #333; padding-bottom: 6px; font-size: 16px; }
+  .v { background: #1a1a2e; border: 2px solid #ef4444; border-radius: 10px; padding: 14px; margin: 10px 0; cursor: pointer; transition: all 0.2s; }
+  .v:hover { border-color: #f87171; }
+  .v.active { border-color: #22c55e; background: #1a2e1a; }
+  .v.loading { border-color: #eab308; }
+  .v.nova { border-color: #ec4899; }
+  .v.nova:hover { border-color: #f472b6; }
+  .v.ref { border-color: #333; }
+  .v.ref:hover { border-color: #555; }
+  .v b { color: #c4b5fd; font-size: 15px; }
+  .v p { margin: 4px 0 0; color: #888; font-size: 12px; }
+  .badge { background: #ef4444; color: white; padding: 1px 6px; border-radius: 3px; font-size: 10px; }
+  .ico { float: right; color: #666; font-size: 20px; }
+  .v.active .ico { color: #22c55e; }
+  #bar { position: fixed; bottom: 0; left: 0; right: 0; background: #16162a; border-top: 2px solid #7c3aed; padding: 10px 20px; z-index: 99; }
+  #bar .name { color: #a78bfa; font-size: 14px; font-weight: bold; }
+  #bar .info { color: #888; font-size: 11px; margin-top: 2px; }
+  #bar .info.err { color: #ef4444; }
+  #bar .info.ok { color: #22c55e; }
+  #prog { width: 100%; height: 6px; background: #333; border-radius: 3px; margin-top: 8px; cursor: pointer; }
+  #progfill { height: 100%; background: #7c3aed; border-radius: 3px; width: 0%; transition: width 0.3s; }
+  #time { color: #666; font-size: 11px; margin-top: 2px; display: inline-block; }
+  #vu { display: inline-block; margin-left: 10px; }
+  #vu canvas { vertical-align: middle; }
+  .btns { margin-top: 6px; }
+  .btns button { background: #333; color: #ddd; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; margin-right: 6px; font-size: 13px; }
+  .btns button:hover { background: #444; }
+  .btns button.play { background: #7c3aed; }
+  .btns button.play:hover { background: #6d28d9; }
+  #dbg { background: #000; color: #0f0; font-family: monospace; font-size: 11px; padding: 8px; border-radius: 6px; margin-top: 20px; max-height: 180px; overflow-y: auto; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Голоса Авроры v2 <span class="ver">player v7</span></h1>
+<p style="color:#888;font-size:13px;">Нажмите на карточку для воспроизведения.</p>
+
+<h2>Marina v2 (Яндекс + обработка) <span class="badge">НОВОЕ</span></h2>
+
+<div class="v" data-file="marina_v2_fast.mp3" data-name="1. Marina Fast">
+  <span class="ico">&#9654;</span>
+  <b>1. Marina Fast</b><p>+10% скорость, pitch jitter, утепление</p>
+</div>
+<div class="v" data-file="marina_v2_alive.mp3" data-name="2. Marina Alive">
+  <span class="ico">&#9654;</span>
+  <b>2. Marina Alive</b><p>+12% скорость, jitter 5 центов, дыхание</p>
+</div>
+<div class="v" data-file="marina_v2_bright.mp3" data-name="3. Marina Bright">
+  <span class="ico">&#9654;</span>
+  <b>3. Marina Bright</b><p>+8% скорость, pitch +0.5 полутона</p>
+</div>
+<div class="v" data-file="marina_v2_max.mp3" data-name="4. Marina Max">
+  <span class="ico">&#9654;</span>
+  <b>4. Marina Max</b><p>+15% скорость, jitter 6 центов, pitch +0.7</p>
+</div>
+<div class="v" data-file="alena_v2_alive.mp3" data-name="5. Alena v2 Alive">
+  <span class="ico">&#9654;</span>
+  <b>5. Alena v2 Alive</b><p>Alena (joy) +10% скорость, jitter, дыхание</p>
+</div>
+
+<h2>Nova v2 (OpenAI + обработка) <span class="badge">НОВОЕ</span></h2>
+
+<div class="v nova" data-file="nova_v2_deep.mp3" data-name="6. Nova Deep">
+  <span class="ico">&#9654;</span>
+  <b>6. Nova Deep</b><p>Pitch -1 полутон, утепление, срез высоких</p>
+</div>
+<div class="v nova" data-file="nova_v2_warm.mp3" data-name="7. Nova Warm">
+  <span class="ico">&#9654;</span>
+  <b>7. Nova Warm</b><p>Pitch -0.5, +5% скорость, утепление</p>
+</div>
+<div class="v nova" data-file="nova_v2_russian.mp3" data-name="8. Nova Russian">
+  <span class="ico">&#9654;</span>
+  <b>8. Nova Russian</b><p>Pitch -1.5, дыхание, максимальное утепление</p>
+</div>
+
+<h2>Оригиналы (для сравнения)</h2>
+
+<div class="v ref" data-file="marina_friendly.mp3" data-name="REF. Marina friendly">
+  <span class="ico">&#9654;</span>
+  <b>REF. Marina friendly</b><p>Оригинал</p>
+</div>
+<div class="v ref" data-file="yandex_alena_joy.mp3" data-name="REF. Alena (joy)">
+  <span class="ico">&#9654;</span>
+  <b>REF. Alena (joy)</b><p>Оригинал</p>
+</div>
+<div class="v ref" data-file="openai_nova.mp3" data-name="REF. OpenAI Nova">
+  <span class="ico">&#9654;</span>
+  <b>REF. OpenAI Nova</b><p>Оригинал</p>
+</div>
+
+<div id="dbg"></div>
+
+<div id="bar">
+  <div class="name" id="name">Выберите голос</div>
+  <div class="info" id="info"></div>
+  <div id="prog"><div id="progfill"></div></div>
+  <div>
+    <span id="time"></span>
+    <span id="vu"><canvas id="vuCanvas" width="80" height="14"></canvas></span>
+  </div>
+  <div class="btns">
+    <button class="play" id="btnplay" onclick="togglePlay()">&#9654; Play</button>
+    <button onclick="stopAll()">&#9632; Stop</button>
+  </div>
+</div>
+
+<script>
+// ===== v7: Простой <audio> + полное пересоздание на каждый клик =====
+// Никакого Web Audio API. Никакого кэширования. Никакого переиспользования.
+// Каждый клик: уничтожить старый Audio → создать новый Audio → play.
+
+var currentAudio = null;
+var activeCard = null;
+var animFrame = null;
+var playCount = 0;
+
+function dbg(msg) {
+  var el = document.getElementById('dbg');
+  var ts = new Date().toLocaleTimeString();
+  el.textContent += ts + ' ' + msg + '\n';
+  el.scrollTop = el.scrollHeight;
+  console.log('[V7]', msg);
+}
+
+function setInfo(msg, type) {
+  var el = document.getElementById('info');
+  el.textContent = msg;
+  el.className = type === 'err' ? 'info err' : type === 'ok' ? 'info ok' : 'info';
+}
+
+function fmt(sec) {
+  if (!sec || !isFinite(sec)) return '0:00';
+  var m = Math.floor(sec / 60);
+  var s = Math.floor(sec % 60);
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function drawVU() {
+  // Простой VU без AnalyserNode — показываем что аудио играет
+  var c = document.getElementById('vuCanvas');
+  if (!c) return;
+  var ctx2d = c.getContext('2d');
+  ctx2d.clearRect(0, 0, 80, 14);
+  ctx2d.fillStyle = '#222';
+  ctx2d.fillRect(0, 0, 80, 14);
+  if (currentAudio && !currentAudio.paused && !currentAudio.ended) {
+    // Показываем что играет
+    ctx2d.fillStyle = '#22c55e';
+    ctx2d.fillRect(0, 0, 60, 14);
+    ctx2d.fillStyle = '#fff';
+    ctx2d.font = '9px monospace';
+    ctx2d.fillText('AUDIO', 3, 11);
+  }
+}
+
+function updateProgress() {
+  if (!currentAudio) return;
+  if (currentAudio.paused && !currentAudio.ended) return;
+  var dur = currentAudio.duration;
+  var cur = currentAudio.currentTime;
+  if (dur && isFinite(dur)) {
+    document.getElementById('progfill').style.width = (cur / dur * 100) + '%';
+    document.getElementById('time').textContent = fmt(cur) + ' / ' + fmt(dur);
+  }
+  drawVU();
+  if (!currentAudio.paused && !currentAudio.ended) {
+    animFrame = requestAnimationFrame(updateProgress);
+  }
+}
+
+function destroyAudio() {
+  if (currentAudio) {
+    dbg('destroy: pausing, clearing src, nulling');
+    currentAudio.pause();
+    currentAudio.oncanplaythrough = null;
+    currentAudio.onplay = null;
+    currentAudio.onended = null;
+    currentAudio.onerror = null;
+    currentAudio.ontimeupdate = null;
+    currentAudio.removeAttribute('src');
+    currentAudio.load(); // Сбросить внутреннее состояние
+    currentAudio = null;
+  }
+}
+
+function stopAll() {
+  dbg('stopAll()');
+  destroyAudio();
+  if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+  document.getElementById('progfill').style.width = '0%';
+  document.getElementById('time').textContent = '';
+  document.getElementById('btnplay').innerHTML = '&#9654; Play';
+  if (activeCard) {
+    activeCard.classList.remove('active', 'loading');
+    activeCard.querySelector('.ico').textContent = '\u25B6';
+    activeCard = null;
+  }
+  document.getElementById('name').textContent = '\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u043E\u043B\u043E\u0441';
+  setInfo('');
+  drawVU();
+}
+
+function togglePlay() {
+  if (!currentAudio) return;
+  if (!currentAudio.paused) {
+    currentAudio.pause();
+    document.getElementById('btnplay').innerHTML = '&#9654; Play';
+    if (activeCard) activeCard.querySelector('.ico').textContent = '\u25B6';
+    dbg('paused');
+  } else {
+    var p = currentAudio.play();
+    if (p && p.catch) p.catch(function(e) { dbg('resume error: ' + e.message); });
+    document.getElementById('btnplay').innerHTML = '&#10074;&#10074; Pause';
+    if (activeCard) activeCard.querySelector('.ico').textContent = '\u23F8';
+    updateProgress();
+    dbg('resumed');
+  }
+}
+
+function playCard(card) {
+  var file = card.dataset.file;
+  var name = card.dataset.name;
+  playCount++;
+  dbg('=== CLICK #' + playCount + ': ' + name + ' (' + file + ') ===');
+
+  // Toggle same card
+  if (activeCard === card && currentAudio) {
+    togglePlay();
+    return;
+  }
+
+  // ПОЛНЫЙ стоп + уничтожение
+  stopAll();
+  activeCard = card;
+  card.classList.add('loading');
+  card.querySelector('.ico').textContent = '\u23F3';
+  document.getElementById('name').textContent = name;
+  setInfo('\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430...');
+
+  // Создаём НОВЫЙ Audio с нуля
+  var audio = new Audio();
+  currentAudio = audio;
+
+  audio.oncanplaythrough = function() {
+    dbg('canplaythrough: dur=' + audio.duration.toFixed(1) + 's, readyState=' + audio.readyState);
+    if (currentAudio !== audio) { dbg('stale audio, skip'); return; }
+    card.classList.remove('loading');
+    card.classList.add('active');
+    setInfo('');
+    document.getElementById('btnplay').innerHTML = '&#10074;&#10074; Pause';
+    card.querySelector('.ico').textContent = '\u23F8';
+    var p = audio.play();
+    if (p && p.then) {
+      p.then(function() {
+        dbg('play() OK');
+        updateProgress();
+      }).catch(function(e) {
+        dbg('play() ERROR: ' + e.name + ': ' + e.message);
+        setInfo('\u041E\u0448\u0438\u0431\u043A\u0430 play: ' + e.message, 'err');
+      });
+    }
+  };
+
+  audio.onended = function() {
+    dbg('ended');
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+    document.getElementById('progfill').style.width = '100%';
+    document.getElementById('btnplay').innerHTML = '&#9654; Play';
+    if (activeCard) activeCard.querySelector('.ico').textContent = '\u25B6';
+    setInfo('\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043E', 'ok');
+    drawVU();
+  };
+
+  audio.onerror = function() {
+    var code = audio.error ? audio.error.code : '?';
+    var msg = audio.error ? audio.error.message : 'unknown';
+    dbg('ERROR: code=' + code + ' msg=' + msg);
+    setInfo('\u041E\u0448\u0438\u0431\u043A\u0430: ' + msg, 'err');
+    card.classList.remove('loading');
+    card.querySelector('.ico').textContent = '\u25B6';
+  };
+
+  // Ждём canplaythrough ПЕРЕД play()
+  audio.preload = 'auto';
+  audio.src = file + '?t=' + Date.now(); // Cache bust каждый раз
+  dbg('src set: ' + audio.src);
+  audio.load();
+  dbg('load() called, waiting for canplaythrough...');
+}
+
+// Seek
+document.getElementById('prog').addEventListener('click', function(e) {
+  if (!currentAudio || !currentAudio.duration) return;
+  var rect = this.getBoundingClientRect();
+  var pct = (e.clientX - rect.left) / rect.width;
+  currentAudio.currentTime = pct * currentAudio.duration;
+  dbg('seek to ' + currentAudio.currentTime.toFixed(1));
+});
+
+// Click handlers
+document.querySelectorAll('.v').forEach(function(c) {
+  c.addEventListener('click', function() { playCard(this); });
+});
+
+dbg('=== Player v7 loaded ===');
+dbg('URL: ' + location.href);
+dbg('Strategy: new Audio() each click, full destroy prev, cache-bust URLs');
+dbg('NO Web Audio API, NO decodeAudioData, NO caching');
+</script>
+</body>
+</html>

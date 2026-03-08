@@ -7,10 +7,13 @@ WS /ws/call/{call_id} — двунаправленный аудио поток:
 from __future__ import annotations
 
 import logging
+import re
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from services.dialog_orchestrator import DialogOrchestrator
+
+CALL_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]{1,64}$")
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +31,11 @@ async def websocket_call(websocket: WebSocket, call_id: str) -> None:
     4. Сервер отправляет TTS ответы (bytes)
     5. При завершении — JSON с результатом
     """
+    # Валидация call_id — защита от path traversal
+    if not CALL_ID_PATTERN.match(call_id):
+        await websocket.close(code=1008)
+        return
+
     await websocket.accept()
 
     orchestrator: DialogOrchestrator | None = getattr(

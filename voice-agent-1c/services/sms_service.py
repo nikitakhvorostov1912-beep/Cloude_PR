@@ -89,7 +89,7 @@ class SMSService:
 
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
-                response = await client.get(SMSC_API_URL, params=params)
+                response = await client.post(SMSC_API_URL, data=params)
                 response.raise_for_status()
                 data = response.json()
 

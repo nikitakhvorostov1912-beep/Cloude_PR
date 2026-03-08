@@ -21,7 +21,7 @@ class TestSMSSend:
     async def test_task_confirmation(self, sms_service, httpx_mock):
         """SMS подтверждение задачи."""
         httpx_mock.add_response(
-            method="GET",
+            method="POST",
             json={"id": 1, "cnt": 1},
         )
 
@@ -33,18 +33,19 @@ class TestSMSSend:
     @pytest.mark.asyncio
     async def test_confirmation_text(self, sms_service, httpx_mock):
         """Текст SMS подтверждения."""
-        httpx_mock.add_response(method="GET", json={"id": 1, "cnt": 1})
+        httpx_mock.add_response(method="POST", json={"id": 1, "cnt": 1})
 
         await sms_service.send_task_confirmation("+79001234567", "4521", 2)
 
         request = httpx_mock.get_request()
-        assert "4521" in str(request.url)
-        assert "2" in str(request.url)
+        body = request.content.decode("utf-8")
+        assert "4521" in body
+        assert "2" in body
 
     @pytest.mark.asyncio
     async def test_escalation_notice(self, sms_service, httpx_mock):
         """SMS уведомление об эскалации."""
-        httpx_mock.add_response(method="GET", json={"id": 2, "cnt": 1})
+        httpx_mock.add_response(method="POST", json={"id": 2, "cnt": 1})
 
         result = await sms_service.send_escalation_notice("+79001234567")
         assert result is True
@@ -52,7 +53,7 @@ class TestSMSSend:
     @pytest.mark.asyncio
     async def test_off_hours_reply(self, sms_service, httpx_mock):
         """SMS ответ в нерабочее время."""
-        httpx_mock.add_response(method="GET", json={"id": 3, "cnt": 1})
+        httpx_mock.add_response(method="POST", json={"id": 3, "cnt": 1})
 
         result = await sms_service.send_off_hours_reply(
             "+79001234567", "в понедельник в 9:00"
@@ -74,7 +75,7 @@ class TestSMSErrors:
     async def test_api_error(self, sms_service, httpx_mock):
         """Ошибка SMSC API -> False."""
         httpx_mock.add_response(
-            method="GET",
+            method="POST",
             json={"error": "invalid login", "error_code": 2},
         )
 

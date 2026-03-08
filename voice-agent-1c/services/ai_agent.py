@@ -170,7 +170,7 @@ class AIAgent:
         confidence_threshold: float = 0.65,
         max_questions: int = 5,
     ) -> None:
-        self._client = anthropic.Anthropic(api_key=api_key)
+        self._client = anthropic.AsyncAnthropic(api_key=api_key)
         self._model = model
         self._max_tokens = max_tokens
         self._temperature = temperature
@@ -238,7 +238,7 @@ class AIAgent:
         system_prompt = build_system_prompt(context.client_info)
 
         try:
-            api_response = self._client.messages.create(
+            api_response = await self._client.messages.create(
                 model=self._model,
                 max_tokens=self._max_tokens,
                 temperature=self._temperature,

@@ -22,13 +22,19 @@ def init_db() -> None:
     """Инициализирует engine и session factory (вызывается в lifespan)."""
     global engine, async_session_factory
     settings = get_settings()
-    engine = create_async_engine(
-        settings.db.database_url,
-        echo=settings.debug,
-        pool_pre_ping=True,
-        pool_size=10,
-        max_overflow=20,
-    )
+    url = settings.db.database_url
+
+    # SQLite не поддерживает pool_size / pool_pre_ping
+    if "sqlite" in url:
+        engine = create_async_engine(url, echo=settings.debug)
+    else:
+        engine = create_async_engine(
+            url,
+            echo=settings.debug,
+            pool_pre_ping=True,
+            pool_size=10,
+            max_overflow=20,
+        )
     async_session_factory = async_sessionmaker(
         engine,
         class_=AsyncSession,

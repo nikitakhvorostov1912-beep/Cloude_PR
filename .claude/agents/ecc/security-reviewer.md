@@ -18,11 +18,27 @@ You are an expert security specialist focused on identifying and remediating vul
 5. **Dependency Security** — Check for vulnerable npm packages
 6. **Security Best Practices** — Enforce secure coding patterns
 
+## Когда НЕ вызывать
+
+- Обычный code review → используй `code-reviewer`
+- Отладка бага → используй `bug-hunter`
+- Проверка производительности → используй `performance-engineer`
+
 ## Analysis Commands
 
 ```bash
+# JavaScript/Node.js
 npm audit --audit-level=high
 npx eslint . --plugin security
+
+# Python
+pip-audit
+bandit -r . -ll
+
+# SAST (Static Analysis)
+# CodeQL (если установлен): codeql database create db && codeql database analyze db
+# Semgrep: semgrep --config=auto .
+# Trivy: trivy fs .
 ```
 
 ## Review Workflow

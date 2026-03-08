@@ -22,9 +22,10 @@ def build_system_prompt(client_info: dict | None = None) -> str:
     """
     info = client_info or {}
     known_client = info.get("found", False)
-    client_name = info.get("name", "")
-    product = info.get("product", "")
-    specialist = info.get("assigned_specialist", "")
+    # Sanitize client data — treat as untrusted input
+    client_name = str(info.get("name", "")).replace("\n", " ").replace("\r", " ")[:100]
+    product = str(info.get("product", "")).replace("\n", " ").replace("\r", " ")[:50]
+    specialist = str(info.get("assigned_specialist", "")).replace("\n", " ").replace("\r", " ")[:100]
 
     # Блок о клиенте
     if known_client:
