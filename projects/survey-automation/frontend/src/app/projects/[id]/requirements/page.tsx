@@ -8,7 +8,6 @@ import {
   Filter,
   FileSpreadsheet,
   FileText,
-  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +29,6 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { dataApi, exportApi } from "@/lib/api";
-import type { Requirement } from "@/lib/types";
 
 const typeLabels: Record<string, string> = {
   functional: "FR",
@@ -40,13 +38,6 @@ const typeLabels: Record<string, string> = {
   security: "SR",
 };
 
-const typeFullLabels: Record<string, string> = {
-  functional: "Функциональное",
-  non_functional: "Нефункциональное",
-  integration: "Интеграционное",
-  data: "Данные",
-  security: "Безопасность",
-};
 
 const priorityLabels: Record<string, string> = {
   critical: "Must",
@@ -81,7 +72,7 @@ export default function RequirementsPage() {
     enabled: !!projectId,
   });
 
-  const requirements = data?.requirements ?? [];
+  const requirements = React.useMemo(() => data?.requirements ?? [], [data]);
 
   const filtered = React.useMemo(() => {
     let result = requirements;
@@ -99,10 +90,8 @@ export default function RequirementsPage() {
     const byType: Record<string, number> = {};
     const byPriority: Record<string, number> = {};
     requirements.forEach((r) => {
-      const rType = r.requirement_type ?? "unknown";
-      const rPriority = r.priority ?? "unknown";
-      byType[rType] = (byType[rType] ?? 0) + 1;
-      byPriority[rPriority] = (byPriority[rPriority] ?? 0) + 1;
+      byType[r.requirement_type] = (byType[r.requirement_type] ?? 0) + 1;
+      byPriority[r.priority] = (byPriority[r.priority] ?? 0) + 1;
     });
     return { byType, byPriority, total: requirements.length };
   }, [requirements]);
@@ -175,10 +164,10 @@ export default function RequirementsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Все приоритеты</SelectItem>
-            <SelectItem value="critical">Must</SelectItem>
-            <SelectItem value="high">Should</SelectItem>
-            <SelectItem value="medium">Could</SelectItem>
-            <SelectItem value="low">Won't</SelectItem>
+            <SelectItem value="critical">Обязательно (Must)</SelectItem>
+            <SelectItem value="high">Желательно (Should)</SelectItem>
+            <SelectItem value="medium">Возможно (Could)</SelectItem>
+            <SelectItem value="low">Не требуется (Won&apos;t)</SelectItem>
           </SelectContent>
         </Select>
         {(typeFilter !== "all" || priorityFilter !== "all") && (
@@ -220,11 +209,11 @@ export default function RequirementsPage() {
               {filtered.map((req, index) => (
                 <TableRow key={req.id}>
                   <TableCell className="font-mono text-xs">
-                    {typeLabels[req.requirement_type ?? ""] ?? "REQ"}-{String(index + 1).padStart(3, "0")}
+                    {typeLabels[req.requirement_type] ?? "REQ"}-{String(index + 1).padStart(3, "0")}
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-xs">
-                      {typeLabels[req.requirement_type ?? ""] ?? req.requirement_type}
+                      {typeLabels[req.requirement_type] ?? req.requirement_type}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -237,14 +226,14 @@ export default function RequirementsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className={`text-xs border ${priorityColors[req.priority ?? ""] ?? ""}`}
+                      className={`text-xs border ${priorityColors[req.priority] ?? ""}`}
                     >
-                      {priorityLabels[req.priority ?? ""] ?? req.priority}
+                      {priorityLabels[req.priority] ?? req.priority}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <span className="text-xs text-muted-foreground">
-                      {statusLabels[req.status ?? ""] ?? req.status}
+                      {statusLabels[req.status] ?? req.status}
                     </span>
                   </TableCell>
                 </TableRow>

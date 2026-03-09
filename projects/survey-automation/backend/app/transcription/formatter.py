@@ -6,14 +6,16 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-from app.exceptions import ValidationError
+from app.exceptions import ProcessingError, ValidationError
 from app.transcription.transcriber import Segment, TranscriptionResult
 
 logger = logging.getLogger(__name__)
@@ -447,7 +449,7 @@ class TranscriptFormatter:
                 matched_count += 1
 
         # Считаем формат валидным, если распознано >= 50% непустых строк
-        non_empty_lines = sum(1 for line in lines if line.strip())
+        non_empty_lines = sum(1 for l in lines if l.strip())
         if non_empty_lines > 0 and matched_count / non_empty_lines >= 0.5:
             return segments
         return []
@@ -477,7 +479,7 @@ class TranscriptFormatter:
                 time_offset += estimated_duration + 0.5
                 matched_count += 1
 
-        non_empty_lines = sum(1 for line in lines if line.strip())
+        non_empty_lines = sum(1 for l in lines if l.strip())
         if non_empty_lines > 0 and matched_count / non_empty_lines >= 0.5:
             return segments
         return []

@@ -1,17 +1,19 @@
-"""Прямая генерация .vsdx файлов из BPMN JSON — стиль Bitrix24.
+"""Прямая генерация .vsdx файлов из BPMN JSON.
 
-Создаёт профессиональные Visio-диаграммы в стиле Bitrix24:
-- Дорожки с широкими тёмными заголовками и светлым цветным фоном
-- Задачи: белый фон + тонкая цветная полоса слева + иконка роли
-- События: геометрические BPMN-фигуры (без emoji)
-- Шлюзы: жёлтый ромб + метка вопроса выше + да/нет на ветках
-- Соединители: серые стрелки с таблетками подписей
+Создаёт профессиональные Visio-диаграммы с BPMN-нотацией:
+- Дорожки (swimlanes) с заголовками слева и рамкой
+- Задачи с маркерами типа (пользователь/сервис) и системными метками
+- События (старт/конец) с подписями
+- Шлюзы с маркерами
+- Соединители с подписями условий
+- Аннотации для pain points
 
 Все тексты на русском языке.
 """
 
 from __future__ import annotations
 
+import json
 import logging
 import math
 import unicodedata
@@ -28,60 +30,57 @@ logger = logging.getLogger(__name__)
 # Константы конвертации
 PIXELS_PER_INCH = 96.0
 
-# ──────────────────────────────────────────────────────────────────────
-# Цветовая палитра дорожек (стиль Bitrix24)
-# Каждая запись: (bg_fill, accent_color, dark_header, border_color)
-# ──────────────────────────────────────────────────────────────────────
-LANE_PALETTE_V2: list[tuple[str, str, str, str]] = [
-    ("#EEF2FA", "#4472C4", "#2B5091", "#C5D3E8"),  # Синий
-    ("#EEF5EE", "#4CAF50", "#2E7D32", "#C3DFC3"),  # Зелёный
-    ("#FFF8E7", "#F9A825", "#F57F17", "#F0DAAA"),  # Жёлтый
-    ("#FEF0EE", "#E53935", "#B71C1C", "#F0C4C2"),  # Красный
-    ("#F3EEF9", "#7B1FA2", "#4A148C", "#D4BEDF"),  # Фиолетовый
-    ("#E8F8F8", "#00796B", "#004D40", "#B0D5D2"),  # Бирюзовый
-    ("#FFF3E0", "#E65100", "#BF360C", "#F0C89A"),  # Оранжевый
-]
+# Цвета BPMN-элементов в стиле Visio (Hex RGB)
+COLORS = {
+    # Задачи — синие по типу
+    "user_task_fill": "#4472C4",     # Пользовательская задача
+    "user_task_line": "#2F5496",
+    "service_task_fill": "#5B9BD5",  # Сервисная задача
+    "service_task_line": "#2E75B6",
+    "task_fill": "#B4D7A0",          # Обычная задача (мягкий зелёный)
+    "task_line": "#70AD47",
+    "task_text": "#FFFFFF",
+    # События
+    "start_fill": "#70AD47",
+    "start_line": "#548235",
+    "end_fill": "#FF0000",
+    "end_line": "#C00000",
+    # Шлюзы
+    "gateway_fill": "#FFD54F",       # Мягкий жёлтый
+    "gateway_line": "#BF9000",
+    # Дорожки
+    "lane_fill": "#E8EDF5",          # Ещё светлее
+    "lane_line": "#8FAADC",
+    "lane_header_fill": "#4472C4",
+    "lane_header_text": "#FFFFFF",
+    # Соединители
+    "connector_line": "#5A5A5A",     # Чуть мягче
+    # Системные метки
+    "system_fill": "#E2EFDA",
+    "system_line": "#A9D18E",
+    "system_text": "#375623",
+    # Документ
+    "doc_fill": "#FFF2CC",
+    "doc_line": "#BF8F00",
+    "doc_text": "#806000",
+    # Аннотации
+    "annotation_fill": "#FFF9E6",
+    "annotation_line": "#C0C000",
+    "annotation_text": "#404040",
+}
 
-# ──────────────────────────────────────────────────────────────────────
-# Константы стиля
-# ──────────────────────────────────────────────────────────────────────
-_LANE_HEADER_W: float = 0.70       # ширина заголовка дорожки (дюймы)
-_ACCENT_BAR_W: float = 0.069       # ширина акцент-полосы задачи (5pt)
-_TASK_FILL = "#FFFFFF"             # белый фон задачи
-_TASK_BORDER = "#CBD4E1"           # светло-серая граница задачи
-_TASK_TEXT = "#1A202C"             # почти чёрный текст задачи
-_TASK_ROUND = 0.0833               # скругление (6pt)
-_CONNECTOR_LINE = "#5A6475"        # цвет соединителей
-_GATEWAY_FILL = "#FFF8E7"          # заливка шлюза
-_GATEWAY_LINE = "#F9A825"          # граница шлюза
-_GATEWAY_LW = 0.0208               # 1.5pt для шлюза
-_LABEL_TEXT_COLOR = "#5A6475"      # цвет подписей
-_EVENT_START_FILL = "#F1FAF1"
-_EVENT_START_LINE = "#43A047"
-_EVENT_END_FILL = "#FFF0EE"
-_EVENT_END_LINE = "#E53935"
-_EVENT_TIMER_FILL = "#FFFDE7"
-_EVENT_TIMER_LINE = "#F9A825"
-_EVENT_CANCEL_FILL = "#FFF0EE"
-_EVENT_CANCEL_LINE = "#E53935"
+# Маркеры типов задач — символы Unicode для обозначения типа
+TASK_MARKERS = {
+    "userTask": "\u2261",           # ≡ (три линии — человек)
+    "serviceTask": "\u2022",        # • (точка — сервис)
+    "scriptTask": "\u2022",         # • (точка — скрипт)
+    "manualTask": "\u2261",         # ≡ (три линии — ручной)
+    "task": "",
+}
 
-
-# ──────────────────────────────────────────────────────────────────────
-# Вспомогательные функции
-# ──────────────────────────────────────────────────────────────────────
 
 def _uid() -> str:
     return uuid.uuid4().hex[:8]
-
-
-def _clean_text(text: str) -> str:
-    """Убирает артефакты усечения ('…', '...') из текста."""
-    if not text:
-        return text
-    t = text.strip()
-    while t.endswith("…") or t.endswith("..."):
-        t = t.rstrip(".…").strip()
-    return t
 
 
 def _px(val: float) -> float:
@@ -90,11 +89,23 @@ def _px(val: float) -> float:
 
 
 def _visual_text_width(text: str, char_coeff: float = 0.085) -> float:
-    """Оценивает визуальную ширину текста в дюймах."""
+    """Визуальная ширина текста с учётом emoji (2x) и пробелов (0.5x).
+
+    Emoji (Unicode Symbol Other/Sk, code > U+1F000) занимают ~2x ширины
+    кириллического символа в Visio. Пробелы — примерно 0.5x.
+
+    Args:
+        text: Строка текста.
+        char_coeff: Ширина в дюймах на 1 визуальную единицу.
+
+    Returns:
+        Оценка ширины текста в дюймах.
+    """
     visual_units = 0.0
     for ch in text:
         cat = unicodedata.category(ch)
         cp = ord(ch)
+        # Emoji: Symbol Other/Sk или code > U+1F000
         if cat in ("So", "Sk") or cp > 0x1F000:
             visual_units += 2.0
         elif ch == " ":
@@ -105,7 +116,7 @@ def _visual_text_width(text: str, char_coeff: float = 0.085) -> float:
 
 
 def _vis_color(hex_color: str) -> str:
-    """Возвращает цвет для .vsdx XML."""
+    """Возвращает цвет для .vsdx XML (формат #RRGGBB без изменений)."""
     if not hex_color.startswith("#"):
         return f"#{hex_color}"
     return hex_color
@@ -117,7 +128,11 @@ def _shape_base(
     w: float, h: float,
     name: str = "",
 ) -> str:
-    """Общая XML-основа фигуры: позиционирование с GUARD()."""
+    """Общая XML-основа фигуры: позиционирование.
+
+    GUARD() предотвращает перезапись размеров Visio-движком
+    (наследование из мастер-шейпов, стилей, авто-ресайз).
+    """
     nu = f'NameU="{xml_escape(name)}"' if name else f'NameU="Shape.{sid}"'
     return (
         f'    <Shape ID="{sid}" {nu} Type="Shape"'
@@ -132,13 +147,10 @@ def _shape_base(
         f'      <Cell N="FlipX" V="0"/>\n'
         f'      <Cell N="FlipY" V="0"/>\n'
         f'      <Cell N="ResizeMode" V="0"/>\n'
+        # Защита от авто-ресайза коннекторами Visio
         f'      <Cell N="ShapeFixedCode" V="6"/>\n'
     )
 
-
-# ──────────────────────────────────────────────────────────────────────
-# Геометрия примитивов
-# ──────────────────────────────────────────────────────────────────────
 
 GEOM_RECT = (
     '      <Section N="Geometry" IX="0">\n'
@@ -170,46 +182,9 @@ GEOM_DIAMOND = (
     '      </Section>\n'
 )
 
-# Геометрия треугольника-play (▶) для startEvent
-GEOM_PLAY = (
-    '      <Section N="Geometry" IX="0">\n'
-    '        <Cell N="NoFill" V="0"/>\n'
-    '        <Cell N="NoLine" V="1"/>\n'
-    '        <Cell N="NoShow" V="0"/>\n'
-    '        <Cell N="NoSnap" V="0"/>\n'
-    '        <Cell N="NoQuickDrag" V="0"/>\n'
-    '        <Row T="RelMoveTo" IX="1"><Cell N="X" V="0.18"/><Cell N="Y" V="0.80"/></Row>\n'
-    '        <Row T="RelLineTo" IX="2"><Cell N="X" V="0.82"/><Cell N="Y" V="0.50"/></Row>\n'
-    '        <Row T="RelLineTo" IX="3"><Cell N="X" V="0.18"/><Cell N="Y" V="0.20"/></Row>\n'
-    '        <Row T="RelLineTo" IX="4"><Cell N="X" V="0.18"/><Cell N="Y" V="0.80"/></Row>\n'
-    '      </Section>\n'
-)
 
-# Геометрия квадрата-terminate для endEvent (центрированный внутри circle)
-GEOM_SQUARE_INNER = (
-    '      <Section N="Geometry" IX="0">\n'
-    '        <Cell N="NoFill" V="0"/>\n'
-    '        <Cell N="NoLine" V="1"/>\n'
-    '        '
-    '<Row T="RelMoveTo" IX="1"><Cell N="X" V="0.20"/><Cell N="Y" V="0.20"/></Row>\n'
-    '        <Row T="RelLineTo" IX="2"><Cell N="X" V="0.80"/><Cell N="Y" V="0.20"/></Row>\n'
-    '        <Row T="RelLineTo" IX="3"><Cell N="X" V="0.80"/><Cell N="Y" V="0.80"/></Row>\n'
-    '        <Row T="RelLineTo" IX="4"><Cell N="X" V="0.20"/><Cell N="Y" V="0.80"/></Row>\n'
-    '        <Row T="RelLineTo" IX="5"><Cell N="X" V="0.20"/><Cell N="Y" V="0.20"/></Row>\n'
-    '      </Section>\n'
-)
-
-
-def _geom_ellipse(w: float, h: float | None = None) -> str:
-    """Геометрия эллипса/круга для Visio.
-
-    w = ширина (diameter для круга)
-    h = высота (если None — круг, h=w)
-    """
-    if h is None:
-        h = w
-    rx = w / 2
-    ry = h / 2
+def _geom_ellipse(d: float) -> str:
+    r = d / 2
     return (
         '      <Section N="Geometry" IX="0">\n'
         '        <Cell N="NoFill" V="0"/>\n'
@@ -218,36 +193,36 @@ def _geom_ellipse(w: float, h: float | None = None) -> str:
         '        <Cell N="NoSnap" V="0"/>\n'
         '        <Cell N="NoQuickDrag" V="0"/>\n'
         f'        <Row T="Ellipse" IX="1">'
-        f'<Cell N="X" V="{rx:.4f}"/>'
-        f'<Cell N="Y" V="{ry:.4f}"/>'
-        f'<Cell N="A" V="{w:.4f}"/>'
-        f'<Cell N="B" V="{ry:.4f}"/>'
-        f'<Cell N="C" V="{rx:.4f}"/>'
-        f'<Cell N="D" V="{h:.4f}"/>'
+        f'<Cell N="X" V="{r:.4f}"/>'
+        f'<Cell N="Y" V="{r:.4f}"/>'
+        f'<Cell N="A" V="{d:.4f}"/>'
+        f'<Cell N="B" V="{r:.4f}"/>'
+        f'<Cell N="C" V="{r:.4f}"/>'
+        f'<Cell N="D" V="{d:.4f}"/>'
         f'</Row>\n'
         '      </Section>\n'
     )
 
 
+# Ширина заголовка дорожки (дюймы) — используется и в _lane_shapes, и для clamp labels
+_LANE_HEADER_W = 0.50
+
+
 class DirectVsdxGenerator:
-    """Генератор .vsdx файлов в стиле Bitrix24.
+    """Генератор профессиональных .vsdx файлов с BPMN-нотацией.
 
     Создаёт Visio-файлы с полной BPMN-стилизацией:
-    - Дорожки с широкими тёмными заголовками
-    - Белые задачи с акцент-полосой и иконкой роли
-    - Геометрические BPMN-события
-    - Шлюзы с вопросами и да/нет ветками
+    дорожки с заголовками, маркеры типов задач, системные метки,
+    аннотации и документы.
     """
 
     def __init__(self) -> None:
         self._shape_id = 0
         self._page_width = 33.11
         self._page_height = 46.81
-        self._step_systems: dict[str, str] = {}
-        self._step_inputs: dict[str, list[str]] = {}
-        self._step_outputs: dict[str, list[str]] = {}
-        # Маппинг lane_id → (bg_fill, accent_color, dark_header, border_color)
-        self._lane_palette: dict[str, tuple[str, str, str, str]] = {}
+        self._step_systems: dict[str, str] = {}   # имя шага → система
+        self._step_inputs: dict[str, list[str]] = {}   # имя шага → входы
+        self._step_outputs: dict[str, list[str]] = {}  # имя шага → выходы
 
     def generate(
         self,
@@ -255,7 +230,16 @@ class DirectVsdxGenerator:
         output_path: Path,
         process_data: dict[str, Any] | None = None,
     ) -> Path:
-        """Генерирует Visio-файл из BPMN JSON."""
+        """Генерирует Visio-файл из BPMN JSON.
+
+        Args:
+            bpmn_json: BPMN JSON с элементами, потоками.
+            output_path: Путь для сохранения .vsdx.
+            process_data: Доп. данные процесса (шаги, системы, pain_points).
+
+        Returns:
+            Путь к файлу.
+        """
         try:
             # Вычисляем layout, если его нет
             if "layout" not in bpmn_json or not bpmn_json.get("layout"):
@@ -264,6 +248,7 @@ class DirectVsdxGenerator:
                 layout = layout_engine.calculate_layout(bpmn_json)
                 bpmn_json = {**bpmn_json, "layout": layout}
 
+            # Загружаем доп. данные о шагах (системы, вх/вых)
             self._load_step_metadata(process_data)
 
             layout = bpmn_json.get("layout") or {}
@@ -282,27 +267,27 @@ class DirectVsdxGenerator:
                 if lid and pname:
                     lane_names[lid] = pname
 
-            # Назначаем палитру дорожкам по порядку
-            for lane_idx, lane_id in enumerate(lane_positions.keys()):
-                self._lane_palette[lane_id] = LANE_PALETTE_V2[lane_idx % len(LANE_PALETTE_V2)]
-
             self._compute_page_size(element_positions, lane_positions)
 
             shapes: list[str] = []
 
             # 1. Дорожки (фон + заголовок)
-            for lane_idx, (lane_id, lane_pos) in enumerate(lane_positions.items()):
+            for lane_id, lane_pos in lane_positions.items():
                 name = lane_names.get(lane_id, lane_pos.get("name", lane_id))
-                shapes.extend(self._lane_shapes(name, lane_pos, lane_idx))
+                shapes.extend(self._lane_shapes(name, lane_pos))
 
             # 2. Элементы (задачи, события, шлюзы)
             for elem in elements:
                 eid = elem.get("id", "")
                 pos = element_positions.get(eid)
                 if pos:
-                    shapes.extend(self._element_shapes(elem, pos, lane_positions))
+                    shapes.extend(self._element_shapes(elem, pos))
 
-            # 3. Соединители — один Shape с множеством Geometry секций
+            # 3. Соединители — один Shape с множеством Geometry секций.
+            # Visio при наличии множества отдельных connector-шейпов
+            # запускает auto-routing, который переопределяет Width
+            # соседних фигур (даже c GUARD). Объединение в одну
+            # фигуру полностью обходит эту проблему.
             connector_geoms: list[tuple[list[dict], str]] = []
             for flow in flows:
                 fid = flow.get("id", "")
@@ -336,9 +321,9 @@ class DirectVsdxGenerator:
                 "Ошибка создания Visio-файла", detail=str(exc),
             ) from exc
 
-    # ──────────────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------
     # Метаданные шагов
-    # ──────────────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------
 
     def _load_step_metadata(self, process_data: dict[str, Any] | None) -> None:
         """Загружает системы и документы из данных процесса."""
@@ -349,31 +334,19 @@ class DirectVsdxGenerator:
             return
         for step in process_data.get("steps") or []:
             name = step.get("name", "")
-            order = step.get("order", "")
-            performer = step.get("performer", step.get("executor", ""))
             system = step.get("system", "")
+            if name and system:
+                self._step_systems[name] = system
             inputs = step.get("inputs") or []
             outputs = step.get("outputs") or []
+            if inputs:
+                self._step_inputs[name] = inputs
+            if outputs:
+                self._step_outputs[name] = outputs
 
-            names_to_index = [name]
-            if order and name:
-                names_to_index.append(f"{order}. {name}")
-                if performer:
-                    names_to_index.append(f"{order}. {name} ({performer})")
-
-            for key in names_to_index:
-                if not key:
-                    continue
-                if system:
-                    self._step_systems[key] = system
-                if inputs:
-                    self._step_inputs[key] = inputs
-                if outputs:
-                    self._step_outputs[key] = outputs
-
-    # ──────────────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------
     # Размер страницы
-    # ──────────────────────────────────────────────────────────────────
+    # ------------------------------------------------------------------
 
     def _compute_page_size(
         self, element_positions: dict, lane_positions: dict,
@@ -385,8 +358,8 @@ class DirectVsdxGenerator:
             bottom = _px(pos.get("y", 0) + pos.get("height", 0))
             max_x = max(max_x, right)
             max_y = max(max_y, bottom)
-        self._page_width = max(11.0, max_x + 2.0)
-        self._page_height = max(8.5, max_y + 2.0)
+        self._page_width = max(11.0, max_x + 0.75)
+        self._page_height = max(8.5, max_y + 0.75)
 
     def _next_id(self) -> int:
         self._shape_id += 1
@@ -396,52 +369,30 @@ class DirectVsdxGenerator:
         """Инвертирует Y для Visio (снизу вверх)."""
         return self._page_height - y_in
 
-    def _lane_accent(self, lane_id: str) -> str:
-        """Возвращает accent_color дорожки по lane_id."""
-        entry = self._lane_palette.get(lane_id)
-        if entry:
-            return entry[1]
-        return LANE_PALETTE_V2[0][1]
-
-    # ══════════════════════════════════════════════════════════════════
+    # ==================================================================
     # Дорожка (swimlane)
-    # ══════════════════════════════════════════════════════════════════
+    # ==================================================================
 
-    def _lane_shapes(self, name: str, pos: dict, lane_idx: int = 0) -> list[str]:
-        """Создаёт дорожку: цветной фон + широкий тёмный заголовок."""
+    def _lane_shapes(self, name: str, pos: dict) -> list[str]:
+        """Создаёт дорожку: фон + заголовок слева."""
         parts: list[str] = []
         x = _px(pos.get("x", 0))
         y = _px(pos.get("y", 0))
         w = _px(pos.get("width", 600))
         h = _px(pos.get("height", 200))
 
-        bg_fill, accent, dark_header, border = LANE_PALETTE_V2[lane_idx % len(LANE_PALETTE_V2)]
+        # Фон дорожки (с рамкой)
+        parts.append(self._make_rect(
+            x, y, w, h,
+            fill=COLORS["lane_fill"],
+            line=COLORS["lane_line"],
+            line_weight=0.010,
+        ))
 
-        # Фон дорожки
-        sid = self._next_id()
-        cx = x + w / 2
-        cy = self._flip_y(y + h / 2)
-        bg_v = _vis_color(bg_fill)
-        border_v = _vis_color(border)
-        parts.append(
-            _shape_base(sid, cx, cy, w, h)
-            + f'      <Cell N="FillForegnd" V="{bg_v}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{bg_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{border_v}"/>\n'
-            + '      <Cell N="LineWeight" V="0.008"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + "    </Shape>"
-        )
-
-        # Заголовок дорожки — тёмный блок слева с белым вертикальным текстом
+        # Заголовок слева — повёрнутый текстовый блок
         header_w = _LANE_HEADER_W
         parts.append(self._make_lane_header(
             x, y, header_w, h, name,
-            header_fill=dark_header,
-            header_line=dark_header,
         ))
 
         return parts
@@ -450,30 +401,36 @@ class DirectVsdxGenerator:
         self,
         x: float, y: float, w: float, h: float,
         name: str,
-        header_fill: str | None = None,
-        header_line: str | None = None,
     ) -> str:
-        """Заголовок дорожки — широкий тёмный блок с белым текстом."""
+        """Заголовок дорожки — вертикальный текст на цветном фоне.
+
+        Создаёт узкий прямоугольник с тёмным фоном и белым текстом,
+        повёрнутым на 90° (чтение снизу вверх).
+        Текстовый блок растягивается на всю высоту дорожки,
+        чтобы длинные названия помещались в одну строку.
+        """
         sid = self._next_id()
         cx = x + w / 2
         cy = self._flip_y(y + h / 2)
-        fill_v = _vis_color(header_fill or "#2B5091")
-        line_v = _vis_color(header_line or "#2B5091")
+        fill_v = _vis_color(COLORS["lane_header_fill"])
+        line_v = _vis_color(COLORS["lane_line"])
+        text_v = _vis_color(COLORS["lane_header_text"])
         txt_angle = math.pi / 2  # 90° CCW — снизу вверх
 
         return (
             _shape_base(sid, cx, cy, w, h, name=name)
             + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="FillPattern" V="1"/>\n'
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + '      <Cell N="LineWeight" V="0.008"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="Char.Color" V="#FFFFFF"/>\n'
-            + '      <Cell N="Char.Size" V="0.1111"/>\n'  # 12pt / 1.08 ≈ 0.1111"
-            + '      <Cell N="Char.Style" V="1"/>\n'  # Bold
-            + '      <Cell N="Para.HorzAlign" V="1"/>\n'  # Center
-            + '      <Cell N="VerticalAlign" V="1"/>\n'  # Middle
+            + f'      <Cell N="LineWeight" V="0.012"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
+            + f'      <Cell N="Char.Size" V="0.09"/>\n'
+            + f'      <Cell N="Char.Style" V="1"/>\n'  # Bold
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'  # Center
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'   # Middle
+            # Текстовый блок: ширина = высота дорожки, высота = ширина заголовка
             + f'      <Cell N="TxtWidth" V="{h:.4f}"/>\n'
             + f'      <Cell N="TxtHeight" V="{w:.4f}"/>\n'
             + f'      <Cell N="TxtPinX" V="{w / 2:.4f}" F="Width*0.5"/>\n'
@@ -481,802 +438,541 @@ class DirectVsdxGenerator:
             + f'      <Cell N="TxtLocPinX" V="{h / 2:.4f}" F="TxtWidth*0.5"/>\n'
             + f'      <Cell N="TxtLocPinY" V="{w / 2:.4f}" F="TxtHeight*0.5"/>\n'
             + f'      <Cell N="TxtAngle" V="{txt_angle:.6f}"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
             + GEOM_RECT
             + f"      <Text>{xml_escape(name)}</Text>\n"
             + "    </Shape>"
         )
 
-    # ══════════════════════════════════════════════════════════════════
+    # ==================================================================
     # Элементы BPMN
-    # ══════════════════════════════════════════════════════════════════
+    # ==================================================================
 
-    def _find_lane_bottom(self, y_inch: float, h_inch: float, lane_positions: dict) -> float:
-        """Находит нижнюю границу дорожки для элемента."""
-        center_y = y_inch + h_inch / 2
-        best: float | None = None
-        best_dist = float("inf")
-        for lane_pos in lane_positions.values():
-            ly = _px(lane_pos.get("y", 0))
-            lh = _px(lane_pos.get("height", 0))
-            lane_center = ly + lh / 2
-            dist = abs(center_y - lane_center)
-            if dist < best_dist:
-                best_dist = dist
-                best = ly + lh
-        return best if best is not None else 1e9
-
-    def _element_shapes(
-        self,
-        elem: dict,
-        pos: dict,
-        lane_positions: dict | None = None,
-    ) -> list[str]:
-        """Создаёт фигуры для BPMN-элемента."""
+    def _element_shapes(self, elem: dict, pos: dict) -> list[str]:
+        """Создаёт фигуры для BPMN-элемента + дополнительные метки."""
         parts: list[str] = []
         etype = elem.get("type", "task")
-        name = _clean_text(elem.get("name", ""))
+        name = elem.get("name", "")
         x = _px(pos.get("x", 0))
         y = _px(pos.get("y", 0))
-        w = _px(pos.get("width", 180))
-        h = _px(pos.get("height", 90))
-        lane_id = elem.get("lane", "")
-
-        # Accent color for this element (from its lane)
-        accent = self._lane_accent(lane_id)
-
-        # Event helpers
-        r_inch = _px(pos.get("width", 36)) / 2
-        cx_px = pos.get("x", 0) + pos.get("width", 36) / 2
-        cy_px = pos.get("y", 0) + pos.get("height", 36) / 2
+        w = _px(pos.get("width", 120))
+        h = _px(pos.get("height", 80))
 
         if etype == "startEvent":
-            # Зелёный круг с треугольником-play внутри
-            parts.extend(self._make_start_event(cx_px, cy_px, r_inch))
+            r = _px(pos.get("width", 36)) / 2
+            cx_px = pos.get("x", 0) + pos.get("width", 36) / 2
+            cy_px = pos.get("y", 0) + pos.get("height", 36) / 2
+            # Круг с иконкой ▶ внутри (текст встроен в фигуру)
+            parts.append(self._make_circle(
+                cx_px, cy_px, r,
+                fill=COLORS["start_fill"],
+                line=COLORS["start_line"],
+                line_weight=0.03,
+                text="\u25B6", font_size=0.12,
+                text_color="#FFFFFF",
+            ))
+            # Подпись под событием — ограниченная ширина + word wrap
             if name:
-                parts.append(self._make_event_label(x, y, w, h, name, _EVENT_START_LINE))
-
-        elif etype == "messageStartEvent":
-            # Зелёный круг с конвертом
-            parts.extend(self._make_message_start_event(cx_px, cy_px, r_inch))
-            if name:
-                parts.append(self._make_event_label(x, y, w, h, name, _EVENT_START_LINE))
+                label_w, label_h = self._label_dims(name, 0.07, 0.065, max_w=1.4)
+                min_lx = _px(30) + _LANE_HEADER_W + 0.03
+                label_x = max(min_lx, x + w / 2 - label_w / 2)
+                parts.append(self._make_label(
+                    label_x,
+                    y + _px(pos.get("height", 36)) + 0.10,
+                    label_w, label_h,
+                    text=name, font_size=0.065,
+                    text_color="#375623",
+                ))
 
         elif etype == "endEvent":
-            # Красный жирный круг с квадратом-terminate
-            parts.extend(self._make_end_event(cx_px, cy_px, r_inch))
+            r = _px(pos.get("width", 36)) / 2
+            cx_px = pos.get("x", 0) + pos.get("width", 36) / 2
+            cy_px = pos.get("y", 0) + pos.get("height", 36) / 2
+            # Круг с иконкой ■ внутри (текст встроен в фигуру)
+            parts.append(self._make_circle(
+                cx_px, cy_px, r,
+                fill=COLORS["end_fill"],
+                line=COLORS["end_line"],
+                line_weight=0.05,
+                text="\u25A0", font_size=0.14,
+                text_color="#FFFFFF",
+            ))
             if name:
-                parts.append(self._make_event_label(x, y, w, h, name, _EVENT_END_LINE))
-
-        elif etype == "messageEndEvent":
-            # Красный жирный круг с закрашенным конвертом
-            parts.extend(self._make_message_end_event(cx_px, cy_px, r_inch))
-            if name:
-                parts.append(self._make_event_label(x, y, w, h, name, _EVENT_END_LINE))
-
-        elif etype in ("cancelEndEvent", "cancelEvent"):
-            # Двойной красный круг с X
-            parts.extend(self._make_cancel_event(cx_px, cy_px, r_inch))
-            if name:
-                parts.append(self._make_event_label(x, y, w, h, name, _EVENT_CANCEL_LINE))
-
-        elif etype in ("timerIntermediateCatchEvent", "timerEvent"):
-            # Двойной жёлтый круг с часами
-            parts.extend(self._make_timer_event(cx_px, cy_px, r_inch))
-            timer_label = elem.get("timer_wait", "") or name
-            if timer_label:
-                parts.append(self._make_event_label(x, y, w, h, timer_label, _EVENT_TIMER_LINE))
+                label_w, label_h = self._label_dims(name, 0.07, 0.065, max_w=1.4)
+                min_lx = _px(30) + _LANE_HEADER_W + 0.03
+                label_x = max(min_lx, x + w / 2 - label_w / 2)
+                parts.append(self._make_label(
+                    label_x,
+                    y + _px(pos.get("height", 36)) + 0.10,
+                    label_w, label_h,
+                    text=name, font_size=0.065,
+                    text_color="#C00000",
+                ))
 
         elif "Gateway" in etype or "gateway" in etype:
-            # Жёлтый ромб + метка вопроса выше
-            parts.append(self._make_diamond(x, y, w, h))
-            condition_label = _clean_text(elem.get("condition_label", "")) or name
-            if condition_label:
-                label_w, label_h = self._label_dims(condition_label, max_w=2.2, min_w=w)
-                parts.append(self._make_gateway_label(
+            markers = {
+                "exclusiveGateway": "\u00D7",   # × знак умножения
+                "parallelGateway": "+",
+                "inclusiveGateway": "\u25CB",   # ○ круг
+                "eventBasedGateway": "\u2605",  # ★ звезда
+            }
+            marker = markers.get(etype, "\u00D7")
+            parts.append(self._make_diamond(
+                x, y, w, h,
+                fill=COLORS["gateway_fill"],
+                line=COLORS["gateway_line"],
+                marker=marker,
+            ))
+            # Подпись шлюза — ограниченная ширина + word wrap
+            if name:
+                label_w, label_h = self._label_dims(name, 0.07, 0.06)
+                label_w = max(label_w, w + 0.2)  # мин: шлюз + 0.2"
+                parts.append(self._make_label(
                     x + w / 2 - label_w / 2,
-                    y - label_h - 0.10,
+                    y + h + 0.04,
                     label_w, label_h,
-                    condition_label,
+                    text=name, font_size=0.06,
+                    text_color="#806000",
+                    italic=True,
                 ))
 
         else:
-            # Задача: белый прямоугольник + акцент-полоса слева + иконка роли
-            parts.extend(self._make_task(x, y, w, h, name, accent))
-            # Маркеры подпроцесса/multi-instance
-            is_subprocess = elem.get("is_subprocess", False)
-            multi_instance = elem.get("multi_instance", False)
-            if is_subprocess and multi_instance:
-                sp_size = 0.16
-                mi_size = 0.18
-                parts.append(self._make_subprocess_marker(
-                    x + w / 2 - sp_size - 0.04, y + h - sp_size - 0.02, sp_size,
+            # Задача (userTask, serviceTask, task, и т.д.)
+            task_colors = {
+                "userTask": (COLORS["user_task_fill"], COLORS["user_task_line"]),
+                "serviceTask": (COLORS["service_task_fill"], COLORS["service_task_line"]),
+            }
+            fill, line_c = task_colors.get(
+                etype, (COLORS["task_fill"], COLORS["task_line"]),
+            )
+
+            # Иконка типа встраивается в текст (надёжнее отдельного shape)
+            marker = TASK_MARKERS.get(etype, "")
+            display_name = f"{marker} {name}" if marker else name
+
+            parts.append(self._make_rect(
+                x, y, w, h,
+                fill=fill, line=line_c,
+                text=display_name,
+                text_color=COLORS["task_text"],
+                rounding=0.06,
+                line_weight=0.012,
+                font_size=0.075,
+                left_margin=0.04,
+                right_margin=0.04,
+                top_margin=0.03,
+                bottom_margin=0.03,
+            ))
+
+            # === Бейджи под задачей (вертикальный стек) ===
+            badge_y = y + h + 0.12  # начало стека под задачей
+            max_badge_w = w  # бейджи не шире задачи
+
+            # Системная метка
+            system = self._step_systems.get(name, "")
+            if system:
+                sys_text = system  # просто название системы (цвет отличает)
+                sys_w = min(self._badge_w(sys_text), max_badge_w)
+                sys_h = self._badge_h(sys_text, sys_w)
+                parts.append(self._make_system_badge(
+                    x + w / 2 - sys_w / 2, badge_y,
+                    sys_text, sys_w, sys_h,
                 ))
-                parts.append(self._make_multi_instance_marker(
-                    x + w / 2 + 0.04, y + h - mi_size - 0.02, mi_size,
+                badge_y += sys_h + 0.10  # зазор между бейджами
+
+            # Входные документы
+            inputs_list = self._step_inputs.get(name, [])
+            if inputs_list:
+                doc_text = inputs_list[0]  # просто название (цвет отличает)
+                doc_w = min(self._badge_w(doc_text), max_badge_w)
+                doc_h = self._badge_h(doc_text, doc_w)
+                parts.append(self._make_doc_badge(
+                    x + w / 2 - doc_w / 2,
+                    badge_y,
+                    doc_text, doc_w, doc_h,
+                    is_input=True,
                 ))
-            elif is_subprocess:
-                sp_size = 0.16
-                parts.append(self._make_subprocess_marker(
-                    x + w / 2 - sp_size / 2, y + h - sp_size - 0.02, sp_size,
+                badge_y += doc_h + 0.10
+
+            # Выходные документы
+            outputs = self._step_outputs.get(name, [])
+            if outputs:
+                doc_text = outputs[0]  # просто название (цвет отличает)
+                doc_w = min(self._badge_w(doc_text), max_badge_w)
+                doc_h = self._badge_h(doc_text, doc_w)
+                parts.append(self._make_doc_badge(
+                    x + w / 2 - doc_w / 2,
+                    badge_y,
+                    doc_text, doc_w, doc_h,
                 ))
-            elif multi_instance:
-                mi_size = 0.18
-                parts.append(self._make_multi_instance_marker(
-                    x + w / 2 - mi_size / 2, y + h - mi_size - 0.02, mi_size,
-                ))
 
         return parts
 
-    # ══════════════════════════════════════════════════════════════════
-    # BPMN-события — геометрические фигуры
-    # ══════════════════════════════════════════════════════════════════
+    # ==================================================================
+    # Примитивы фигур
+    # ==================================================================
 
-    def _make_start_event(
-        self, cx_px: float, cy_px: float, r_inch: float,
-    ) -> list[str]:
-        """startEvent: зелёный тонкий круг + треугольник-play."""
-        parts = []
-        d = r_inch * 2
-        cx = _px(cx_px)
-        cy = self._flip_y(_px(cy_px))
-
-        # Внешний круг
-        sid = self._next_id()
-        parts.append(
-            _shape_base(sid, cx, cy, d, d, name="StartEvent")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_START_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_START_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_START_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0208"/>\n'  # 1.5pt
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d)
-            + "    </Shape>"
-        )
-
-        # Треугольник-play внутри (чуть меньше круга)
-        play_size = d * 0.55
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, cx, cy, play_size, play_size, name="PlayTriangle")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_START_LINE}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_START_LINE}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_PLAY
-            + "    </Shape>"
-        )
-        return parts
-
-    def _make_message_start_event(
-        self, cx_px: float, cy_px: float, r_inch: float,
-    ) -> list[str]:
-        """messageStartEvent: зелёный круг + конверт."""
-        parts = []
-        d = r_inch * 2
-        cx = _px(cx_px)
-        cy = self._flip_y(_px(cy_px))
-
-        # Круг
-        sid = self._next_id()
-        parts.append(
-            _shape_base(sid, cx, cy, d, d, name="MsgStartEvent")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_START_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_START_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_START_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0208"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d)
-            + "    </Shape>"
-        )
-
-        # Конверт — прямоугольник
-        ew = d * 0.58
-        eh = d * 0.40
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, cx, cy, ew, eh, name="EnvelopeRect")
-            + '      <Cell N="FillForegnd" V="#A5D6A7"/>\n'
-            + '      <Cell N="FillBkgnd" V="#A5D6A7"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_START_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.008"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + "    </Shape>"
-        )
-
-        # Крышка конверта (V-образная линия)
-        sid3 = self._next_id()
-        parts.append(
-            _shape_base(sid3, cx, cy, ew, eh, name="EnvelopeFlap")
-            + '      <Cell N="FillPattern" V="0"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_START_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.008"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + '      <Section N="Geometry" IX="0">\n'
-            + '        <Cell N="NoFill" V="1"/>\n'
-            + '        <Cell N="NoLine" V="0"/>\n'
-            + '        <Row T="RelMoveTo" IX="1"><Cell N="X" V="0.0"/><Cell N="Y" V="1.0"/></Row>\n'
-            + '        <Row T="RelLineTo" IX="2"><Cell N="X" V="0.5"/><Cell N="Y" V="0.35"/></Row>\n'
-            + '        <Row T="RelLineTo" IX="3"><Cell N="X" V="1.0"/><Cell N="Y" V="1.0"/></Row>\n'
-            + '      </Section>\n'
-            + "    </Shape>"
-        )
-        return parts
-
-    def _make_end_event(
-        self, cx_px: float, cy_px: float, r_inch: float,
-    ) -> list[str]:
-        """endEvent: красный жирный круг + квадрат-terminate."""
-        parts = []
-        d = r_inch * 2
-        cx = _px(cx_px)
-        cy = self._flip_y(_px(cy_px))
-
-        sid = self._next_id()
-        parts.append(
-            _shape_base(sid, cx, cy, d, d, name="EndEvent")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_END_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_END_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_END_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0417"/>\n'  # 3pt
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d)
-            + "    </Shape>"
-        )
-
-        # Квадрат-terminate внутри
-        sq_size = d * 0.42
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, cx, cy, sq_size, sq_size, name="TerminateSquare")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_END_LINE}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_END_LINE}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + "    </Shape>"
-        )
-        return parts
-
-    def _make_message_end_event(
-        self, cx_px: float, cy_px: float, r_inch: float,
-    ) -> list[str]:
-        """messageEndEvent: красный жирный круг + закрашенный конверт."""
-        parts = []
-        d = r_inch * 2
-        cx = _px(cx_px)
-        cy = self._flip_y(_px(cy_px))
-
-        # Жирный красный круг
-        sid = self._next_id()
-        parts.append(
-            _shape_base(sid, cx, cy, d, d, name="MsgEndEvent")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_END_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_END_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_END_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0417"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d)
-            + "    </Shape>"
-        )
-
-        # Закрашенный конверт
-        ew = d * 0.58
-        eh = d * 0.40
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, cx, cy, ew, eh, name="EnvelopeRectEnd")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_END_LINE}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_END_LINE}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_END_FILL}"/>\n'
-            + '      <Cell N="LineWeight" V="0.008"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + "    </Shape>"
-        )
-
-        # Крышка конверта
-        sid3 = self._next_id()
-        parts.append(
-            _shape_base(sid3, cx, cy, ew, eh, name="EnvelopeFlapEnd")
-            + '      <Cell N="FillPattern" V="0"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_END_FILL}"/>\n'
-            + '      <Cell N="LineWeight" V="0.010"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + '      <Section N="Geometry" IX="0">\n'
-            + '        <Cell N="NoFill" V="1"/>\n'
-            + '        <Cell N="NoLine" V="0"/>\n'
-            + '        <Row T="RelMoveTo" IX="1"><Cell N="X" V="0.0"/><Cell N="Y" V="1.0"/></Row>\n'
-            + '        <Row T="RelLineTo" IX="2"><Cell N="X" V="0.5"/><Cell N="Y" V="0.35"/></Row>\n'
-            + '        <Row T="RelLineTo" IX="3"><Cell N="X" V="1.0"/><Cell N="Y" V="1.0"/></Row>\n'
-            + '      </Section>\n'
-            + "    </Shape>"
-        )
-        return parts
-
-    def _make_cancel_event(
-        self, cx_px: float, cy_px: float, r_inch: float,
-    ) -> list[str]:
-        """cancelEndEvent: двойной красный круг + X-крест."""
-        parts = []
-        d = r_inch * 2
-        cx = _px(cx_px)
-        cy = self._flip_y(_px(cy_px))
-
-        # Внешний круг (жирный)
-        sid = self._next_id()
-        parts.append(
-            _shape_base(sid, cx, cy, d, d, name="CancelOuter")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_CANCEL_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_CANCEL_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_CANCEL_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0417"/>\n'  # 3pt
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d)
-            + "    </Shape>"
-        )
-
-        # Внутренний круг (тонкий)
-        d_inner = d * 0.80
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, cx, cy, d_inner, d_inner, name="CancelInner")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_CANCEL_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_CANCEL_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_CANCEL_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.010"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d_inner)
-            + "    </Shape>"
-        )
-
-        # X-крест: 2 диагональные линии
-        # Параметры: 40% радиуса внутреннего круга от центра
-        cross_half = r_inch * 0.35
-        # Линия 1: ↘ (top-left to bottom-right) — в Visio coords
-        x1_v = cx - cross_half
-        y1_v = cy + cross_half  # Visio: + = up
-        x2_v = cx + cross_half
-        y2_v = cy - cross_half
-        parts.append(self._make_line_vis(
-            x1_v, y1_v, x2_v, y2_v,
-            _EVENT_CANCEL_LINE, 0.0208,
-        ))
-        # Линия 2: ↙ (top-right to bottom-left)
-        parts.append(self._make_line_vis(
-            cx + cross_half, cy + cross_half,
-            cx - cross_half, cy - cross_half,
-            _EVENT_CANCEL_LINE, 0.0208,
-        ))
-        return parts
-
-    def _make_timer_event(
-        self, cx_px: float, cy_px: float, r_inch: float,
-    ) -> list[str]:
-        """timerIntermediateCatchEvent: двойной жёлтый круг + часы."""
-        parts = []
-        d = r_inch * 2
-        cx = _px(cx_px)
-        cy = self._flip_y(_px(cy_px))
-
-        # Внешний круг
-        sid = self._next_id()
-        parts.append(
-            _shape_base(sid, cx, cy, d, d, name="TimerOuter")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_TIMER_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_TIMER_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_TIMER_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0139"/>\n'  # 1pt
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d)
-            + "    </Shape>"
-        )
-
-        # Внутренний круг
-        d_inner = d * 0.80
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, cx, cy, d_inner, d_inner, name="TimerInner")
-            + f'      <Cell N="FillForegnd" V="{_EVENT_TIMER_FILL}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{_EVENT_TIMER_FILL}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_EVENT_TIMER_LINE}"/>\n'
-            + '      <Cell N="LineWeight" V="0.010"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(d_inner)
-            + "    </Shape>"
-        )
-
-        # Tick-марки на 12, 3, 6, 9 часов (в Visio coords)
-        tick_inner_r = r_inch * 0.58
-        tick_outer_r = r_inch * 0.72
-        for angle_deg in (90, 0, 270, 180):  # 12=90°, 3=0°, 6=270°, 9=180°
-            rad = math.radians(angle_deg)
-            x1_v = cx + math.cos(rad) * tick_inner_r
-            y1_v = cy + math.sin(rad) * tick_inner_r
-            x2_v = cx + math.cos(rad) * tick_outer_r
-            y2_v = cy + math.sin(rad) * tick_outer_r
-            parts.append(self._make_line_vis(x1_v, y1_v, x2_v, y2_v, _EVENT_TIMER_LINE, 0.012))
-
-        # Часовая стрелка → 3 часа (вправо, ~50% радиуса)
-        hand_h_len = r_inch * 0.42
-        parts.append(self._make_line_vis(
-            cx, cy,
-            cx + hand_h_len, cy,
-            _EVENT_TIMER_LINE, 0.015,
-        ))
-
-        # Минутная стрелка → 12 часов (вверх, ~62% радиуса)
-        hand_m_len = r_inch * 0.55
-        parts.append(self._make_line_vis(
-            cx, cy,
-            cx, cy + hand_m_len,
-            _EVENT_TIMER_LINE, 0.010,
-        ))
-        return parts
-
-    def _make_event_label(
+    def _make_rect(
         self,
         x: float, y: float, w: float, h: float,
-        text: str,
-        text_color: str,
+        fill: str, line: str, text: str = "",
+        text_color: str = "#000000",
+        rounding: float = 0.0,
+        line_weight: float = 0.01,
+        font_size: float = 0.1111,
+        text_angle: float = 0,
+        left_margin: float = 0.0,
+        right_margin: float = 0.0,
+        top_margin: float = 0.0,
+        bottom_margin: float = 0.0,
     ) -> str:
-        """Подпись под событием (прозрачный фон)."""
-        label_w, label_h = self._label_dims(text, max_w=1.5, min_w=0.50)
-        min_lx = _px(80) + _LANE_HEADER_W + 0.05
-        label_x = max(min_lx, x + w / 2 - label_w / 2)
-        label_y = y + h + 0.10
-
-        sid = self._next_id()
-        cx = label_x + label_w / 2
-        cy = self._flip_y(label_y + label_h / 2)
-        text_v = _vis_color(text_color)
-
-        return (
-            _shape_base(sid, cx, cy, label_w, label_h, name="EventLabel")
-            + '      <Cell N="FillPattern" V="0"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
-            + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-            + '      <Cell N="Char.Size" V="0.0833"/>\n'  # ~7pt / 1.08
-            + '      <Cell N="Para.HorzAlign" V="1"/>\n'
-            + '      <Cell N="VerticalAlign" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + f"      <Text>{xml_escape(text)}</Text>\n"
-            + "    </Shape>"
-        )
-
-    # ══════════════════════════════════════════════════════════════════
-    # Задача (Bitrix24 style)
-    # ══════════════════════════════════════════════════════════════════
-
-    def _make_task(
-        self,
-        x: float, y: float, w: float, h: float,
-        name: str,
-        accent_color: str,
-    ) -> list[str]:
-        """Задача: белый фон + акцент-полоса слева + иконка роли + текст."""
-        parts = []
-
-        # 1. Основной прямоугольник (белый, скруглённый)
         sid = self._next_id()
         cx = x + w / 2
         cy = self._flip_y(y + h / 2)
-        fill_v = _vis_color(_TASK_FILL)
-        border_v = _vis_color(_TASK_BORDER)
-        text_v = _vis_color(_TASK_TEXT)
-        accent_v = _vis_color(accent_color)
+        fill_v = _vis_color(fill)
+        line_v = _vis_color(line)
+        text_v = _vis_color(text_color)
+        text_esc = xml_escape(text) if text else ""
+        text_block = f"      <Text>{text_esc}</Text>\n" if text_esc else ""
 
-        parts.append(
+        # Поворот текста
+        angle_cell = ""
+        if text_angle:
+            rad = math.radians(text_angle)
+            angle_cell = f'      <Cell N="TxtAngle" V="{rad:.6f}"/>\n'
+
+        # Отступы текста от границ фигуры
+        margin_cells = ""
+        if left_margin > 0:
+            margin_cells += f'      <Cell N="LeftMargin" V="{left_margin:.4f}"/>\n'
+        if right_margin > 0:
+            margin_cells += f'      <Cell N="RightMargin" V="{right_margin:.4f}"/>\n'
+        if top_margin > 0:
+            margin_cells += f'      <Cell N="TopMargin" V="{top_margin:.4f}"/>\n'
+        if bottom_margin > 0:
+            margin_cells += f'      <Cell N="BottomMargin" V="{bottom_margin:.4f}"/>\n'
+
+        return (
             _shape_base(sid, cx, cy, w, h)
             + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{border_v}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0104"/>\n'  # 0.75pt
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + f'      <Cell N="Rounding" V="{_TASK_ROUND:.4f}"/>\n'
+            + f'      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="LineColor" V="{line_v}"/>\n'
+            + f'      <Cell N="LineWeight" V="{line_weight:.4f}"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="Rounding" V="{rounding:.4f}"/>\n'
             + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-            + '      <Cell N="Char.Size" V="0.1014"/>\n'  # ~11pt
-            + '      <Cell N="Char.Face" V="Calibri"/>\n'
-            + '      <Cell N="Para.HorzAlign" V="0"/>\n'  # Left
-            + '      <Cell N="VerticalAlign" V="1"/>\n'    # Middle
-            + f'      <Cell N="LeftMargin" V="{_ACCENT_BAR_W + 0.07:.4f}"/>\n'
-            + '      <Cell N="RightMargin" V="0.22"/>\n'
-            + '      <Cell N="TopMargin" V="0.06"/>\n'
-            + '      <Cell N="BottomMargin" V="0.04"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
+            + f'      <Cell N="Char.Size" V="{font_size:.4f}"/>\n'
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'
+            + margin_cells
+            + f'      <Cell N="ObjType" V="1"/>\n'
+            + angle_cell
             + GEOM_RECT
-            + f"      <Text>{xml_escape(name)}</Text>\n"
+            + text_block
             + "    </Shape>"
         )
 
-        # 2. Акцент-полоса (цветная вертикальная полоска слева)
-        bar_h = h - 2 * _TASK_ROUND
-        bar_y = y + _TASK_ROUND
-        bar_x = x
-        sid2 = self._next_id()
-        bcx = bar_x + _ACCENT_BAR_W / 2
-        bcy = self._flip_y(bar_y + bar_h / 2)
-        parts.append(
-            _shape_base(sid2, bcx, bcy, _ACCENT_BAR_W, bar_h, name="AccentBar")
-            + f'      <Cell N="FillForegnd" V="{accent_v}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{accent_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
-            + '      <Cell N="Rounding" V="0.042"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + "    </Shape>"
-        )
-
-        # 3. Иконка роли: голова + тело (в правом верхнем углу)
-        parts.extend(self._make_person_icon(x, y, w, accent_color))
-
-        return parts
-
-    def _make_person_icon(
+    def _make_circle(
         self,
-        task_x: float, task_y: float,
-        task_w: float,
-        accent_color: str,
-    ) -> list[str]:
-        """Иконка-персонаж: круг (голова) + эллипс (тело) — top-right задачи."""
-        parts = []
-        fill_v = _vis_color(accent_color)
-        icon_inset = 0.09   # отступ от края задачи
-
-        # Голова (маленький круг)
-        head_d = 0.11
-        head_cx = task_x + task_w - icon_inset - head_d / 2
-        head_cy = task_y + icon_inset + head_d / 2
+        cx_px: float, cy_px: float, radius: float,
+        fill: str, line: str,
+        line_weight: float = 0.02,
+        text: str = "",
+        text_color: str = "#FFFFFF",
+        font_size: float = 0.12,
+    ) -> str:
         sid = self._next_id()
-        parts.append(
-            _shape_base(sid, head_cx, self._flip_y(head_cy), head_d, head_d, name="PersonHead")
+        d = radius * 2
+        cx = _px(cx_px)
+        cy = self._flip_y(_px(cy_px))
+        fill_v = _vis_color(fill)
+        line_v = _vis_color(line)
+        text_v = _vis_color(text_color)
+
+        text_block = ""
+        text_cells = ""
+        if text:
+            text_block = f"      <Text>{xml_escape(text)}</Text>\n"
+            text_cells = (
+                f'      <Cell N="Char.Color" V="{text_v}"/>\n'
+                f'      <Cell N="Char.Size" V="{font_size:.4f}"/>\n'
+                f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+                f'      <Cell N="VerticalAlign" V="1"/>\n'
+            )
+
+        return (
+            _shape_base(sid, cx, cy, d, d)
             + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(head_d)
+            + f'      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="LineColor" V="{line_v}"/>\n'
+            + f'      <Cell N="LineWeight" V="{line_weight:.4f}"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
+            + text_cells
+            + _geom_ellipse(d)
+            + text_block
             + "    </Shape>"
         )
-
-        # Тело (маленький широкий эллипс)
-        body_w = 0.17
-        body_h = 0.09
-        body_cx = task_x + task_w - icon_inset - head_d / 2
-        body_cy = head_cy + head_d / 2 + body_h / 2 + 0.01
-        sid2 = self._next_id()
-        parts.append(
-            _shape_base(sid2, body_cx, self._flip_y(body_cy), body_w, body_h, name="PersonBody")
-            + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
-            + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + _geom_ellipse(body_w, body_h)
-            + "    </Shape>"
-        )
-        return parts
-
-    # ══════════════════════════════════════════════════════════════════
-    # Шлюз (gateway)
-    # ══════════════════════════════════════════════════════════════════
 
     def _make_diamond(
         self,
         x: float, y: float, w: float, h: float,
+        fill: str, line: str, marker: str = "\u00D7",
     ) -> str:
-        """Жёлтый ромб шлюза с × маркером."""
         sid = self._next_id()
         cx = x + w / 2
         cy = self._flip_y(y + h / 2)
-        fill_v = _vis_color(_GATEWAY_FILL)
-        line_v = _vis_color(_GATEWAY_LINE)
+        fill_v = _vis_color(fill)
+        line_v = _vis_color(line)
 
         return (
             _shape_base(sid, cx, cy, w, h)
             + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
             + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="FillPattern" V="1"/>\n'
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + f'      <Cell N="LineWeight" V="{_GATEWAY_LW:.4f}"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="Char.Size" V="0.1667"/>\n'  # крупный × внутри
-            + '      <Cell N="Char.Style" V="1"/>\n'      # Bold
-            + f'      <Cell N="Char.Color" V="{line_v}"/>\n'
-            + '      <Cell N="Para.HorzAlign" V="1"/>\n'
-            + '      <Cell N="VerticalAlign" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
+            + f'      <Cell N="LineWeight" V="0.0139"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="Char.Size" V="0.14"/>\n'
+            + f'      <Cell N="Char.Style" V="1"/>\n'
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
             + GEOM_DIAMOND
-            + "      <Text>\u00D7</Text>\n"  # ×
+            + f"      <Text>{xml_escape(marker)}</Text>\n"
             + "    </Shape>"
         )
 
-    def _make_gateway_label(
+    def _make_task_icon(
+        self,
+        x: float, y: float, size: float, marker: str,
+    ) -> str:
+        """Иконка типа задачи — маленький overlay в верхнем-левом углу.
+
+        Прозрачный фон, без рамки — только символ Unicode.
+        Размещается поверх прямоугольника задачи.
+        """
+        sid = self._next_id()
+        cx = x + size / 2
+        cy = self._flip_y(y + size / 2)
+        return (
+            _shape_base(sid, cx, cy, size, size, name="TaskIcon")
+            + f'      <Cell N="FillPattern" V="0"/>\n'
+            + f'      <Cell N="LinePattern" V="0"/>\n'
+            + f'      <Cell N="Char.Color" V="#FFFFFF"/>\n'
+            + f'      <Cell N="Char.Size" V="0.11"/>\n'
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
+            + GEOM_RECT
+            + f"      <Text>{xml_escape(marker)}</Text>\n"
+            + "    </Shape>"
+        )
+
+    def _make_label(
         self,
         x: float, y: float, w: float, h: float,
-        text: str,
+        text: str, font_size: float = 0.08,
+        text_color: str = "#000000",
+        italic: bool = False,
     ) -> str:
-        """Подпись шлюза — прозрачный блок выше ромба."""
+        """Текстовая метка — реализована как прямоугольник с фоном дорожки.
+
+        Visio игнорирует Width для текстового блока в фигурах без
+        видимой заливки (FillPattern=0). Поэтому используем полноценный
+        прямоугольник с заливкой цвета дорожки для корректного переноса.
+        """
         sid = self._next_id()
         cx = x + w / 2
         cy = self._flip_y(y + h / 2)
-        text_v = _vis_color(_LABEL_TEXT_COLOR)
+        text_v = _vis_color(text_color)
+        fill_v = _vis_color(COLORS["lane_fill"])
+
+        char_style = ""
+        if italic:
+            char_style = '      <Cell N="Char.Style" V="2"/>\n'
 
         return (
-            _shape_base(sid, cx, cy, w, h, name="GatewayLabel")
-            + '      <Cell N="FillPattern" V="0"/>\n'
-            + '      <Cell N="LinePattern" V="0"/>\n'
+            _shape_base(sid, cx, cy, w, h)
+            + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
+            + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
+            + f'      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="LineColor" V="{fill_v}"/>\n'
+            + f'      <Cell N="LineWeight" V="0.001"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="Rounding" V="0.0000"/>\n'
             + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-            + '      <Cell N="Char.Size" V="0.0833"/>\n'
-            + '      <Cell N="Char.Style" V="2"/>\n'  # Italic
-            + '      <Cell N="Para.HorzAlign" V="1"/>\n'
-            + '      <Cell N="VerticalAlign" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
+            + f'      <Cell N="Char.Size" V="{font_size:.4f}"/>\n'
+            + char_style
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
             + GEOM_RECT
             + f"      <Text>{xml_escape(text)}</Text>\n"
             + "    </Shape>"
         )
 
-    # ══════════════════════════════════════════════════════════════════
-    # Маркеры подпроцессов
-    # ══════════════════════════════════════════════════════════════════
-
-    def _make_subprocess_marker(self, x: float, y: float, size: float) -> str:
-        """Маркер подпроцесса [+]."""
-        sid = self._next_id()
-        cx = x + size / 2
-        cy = self._flip_y(y + size / 2)
-        return (
-            _shape_base(sid, cx, cy, size, size, name="SubprocessMarker")
-            + '      <Cell N="FillForegnd" V="#FFFFFF"/>\n'
-            + '      <Cell N="FillBkgnd" V="#FFFFFF"/>\n'
-            + '      <Cell N="FillPattern" V="1"/>\n'
-            + f'      <Cell N="LineColor" V="{_TASK_BORDER}"/>\n'
-            + '      <Cell N="LineWeight" V="0.008"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + f'      <Cell N="Char.Color" V="{_TASK_TEXT}"/>\n'
-            + '      <Cell N="Char.Size" V="0.10"/>\n'
-            + '      <Cell N="Char.Style" V="1"/>\n'
-            + '      <Cell N="Para.HorzAlign" V="1"/>\n'
-            + '      <Cell N="VerticalAlign" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + GEOM_RECT
-            + "      <Text>+</Text>\n"
-            + "    </Shape>"
-        )
-
-    def _make_multi_instance_marker(self, x: float, y: float, size: float) -> str:
-        """Маркер multi-instance ||| — три вертикальные линии."""
-        parts = []
-        bar_w = size / 6
-        bar_gap = bar_w * 1.5
-        total = 3 * bar_w + 2 * bar_gap
-        start_x = x + (size - total) / 2
-
-        for i in range(3):
-            bx = start_x + i * (bar_w + bar_gap)
-            sid = self._next_id()
-            cx = bx + bar_w / 2
-            cy = self._flip_y(y + size / 2)
-            parts.append(
-                _shape_base(sid, cx, cy, bar_w, size, name="MIBar")
-                + f'      <Cell N="FillForegnd" V="{_TASK_TEXT}"/>\n'
-                + f'      <Cell N="FillBkgnd" V="{_TASK_TEXT}"/>\n'
-                + '      <Cell N="FillPattern" V="1"/>\n'
-                + '      <Cell N="LinePattern" V="0"/>\n'
-                + '      <Cell N="ObjType" V="1"/>\n'
-                + GEOM_RECT
-                + "    </Shape>"
-            )
-        return "\n".join(parts)
-
-    # ══════════════════════════════════════════════════════════════════
-    # Линии (для геометрических фигур событий)
-    # ══════════════════════════════════════════════════════════════════
-
-    def _make_line_vis(
-        self,
-        x1_vis: float, y1_vis: float,
-        x2_vis: float, y2_vis: float,
-        line_color: str = "#404040",
-        line_weight: float = 0.010,
-    ) -> str:
-        """Линия в Visio-координатах (уже перевёрнутые Y)."""
-        sid = self._next_id()
-        margin = 0.001
-        min_x = min(x1_vis, x2_vis) - margin
-        max_x = max(x1_vis, x2_vis) + margin
-        min_y = min(y1_vis, y2_vis) - margin
-        max_y = max(y1_vis, y2_vis) + margin
-
-        w = max(max_x - min_x, 0.002)
-        h = max(max_y - min_y, 0.002)
-        cx = (min_x + max_x) / 2
-        cy = (min_y + max_y) / 2
-
-        # Local coordinates within the shape's bounding box
-        lx1 = x1_vis - min_x
-        ly1 = y1_vis - min_y
-        lx2 = x2_vis - min_x
-        ly2 = y2_vis - min_y
-
-        line_v = _vis_color(line_color)
-        return (
-            _shape_base(sid, cx, cy, w, h, name="Line")
-            + '      <Cell N="FillPattern" V="0"/>\n'
-            + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + f'      <Cell N="LineWeight" V="{line_weight:.4f}"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
-            + '      <Section N="Geometry" IX="0">\n'
-            + '        <Cell N="NoFill" V="1"/>\n'
-            + '        <Cell N="NoLine" V="0"/>\n'
-            + f'        <Row T="MoveTo" IX="1">'
-            + f'<Cell N="X" V="{lx1:.4f}"/><Cell N="Y" V="{ly1:.4f}"/></Row>\n'
-            + f'        <Row T="LineTo" IX="2">'
-            + f'<Cell N="X" V="{lx2:.4f}"/><Cell N="Y" V="{ly2:.4f}"/></Row>\n'
-            + '      </Section>\n'
-            + "    </Shape>"
-        )
-
-    # ══════════════════════════════════════════════════════════════════
-    # Утилиты размеров
-    # ══════════════════════════════════════════════════════════════════
+    # ------------------------------------------------------------------
+    # Утилиты размеров (бейджи, labels)
+    # ------------------------------------------------------------------
 
     @staticmethod
     def _label_dims(
         text: str,
-        char_coeff: float = 0.085,
-        font_size: float = 0.08,
-        max_w: float = 2.2,
-        min_w: float = 1.0,
+        char_coeff: float = 0.07,
+        font_size: float = 0.065,
+        max_w: float = 1.8,
+        min_w: float = 0.8,
     ) -> tuple[float, float]:
-        """Вычисляет (width, height) для текстовой метки."""
+        """Вычисляет (width, height) для текстовой метки с word wrap.
+
+        Ширина ограничена max_w, при превышении текст переносится
+        и высота увеличивается.
+        """
         raw_w = _visual_text_width(text, char_coeff=char_coeff)
-        label_w = max(min(raw_w + 0.12, max_w), min_w)
+        label_w = max(min(raw_w + 0.1, max_w), min_w)
+        # Сколько строк нужно
         visual_len = _visual_text_width(text, char_coeff=1.0)
         chars_per_line = max(1, int(label_w / char_coeff))
         lines = max(1, math.ceil(visual_len / chars_per_line))
-        label_h = max(0.28, font_size * 1.8 * lines + 0.06)
+        label_h = max(0.30, font_size * 1.8 * lines + 0.06)
         return label_w, label_h
 
-    # ══════════════════════════════════════════════════════════════════
-    # Соединители
-    # ══════════════════════════════════════════════════════════════════
+    @staticmethod
+    def _badge_w(text: str) -> float:
+        """Ширина бейджа: visual_text_width + padding 0.14"."""
+        text_w = _visual_text_width(text, char_coeff=0.075)
+        return max(text_w + 0.14, 0.8)
+
+    @staticmethod
+    def _badge_h(
+        text: str, badge_w: float, font_size: float = 0.06,
+    ) -> float:
+        """Динамическая высота бейджа: 0.22" для 1 строки, больше для 2+.
+
+        Учитывает word-wrap в Visio: текст переносится по словам,
+        а не по символам, что увеличивает кол-во строк.
+        """
+        # Фактическая ширина текстовой области в Visio (за вычетом LeftMargin + RightMargin)
+        usable = badge_w - 0.08
+        # word-wrap penalty ~20%: Visio переносит по словам, теряя место
+        effective_per_line = max(1, int(usable / 0.075 * 0.80))
+        visual_len = _visual_text_width(text, char_coeff=1.0)
+        lines = max(1, math.ceil(visual_len / effective_per_line))
+        return max(0.22, font_size * 2.0 * lines + 0.10)
+
+    # ------------------------------------------------------------------
+    # Бейджи
+    # ------------------------------------------------------------------
+
+    def _make_system_badge(
+        self,
+        x: float, y: float, system: str,
+        w: float, h: float,
+    ) -> str:
+        """Цветная метка системы (⚙ 1С:ERP, и т.д.) под задачей."""
+        sid = self._next_id()
+        cx = x + w / 2
+        cy = self._flip_y(y + h / 2)
+        fill_v = _vis_color(COLORS["system_fill"])
+        line_v = _vis_color(COLORS["system_line"])
+        text_v = _vis_color(COLORS["system_text"])
+
+        return (
+            _shape_base(sid, cx, cy, w, h)
+            + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
+            + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
+            + f'      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="LineColor" V="{line_v}"/>\n'
+            + f'      <Cell N="LineWeight" V="0.006"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="Rounding" V="0.05"/>\n'
+            + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
+            + f'      <Cell N="Char.Size" V="0.06"/>\n'
+            + f'      <Cell N="Char.Style" V="1"/>\n'
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'
+            + f'      <Cell N="LeftMargin" V="0.04"/>\n'
+            + f'      <Cell N="RightMargin" V="0.04"/>\n'
+            + f'      <Cell N="TopMargin" V="0.02"/>\n'
+            + f'      <Cell N="BottomMargin" V="0.02"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
+            + GEOM_RECT
+            + f"      <Text>{xml_escape(system)}</Text>\n"
+            + "    </Shape>"
+        )
+
+    def _make_doc_badge(
+        self,
+        x: float, y: float, text: str,
+        w: float, h: float,
+        is_input: bool = False,
+    ) -> str:
+        """Документ — плоский скруглённый прямоугольник (flat modern).
+
+        is_input=True — входной документ (серо-голубой, 📥).
+        is_input=False — выходной документ (жёлтый, 📤).
+        """
+        sid = self._next_id()
+        cx = x + w / 2
+        cy = self._flip_y(y + h / 2)
+        if is_input:
+            fill_v = _vis_color("#DAEEF3")
+            line_v = _vis_color("#5B9BD5")
+            text_v = _vis_color("#1F4E79")
+        else:
+            fill_v = _vis_color(COLORS["doc_fill"])
+            line_v = _vis_color(COLORS["doc_line"])
+            text_v = _vis_color(COLORS["doc_text"])
+
+        return (
+            _shape_base(sid, cx, cy, w, h)
+            + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
+            + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
+            + f'      <Cell N="FillPattern" V="1"/>\n'
+            + f'      <Cell N="LineColor" V="{line_v}"/>\n'
+            + f'      <Cell N="LineWeight" V="0.006"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="Rounding" V="0.05"/>\n'
+            + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
+            + f'      <Cell N="Char.Size" V="0.06"/>\n'
+            + f'      <Cell N="Char.Style" V="2"/>\n'  # Italic
+            + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+            + f'      <Cell N="VerticalAlign" V="1"/>\n'
+            + f'      <Cell N="LeftMargin" V="0.04"/>\n'
+            + f'      <Cell N="RightMargin" V="0.04"/>\n'
+            + f'      <Cell N="TopMargin" V="0.02"/>\n'
+            + f'      <Cell N="BottomMargin" V="0.02"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
+            + GEOM_RECT
+            + f"      <Text>{xml_escape(text)}</Text>\n"
+            + "    </Shape>"
+        )
+
+    # ==================================================================
+    # Соединитель
+    # ==================================================================
 
     def _make_all_connectors(
         self,
         connector_geoms: list[tuple[list[dict], str]],
     ) -> str:
-        """Все соединители в ОДНОМ Shape — предотвращает auto-routing Visio."""
+        """Все соединители в ОДНОМ Shape с множеством Geometry секций.
+
+        Visio при наличии множества отдельных connector-шейпов запускает
+        auto-routing, который переопределяет Width соседних фигур
+        (даже с GUARD). Объединение всех коннекторов в одну фигуру
+        полностью обходит эту проблему.
+
+        Каждый коннектор — отдельная ``<Section N="Geometry" IX="N">``.
+        ``EndArrow`` рисуется на конце каждой Geometry секции.
+
+        Текстовые подписи на коннекторах — отдельные label-фигуры
+        (ObjType=1, обычные прямоугольники — не влияют на routing).
+        """
+        # Конвертируем все waypoints в Visio-координаты (inches, Y flipped)
         all_vis_paths: list[list[tuple[float, float]]] = []
         all_texts: list[str] = []
 
@@ -1292,6 +988,7 @@ class DirectVsdxGenerator:
         if not all_vis_paths:
             return ""
 
+        # Bounding box всех коннекторов (с маленьким запасом)
         flat_x = [p[0] for pts in all_vis_paths for p in pts]
         flat_y = [p[1] for pts in all_vis_paths for p in pts]
         margin = 0.02
@@ -1306,12 +1003,14 @@ class DirectVsdxGenerator:
         cy = (bb_min_y + bb_max_y) / 2
 
         sid = self._next_id()
-        line_v = _vis_color(_CONNECTOR_LINE)
+        line_v = _vis_color(COLORS["connector_line"])
 
+        # Geometry секции — одна на каждый коннектор
         geom_parts: list[str] = []
         for idx, vis_pts in enumerate(all_vis_paths):
             rows: list[str] = []
             for i, (px, py) in enumerate(vis_pts):
+                # Относительные координаты (0..1) внутри bounding box
                 rel_x = (px - bb_min_x) / w if w > 0.001 else 0.0
                 rel_y = (py - bb_min_y) / h if h > 0.001 else 0.0
                 row_type = "RelMoveTo" if i == 0 else "RelLineTo"
@@ -1334,71 +1033,71 @@ class DirectVsdxGenerator:
 
         all_geom = "".join(geom_parts)
 
+        # Основной shape — одна фигура со всеми коннекторами
         connector_shape = (
             _shape_base(sid, cx, cy, w, h, name="Connectors")
             + f'      <Cell N="LineColor" V="{line_v}"/>\n'
-            + '      <Cell N="LineWeight" V="0.0100"/>\n'
-            + '      <Cell N="LinePattern" V="1"/>\n'
-            + '      <Cell N="EndArrow" V="13"/>\n'
-            + '      <Cell N="EndArrowSize" V="2"/>\n'
-            + '      <Cell N="FillPattern" V="0"/>\n'
-            + '      <Cell N="ObjType" V="1"/>\n'
+            + f'      <Cell N="LineWeight" V="0.0100"/>\n'
+            + f'      <Cell N="LinePattern" V="1"/>\n'
+            + f'      <Cell N="EndArrow" V="13"/>\n'
+            + f'      <Cell N="EndArrowSize" V="2"/>\n'
+            + f'      <Cell N="FillPattern" V="0"/>\n'
+            + f'      <Cell N="ObjType" V="1"/>\n'
             + all_geom
             + "    </Shape>"
         )
 
-        # Таблетки-подписи (Да / Нет) на ветках шлюзов
+        # Текстовые подписи — отдельные label-фигуры для коннекторов
+        # с текстом (обычные Shape ObjType=1, не влияют на routing)
         labels: list[str] = []
         for vis_pts, text in zip(all_vis_paths, all_texts):
             if not text:
                 continue
+            # Позиция метки — середина пути коннектора
             mid = len(vis_pts) // 2
             mx, my = vis_pts[mid]
-            label_w = max(_visual_text_width(text, char_coeff=0.08), 0.28)
-            label_h = 0.18
+            label_w = max(_visual_text_width(text, char_coeff=0.055), 0.3)
+            label_h = 0.16
             lsid = self._next_id()
 
+            # Определяем направление сегмента для правильного offset
             p_prev = vis_pts[max(0, mid - 1)]
             p_curr = vis_pts[mid]
             dx = abs(p_curr[0] - p_prev[0])
             dy = abs(p_curr[1] - p_prev[1])
             if dy > dx:
-                label_cx = mx + label_w / 2 + 0.10
+                # Вертикальный сегмент — смещаем вправо от линии
+                label_cx = mx + label_w / 2 + 0.05
                 label_cy = my
             else:
+                # Горизонтальный — смещаем вверх от линии
                 label_cx = mx
-                label_cy = my + 0.14
-
-            fill_v = _vis_color("#FFFFFF")
-            border_v = _vis_color(_TASK_BORDER)
-            text_v = _vis_color(_LABEL_TEXT_COLOR)
+                label_cy = my + 0.10
+            text_v = _vis_color("#404040")
+            fill_v = _vis_color(COLORS["lane_fill"])
             labels.append(
                 _shape_base(lsid, label_cx, label_cy, label_w, label_h)
                 + f'      <Cell N="FillForegnd" V="{fill_v}"/>\n'
                 + f'      <Cell N="FillBkgnd" V="{fill_v}"/>\n'
-                + '      <Cell N="FillPattern" V="1"/>\n'
-                + f'      <Cell N="LineColor" V="{border_v}"/>\n'
-                + '      <Cell N="LineWeight" V="0.007"/>\n'
-                + '      <Cell N="LinePattern" V="1"/>\n'
-                + '      <Cell N="Rounding" V="0.09"/>\n'   # pill shape
+                + f'      <Cell N="FillPattern" V="1"/>\n'
+                + f'      <Cell N="LineColor" V="{fill_v}"/>\n'
+                + f'      <Cell N="LineWeight" V="0.001"/>\n'
+                + f'      <Cell N="LinePattern" V="1"/>\n'
                 + f'      <Cell N="Char.Color" V="{text_v}"/>\n'
-                + '      <Cell N="Char.Size" V="0.0694"/>\n'  # ~7.5pt
-                + '      <Cell N="Char.Style" V="1"/>\n'       # Bold
-                + '      <Cell N="Para.HorzAlign" V="1"/>\n'
-                + '      <Cell N="VerticalAlign" V="1"/>\n'
-                + '      <Cell N="ObjType" V="1"/>\n'
+                + f'      <Cell N="Char.Size" V="0.055"/>\n'
+                + f'      <Cell N="Char.Style" V="2"/>\n'
+                + f'      <Cell N="Para.HorzAlign" V="1"/>\n'
+                + f'      <Cell N="VerticalAlign" V="1"/>\n'
+                + f'      <Cell N="ObjType" V="1"/>\n'
                 + GEOM_RECT
                 + f"      <Text>{xml_escape(text)}</Text>\n"
                 + "    </Shape>"
             )
 
+        # Возвращаем основную фигуру + все метки
         parts = [connector_shape] + labels
         return "\n".join(parts)
 
-
-# ──────────────────────────────────────────────────────────────────────
-# Точка входа
-# ──────────────────────────────────────────────────────────────────────
 
 def generate_visio_direct(
     bpmn_json: dict[str, Any],

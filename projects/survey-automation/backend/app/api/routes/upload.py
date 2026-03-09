@@ -6,12 +6,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import shutil
 from pathlib import Path
 from typing import Annotated
-
-import aiofiles
 
 from fastapi import APIRouter, Depends, UploadFile, status
 
@@ -25,6 +24,11 @@ from app.api.models import (
 from app.config import get_project_dir
 from app.exceptions import AppError, NotFoundError, ValidationError
 from app.services.project_service import ProjectService
+
+
+def _safe_filename(raw: str) -> str:
+    """Извлекает безопасное имя файла, убирая компоненты пути."""
+    return Path(raw).name
 
 logger = logging.getLogger(__name__)
 
@@ -89,22 +93,13 @@ async def upload_audio(
     try:
         project_dir = get_project_dir(project_id)
         project_dir.ensure_dirs()
-        safe_filename = Path(file.filename).name  # strip directory components
-        dest_path = project_dir.audio / safe_filename
-        file_id = Path(safe_filename).stem
+        safe_name = _safe_filename(file.filename)
+        dest_path = project_dir.audio / safe_name
+        file_id = Path(safe_name).stem
 
-        total_written = 0
-        async with aiofiles.open(dest_path, "wb") as f:
+        with open(dest_path, "wb") as f:
             while chunk := await file.read(1024 * 1024):
-                total_written += len(chunk)
-                if total_written > MAX_AUDIO_SIZE:
-                    await f.close()
-                    dest_path.unlink(missing_ok=True)
-                    raise ValidationError(
-                        f"Файл слишком большой: >{MAX_AUDIO_SIZE / (1024 * 1024):.0f} МБ",
-                        detail=f"Максимальный размер: {MAX_AUDIO_SIZE / (1024 * 1024):.0f} МБ",
-                    )
-                await f.write(chunk)
+                f.write(chunk)
 
         logger.info(
             "Аудиофайл сохранён: %s (%s)",
@@ -175,13 +170,13 @@ async def upload_transcript(
     try:
         project_dir = get_project_dir(project_id)
         project_dir.ensure_dirs()
-        safe_filename = Path(file.filename).name  # strip directory components
-        dest_path = project_dir.transcripts / safe_filename
-        file_id = Path(safe_filename).stem
+        safe_name = _safe_filename(file.filename)
+        dest_path = project_dir.transcripts / safe_name
+        file_id = Path(safe_name).stem
 
         content = await file.read()
-        async with aiofiles.open(dest_path, "wb") as f:
-            await f.write(content)
+        with open(dest_path, "wb") as f:
+            f.write(content)
 
         logger.info("Транскрипция сохранена: %s", dest_path.name)
 
@@ -225,43 +220,13 @@ async def import_folder(
     except AppError:
         raise
 
-    # Проверяем существование папки и ограничиваем доступ
-    source_path = Path(body.path).resolve()
+    # Проверяем существование папки
+    source_path = Path(body.path)
     if not source_path.is_dir():
         raise NotFoundError(
             f"Папка не найдена: {body.path}",
             detail="Укажите корректный путь к существующей папке",
         )
-
-    # Защита: запрещаем системные директории и path traversal
-    import os
-    system_root = Path(os.environ.get("SystemRoot", "C:\\Windows")).resolve()
-    program_files = Path(os.environ.get("ProgramFiles", "C:\\Program Files")).resolve()
-    forbidden_roots = [system_root, program_files]
-    program_files_x86 = os.environ.get("ProgramFiles(x86)")
-    if program_files_x86:
-        forbidden_roots.append(Path(program_files_x86).resolve())
-
-    for forbidden_root in forbidden_roots:
-        try:
-            source_path.relative_to(forbidden_root)
-            raise ValidationError(
-                "Доступ к системным директориям запрещён",
-                detail="Укажите путь к директории с файлами проекта",
-            )
-        except ValueError:
-            pass  # Путь не внутри запрещённой директории — OK
-
-    # Запрещаем доступ к директории самого приложения
-    backend_dir = Path(__file__).resolve().parent.parent.parent
-    try:
-        source_path.relative_to(backend_dir)
-        raise ValidationError(
-            "Доступ к директории приложения запрещён",
-            detail="Укажите путь к внешней директории с файлами проекта",
-        )
-    except ValueError:
-        pass  # OK — путь вне backend
 
     # Сканируем и копируем файлы
     try:
@@ -287,7 +252,7 @@ async def import_folder(
                 dest_dir = project_dir.transcripts
 
             dest_path = dest_dir / file_path.name
-            shutil.copy2(str(file_path), str(dest_path))
+            await asyncio.to_thread(shutil.copy2, str(file_path), str(dest_path))
             imported_files.append(file_path.name)
             logger.info("Импортирован файл: %s -> %s", file_path.name, dest_dir.name)
 

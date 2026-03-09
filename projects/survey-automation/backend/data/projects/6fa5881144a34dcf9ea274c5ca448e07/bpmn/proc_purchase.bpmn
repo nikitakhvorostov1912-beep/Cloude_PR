@@ -1,0 +1,441 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1386bef7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="SurveyAutomation" exporterVersion="1.0">
+  <collaboration id="Collaboration_c9231338">
+    <participant id="proc_purchase_pool" processRef="proc_purchase" name="Закупка товаров и материалов"/>
+  </collaboration>
+  <process id="proc_purchase" isExecutable="true" name="Закупка товаров и материалов">
+    <laneSet id="LaneSet_a27f2ebb">
+      <lane id="lane_3fc1c4ff" name="Инициатор заявки">
+        <flowNodeRef>proc_purchase_start</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_1</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_split_1</flowNodeRef>
+        <flowNodeRef>proc_purchase_yes_1</flowNodeRef>
+        <flowNodeRef>proc_purchase_no_1</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_merge_1</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_11</flowNodeRef>
+        <flowNodeRef>proc_purchase_end</flowNodeRef>
+      </lane>
+      <lane id="lane_e3662fa8" name="Руководитель подразделения">
+        <flowNodeRef>proc_purchase_task_2</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_split_2</flowNodeRef>
+        <flowNodeRef>proc_purchase_yes_2</flowNodeRef>
+        <flowNodeRef>proc_purchase_no_2</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_merge_2</flowNodeRef>
+      </lane>
+      <lane id="lane_94feb930" name="Менеджер по закупкам">
+        <flowNodeRef>proc_purchase_task_4</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_split_4</flowNodeRef>
+        <flowNodeRef>proc_purchase_yes_4</flowNodeRef>
+        <flowNodeRef>proc_purchase_no_4</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_merge_4</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_8</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_9</flowNodeRef>
+      </lane>
+      <lane id="lane_6aecdb2a" name="Руководитель отдела закупок">
+        <flowNodeRef>proc_purchase_task_5</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_7</flowNodeRef>
+      </lane>
+      <lane id="lane_1dd149e8" name="Финансовый контролёр">
+        <flowNodeRef>proc_purchase_task_3</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_split_3</flowNodeRef>
+        <flowNodeRef>proc_purchase_yes_3</flowNodeRef>
+        <flowNodeRef>proc_purchase_no_3</flowNodeRef>
+        <flowNodeRef>proc_purchase_gw_merge_3</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_13</flowNodeRef>
+      </lane>
+      <lane id="lane_4ffdee75" name="Юрист">
+        <flowNodeRef>proc_purchase_task_6</flowNodeRef>
+      </lane>
+      <lane id="lane_3ee1b33d" name="Кладовщик">
+        <flowNodeRef>proc_purchase_task_10</flowNodeRef>
+        <flowNodeRef>proc_purchase_task_12</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="proc_purchase_start" name="Формирование потребности в материалах"/>
+    <serviceTask id="proc_purchase_task_1" name="Формирование заявки на закупку"/>
+    <exclusiveGateway id="proc_purchase_gw_split_1" name="Заявка обоснована?"/>
+    <task id="proc_purchase_yes_1" name="Проверка бюджета"/>
+    <task id="proc_purchase_no_1" name="Возврат инициатору"/>
+    <exclusiveGateway id="proc_purchase_gw_merge_1"/>
+    <serviceTask id="proc_purchase_task_2" name="Согласование руководителем"/>
+    <exclusiveGateway id="proc_purchase_gw_split_2" name="Бюджет достаточен?"/>
+    <task id="proc_purchase_yes_2" name="Поиск поставщиков"/>
+    <task id="proc_purchase_no_2" name="Запрос доп. финансирования"/>
+    <exclusiveGateway id="proc_purchase_gw_merge_2"/>
+    <serviceTask id="proc_purchase_task_3" name="Проверка бюджета"/>
+    <exclusiveGateway id="proc_purchase_gw_split_3" name="Сумма &gt; 500 тыс?"/>
+    <task id="proc_purchase_yes_3" name="Тендер"/>
+    <task id="proc_purchase_no_3" name="Прямая закупка"/>
+    <exclusiveGateway id="proc_purchase_gw_merge_3"/>
+    <serviceTask id="proc_purchase_task_4" name="Поиск и выбор поставщиков"/>
+    <exclusiveGateway id="proc_purchase_gw_split_4" name="Товар соответствует?"/>
+    <task id="proc_purchase_yes_4" name="Оприходование"/>
+    <task id="proc_purchase_no_4" name="Рекламация"/>
+    <exclusiveGateway id="proc_purchase_gw_merge_4"/>
+    <userTask id="proc_purchase_task_5" name="Проведение тендера"/>
+    <userTask id="proc_purchase_task_6" name="Согласование договора"/>
+    <serviceTask id="proc_purchase_task_7" name="Подписание договора"/>
+    <serviceTask id="proc_purchase_task_8" name="Формирование заказа поставщику"/>
+    <serviceTask id="proc_purchase_task_9" name="Контроль сроков поставки"/>
+    <serviceTask id="proc_purchase_task_10" name="Приёмка товара на складе"/>
+    <userTask id="proc_purchase_task_11" name="Контроль качества"/>
+    <serviceTask id="proc_purchase_task_12" name="Оприходование на склад"/>
+    <serviceTask id="proc_purchase_task_13" name="Обработка оплаты"/>
+    <endEvent id="proc_purchase_end" name="Товар оприходован на склад"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_start_to_proc_purchase_task_1" sourceRef="proc_purchase_start" targetRef="proc_purchase_task_1"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_1_to_proc_purchase_gw_split_1" sourceRef="proc_purchase_task_1" targetRef="proc_purchase_gw_split_1"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_yes_1" sourceRef="proc_purchase_gw_split_1" targetRef="proc_purchase_yes_1" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Заявка обоснована?</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_no_1" sourceRef="proc_purchase_gw_split_1" targetRef="proc_purchase_no_1" name="Нет"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_yes_1_to_proc_purchase_gw_merge_1" sourceRef="proc_purchase_yes_1" targetRef="proc_purchase_gw_merge_1"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_no_1_to_proc_purchase_gw_merge_1" sourceRef="proc_purchase_no_1" targetRef="proc_purchase_gw_merge_1"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_merge_1_to_proc_purchase_task_2" sourceRef="proc_purchase_gw_merge_1" targetRef="proc_purchase_task_2"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_2_to_proc_purchase_gw_split_2" sourceRef="proc_purchase_task_2" targetRef="proc_purchase_gw_split_2"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_yes_2" sourceRef="proc_purchase_gw_split_2" targetRef="proc_purchase_yes_2" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Бюджет достаточен?</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_no_2" sourceRef="proc_purchase_gw_split_2" targetRef="proc_purchase_no_2" name="Нет"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_yes_2_to_proc_purchase_gw_merge_2" sourceRef="proc_purchase_yes_2" targetRef="proc_purchase_gw_merge_2"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_no_2_to_proc_purchase_gw_merge_2" sourceRef="proc_purchase_no_2" targetRef="proc_purchase_gw_merge_2"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_merge_2_to_proc_purchase_task_3" sourceRef="proc_purchase_gw_merge_2" targetRef="proc_purchase_task_3"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_3_to_proc_purchase_gw_split_3" sourceRef="proc_purchase_task_3" targetRef="proc_purchase_gw_split_3"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_yes_3" sourceRef="proc_purchase_gw_split_3" targetRef="proc_purchase_yes_3" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Сумма &gt; 500 тыс?</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_no_3" sourceRef="proc_purchase_gw_split_3" targetRef="proc_purchase_no_3" name="Нет"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_yes_3_to_proc_purchase_gw_merge_3" sourceRef="proc_purchase_yes_3" targetRef="proc_purchase_gw_merge_3"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_no_3_to_proc_purchase_gw_merge_3" sourceRef="proc_purchase_no_3" targetRef="proc_purchase_gw_merge_3"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_merge_3_to_proc_purchase_task_4" sourceRef="proc_purchase_gw_merge_3" targetRef="proc_purchase_task_4"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_4_to_proc_purchase_gw_split_4" sourceRef="proc_purchase_task_4" targetRef="proc_purchase_gw_split_4"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_yes_4" sourceRef="proc_purchase_gw_split_4" targetRef="proc_purchase_yes_4" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Товар соответствует?</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_no_4" sourceRef="proc_purchase_gw_split_4" targetRef="proc_purchase_no_4" name="Нет"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_yes_4_to_proc_purchase_gw_merge_4" sourceRef="proc_purchase_yes_4" targetRef="proc_purchase_gw_merge_4"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_no_4_to_proc_purchase_gw_merge_4" sourceRef="proc_purchase_no_4" targetRef="proc_purchase_gw_merge_4"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_gw_merge_4_to_proc_purchase_task_5" sourceRef="proc_purchase_gw_merge_4" targetRef="proc_purchase_task_5"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_5_to_proc_purchase_task_6" sourceRef="proc_purchase_task_5" targetRef="proc_purchase_task_6"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_6_to_proc_purchase_task_7" sourceRef="proc_purchase_task_6" targetRef="proc_purchase_task_7"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_7_to_proc_purchase_task_8" sourceRef="proc_purchase_task_7" targetRef="proc_purchase_task_8"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_8_to_proc_purchase_task_9" sourceRef="proc_purchase_task_8" targetRef="proc_purchase_task_9"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_9_to_proc_purchase_task_10" sourceRef="proc_purchase_task_9" targetRef="proc_purchase_task_10"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_10_to_proc_purchase_task_11" sourceRef="proc_purchase_task_10" targetRef="proc_purchase_task_11"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_11_to_proc_purchase_task_12" sourceRef="proc_purchase_task_11" targetRef="proc_purchase_task_12"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_12_to_proc_purchase_task_13" sourceRef="proc_purchase_task_12" targetRef="proc_purchase_task_13"/>
+    <sequenceFlow id="proc_purchase_flow_proc_purchase_task_13_to_proc_purchase_end" sourceRef="proc_purchase_task_13" targetRef="proc_purchase_end"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_8e14281d">
+    <bpmndi:BPMNPlane id="BPMNPlane_f792969e" bpmnElement="Collaboration_c9231338">
+      <bpmndi:BPMNShape id="proc_purchase_pool_di" bpmnElement="proc_purchase_pool">
+        <dc:Bounds x="80.0" y="60" width="5558.0" height="1800.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_3fc1c4ff_di" bpmnElement="lane_3fc1c4ff" isHorizontal="true">
+        <dc:Bounds x="80.0" y="60" width="5558.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_e3662fa8_di" bpmnElement="lane_e3662fa8" isHorizontal="true">
+        <dc:Bounds x="80.0" y="360.0" width="5558.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_94feb930_di" bpmnElement="lane_94feb930" isHorizontal="true">
+        <dc:Bounds x="80.0" y="660.0" width="5558.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_6aecdb2a_di" bpmnElement="lane_6aecdb2a" isHorizontal="true">
+        <dc:Bounds x="80.0" y="960.0" width="5558.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_1dd149e8_di" bpmnElement="lane_1dd149e8" isHorizontal="true">
+        <dc:Bounds x="80.0" y="1160.0" width="5558.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_4ffdee75_di" bpmnElement="lane_4ffdee75" isHorizontal="true">
+        <dc:Bounds x="80.0" y="1460.0" width="5558.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_3ee1b33d_di" bpmnElement="lane_3ee1b33d" isHorizontal="true">
+        <dc:Bounds x="80.0" y="1660.0" width="5558.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_start_di" bpmnElement="proc_purchase_start">
+        <dc:Bounds x="162.0" y="142.0" width="36.0" height="36.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_1_di" bpmnElement="proc_purchase_task_1">
+        <dc:Bounds x="320.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_split_1_di" bpmnElement="proc_purchase_gw_split_1">
+        <dc:Bounds x="555.0" y="135.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_yes_1_di" bpmnElement="proc_purchase_yes_1">
+        <dc:Bounds x="720.0" y="50.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_no_1_di" bpmnElement="proc_purchase_no_1">
+        <dc:Bounds x="720.0" y="190.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_merge_1_di" bpmnElement="proc_purchase_gw_merge_1">
+        <dc:Bounds x="955.0" y="135.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_2_di" bpmnElement="proc_purchase_task_2">
+        <dc:Bounds x="1120.0" y="320.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_split_2_di" bpmnElement="proc_purchase_gw_split_2">
+        <dc:Bounds x="1355.0" y="335.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_yes_2_di" bpmnElement="proc_purchase_yes_2">
+        <dc:Bounds x="1520.0" y="250.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_no_2_di" bpmnElement="proc_purchase_no_2">
+        <dc:Bounds x="1520.0" y="390.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_merge_2_di" bpmnElement="proc_purchase_gw_merge_2">
+        <dc:Bounds x="1755.0" y="335.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_3_di" bpmnElement="proc_purchase_task_3">
+        <dc:Bounds x="1920.0" y="920.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_split_3_di" bpmnElement="proc_purchase_gw_split_3">
+        <dc:Bounds x="2155.0" y="935.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_yes_3_di" bpmnElement="proc_purchase_yes_3">
+        <dc:Bounds x="2320.0" y="850.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_no_3_di" bpmnElement="proc_purchase_no_3">
+        <dc:Bounds x="2320.0" y="990.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_merge_3_di" bpmnElement="proc_purchase_gw_merge_3">
+        <dc:Bounds x="2555.0" y="935.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_4_di" bpmnElement="proc_purchase_task_4">
+        <dc:Bounds x="2720.0" y="520.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_split_4_di" bpmnElement="proc_purchase_gw_split_4">
+        <dc:Bounds x="2955.0" y="535.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_yes_4_di" bpmnElement="proc_purchase_yes_4">
+        <dc:Bounds x="3120.0" y="450.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_no_4_di" bpmnElement="proc_purchase_no_4">
+        <dc:Bounds x="3120.0" y="590.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_gw_merge_4_di" bpmnElement="proc_purchase_gw_merge_4">
+        <dc:Bounds x="3355.0" y="535.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_5_di" bpmnElement="proc_purchase_task_5">
+        <dc:Bounds x="3520.0" y="720.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_6_di" bpmnElement="proc_purchase_task_6">
+        <dc:Bounds x="3720.0" y="1120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_7_di" bpmnElement="proc_purchase_task_7">
+        <dc:Bounds x="3920.0" y="720.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_8_di" bpmnElement="proc_purchase_task_8">
+        <dc:Bounds x="4120.0" y="520.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_9_di" bpmnElement="proc_purchase_task_9">
+        <dc:Bounds x="4320.0" y="520.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_10_di" bpmnElement="proc_purchase_task_10">
+        <dc:Bounds x="4520.0" y="1320.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_11_di" bpmnElement="proc_purchase_task_11">
+        <dc:Bounds x="4720.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_12_di" bpmnElement="proc_purchase_task_12">
+        <dc:Bounds x="4920.0" y="1320.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_task_13_di" bpmnElement="proc_purchase_task_13">
+        <dc:Bounds x="5120.0" y="920.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_purchase_end_di" bpmnElement="proc_purchase_end">
+        <dc:Bounds x="5362.0" y="142.0" width="36.0" height="36.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_start_to_proc_purchase_task_1_di" bpmnElement="proc_purchase_flow_proc_purchase_start_to_proc_purchase_task_1">
+        <di:waypoint x="198.0" y="160.0"/>
+        <di:waypoint x="320.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_1_to_proc_purchase_gw_split_1_di" bpmnElement="proc_purchase_flow_proc_purchase_task_1_to_proc_purchase_gw_split_1">
+        <di:waypoint x="440.0" y="160.0"/>
+        <di:waypoint x="555.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_yes_1_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_yes_1">
+        <di:waypoint x="605.0" y="160.0"/>
+        <di:waypoint x="662.5" y="160.0"/>
+        <di:waypoint x="662.5" y="90.0"/>
+        <di:waypoint x="720.0" y="90.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_no_1_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_1_to_proc_purchase_no_1">
+        <di:waypoint x="605.0" y="160.0"/>
+        <di:waypoint x="662.5" y="160.0"/>
+        <di:waypoint x="662.5" y="230.0"/>
+        <di:waypoint x="720.0" y="230.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_yes_1_to_proc_purchase_gw_merge_1_di" bpmnElement="proc_purchase_flow_proc_purchase_yes_1_to_proc_purchase_gw_merge_1">
+        <di:waypoint x="840.0" y="90.0"/>
+        <di:waypoint x="897.5" y="90.0"/>
+        <di:waypoint x="897.5" y="160.0"/>
+        <di:waypoint x="955.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_no_1_to_proc_purchase_gw_merge_1_di" bpmnElement="proc_purchase_flow_proc_purchase_no_1_to_proc_purchase_gw_merge_1">
+        <di:waypoint x="840.0" y="230.0"/>
+        <di:waypoint x="897.5" y="230.0"/>
+        <di:waypoint x="897.5" y="160.0"/>
+        <di:waypoint x="955.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_merge_1_to_proc_purchase_task_2_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_merge_1_to_proc_purchase_task_2">
+        <di:waypoint x="1005.0" y="160.0"/>
+        <di:waypoint x="1062.5" y="160.0"/>
+        <di:waypoint x="1062.5" y="360.0"/>
+        <di:waypoint x="1120.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_2_to_proc_purchase_gw_split_2_di" bpmnElement="proc_purchase_flow_proc_purchase_task_2_to_proc_purchase_gw_split_2">
+        <di:waypoint x="1240.0" y="360.0"/>
+        <di:waypoint x="1355.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_yes_2_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_yes_2">
+        <di:waypoint x="1405.0" y="360.0"/>
+        <di:waypoint x="1462.5" y="360.0"/>
+        <di:waypoint x="1462.5" y="290.0"/>
+        <di:waypoint x="1520.0" y="290.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_no_2_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_2_to_proc_purchase_no_2">
+        <di:waypoint x="1405.0" y="360.0"/>
+        <di:waypoint x="1462.5" y="360.0"/>
+        <di:waypoint x="1462.5" y="430.0"/>
+        <di:waypoint x="1520.0" y="430.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_yes_2_to_proc_purchase_gw_merge_2_di" bpmnElement="proc_purchase_flow_proc_purchase_yes_2_to_proc_purchase_gw_merge_2">
+        <di:waypoint x="1640.0" y="290.0"/>
+        <di:waypoint x="1697.5" y="290.0"/>
+        <di:waypoint x="1697.5" y="360.0"/>
+        <di:waypoint x="1755.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_no_2_to_proc_purchase_gw_merge_2_di" bpmnElement="proc_purchase_flow_proc_purchase_no_2_to_proc_purchase_gw_merge_2">
+        <di:waypoint x="1640.0" y="430.0"/>
+        <di:waypoint x="1697.5" y="430.0"/>
+        <di:waypoint x="1697.5" y="360.0"/>
+        <di:waypoint x="1755.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_merge_2_to_proc_purchase_task_3_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_merge_2_to_proc_purchase_task_3">
+        <di:waypoint x="1805.0" y="360.0"/>
+        <di:waypoint x="1862.5" y="360.0"/>
+        <di:waypoint x="1862.5" y="960.0"/>
+        <di:waypoint x="1920.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_3_to_proc_purchase_gw_split_3_di" bpmnElement="proc_purchase_flow_proc_purchase_task_3_to_proc_purchase_gw_split_3">
+        <di:waypoint x="2040.0" y="960.0"/>
+        <di:waypoint x="2155.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_yes_3_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_yes_3">
+        <di:waypoint x="2205.0" y="960.0"/>
+        <di:waypoint x="2262.5" y="960.0"/>
+        <di:waypoint x="2262.5" y="890.0"/>
+        <di:waypoint x="2320.0" y="890.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_no_3_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_3_to_proc_purchase_no_3">
+        <di:waypoint x="2205.0" y="960.0"/>
+        <di:waypoint x="2262.5" y="960.0"/>
+        <di:waypoint x="2262.5" y="1030.0"/>
+        <di:waypoint x="2320.0" y="1030.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_yes_3_to_proc_purchase_gw_merge_3_di" bpmnElement="proc_purchase_flow_proc_purchase_yes_3_to_proc_purchase_gw_merge_3">
+        <di:waypoint x="2440.0" y="890.0"/>
+        <di:waypoint x="2497.5" y="890.0"/>
+        <di:waypoint x="2497.5" y="960.0"/>
+        <di:waypoint x="2555.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_no_3_to_proc_purchase_gw_merge_3_di" bpmnElement="proc_purchase_flow_proc_purchase_no_3_to_proc_purchase_gw_merge_3">
+        <di:waypoint x="2440.0" y="1030.0"/>
+        <di:waypoint x="2497.5" y="1030.0"/>
+        <di:waypoint x="2497.5" y="960.0"/>
+        <di:waypoint x="2555.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_merge_3_to_proc_purchase_task_4_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_merge_3_to_proc_purchase_task_4">
+        <di:waypoint x="2605.0" y="960.0"/>
+        <di:waypoint x="2662.5" y="960.0"/>
+        <di:waypoint x="2662.5" y="560.0"/>
+        <di:waypoint x="2720.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_4_to_proc_purchase_gw_split_4_di" bpmnElement="proc_purchase_flow_proc_purchase_task_4_to_proc_purchase_gw_split_4">
+        <di:waypoint x="2840.0" y="560.0"/>
+        <di:waypoint x="2955.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_yes_4_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_yes_4">
+        <di:waypoint x="3005.0" y="560.0"/>
+        <di:waypoint x="3062.5" y="560.0"/>
+        <di:waypoint x="3062.5" y="490.0"/>
+        <di:waypoint x="3120.0" y="490.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_no_4_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_split_4_to_proc_purchase_no_4">
+        <di:waypoint x="3005.0" y="560.0"/>
+        <di:waypoint x="3062.5" y="560.0"/>
+        <di:waypoint x="3062.5" y="630.0"/>
+        <di:waypoint x="3120.0" y="630.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_yes_4_to_proc_purchase_gw_merge_4_di" bpmnElement="proc_purchase_flow_proc_purchase_yes_4_to_proc_purchase_gw_merge_4">
+        <di:waypoint x="3240.0" y="490.0"/>
+        <di:waypoint x="3297.5" y="490.0"/>
+        <di:waypoint x="3297.5" y="560.0"/>
+        <di:waypoint x="3355.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_no_4_to_proc_purchase_gw_merge_4_di" bpmnElement="proc_purchase_flow_proc_purchase_no_4_to_proc_purchase_gw_merge_4">
+        <di:waypoint x="3240.0" y="630.0"/>
+        <di:waypoint x="3297.5" y="630.0"/>
+        <di:waypoint x="3297.5" y="560.0"/>
+        <di:waypoint x="3355.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_gw_merge_4_to_proc_purchase_task_5_di" bpmnElement="proc_purchase_flow_proc_purchase_gw_merge_4_to_proc_purchase_task_5">
+        <di:waypoint x="3405.0" y="560.0"/>
+        <di:waypoint x="3462.5" y="560.0"/>
+        <di:waypoint x="3462.5" y="760.0"/>
+        <di:waypoint x="3520.0" y="760.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_5_to_proc_purchase_task_6_di" bpmnElement="proc_purchase_flow_proc_purchase_task_5_to_proc_purchase_task_6">
+        <di:waypoint x="3640.0" y="760.0"/>
+        <di:waypoint x="3680.0" y="760.0"/>
+        <di:waypoint x="3680.0" y="1160.0"/>
+        <di:waypoint x="3720.0" y="1160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_6_to_proc_purchase_task_7_di" bpmnElement="proc_purchase_flow_proc_purchase_task_6_to_proc_purchase_task_7">
+        <di:waypoint x="3840.0" y="1160.0"/>
+        <di:waypoint x="3880.0" y="1160.0"/>
+        <di:waypoint x="3880.0" y="760.0"/>
+        <di:waypoint x="3920.0" y="760.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_7_to_proc_purchase_task_8_di" bpmnElement="proc_purchase_flow_proc_purchase_task_7_to_proc_purchase_task_8">
+        <di:waypoint x="4040.0" y="760.0"/>
+        <di:waypoint x="4080.0" y="760.0"/>
+        <di:waypoint x="4080.0" y="560.0"/>
+        <di:waypoint x="4120.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_8_to_proc_purchase_task_9_di" bpmnElement="proc_purchase_flow_proc_purchase_task_8_to_proc_purchase_task_9">
+        <di:waypoint x="4240.0" y="560.0"/>
+        <di:waypoint x="4320.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_9_to_proc_purchase_task_10_di" bpmnElement="proc_purchase_flow_proc_purchase_task_9_to_proc_purchase_task_10">
+        <di:waypoint x="4440.0" y="560.0"/>
+        <di:waypoint x="4480.0" y="560.0"/>
+        <di:waypoint x="4480.0" y="1360.0"/>
+        <di:waypoint x="4520.0" y="1360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_10_to_proc_purchase_task_11_di" bpmnElement="proc_purchase_flow_proc_purchase_task_10_to_proc_purchase_task_11">
+        <di:waypoint x="4640.0" y="1360.0"/>
+        <di:waypoint x="4680.0" y="1360.0"/>
+        <di:waypoint x="4680.0" y="160.0"/>
+        <di:waypoint x="4720.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_11_to_proc_purchase_task_12_di" bpmnElement="proc_purchase_flow_proc_purchase_task_11_to_proc_purchase_task_12">
+        <di:waypoint x="4840.0" y="160.0"/>
+        <di:waypoint x="4880.0" y="160.0"/>
+        <di:waypoint x="4880.0" y="1360.0"/>
+        <di:waypoint x="4920.0" y="1360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_12_to_proc_purchase_task_13_di" bpmnElement="proc_purchase_flow_proc_purchase_task_12_to_proc_purchase_task_13">
+        <di:waypoint x="5040.0" y="1360.0"/>
+        <di:waypoint x="5080.0" y="1360.0"/>
+        <di:waypoint x="5080.0" y="960.0"/>
+        <di:waypoint x="5120.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_purchase_flow_proc_purchase_task_13_to_proc_purchase_end_di" bpmnElement="proc_purchase_flow_proc_purchase_task_13_to_proc_purchase_end">
+        <di:waypoint x="5240.0" y="960.0"/>
+        <di:waypoint x="5301.0" y="960.0"/>
+        <di:waypoint x="5301.0" y="160.0"/>
+        <di:waypoint x="5362.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

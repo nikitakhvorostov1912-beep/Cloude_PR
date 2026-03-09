@@ -4,7 +4,6 @@ import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { projectsApi } from "@/lib/api";
-import type { Project } from "@/lib/types";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarProvider,
@@ -34,7 +33,7 @@ export default function ProjectLayout({
     queryFn: () => projectsApi.list(),
   });
 
-  const project: Project | undefined = projectData;
+  const project = projectData;
   const projects = projectsData?.projects ?? [];
 
   const handleProjectSelect = (id: string) => {

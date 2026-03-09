@@ -3,6 +3,7 @@
 import json
 import sys
 from pathlib import Path
+from datetime import datetime
 
 # Ensure project root is in path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -216,7 +217,7 @@ processes_data = {
     encoding="utf-8",
 )
 
-print("Saved processes.json")
+print(f"Saved processes.json")
 print(f"  Steps: {len(processes_data['processes'][0]['steps'])}")
 print(f"  Decisions: {len(processes_data['processes'][0]['decisions'])}")
 print(f"  Pain points: {len(processes_data['processes'][0]['pain_points'])}")
@@ -226,10 +227,10 @@ print(f"  Participants: {len(processes_data['processes'][0]['participants'])}")
 # Generate BPMN JSON, XML and SVG using project pipeline
 # =====================================================================
 
-from app.bpmn.process_to_bpmn import ProcessToBpmnConverter  # noqa: E402
-from app.bpmn.renderer import BPMNRenderer  # noqa: E402
-from app.bpmn.json_to_bpmn import BpmnConverter  # noqa: E402
-from app.bpmn.layout import BpmnLayout  # noqa: E402
+from app.bpmn.process_to_bpmn import ProcessToBpmnConverter
+from app.bpmn.renderer import BPMNRenderer
+from app.bpmn.json_to_bpmn import BpmnConverter
+from app.bpmn.layout import BpmnLayout
 
 process = processes_data["processes"][0]
 
@@ -263,7 +264,7 @@ svg_path.write_text(svg, encoding="utf-8")
 print(f"SVG saved: {len(svg)} bytes")
 
 # Count elements in generated output
-print("\n=== Summary ===")
+print(f"\n=== Summary ===")
 print(f"Project: {pid}")
 print(f"Process: {process['name']}")
 print(f"  Roles (lanes): {len(set(p['role'] for p in process['participants']))}")

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,7 @@ from openpyxl.styles import Alignment, Font, PatternFill
 
 from ..exceptions import ExportError
 from .doc_generator import (
+    COLORS,
     EXCEL_ALIGNMENT_CENTER,
     EXCEL_ALIGNMENT_LEFT,
     EXCEL_BORDER,

@@ -46,8 +46,8 @@ XLINK_NS: str = "http://www.w3.org/1999/xlink"
 # Размеры элементов по умолчанию (fallback, если DI не содержит Bounds)
 # ----------------------------------------------------------------------
 
-_DEFAULT_TASK_W: float = 180.0
-_DEFAULT_TASK_H: float = 90.0
+_DEFAULT_TASK_W: float = 120.0
+_DEFAULT_TASK_H: float = 80.0
 _DEFAULT_EVENT_R: float = 18.0
 _DEFAULT_GATEWAY_S: float = 50.0
 
@@ -58,8 +58,8 @@ _PADDING: float = 30.0
 _ARROW_SIZE: float = 10.0
 
 # Максимальная длина текста в одной строке (символы).
-# Для кириллицы ~7px/символ при font-size 12px → 22 × 7 = 154px < 180px (ширина задачи).
-_MAX_LABEL_LINE_LEN: int = 22
+# Для кириллицы ~7px/символ при font-size 12px → 14 × 7 = 98px < 120px (ширина задачи).
+_MAX_LABEL_LINE_LEN: int = 14
 
 # Высота строки текста
 _LINE_HEIGHT: float = 15.0
@@ -622,8 +622,8 @@ class BPMNRenderer:
                     "width": float(lb.get("width", "100")),
                     "height": float(lb.get("height", "20")),
                 }
-            except (ValueError, TypeError) as exc:
-                logger.debug("Не удалось распарсить label bounds для %s: %s", bpmn_element, exc)
+            except (ValueError, TypeError):
+                pass
 
         return {
             "bpmn_element": bpmn_element,
@@ -653,8 +653,7 @@ class BPMNRenderer:
                 wx = float(wp.get("x", "0"))
                 wy = float(wp.get("y", "0"))
                 waypoints.append((wx, wy))
-            except (ValueError, TypeError) as exc:
-                logger.debug("Не удалось распарсить waypoint: %s", exc)
+            except (ValueError, TypeError):
                 continue
 
         if len(waypoints) < 2:
@@ -872,16 +871,17 @@ class BPMNRenderer:
                 )
 
             # Расчёт максимальной ширины строки в символах
-            # ≈6px на кириллический символ при 11px font-size
-            max_chars = max(8, int(w / 6.5))
+            # исходя из ширины задачи (≈7px на символ для кириллицы)
+            max_chars = max(8, int(w / 7.5))
             lines = _wrap_text(name, max_len=max_chars)
 
-            # Ограничиваем количество строк: используем всю высоту задачи.
-            # clipPath обрезает текст визуально — "…" не добавляем,
-            # чтобы избежать артефактов в SVG-превью.
-            max_lines = max(4, int(h / _LINE_HEIGHT))
+            # Ограничиваем количество строк
+            max_lines = max(2, int((h - 10) / _LINE_HEIGHT))
             if len(lines) > max_lines:
                 lines = lines[:max_lines]
+                last = lines[-1]
+                if len(last) > 3:
+                    lines[-1] = last[:-1] + "…"
 
             cx = x + w / 2
             cy = y + h / 2
@@ -1061,37 +1061,25 @@ class BPMNRenderer:
                 class_name="bpmn-gateway-marker",
             )
 
-        # Метка шлюза — ВЫШЕ ромба (симметрично с VSDX)
+        # Метка под шлюзом
         if name:
+            label_y = y + h + 5
             label_bounds = shape.get("label_bounds")
             if label_bounds:
-                # Если в BPMN есть явные bounds для label — используем их
                 label_x = label_bounds["x"] + label_bounds["width"] / 2
                 label_y = label_bounds["y"]
-                lines = _wrap_text(name, max_len=20)
-                for i, line in enumerate(lines):
-                    text_elem = _svg_element(
-                        g, "text",
-                        x=f"{label_x:.1f}",
-                        y=f"{label_y + i * _LINE_HEIGHT:.1f}",
-                        class_name="bpmn-gateway-label",
-                    )
-                    text_elem.text = line
             else:
-                # Размещаем ВЫШЕ шлюза: 20px для текста на каждую строку
-                # max_len=20 символов → умещается в ширину ~120px
-                lines = _wrap_text(name, max_len=20)
-                # Сколько строк: рисуем снизу вверх от y - 4
-                total_h = len(lines) * _LINE_HEIGHT
-                start_y = y - 4 - total_h + _LINE_HEIGHT
-                for i, line in enumerate(lines):
-                    text_elem = _svg_element(
-                        g, "text",
-                        x=f"{cx:.1f}",
-                        y=f"{start_y + i * _LINE_HEIGHT:.1f}",
-                        class_name="bpmn-gateway-label",
-                    )
-                    text_elem.text = line
+                label_x = cx
+
+            lines = _wrap_text(name, max_len=16)
+            for i, line in enumerate(lines):
+                text_elem = _svg_element(
+                    g, "text",
+                    x=f"{label_x:.1f}",
+                    y=f"{label_y + i * _LINE_HEIGHT:.1f}",
+                    class_name="bpmn-gateway-label",
+                )
+                text_elem.text = line
 
     # --- Аннотации ---
 

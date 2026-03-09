@@ -17,11 +17,8 @@ from fastapi import APIRouter, Depends
 from app.api.deps import get_project_service
 from app.api.models import (
     ErrorResponse,
-    GapListResponse,
-    ProcessListResponse,
     ProcessResponse,
     ProcessUpdate,
-    RequirementListResponse,
     TranscriptResponse,
 )
 from app.config import get_project_dir
@@ -235,7 +232,6 @@ async def get_transcript(
 
 @router.get(
     "/processes",
-    response_model=ProcessListResponse,
     summary="Список процессов",
     description="Возвращает список извлечённых бизнес-процессов проекта.",
     responses={
@@ -246,7 +242,7 @@ async def get_transcript(
 async def list_processes(
     project_id: str,
     service: Annotated[ProjectService, Depends(get_project_service)],
-) -> ProcessListResponse:
+) -> dict[str, Any]:
     """Возвращает список бизнес-процессов проекта."""
     logger.info("Запрос списка процессов для проекта %s", project_id)
 
@@ -260,16 +256,11 @@ async def list_processes(
         processes: list[ProcessResponse] = []
 
         if not project_dir.processes.is_dir():
-            return ProcessListResponse(processes=[], total=0)
+            return processes
 
         json_files = sorted(
             p for p in project_dir.processes.iterdir()
-            if p.is_file()
-            and p.suffix.lower() == ".json"
-            and not p.name.startswith("_")
-            and not p.name.endswith("_bpmn.json")
-            and not p.name.endswith("_gap.json")
-            and not p.name.endswith("_tobe.json")
+            if p.is_file() and p.suffix.lower() == ".json"
         )
 
         for json_path in json_files:
@@ -316,7 +307,7 @@ async def list_processes(
                 )
                 continue
 
-        return ProcessListResponse(processes=processes, total=len(processes))
+        return {"processes": processes, "total": len(processes)}
     except AppError:
         raise
     except Exception as exc:
@@ -443,7 +434,6 @@ async def update_process(
 
 @router.get(
     "/gaps",
-    response_model=GapListResponse,
     summary="Результаты GAP-анализа",
     description="Возвращает результаты GAP-анализа процессов.",
     responses={
@@ -454,7 +444,7 @@ async def update_process(
 async def get_gaps(
     project_id: str,
     service: Annotated[ProjectService, Depends(get_project_service)],
-) -> GapListResponse:
+) -> dict[str, Any]:
     """Возвращает результаты GAP-анализа."""
     logger.info("Запрос GAP-анализа для проекта %s", project_id)
 
@@ -473,7 +463,7 @@ async def get_gaps(
         if not gaps_path.is_file():
             gaps_path = project_dir.processes / "_gap_analysis.json"
         if not gaps_path.is_file():
-            return GapListResponse(gaps=[], total=0, summary={})
+            return {"gaps": [], "total": 0, "summary": {}}
 
         with open(gaps_path, "r", encoding="utf-8") as f:
             raw_data = json.load(f)
@@ -503,7 +493,7 @@ async def get_gaps(
                 "priority": gap.get("priority", ""),
             })
 
-        return GapListResponse(gaps=result, total=len(result), summary=summary)
+        return {"gaps": result, "total": len(result), "summary": summary}
     except AppError:
         raise
     except Exception as exc:
@@ -521,7 +511,6 @@ async def get_gaps(
 
 @router.get(
     "/requirements",
-    response_model=RequirementListResponse,
     summary="Список требований",
     description="Возвращает список требований, сформированных по результатам анализа.",
     responses={
@@ -532,7 +521,7 @@ async def get_gaps(
 async def get_requirements(
     project_id: str,
     service: Annotated[ProjectService, Depends(get_project_service)],
-) -> RequirementListResponse:
+) -> dict[str, Any]:
     """Возвращает список требований проекта."""
     logger.info("Запрос требований для проекта %s", project_id)
 
@@ -551,7 +540,7 @@ async def get_requirements(
         if not requirements_path.is_file():
             requirements_path = project_dir.root / "requirements" / "requirements.json"
         if not requirements_path.is_file():
-            return RequirementListResponse(requirements=[], total=0)
+            return {"requirements": [], "total": 0}
 
         with open(requirements_path, "r", encoding="utf-8") as f:
             raw_data = json.load(f)
@@ -563,7 +552,7 @@ async def get_requirements(
         elif isinstance(raw_data, list):
             req_items = raw_data
 
-        return RequirementListResponse(requirements=req_items, total=len(req_items))
+        return {"requirements": req_items, "total": len(req_items)}
     except AppError:
         raise
     except Exception as exc:

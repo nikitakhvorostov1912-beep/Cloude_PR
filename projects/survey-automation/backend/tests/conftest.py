@@ -1,5 +1,6 @@
 """Фикстуры для тестов."""
 import json
+import functools
 import pytest
 import pytest_asyncio
 from pathlib import Path

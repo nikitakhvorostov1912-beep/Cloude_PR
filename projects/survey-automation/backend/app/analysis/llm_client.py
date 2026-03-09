@@ -15,7 +15,6 @@ import re
 from typing import Any
 
 import anthropic
-import httpx
 
 from app.config import AnalysisConfig
 from app.exceptions import ProcessingError
@@ -55,10 +54,7 @@ class LLMClient:
                 detail={"env_var": "ANTHROPIC_API_KEY"},
             )
 
-        self._client = anthropic.AsyncAnthropic(
-            api_key=api_key,
-            timeout=httpx.Timeout(300.0, connect=10.0),
-        )
+        self._client = anthropic.AsyncAnthropic(api_key=api_key)
         logger.info(
             "LLM-клиент инициализирован: модель=%s, max_tokens=%d, temperature=%.2f",
             config.model,
@@ -318,7 +314,7 @@ class LLMClient:
         try:
             return json.loads(cleaned)
         except json.JSONDecodeError:
-            logger.debug("Прямой парсинг JSON не удался, пробуем извлечь из markdown")
+            pass
 
         # Попытка 2: извлечь JSON из markdown-блока ```json ... ```
         json_block_match = re.search(
@@ -330,7 +326,7 @@ class LLMClient:
             try:
                 return json.loads(json_block_match.group(1).strip())
             except json.JSONDecodeError:
-                logger.debug("Парсинг JSON из markdown-блока не удался, пробуем извлечь по скобкам")
+                pass
 
         # Попытка 3: найти первый { или [ и последний } или ]
         # для извлечения JSON из текста с комментариями
@@ -351,7 +347,7 @@ class LLMClient:
             try:
                 return json.loads(candidate)
             except json.JSONDecodeError:
-                logger.debug("Парсинг JSON-кандидата по скобкам не удался")
+                pass
 
         raise ValueError(
             "Не удалось обнаружить валидный JSON в ответе. "

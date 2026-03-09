@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_e33cbfde" targetNamespace="http://bpmn.io/schema/bpmn" exporter="SurveyAutomation" exporterVersion="1.0">
+  <collaboration id="Collaboration_565a9711">
+    <participant id="proc_004_pool" processRef="proc_004" name="Согласование скидки"/>
+    <participant id="lane_____________________" processRef="proc_004" name="Менеджер по продажам"/>
+    <participant id="lane___________________________" processRef="proc_004" name="Руководитель отдела продаж"/>
+    <participant id="lane______________________" processRef="proc_004" name="Коммерческий директор"/>
+  </collaboration>
+  <process id="proc_004" isExecutable="true" name="Согласование скидки">
+    <laneSet id="LaneSet_0426d13a">
+      <lane id="lane_____________________" name="Менеджер по продажам">
+        <flowNodeRef>proc_004_start</flowNodeRef>
+        <flowNodeRef>proc_004_task_1</flowNodeRef>
+        <flowNodeRef>proc_004_gw_split_1</flowNodeRef>
+        <flowNodeRef>proc_004_yes_1</flowNodeRef>
+        <flowNodeRef>proc_004_no_1</flowNodeRef>
+        <flowNodeRef>proc_004_gw_merge_1</flowNodeRef>
+        <flowNodeRef>proc_004_task_4</flowNodeRef>
+        <flowNodeRef>proc_004_end</flowNodeRef>
+      </lane>
+      <lane id="lane___________________________" name="Руководитель отдела продаж">
+        <flowNodeRef>proc_004_task_2</flowNodeRef>
+        <flowNodeRef>proc_004_gw_split_2</flowNodeRef>
+        <flowNodeRef>proc_004_yes_2</flowNodeRef>
+        <flowNodeRef>proc_004_no_2</flowNodeRef>
+        <flowNodeRef>proc_004_gw_merge_2</flowNodeRef>
+      </lane>
+      <lane id="lane______________________" name="Коммерческий директор">
+        <flowNodeRef>proc_004_task_3</flowNodeRef>
+      </lane>
+    </laneSet>
+    <startEvent id="proc_004_start" name="Запрос клиента на скидку более 5% от пр…"/>
+    <userTask id="proc_004_task_1" name="Формирование запроса на скидку"/>
+    <exclusiveGateway id="proc_004_gw_split_1" name="Руководитель оценивает объём заказ…"/>
+    <task id="proc_004_yes_1" name="Передача коммерческому директ…"/>
+    <task id="proc_004_no_1" name="Отклонение заявки, уведомлени…"/>
+    <exclusiveGateway id="proc_004_gw_merge_1"/>
+    <userTask id="proc_004_task_2" name="Рассмотрение руководителем отдела"/>
+    <exclusiveGateway id="proc_004_gw_split_2" name="Коммерческий директор оценивает вл…"/>
+    <task id="proc_004_yes_2" name="Уведомление менеджера, примен…"/>
+    <task id="proc_004_no_2" name="Предложение альтернативных ус…"/>
+    <exclusiveGateway id="proc_004_gw_merge_2"/>
+    <userTask id="proc_004_task_3" name="Согласование коммерческим директором"/>
+    <userTask id="proc_004_task_4" name="Уведомление менеджера о решении"/>
+    <endEvent id="proc_004_end" name="Утверждённая или отклонённая скидка с з…"/>
+    <sequenceFlow id="proc_004_flow_proc_004_start_to_proc_004_task_1" sourceRef="proc_004_start" targetRef="proc_004_task_1"/>
+    <sequenceFlow id="proc_004_flow_proc_004_task_1_to_proc_004_gw_split_1" sourceRef="proc_004_task_1" targetRef="proc_004_gw_split_1"/>
+    <sequenceFlow id="proc_004_flow_proc_004_gw_split_1_to_proc_004_yes_1" sourceRef="proc_004_gw_split_1" targetRef="proc_004_yes_1" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Руководитель оценивает объём заказа, историю клиента и маржинальность</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_004_flow_proc_004_gw_split_1_to_proc_004_no_1" sourceRef="proc_004_gw_split_1" targetRef="proc_004_no_1" name="Нет"/>
+    <sequenceFlow id="proc_004_flow_proc_004_yes_1_to_proc_004_gw_merge_1" sourceRef="proc_004_yes_1" targetRef="proc_004_gw_merge_1"/>
+    <sequenceFlow id="proc_004_flow_proc_004_no_1_to_proc_004_gw_merge_1" sourceRef="proc_004_no_1" targetRef="proc_004_gw_merge_1"/>
+    <sequenceFlow id="proc_004_flow_proc_004_gw_merge_1_to_proc_004_task_2" sourceRef="proc_004_gw_merge_1" targetRef="proc_004_task_2"/>
+    <sequenceFlow id="proc_004_flow_proc_004_task_2_to_proc_004_gw_split_2" sourceRef="proc_004_task_2" targetRef="proc_004_gw_split_2"/>
+    <sequenceFlow id="proc_004_flow_proc_004_gw_split_2_to_proc_004_yes_2" sourceRef="proc_004_gw_split_2" targetRef="proc_004_yes_2" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Коммерческий директор оценивает влияние на прибыльность</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_004_flow_proc_004_gw_split_2_to_proc_004_no_2" sourceRef="proc_004_gw_split_2" targetRef="proc_004_no_2" name="Нет"/>
+    <sequenceFlow id="proc_004_flow_proc_004_yes_2_to_proc_004_gw_merge_2" sourceRef="proc_004_yes_2" targetRef="proc_004_gw_merge_2"/>
+    <sequenceFlow id="proc_004_flow_proc_004_no_2_to_proc_004_gw_merge_2" sourceRef="proc_004_no_2" targetRef="proc_004_gw_merge_2"/>
+    <sequenceFlow id="proc_004_flow_proc_004_gw_merge_2_to_proc_004_task_3" sourceRef="proc_004_gw_merge_2" targetRef="proc_004_task_3"/>
+    <sequenceFlow id="proc_004_flow_proc_004_task_3_to_proc_004_task_4" sourceRef="proc_004_task_3" targetRef="proc_004_task_4"/>
+    <sequenceFlow id="proc_004_flow_proc_004_task_4_to_proc_004_end" sourceRef="proc_004_task_4" targetRef="proc_004_end"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_e9e08631">
+    <bpmndi:BPMNPlane id="BPMNPlane_d19a8b93" bpmnElement="Collaboration_565a9711">
+      <bpmndi:BPMNShape id="proc_004_pool_di" bpmnElement="proc_004_pool">
+        <dc:Bounds x="80.0" y="60" width="2558.0" height="800.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane______________________di" bpmnElement="lane_____________________">
+        <dc:Bounds x="80.0" y="60" width="2558.0" height="800.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane____________________________di" bpmnElement="lane___________________________">
+        <dc:Bounds x="80.0" y="60" width="2558.0" height="800.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_______________________di" bpmnElement="lane______________________">
+        <dc:Bounds x="80.0" y="60" width="2558.0" height="800.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane______________________di" bpmnElement="lane_____________________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="60" width="2558.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane____________________________di" bpmnElement="lane___________________________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="360.0" width="2558.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_______________________di" bpmnElement="lane______________________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="660.0" width="2558.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_start_di" bpmnElement="proc_004_start">
+        <dc:Bounds x="162.0" y="142.0" width="36.0" height="36.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_task_1_di" bpmnElement="proc_004_task_1">
+        <dc:Bounds x="320.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_gw_split_1_di" bpmnElement="proc_004_gw_split_1">
+        <dc:Bounds x="555.0" y="135.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_yes_1_di" bpmnElement="proc_004_yes_1">
+        <dc:Bounds x="720.0" y="50.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_no_1_di" bpmnElement="proc_004_no_1">
+        <dc:Bounds x="720.0" y="190.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_gw_merge_1_di" bpmnElement="proc_004_gw_merge_1">
+        <dc:Bounds x="955.0" y="135.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_task_2_di" bpmnElement="proc_004_task_2">
+        <dc:Bounds x="1120.0" y="320.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_gw_split_2_di" bpmnElement="proc_004_gw_split_2">
+        <dc:Bounds x="1355.0" y="335.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_yes_2_di" bpmnElement="proc_004_yes_2">
+        <dc:Bounds x="1520.0" y="250.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_no_2_di" bpmnElement="proc_004_no_2">
+        <dc:Bounds x="1520.0" y="390.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_gw_merge_2_di" bpmnElement="proc_004_gw_merge_2">
+        <dc:Bounds x="1755.0" y="335.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_task_3_di" bpmnElement="proc_004_task_3">
+        <dc:Bounds x="1920.0" y="520.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_task_4_di" bpmnElement="proc_004_task_4">
+        <dc:Bounds x="2120.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_004_end_di" bpmnElement="proc_004_end">
+        <dc:Bounds x="2362.0" y="142.0" width="36.0" height="36.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_start_to_proc_004_task_1_di" bpmnElement="proc_004_flow_proc_004_start_to_proc_004_task_1">
+        <di:waypoint x="198.0" y="160.0"/>
+        <di:waypoint x="320.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_task_1_to_proc_004_gw_split_1_di" bpmnElement="proc_004_flow_proc_004_task_1_to_proc_004_gw_split_1">
+        <di:waypoint x="440.0" y="160.0"/>
+        <di:waypoint x="555.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_gw_split_1_to_proc_004_yes_1_di" bpmnElement="proc_004_flow_proc_004_gw_split_1_to_proc_004_yes_1">
+        <di:waypoint x="605.0" y="160.0"/>
+        <di:waypoint x="662.5" y="160.0"/>
+        <di:waypoint x="662.5" y="90.0"/>
+        <di:waypoint x="720.0" y="90.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_gw_split_1_to_proc_004_no_1_di" bpmnElement="proc_004_flow_proc_004_gw_split_1_to_proc_004_no_1">
+        <di:waypoint x="605.0" y="160.0"/>
+        <di:waypoint x="662.5" y="160.0"/>
+        <di:waypoint x="662.5" y="230.0"/>
+        <di:waypoint x="720.0" y="230.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_yes_1_to_proc_004_gw_merge_1_di" bpmnElement="proc_004_flow_proc_004_yes_1_to_proc_004_gw_merge_1">
+        <di:waypoint x="840.0" y="90.0"/>
+        <di:waypoint x="897.5" y="90.0"/>
+        <di:waypoint x="897.5" y="160.0"/>
+        <di:waypoint x="955.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_no_1_to_proc_004_gw_merge_1_di" bpmnElement="proc_004_flow_proc_004_no_1_to_proc_004_gw_merge_1">
+        <di:waypoint x="840.0" y="230.0"/>
+        <di:waypoint x="897.5" y="230.0"/>
+        <di:waypoint x="897.5" y="160.0"/>
+        <di:waypoint x="955.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_gw_merge_1_to_proc_004_task_2_di" bpmnElement="proc_004_flow_proc_004_gw_merge_1_to_proc_004_task_2">
+        <di:waypoint x="1005.0" y="160.0"/>
+        <di:waypoint x="1062.5" y="160.0"/>
+        <di:waypoint x="1062.5" y="360.0"/>
+        <di:waypoint x="1120.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_task_2_to_proc_004_gw_split_2_di" bpmnElement="proc_004_flow_proc_004_task_2_to_proc_004_gw_split_2">
+        <di:waypoint x="1240.0" y="360.0"/>
+        <di:waypoint x="1355.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_gw_split_2_to_proc_004_yes_2_di" bpmnElement="proc_004_flow_proc_004_gw_split_2_to_proc_004_yes_2">
+        <di:waypoint x="1405.0" y="360.0"/>
+        <di:waypoint x="1462.5" y="360.0"/>
+        <di:waypoint x="1462.5" y="290.0"/>
+        <di:waypoint x="1520.0" y="290.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_gw_split_2_to_proc_004_no_2_di" bpmnElement="proc_004_flow_proc_004_gw_split_2_to_proc_004_no_2">
+        <di:waypoint x="1405.0" y="360.0"/>
+        <di:waypoint x="1462.5" y="360.0"/>
+        <di:waypoint x="1462.5" y="430.0"/>
+        <di:waypoint x="1520.0" y="430.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_yes_2_to_proc_004_gw_merge_2_di" bpmnElement="proc_004_flow_proc_004_yes_2_to_proc_004_gw_merge_2">
+        <di:waypoint x="1640.0" y="290.0"/>
+        <di:waypoint x="1697.5" y="290.0"/>
+        <di:waypoint x="1697.5" y="360.0"/>
+        <di:waypoint x="1755.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_no_2_to_proc_004_gw_merge_2_di" bpmnElement="proc_004_flow_proc_004_no_2_to_proc_004_gw_merge_2">
+        <di:waypoint x="1640.0" y="430.0"/>
+        <di:waypoint x="1697.5" y="430.0"/>
+        <di:waypoint x="1697.5" y="360.0"/>
+        <di:waypoint x="1755.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_gw_merge_2_to_proc_004_task_3_di" bpmnElement="proc_004_flow_proc_004_gw_merge_2_to_proc_004_task_3">
+        <di:waypoint x="1805.0" y="360.0"/>
+        <di:waypoint x="1862.5" y="360.0"/>
+        <di:waypoint x="1862.5" y="560.0"/>
+        <di:waypoint x="1920.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_task_3_to_proc_004_task_4_di" bpmnElement="proc_004_flow_proc_004_task_3_to_proc_004_task_4">
+        <di:waypoint x="2040.0" y="560.0"/>
+        <di:waypoint x="2080.0" y="560.0"/>
+        <di:waypoint x="2080.0" y="160.0"/>
+        <di:waypoint x="2120.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_004_flow_proc_004_task_4_to_proc_004_end_di" bpmnElement="proc_004_flow_proc_004_task_4_to_proc_004_end">
+        <di:waypoint x="2240.0" y="160.0"/>
+        <di:waypoint x="2362.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

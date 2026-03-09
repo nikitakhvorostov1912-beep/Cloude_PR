@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import aiofiles
 import json
 import logging
 import shutil
@@ -10,7 +9,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from app.config import ProjectDir, get_project_dir
+from app.config import ProjectDir, get_config, get_project_dir
 from app.docs.process_doc import ProcessDocGenerator
 from app.exceptions import ExportError, NotFoundError, ProcessingError
 
@@ -49,15 +48,26 @@ class ExportService:
         project_dir = self._ensure_project_exists(project_id)
 
         # Проверяем наличие BPMN JSON или файла процесса
-        bpmn_json = await self._load_process_bpmn(project_dir, process_id)
+        bpmn_json = self._load_process_bpmn(project_dir, process_id)
 
         project_dir.ensure_dirs()
         output_path = project_dir.get_visio_path(process_id)
 
         try:
-            from app.visio import generate_visio
+            from app.visio import generate_visio  # type: ignore[attr-defined]
 
             generate_visio(bpmn_json, output_path)
+        except ImportError:
+            # Visio-генератор ещё не реализован — создаём заглушку
+            logger.warning(
+                "Модуль app.visio не реализован. "
+                "Visio-экспорт недоступен для процесса: %s",
+                process_id,
+            )
+            raise ExportError(
+                "Экспорт в Visio временно недоступен. Модуль находится в разработке.",
+                detail={"process_id": process_id},
+            )
         except Exception as exc:
             raise ExportError(
                 f"Ошибка генерации Visio для процесса: {process_id}",
@@ -85,7 +95,7 @@ class ExportService:
             ExportError: При ошибке генерации документа.
         """
         project_dir = self._ensure_project_exists(project_id)
-        processes = await self._load_all_processes(project_dir)
+        processes = self._load_all_processes(project_dir)
 
         if not processes:
             raise NotFoundError(
@@ -93,7 +103,7 @@ class ExportService:
                 detail={"project_id": project_id},
             )
 
-        project_data = await self._load_project_meta(project_dir)
+        project_data = self._load_project_meta(project_dir)
         project_name = project_data.get("name", "Проект")
 
         project_dir.ensure_dirs()
@@ -133,7 +143,7 @@ class ExportService:
             ExportError: При ошибке генерации.
         """
         project_dir = self._ensure_project_exists(project_id)
-        requirements_data = await self._load_requirements(project_dir)
+        requirements_data = self._load_requirements(project_dir)
 
         if not requirements_data:
             raise NotFoundError(
@@ -228,7 +238,7 @@ class ExportService:
             ExportError: При ошибке генерации.
         """
         project_dir = self._ensure_project_exists(project_id)
-        requirements_data = await self._load_requirements(project_dir)
+        requirements_data = self._load_requirements(project_dir)
 
         if not requirements_data:
             raise NotFoundError(
@@ -236,14 +246,17 @@ class ExportService:
                 detail={"project_id": project_id},
             )
 
-        project_data = await self._load_project_meta(project_dir)
+        project_data = self._load_project_meta(project_dir)
         project_name = project_data.get("name", "Проект")
 
         project_dir.ensure_dirs()
         output_path = project_dir.get_output_path("лист_требований", ext=".docx")
 
         try:
-            from app.docs.doc_generator import safe_str
+            from app.docs.doc_generator import DocGenerator, format_date_russian, safe_str
+            from docx import Document
+            from docx.enum.text import WD_ALIGN_PARAGRAPH
+            from docx.shared import Pt
 
             # Используем базовый генератор для утилит
             gen = ProcessDocGenerator()
@@ -331,7 +344,7 @@ class ExportService:
             ExportError: При ошибке генерации.
         """
         project_dir = self._ensure_project_exists(project_id)
-        gaps = await self._load_gaps(project_dir)
+        gaps = self._load_gaps(project_dir)
 
         if not gaps:
             raise NotFoundError(
@@ -541,30 +554,30 @@ class ExportService:
             )
         return project_dir
 
-    async def _load_project_meta(self, project_dir: ProjectDir) -> dict[str, Any]:
+    @staticmethod
+    def _load_project_meta(project_dir: ProjectDir) -> dict[str, Any]:
         """Загружает метаданные проекта из project.json."""
         meta_path = project_dir.root / "project.json"
         if not meta_path.is_file():
             return {}
         try:
-            async with aiofiles.open(meta_path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            return json.loads(content)
+            with open(meta_path, "r", encoding="utf-8") as f:
+                return json.load(f)
         except Exception:
             return {}
 
-    async def _load_all_processes(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
+    @staticmethod
+    def _load_all_processes(project_dir: ProjectDir) -> list[dict[str, Any]]:
         """Загружает все процессы проекта."""
         all_path = project_dir.processes / "_all_processes.json"
         if all_path.is_file():
             try:
-                async with aiofiles.open(all_path, "r", encoding="utf-8") as f:
-                    content = await f.read()
-                data = json.loads(content)
+                with open(all_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
                 if isinstance(data, list):
                     return data
-            except Exception as exc:
-                logger.warning("Не удалось загрузить %s: %s", all_path.name, exc)
+            except Exception:
+                pass
 
         if not project_dir.processes.is_dir():
             return []
@@ -580,50 +593,48 @@ class ExportService:
                 and not jf.name.endswith("_bpmn.json")
             ):
                 try:
-                    async with aiofiles.open(jf, "r", encoding="utf-8") as f:
-                        content = await f.read()
-                    data = json.loads(content)
+                    with open(jf, "r", encoding="utf-8") as f:
+                        data = json.load(f)
                     if isinstance(data, dict):
                         processes.append(data)
-                except Exception as exc:
-                    logger.warning("Не удалось прочитать процесс %s: %s", jf.name, exc)
+                except Exception:
                     continue
         return processes
 
-    async def _load_requirements(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
+    @staticmethod
+    def _load_requirements(project_dir: ProjectDir) -> list[dict[str, Any]]:
         """Загружает лист требований."""
         req_path = project_dir.processes / "_requirements.json"
         if not req_path.is_file():
             return []
         try:
-            async with aiofiles.open(req_path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(req_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
             if isinstance(data, dict):
                 return data.get("requirements", [data])
             if isinstance(data, list):
                 return data
-        except Exception as exc:
-            logger.warning("Не удалось загрузить требования %s: %s", req_path.name, exc)
+        except Exception:
+            pass
         return []
 
-    async def _load_gaps(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
+    @staticmethod
+    def _load_gaps(project_dir: ProjectDir) -> list[dict[str, Any]]:
         """Загружает результаты GAP-анализа."""
         gaps_path = project_dir.processes / "_gap_analysis.json"
         if not gaps_path.is_file():
             return []
         try:
-            async with aiofiles.open(gaps_path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(gaps_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
             if isinstance(data, list):
                 return data
-        except Exception as exc:
-            logger.warning("Не удалось загрузить GAP-анализ %s: %s", gaps_path.name, exc)
+        except Exception:
+            pass
         return []
 
-    async def _load_process_bpmn(
-        self,
+    @staticmethod
+    def _load_process_bpmn(
         project_dir: ProjectDir,
         process_id: str,
     ) -> dict[str, Any]:
@@ -641,9 +652,8 @@ class ExportService:
             )
 
         try:
-            async with aiofiles.open(bpmn_path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(bpmn_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
         except Exception as exc:
             raise ProcessingError(
                 f"Ошибка чтения данных процесса: {process_id}",

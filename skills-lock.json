@@ -1,20 +1,30 @@
 {
   "version": 1,
   "skills": {
+    "anthropics-agent-identifier": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "ae2d0a7dbbaabe6b4f52b574c75c7074d74f09d2d0ff918d8fa155c76544a60a"
+    },
+    "anthropics-canvas-design": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "c87f84df84815b5c8b2987395417a478ca0abe3d38483467d1d9b7fe2c87ae49"
+    },
     "anthropics-claude-automation-recommender": {
       "source": "smithery.ai",
       "sourceType": "well-known",
       "computedHash": "f4508316c7b10f4fabf649d90868b8551238ef7686c99a13c999d103a4fb88e8"
     },
-    "anthropics-claude-md-improver": {
+    "anthropics-command-development": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "16edba0de62ef261611d60b8ddb01b3e8b8a0c0bbdc587e7b54727b394f782e7"
+      "computedHash": "1ca6683358d17204f9d83dca96a076d9bc826400bc83290f18a4857aba7eb5a0"
     },
-    "anthropics-feature-spec": {
+    "anthropics-frontend-design": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "112ff31d7235f026c322e497b14cd635c4ae8268a98983401f52700b3a71bc0a"
+      "computedHash": "20272c29770acae46e2fe1531911fb06cc5521802bac0605a97146109e56cd4a"
     },
     "anthropics-hook-development": {
       "source": "smithery.ai",
@@ -26,75 +36,55 @@
       "sourceType": "well-known",
       "computedHash": "ede3a413388d07c69d8226a5c2db1fd0b1140e7c05fd888849572fbc6db45d34"
     },
-    "anthropics-knowledge-management": {
+    "anthropics-mcp-builder": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "c2e1eef37c72c7c759ab1eff71574060aee5fe7df343bf17c32324618627b63a"
+      "computedHash": "4fd294adc0e00b7a25c5d05a7eb7512b07a11fcab067d3636efe37e3e24802c8"
     },
-    "anthropics-knowledge-synthesis": {
+    "anthropics-memory-management": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "15cd50a0ca6dbe18b97cba31cdaccb1b4541bdd2c5a625caa053e53ae7801937"
+      "computedHash": "9ba5c89335a8054f7b6a50d0c44e3db1e63a5fa83f7b7edff829b26b669df113"
     },
-    "anthropics-roadmap-management": {
+    "anthropics-pdf": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "6adfe3a6c2a7faedb552e1c2c54e14d33d801d34663bb8ddc1749f71406673a4"
+      "computedHash": "5655b54843ede4eabc0998e403c999bf5924f63233eb6562192325fec4295d0a"
     },
-    "anthropics-task-management": {
+    "anthropics-skill-development": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "9096032ce744fc35c206af6d28a11a950f550296d3664f39a86d92af7043482e"
+      "computedHash": "aef19341da295f83644071ca2a0948369eab7c3e163bd785b08d7826029795e1"
     },
-    "composiohq-content-research-writer": {
+    "anthropics-webapp-testing": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "30df436f274e8bdd584b5ebe25153684a8f8f7d755b0b7518d9a216f9e6f0d4a"
+      "computedHash": "b8ec8f08729b82c65f281cb00d668da03d47d8438261ab2bcf3f20d49468442c"
     },
-    "davila7-product-manager-toolkit": {
+    "davila7-scientific-writing": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "c585c2a0ed186f4e64812528a8cddf6e58d6b3534d8f934dce6c6eeec5e2dc91"
-    },
-    "davila7-scientific-brainstorming": {
-      "source": "smithery.ai",
-      "sourceType": "well-known",
-      "computedHash": "b69e6625b57db7f2a0f6164f74af237812255106e0497b433357ea5f094f3928"
+      "computedHash": "f29680e46512d96f1ecea3f080af10bd76ba9f41db887da20fb1766f05a42334"
     },
     "davila7-senior-fullstack": {
       "source": "smithery.ai",
       "sourceType": "well-known",
       "computedHash": "93676060f0ab2364678125867f9c8196f15239de6cdc753368b3872d63bd02f6"
     },
-    "davila7-ui-design-system": {
-      "source": "smithery.ai",
-      "sourceType": "well-known",
-      "computedHash": "efa996fca2bb5842412cea5075fac2b874073205d54dd58fe5ead00e74e28674"
-    },
-    "github-agentic-eval": {
-      "source": "smithery.ai",
-      "sourceType": "well-known",
-      "computedHash": "c0c3c7970b122e5eb8cdaec9e65f14a569927e4796b9722ab26fc8b46ce5e0a6"
-    },
     "github-prd": {
       "source": "smithery.ai",
       "sourceType": "well-known",
       "computedHash": "9e8718f0543cef2d4f0d501b0202182325851f9a2a71b7965032000a9729bf36"
     },
-    "langchain-ai-web-research": {
+    "github-refactor": {
       "source": "smithery.ai",
       "sourceType": "well-known",
-      "computedHash": "4a517d9f2d42d9bd5ac36cee2b30fb4ba989b526ed9a27744b3548af14479b93"
+      "computedHash": "40e9f84a09a080231d47ee4c93f4464d3799df85ff1b1e4c6a551af74ac8f808"
     },
     "nextlevelbuilder-ui-ux-pro-max": {
       "source": "smithery.ai",
       "sourceType": "well-known",
       "computedHash": "047974cdd8a0c68e96559f0260dfc76a8b2cf19c3adb2cd4a8997dfe70436d35"
-    },
-    "obra-brainstorming": {
-      "source": "smithery.ai",
-      "sourceType": "well-known",
-      "computedHash": "7eadeba01ca77c6261de4dbdfc36a73968288abf8164c364a525e55190acee8d"
     },
     "obra-using-superpowers": {
       "source": "smithery.ai",
@@ -111,20 +101,25 @@
       "sourceType": "well-known",
       "computedHash": "0d229c5d0f6258977566032978821dd7c2d3c19cbf526e49a146df41807e151f"
     },
+    "shubhamsaboo-strategy-advisor": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "ac8a29fe03b91f4346cd3ffbe2796daa3e15ecbcd594d927f42114b699c102a6"
+    },
     "smithery-ai-cli": {
       "source": "smithery.ai",
       "sourceType": "well-known",
       "computedHash": "7344c4b36e162a7eaf4ef78118c40122efea4edbf9ffc4edc515d9b6a2d3c72b"
     },
-    "vercel-labs-agent-browser": {
-      "source": "smithery.ai",
-      "sourceType": "well-known",
-      "computedHash": "261f21df6ebdb694e45b329d7640864c24cb9e7c5765fd3902b86baac9fa0e35"
-    },
     "vercel-web-design-guidelines": {
       "source": "smithery.ai",
       "sourceType": "well-known",
       "computedHash": "9ada2a49eb6fe93989148956d1b425a127705819d53b5af968addba8770e5a4a"
+    },
+    "wshobson-prompt-engineering-patterns": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "230cc845e358accc220c42aaede9c475567b40ec12e1702279bd3dba37c23676"
     }
   }
 }

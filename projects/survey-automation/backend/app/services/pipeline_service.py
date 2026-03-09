@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import json
 import logging
-
-import aiofiles
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
-from app.config import ProjectDir, get_project_dir
+from app.config import ProjectDir, get_config, get_project_dir
 from app.exceptions import (
     NotFoundError,
     PipelineError,
@@ -137,10 +136,10 @@ class PipelineService:
         project_dir = self._ensure_project_exists(project_id)
 
         # Проверяем зависимости: все предыдущие стадии должны быть завершены
-        await self._validate_dependencies(project_dir, stage)
+        self._validate_dependencies(project_dir, stage)
 
         # Обновляем статус: стадия запущена
-        await self._update_stage_status(
+        self._update_stage_status(
             project_dir, stage,
             status="running", progress=0, error=None,
         )
@@ -156,11 +155,11 @@ class PipelineService:
             await self._execute_stage(project_dir, project_id, stage)
 
             # Обновляем статус: стадия завершена
-            await self._update_stage_status(
+            self._update_stage_status(
                 project_dir, stage,
                 status="completed", progress=100, error=None,
             )
-            await self._mark_stage_completed(project_dir, stage)
+            self._mark_stage_completed(project_dir, stage)
 
             logger.info(
                 "Стадия '%s' завершена успешно для проекта: %s",
@@ -169,7 +168,7 @@ class PipelineService:
 
         except (NotFoundError, ValidationError, ProcessingError, PipelineError) as exc:
             # Помечаем стадию как проваленную
-            await self._update_stage_status(
+            self._update_stage_status(
                 project_dir, stage,
                 status="failed", progress=0, error=exc.message,
             )
@@ -183,7 +182,7 @@ class PipelineService:
             ) from exc
 
         except Exception as exc:
-            await self._update_stage_status(
+            self._update_stage_status(
                 project_dir, stage,
                 status="failed", progress=0, error=str(exc),
             )
@@ -212,7 +211,7 @@ class PipelineService:
             NotFoundError: Если проект не найден.
         """
         project_dir = self._ensure_project_exists(project_id)
-        pipeline_state = await self._load_pipeline_state(project_dir)
+        pipeline_state = self._load_pipeline_state(project_dir)
         completed = pipeline_state.get("completed_stages", [])
 
         stages_info: list[dict[str, Any]] = []
@@ -255,10 +254,10 @@ class PipelineService:
     ) -> None:
         """Выполняет указанную стадию конвейера."""
 
-        async def _progress_callback(current: float, total: float, message: str) -> None:
+        def _progress_callback(current: float, total: float, message: str) -> None:
             """Обновляет прогресс стадии."""
             pct = int((current / max(total, 1)) * 100)
-            await self._update_stage_status(
+            self._update_stage_status(
                 project_dir, stage,
                 status="running", progress=pct, error=None,
             )
@@ -315,14 +314,14 @@ class PipelineService:
         for idx, audio_path in enumerate(audio_files):
             if on_progress:
                 pct = (idx / total) * 100
-                await on_progress(pct, 100, f"Транскрипция: {audio_path.name}...")
+                on_progress(pct, 100, f"Транскрипция: {audio_path.name}...")
 
             await self._transcription.transcribe_audio(
                 project_dir, audio_path.name,
             )
 
         if on_progress:
-            await on_progress(100, 100, "Транскрипция завершена")
+            on_progress(100, 100, "Транскрипция завершена")
 
     async def _run_doc_generation(
         self,
@@ -339,7 +338,7 @@ class PipelineService:
 
         for pct, message, export_fn in stages:
             if on_progress:
-                await on_progress(pct, 100, message)
+                on_progress(pct, 100, message)
             try:
                 await export_fn(project_id)
             except NotFoundError:
@@ -347,13 +346,13 @@ class PipelineService:
                 continue
 
         if on_progress:
-            await on_progress(100, 100, "Генерация документов завершена")
+            on_progress(100, 100, "Генерация документов завершена")
 
     # ------------------------------------------------------------------
     # Валидация зависимостей
     # ------------------------------------------------------------------
 
-    async def _validate_dependencies(
+    def _validate_dependencies(
         self,
         project_dir: ProjectDir,
         stage: str,
@@ -363,7 +362,7 @@ class PipelineService:
         Raises:
             ValidationError: Если предыдущие стадии не завершены.
         """
-        pipeline_state = await self._load_pipeline_state(project_dir)
+        pipeline_state = self._load_pipeline_state(project_dir)
         completed = set(pipeline_state.get("completed_stages", []))
 
         stage_index = PIPELINE_STAGES.index(stage)
@@ -386,22 +385,22 @@ class PipelineService:
     # Управление состоянием конвейера
     # ------------------------------------------------------------------
 
-    async def _load_pipeline_state(self, project_dir: ProjectDir) -> dict[str, Any]:
+    @staticmethod
+    def _load_pipeline_state(project_dir: ProjectDir) -> dict[str, Any]:
         """Загружает состояние конвейера из project.json."""
         project_json = project_dir.root / "project.json"
         if not project_json.is_file():
             return {"completed_stages": []}
 
         try:
-            async with aiofiles.open(project_json, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(project_json, "r", encoding="utf-8") as f:
+                data = json.load(f)
             return data.get("pipeline_state", {"completed_stages": []})
         except Exception:
             return {"completed_stages": []}
 
-    async def _save_pipeline_state(
-        self,
+    @staticmethod
+    def _save_pipeline_state(
         project_dir: ProjectDir,
         pipeline_state: dict[str, Any],
     ) -> None:
@@ -410,9 +409,8 @@ class PipelineService:
 
         try:
             if project_json.is_file():
-                async with aiofiles.open(project_json, "r", encoding="utf-8") as f:
-                    content = await f.read()
-                data = json.loads(content)
+                with open(project_json, "r", encoding="utf-8") as f:
+                    data = json.load(f)
             else:
                 data = {}
         except Exception:
@@ -422,13 +420,12 @@ class PipelineService:
         data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         try:
-            content = json.dumps(data, ensure_ascii=False, indent=2)
-            async with aiofiles.open(project_json, "w", encoding="utf-8") as f:
-                await f.write(content)
+            with open(project_json, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
         except OSError as exc:
             logger.error("Ошибка сохранения состояния конвейера: %s", exc)
 
-    async def _update_stage_status(
+    def _update_stage_status(
         self,
         project_dir: ProjectDir,
         stage: str,
@@ -438,7 +435,7 @@ class PipelineService:
         error: str | None,
     ) -> None:
         """Обновляет статус конкретной стадии."""
-        pipeline_state = await self._load_pipeline_state(project_dir)
+        pipeline_state = self._load_pipeline_state(project_dir)
         pipeline_state["stage"] = stage
         pipeline_state[f"stage_{stage}"] = {
             "status": status,
@@ -446,21 +443,21 @@ class PipelineService:
             "error": error,
             "updated_at": datetime.now(timezone.utc).isoformat(),
         }
-        await self._save_pipeline_state(project_dir, pipeline_state)
+        self._save_pipeline_state(project_dir, pipeline_state)
 
-    async def _mark_stage_completed(
+    def _mark_stage_completed(
         self,
         project_dir: ProjectDir,
         stage: str,
     ) -> None:
         """Отмечает стадию как завершённую."""
-        pipeline_state = await self._load_pipeline_state(project_dir)
+        pipeline_state = self._load_pipeline_state(project_dir)
         completed = pipeline_state.get("completed_stages", [])
         if stage not in completed:
             completed.append(stage)
         pipeline_state["completed_stages"] = completed
         pipeline_state["progress"] = self._calculate_overall_progress(completed)
-        await self._save_pipeline_state(project_dir, pipeline_state)
+        self._save_pipeline_state(project_dir, pipeline_state)
 
     @staticmethod
     def _calculate_overall_progress(completed_stages: list[str]) -> int:

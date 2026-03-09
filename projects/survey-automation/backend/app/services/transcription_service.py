@@ -12,8 +12,6 @@ import logging
 from pathlib import Path
 from typing import Any, Callable
 
-import aiofiles
-
 from app.config import ProjectDir
 from app.exceptions import NotFoundError, ProcessingError, ValidationError
 from app.transcription.formatter import TranscriptFormatter
@@ -136,11 +134,11 @@ class TranscriptionService:
         transcript_data = self._formatter.to_json(result, audio_file=audio_filename)
         transcript_id = Path(audio_filename).stem
 
-        await self._save_transcript(project_dir, transcript_id, transcript_data)
+        self._save_transcript(project_dir, transcript_id, transcript_data)
 
         # Сохраняем текстовую версию
         full_text = self._formatter.format_full_text(result)
-        await self._save_transcript_text(project_dir, transcript_id, full_text)
+        self._save_transcript_text(project_dir, transcript_id, full_text)
 
         if on_progress:
             on_progress(100, 100, "Транскрипция завершена")
@@ -207,11 +205,11 @@ class TranscriptionService:
             )
 
         transcript_data = self._formatter.to_json(result, audio_file=filename)
-        await self._save_transcript(project_dir, transcript_id, transcript_data)
+        self._save_transcript(project_dir, transcript_id, transcript_data)
 
         # Сохраняем текстовую версию
         full_text = self._formatter.format_full_text(result)
-        await self._save_transcript_text(project_dir, transcript_id, full_text)
+        self._save_transcript_text(project_dir, transcript_id, full_text)
 
         logger.info(
             "Транскрипция импортирована: %s -> %s (%d сегментов)",
@@ -242,7 +240,7 @@ class TranscriptionService:
 
         for json_path in json_files:
             try:
-                data = await self._load_json_file(json_path)
+                data = self._load_json_file(json_path)
                 metadata = data.get("metadata", {})
                 transcripts.append({
                     "id": json_path.stem,
@@ -285,13 +283,13 @@ class TranscriptionService:
                 f"Транскрипция не найдена: {transcript_id}",
                 detail=str(json_path),
             )
-        return await self._load_json_file(json_path)
+        return self._load_json_file(json_path)
 
     # ------------------------------------------------------------------
     # Приватные методы
     # ------------------------------------------------------------------
 
-    async def _save_transcript(
+    def _save_transcript(
         self,
         project_dir: ProjectDir,
         transcript_id: str,
@@ -301,9 +299,8 @@ class TranscriptionService:
         project_dir.ensure_dirs()
         json_path = project_dir.get_transcript_path(transcript_id, ext=".json")
         try:
-            content = json.dumps(data, ensure_ascii=False, indent=2)
-            async with aiofiles.open(json_path, "w", encoding="utf-8") as f:
-                await f.write(content)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
         except OSError as exc:
             raise ProcessingError(
                 "Ошибка сохранения транскрипции",
@@ -311,7 +308,7 @@ class TranscriptionService:
             ) from exc
         return json_path
 
-    async def _save_transcript_text(
+    def _save_transcript_text(
         self,
         project_dir: ProjectDir,
         transcript_id: str,
@@ -321,8 +318,8 @@ class TranscriptionService:
         project_dir.ensure_dirs()
         txt_path = project_dir.get_transcript_path(transcript_id, ext=".txt")
         try:
-            async with aiofiles.open(txt_path, "w", encoding="utf-8") as f:
-                await f.write(text)
+            with open(txt_path, "w", encoding="utf-8") as f:
+                f.write(text)
         except OSError as exc:
             raise ProcessingError(
                 "Ошибка сохранения текста транскрипции",
@@ -330,12 +327,12 @@ class TranscriptionService:
             ) from exc
         return txt_path
 
-    async def _load_json_file(self, path: Path) -> dict[str, Any]:
+    @staticmethod
+    def _load_json_file(path: Path) -> dict[str, Any]:
         """Загружает и парсит JSON-файл."""
         try:
-            async with aiofiles.open(path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
         except json.JSONDecodeError as exc:
             raise ProcessingError(
                 f"Некорректный JSON в файле: {path.name}",

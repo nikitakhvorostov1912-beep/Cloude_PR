@@ -1,0 +1,997 @@
+{
+  "process_id": "proc_001",
+  "process_name": "Обработка заказа клиента",
+  "elements": [
+    {
+      "id": "proc_001_start",
+      "type": "startEvent",
+      "name": "Обращение клиента (телефон/email/сайт)",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_task_1",
+      "type": "userTask",
+      "name": "Приём заявки",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_gw_split_1",
+      "type": "exclusiveGateway",
+      "name": "Товар в наличии?",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_yes_1",
+      "type": "task",
+      "name": "Расчёт стоимости",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_no_1",
+      "type": "task",
+      "name": "Согласование сроков поставки с поставщиком",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_gw_merge_1",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_task_2",
+      "type": "serviceTask",
+      "name": "Проверка остатков",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_gw_split_2",
+      "type": "exclusiveGateway",
+      "name": "Скидка превышает 5%?",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_yes_2",
+      "type": "task",
+      "name": "Согласование коммерческим директором",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_no_2",
+      "type": "task",
+      "name": "Утверждение руководителем отдела",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_gw_merge_2",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_task_3",
+      "type": "userTask",
+      "name": "Формирование коммерческого предложения",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_gw_split_3",
+      "type": "exclusiveGateway",
+      "name": "Клиент принял КП?",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_yes_3",
+      "type": "task",
+      "name": "Подготовка договора",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_no_3",
+      "type": "task",
+      "name": "Корректировка КП или закрытие заявки",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_gw_merge_3",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_task_4",
+      "type": "userTask",
+      "name": "Отправка КП клиенту",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_task_5",
+      "type": "userTask",
+      "name": "Получение подтверждения от клиента",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_task_6",
+      "type": "userTask",
+      "name": "Согласование с руководителем отдела",
+      "lane": "lane_83319e17"
+    },
+    {
+      "id": "proc_001_task_7",
+      "type": "serviceTask",
+      "name": "Передача заказа в работу",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_end",
+      "type": "endEvent",
+      "name": "Подтверждённый заказ с рассчитанной стоимостью",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_end_rejected",
+      "type": "endEvent",
+      "name": "Заявка отклонена/отложена",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_error_stock",
+      "type": "intermediateThrowEvent",
+      "name": "Ошибка: данные остатков расходятся (Excel/1С)",
+      "eventDefinition": "errorEventDefinition",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_end_error",
+      "type": "endEvent",
+      "name": "Ошибка обработки заказа",
+      "eventDefinition": "errorEventDefinition",
+      "lane": "lane_8a6c85a1"
+    },
+    {
+      "id": "proc_001_timer_client",
+      "type": "intermediateCatchEvent",
+      "name": "Ожидание ответа клиента (до 48ч)",
+      "eventDefinition": "timerEventDefinition",
+      "lane": "lane_8a6c85a1"
+    }
+  ],
+  "flows": [
+    {
+      "id": "proc_001_flow_proc_001_start_to_proc_001_task_1",
+      "source": "proc_001_start",
+      "target": "proc_001_task_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_1_to_proc_001_gw_split_1",
+      "source": "proc_001_task_1",
+      "target": "proc_001_gw_split_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_1_to_proc_001_yes_1",
+      "source": "proc_001_gw_split_1",
+      "target": "proc_001_yes_1",
+      "name": "Да",
+      "condition": "Товар в наличии?"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_1_to_proc_001_no_1",
+      "source": "proc_001_gw_split_1",
+      "target": "proc_001_no_1",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_001_flow_proc_001_yes_1_to_proc_001_gw_merge_1",
+      "source": "proc_001_yes_1",
+      "target": "proc_001_gw_merge_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_no_1_to_proc_001_gw_merge_1",
+      "source": "proc_001_no_1",
+      "target": "proc_001_gw_merge_1"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_merge_1_to_proc_001_task_2",
+      "source": "proc_001_gw_merge_1",
+      "target": "proc_001_task_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_2_to_proc_001_gw_split_2",
+      "source": "proc_001_task_2",
+      "target": "proc_001_gw_split_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_2_to_proc_001_yes_2",
+      "source": "proc_001_gw_split_2",
+      "target": "proc_001_yes_2",
+      "name": "Да",
+      "condition": "Скидка превышает 5%?"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_2_to_proc_001_no_2",
+      "source": "proc_001_gw_split_2",
+      "target": "proc_001_no_2",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_001_flow_proc_001_yes_2_to_proc_001_gw_merge_2",
+      "source": "proc_001_yes_2",
+      "target": "proc_001_gw_merge_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_no_2_to_proc_001_gw_merge_2",
+      "source": "proc_001_no_2",
+      "target": "proc_001_gw_merge_2"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_merge_2_to_proc_001_task_3",
+      "source": "proc_001_gw_merge_2",
+      "target": "proc_001_task_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_3_to_proc_001_gw_split_3",
+      "source": "proc_001_task_3",
+      "target": "proc_001_gw_split_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_3_to_proc_001_yes_3",
+      "source": "proc_001_gw_split_3",
+      "target": "proc_001_yes_3",
+      "name": "Да",
+      "condition": "Клиент принял КП?"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_split_3_to_proc_001_no_3",
+      "source": "proc_001_gw_split_3",
+      "target": "proc_001_no_3",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_001_flow_proc_001_yes_3_to_proc_001_gw_merge_3",
+      "source": "proc_001_yes_3",
+      "target": "proc_001_gw_merge_3"
+    },
+    {
+      "id": "proc_001_flow_proc_001_no_3_to_proc_001_end_rejected",
+      "source": "proc_001_no_3",
+      "target": "proc_001_end_rejected"
+    },
+    {
+      "id": "proc_001_flow_proc_001_gw_merge_3_to_proc_001_task_4",
+      "source": "proc_001_gw_merge_3",
+      "target": "proc_001_task_4"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_5_to_proc_001_task_6",
+      "source": "proc_001_task_5",
+      "target": "proc_001_task_6"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_6_to_proc_001_task_7",
+      "source": "proc_001_task_6",
+      "target": "proc_001_task_7"
+    },
+    {
+      "id": "proc_001_flow_proc_001_task_7_to_proc_001_end",
+      "source": "proc_001_task_7",
+      "target": "proc_001_end"
+    },
+    {
+      "id": "proc_001_flow_error_stock_to_end_error",
+      "source": "proc_001_error_stock",
+      "target": "proc_001_end_error"
+    },
+    {
+      "id": "proc_001_flow_task2_to_error",
+      "source": "proc_001_task_2",
+      "target": "proc_001_error_stock",
+      "name": "Ошибка данных"
+    },
+    {
+      "id": "proc_001_flow_task4_to_timer",
+      "source": "proc_001_task_4",
+      "target": "proc_001_timer_client"
+    },
+    {
+      "id": "proc_001_flow_timer_to_task5",
+      "source": "proc_001_timer_client",
+      "target": "proc_001_task_5"
+    }
+  ],
+  "participants": [
+    {
+      "id": "proc_001_pool",
+      "name": "Обработка заказа клиента",
+      "processRef": "proc_001"
+    },
+    {
+      "id": "lane_8a6c85a1",
+      "name": "Менеджер по продажам",
+      "lane_id": "lane_8a6c85a1"
+    },
+    {
+      "id": "lane_83319e17",
+      "name": "Руководитель отдела продаж",
+      "lane_id": "lane_83319e17"
+    },
+    {
+      "id": "lane_74774a11",
+      "name": "Коммерческий директор",
+      "lane_id": "lane_74774a11"
+    },
+    {
+      "id": "lane_1b0d3d71",
+      "name": "Заведующий складом",
+      "lane_id": "lane_1b0d3d71"
+    }
+  ],
+  "annotations": [],
+  "associations": [],
+  "message_flows": [
+    {
+      "id": "mf_001_to_003",
+      "name": "Заявка на отгрузку",
+      "source_process": "proc_001",
+      "source_element": "proc_001_task_7",
+      "target_process": "proc_003",
+      "target_element": "proc_003_start"
+    },
+    {
+      "id": "mf_001_to_004",
+      "name": "Запрос на согласование скидки",
+      "source_process": "proc_001",
+      "source_element": "proc_001_yes_2",
+      "target_process": "proc_004",
+      "target_element": "proc_004_start"
+    },
+    {
+      "id": "mf_001_to_002",
+      "name": "Заказ поставщику (товар не в наличии)",
+      "source_process": "proc_001",
+      "source_element": "proc_001_no_1",
+      "target_process": "proc_002",
+      "target_element": "proc_002_start"
+    }
+  ],
+  "data_objects": [
+    {
+      "id": "do_zayavka",
+      "name": "Заявка клиента",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_prays",
+      "name": "Прайс-лист",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_kp",
+      "name": "Коммерческое предложение",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_zhurnal",
+      "name": "Журнал заявок",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_schet",
+      "name": "Счёт на оплату",
+      "type": "DataObject"
+    }
+  ],
+  "data_stores": [
+    {
+      "id": "ds_excel",
+      "name": "Excel (таблица заявок)",
+      "type": "DataStore"
+    },
+    {
+      "id": "ds_1c",
+      "name": "1С:Бухгалтерия",
+      "type": "DataStore"
+    }
+  ],
+  "layout": {
+    "elements": {
+      "proc_001_start": {
+        "x": 125.0,
+        "y": 305.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_001_task_1": {
+        "x": 280.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_gw_split_1": {
+        "x": 520.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_001_yes_1": {
+        "x": 680.0,
+        "y": 220.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_no_1": {
+        "x": 680.0,
+        "y": 360.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_gw_merge_1": {
+        "x": 920.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_001_task_2": {
+        "x": 1080.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_gw_split_2": {
+        "x": 1320.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_001_yes_2": {
+        "x": 1480.0,
+        "y": 220.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_no_2": {
+        "x": 1480.0,
+        "y": 360.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_gw_merge_2": {
+        "x": 1720.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_001_task_3": {
+        "x": 1880.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_gw_split_3": {
+        "x": 2120.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_001_yes_3": {
+        "x": 2280.0,
+        "y": 220.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_no_3": {
+        "x": 2280.0,
+        "y": 360.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_gw_merge_3": {
+        "x": 2520.0,
+        "y": 240.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_001_end_rejected": {
+        "x": 2525.0,
+        "y": 360.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_001_task_4": {
+        "x": 2680.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_task_5": {
+        "x": 2880.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_task_6": {
+        "x": 3080.0,
+        "y": 730.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_task_7": {
+        "x": 3280.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_001_end": {
+        "x": 3525.0,
+        "y": 305.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_001_error_stock": {
+        "x": 1080.0,
+        "y": 430.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_001_end_error": {
+        "x": 1225.0,
+        "y": 430.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_001_timer_client": {
+        "x": 2785.0,
+        "y": 305.0,
+        "width": 30.0,
+        "height": 30.0
+      }
+    },
+    "flows": {
+      "proc_001_flow_proc_001_start_to_proc_001_task_1": [
+        {
+          "x": 155.0,
+          "y": 320.0
+        },
+        {
+          "x": 280.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_task_1_to_proc_001_gw_split_1": [
+        {
+          "x": 400.0,
+          "y": 320.0
+        },
+        {
+          "x": 520.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_split_1_to_proc_001_yes_1": [
+        {
+          "x": 560.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 250.0
+        },
+        {
+          "x": 680.0,
+          "y": 250.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_split_1_to_proc_001_no_1": [
+        {
+          "x": 560.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 390.0
+        },
+        {
+          "x": 680.0,
+          "y": 390.0
+        }
+      ],
+      "proc_001_flow_proc_001_yes_1_to_proc_001_gw_merge_1": [
+        {
+          "x": 800.0,
+          "y": 250.0
+        },
+        {
+          "x": 860.0,
+          "y": 250.0
+        },
+        {
+          "x": 860.0,
+          "y": 320.0
+        },
+        {
+          "x": 920.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_no_1_to_proc_001_gw_merge_1": [
+        {
+          "x": 800.0,
+          "y": 390.0
+        },
+        {
+          "x": 860.0,
+          "y": 390.0
+        },
+        {
+          "x": 860.0,
+          "y": 320.0
+        },
+        {
+          "x": 920.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_merge_1_to_proc_001_task_2": [
+        {
+          "x": 960.0,
+          "y": 320.0
+        },
+        {
+          "x": 1080.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_task_2_to_proc_001_gw_split_2": [
+        {
+          "x": 1200.0,
+          "y": 320.0
+        },
+        {
+          "x": 1320.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_split_2_to_proc_001_yes_2": [
+        {
+          "x": 1360.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 250.0
+        },
+        {
+          "x": 1480.0,
+          "y": 250.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_split_2_to_proc_001_no_2": [
+        {
+          "x": 1360.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 390.0
+        },
+        {
+          "x": 1480.0,
+          "y": 390.0
+        }
+      ],
+      "proc_001_flow_proc_001_yes_2_to_proc_001_gw_merge_2": [
+        {
+          "x": 1600.0,
+          "y": 250.0
+        },
+        {
+          "x": 1660.0,
+          "y": 250.0
+        },
+        {
+          "x": 1660.0,
+          "y": 320.0
+        },
+        {
+          "x": 1720.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_no_2_to_proc_001_gw_merge_2": [
+        {
+          "x": 1600.0,
+          "y": 390.0
+        },
+        {
+          "x": 1660.0,
+          "y": 390.0
+        },
+        {
+          "x": 1660.0,
+          "y": 320.0
+        },
+        {
+          "x": 1720.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_merge_2_to_proc_001_task_3": [
+        {
+          "x": 1760.0,
+          "y": 320.0
+        },
+        {
+          "x": 1880.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_task_3_to_proc_001_gw_split_3": [
+        {
+          "x": 2000.0,
+          "y": 320.0
+        },
+        {
+          "x": 2120.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_split_3_to_proc_001_yes_3": [
+        {
+          "x": 2160.0,
+          "y": 320.0
+        },
+        {
+          "x": 2220.0,
+          "y": 320.0
+        },
+        {
+          "x": 2220.0,
+          "y": 250.0
+        },
+        {
+          "x": 2280.0,
+          "y": 250.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_split_3_to_proc_001_no_3": [
+        {
+          "x": 2160.0,
+          "y": 320.0
+        },
+        {
+          "x": 2220.0,
+          "y": 320.0
+        },
+        {
+          "x": 2220.0,
+          "y": 390.0
+        },
+        {
+          "x": 2280.0,
+          "y": 390.0
+        }
+      ],
+      "proc_001_flow_proc_001_yes_3_to_proc_001_gw_merge_3": [
+        {
+          "x": 2400.0,
+          "y": 250.0
+        },
+        {
+          "x": 2460.0,
+          "y": 250.0
+        },
+        {
+          "x": 2460.0,
+          "y": 260.0
+        },
+        {
+          "x": 2520.0,
+          "y": 260.0
+        }
+      ],
+      "proc_001_flow_proc_001_no_3_to_proc_001_end_rejected": [
+        {
+          "x": 2400.0,
+          "y": 390.0
+        },
+        {
+          "x": 2462.5,
+          "y": 390.0
+        },
+        {
+          "x": 2462.5,
+          "y": 375.0
+        },
+        {
+          "x": 2525.0,
+          "y": 375.0
+        }
+      ],
+      "proc_001_flow_proc_001_gw_merge_3_to_proc_001_task_4": [
+        {
+          "x": 2560.0,
+          "y": 260.0
+        },
+        {
+          "x": 2620.0,
+          "y": 260.0
+        },
+        {
+          "x": 2620.0,
+          "y": 320.0
+        },
+        {
+          "x": 2680.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_task_5_to_proc_001_task_6": [
+        {
+          "x": 3000.0,
+          "y": 320.0
+        },
+        {
+          "x": 3040.0,
+          "y": 320.0
+        },
+        {
+          "x": 3040.0,
+          "y": 760.0
+        },
+        {
+          "x": 3080.0,
+          "y": 760.0
+        }
+      ],
+      "proc_001_flow_proc_001_task_6_to_proc_001_task_7": [
+        {
+          "x": 3200.0,
+          "y": 760.0
+        },
+        {
+          "x": 3240.0,
+          "y": 760.0
+        },
+        {
+          "x": 3240.0,
+          "y": 320.0
+        },
+        {
+          "x": 3280.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_proc_001_task_7_to_proc_001_end": [
+        {
+          "x": 3400.0,
+          "y": 320.0
+        },
+        {
+          "x": 3525.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_error_stock_to_end_error": [
+        {
+          "x": 1110.0,
+          "y": 445.0
+        },
+        {
+          "x": 1225.0,
+          "y": 445.0
+        }
+      ],
+      "proc_001_flow_task2_to_error": [
+        {
+          "x": 1140.0,
+          "y": 350.0
+        },
+        {
+          "x": 1140.0,
+          "y": 430.0
+        },
+        {
+          "x": 1095.0,
+          "y": 430.0
+        },
+        {
+          "x": 1095.0,
+          "y": 430.0
+        }
+      ],
+      "proc_001_flow_task4_to_timer": [
+        {
+          "x": 2800.0,
+          "y": 320.0
+        },
+        {
+          "x": 2785.0,
+          "y": 320.0
+        }
+      ],
+      "proc_001_flow_timer_to_task5": [
+        {
+          "x": 2815.0,
+          "y": 320.0
+        },
+        {
+          "x": 2880.0,
+          "y": 320.0
+        }
+      ]
+    },
+    "lanes": {
+      "lane_8a6c85a1": {
+        "x": 30.0,
+        "y": 30,
+        "width": 3665.0,
+        "height": 580
+      },
+      "lane_83319e17": {
+        "x": 30.0,
+        "y": 610,
+        "width": 3665.0,
+        "height": 300
+      },
+      "lane_74774a11": {
+        "x": 30.0,
+        "y": 910,
+        "width": 3665.0,
+        "height": 80.0
+      },
+      "lane_1b0d3d71": {
+        "x": 30.0,
+        "y": 990.0,
+        "width": 3665.0,
+        "height": 80.0
+      }
+    },
+    "participants": {
+      "proc_001_pool": {
+        "x": 30.0,
+        "y": 30,
+        "width": 3665.0,
+        "height": 1040.0
+      },
+      "lane_8a6c85a1": {
+        "x": 30.0,
+        "y": 30,
+        "width": 3665.0,
+        "height": 1040.0
+      },
+      "lane_83319e17": {
+        "x": 30.0,
+        "y": 30,
+        "width": 3665.0,
+        "height": 1040.0
+      },
+      "lane_74774a11": {
+        "x": 30.0,
+        "y": 30,
+        "width": 3665.0,
+        "height": 1040.0
+      },
+      "lane_1b0d3d71": {
+        "x": 30.0,
+        "y": 30,
+        "width": 3665.0,
+        "height": 1040.0
+      }
+    }
+  }
+}

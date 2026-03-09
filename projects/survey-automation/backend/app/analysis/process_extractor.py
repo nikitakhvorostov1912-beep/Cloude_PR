@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import uuid
 from typing import Any
@@ -20,7 +21,7 @@ from app.exceptions import ProcessingError
 
 from .llm_client import LLMClient
 from .prompts import EXTRACT_PROCESSES_PROMPT, SYSTEM_PROMPT
-from .validator import ProcessValidator
+from .validator import ProcessValidator, ValidationResult
 
 logger = logging.getLogger(__name__)
 

@@ -1,0 +1,801 @@
+{
+  "process_id": "proc_003",
+  "process_name": "Отгрузка товара клиенту",
+  "elements": [
+    {
+      "id": "proc_003_start",
+      "type": "startEvent",
+      "name": "Получение заявки на отгрузку от менеджера",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_task_1",
+      "type": "userTask",
+      "name": "Получение заявки на отгрузку",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_gw_split_1",
+      "type": "exclusiveGateway",
+      "name": "Все позиции в наличии?",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_yes_1",
+      "type": "task",
+      "name": "Комплектация заказа",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_no_1",
+      "type": "task",
+      "name": "Уведомление менеджера по продажам о нехватке",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_gw_merge_1",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_task_2",
+      "type": "userTask",
+      "name": "Сборка и комплектация заказа",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_gw_split_2",
+      "type": "exclusiveGateway",
+      "name": "Заказ собран верно?",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_yes_2",
+      "type": "task",
+      "name": "Оформление документов",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_no_2",
+      "type": "task",
+      "name": "Исправление комплектации",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_gw_merge_2",
+      "type": "exclusiveGateway",
+      "name": "",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_task_3",
+      "type": "userTask",
+      "name": "Проверка комплектности",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_task_4",
+      "type": "serviceTask",
+      "name": "Оформление отгрузочных документов",
+      "lane": "lane_f528abeb"
+    },
+    {
+      "id": "proc_003_task_5",
+      "type": "userTask",
+      "name": "Погрузка и отправка",
+      "lane": "lane_a064d6ef"
+    },
+    {
+      "id": "proc_003_task_6",
+      "type": "userTask",
+      "name": "Обновление складского учёта",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_end",
+      "type": "endEvent",
+      "name": "Отгруженный товар с оформленными документами",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_end_shortage",
+      "type": "endEvent",
+      "name": "Отгрузка отложена (нехватка товара)",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_end_error",
+      "type": "endEvent",
+      "name": "Ошибка комплектации (возврат)",
+      "eventDefinition": "errorEventDefinition",
+      "lane": "lane_1b0d3d71"
+    },
+    {
+      "id": "proc_003_timer_docs",
+      "type": "intermediateCatchEvent",
+      "name": "Ожидание документов (до 1ч)",
+      "eventDefinition": "timerEventDefinition",
+      "lane": "lane_1b0d3d71"
+    }
+  ],
+  "flows": [
+    {
+      "id": "proc_003_flow_proc_003_start_to_proc_003_task_1",
+      "source": "proc_003_start",
+      "target": "proc_003_task_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_1_to_proc_003_gw_split_1",
+      "source": "proc_003_task_1",
+      "target": "proc_003_gw_split_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_1_to_proc_003_yes_1",
+      "source": "proc_003_gw_split_1",
+      "target": "proc_003_yes_1",
+      "name": "Да",
+      "condition": "Все позиции в наличии?"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_1_to_proc_003_no_1",
+      "source": "proc_003_gw_split_1",
+      "target": "proc_003_no_1",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_003_flow_proc_003_yes_1_to_proc_003_gw_merge_1",
+      "source": "proc_003_yes_1",
+      "target": "proc_003_gw_merge_1"
+    },
+    {
+      "id": "proc_003_flow_proc_003_no_1_to_proc_003_end_shortage",
+      "source": "proc_003_no_1",
+      "target": "proc_003_end_shortage"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_merge_1_to_proc_003_task_2",
+      "source": "proc_003_gw_merge_1",
+      "target": "proc_003_task_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_2_to_proc_003_gw_split_2",
+      "source": "proc_003_task_2",
+      "target": "proc_003_gw_split_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_2_to_proc_003_yes_2",
+      "source": "proc_003_gw_split_2",
+      "target": "proc_003_yes_2",
+      "name": "Да",
+      "condition": "Заказ собран верно?"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_split_2_to_proc_003_no_2",
+      "source": "proc_003_gw_split_2",
+      "target": "proc_003_no_2",
+      "name": "Нет"
+    },
+    {
+      "id": "proc_003_flow_proc_003_yes_2_to_proc_003_gw_merge_2",
+      "source": "proc_003_yes_2",
+      "target": "proc_003_gw_merge_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_no_2_to_proc_003_gw_merge_2",
+      "source": "proc_003_no_2",
+      "target": "proc_003_gw_merge_2"
+    },
+    {
+      "id": "proc_003_flow_proc_003_gw_merge_2_to_proc_003_task_3",
+      "source": "proc_003_gw_merge_2",
+      "target": "proc_003_task_3"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_4_to_proc_003_task_5",
+      "source": "proc_003_task_4",
+      "target": "proc_003_task_5"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_5_to_proc_003_task_6",
+      "source": "proc_003_task_5",
+      "target": "proc_003_task_6"
+    },
+    {
+      "id": "proc_003_flow_proc_003_task_6_to_proc_003_end",
+      "source": "proc_003_task_6",
+      "target": "proc_003_end"
+    },
+    {
+      "id": "proc_003_flow_no2_to_error",
+      "source": "proc_003_no_2",
+      "target": "proc_003_end_error",
+      "name": "Невозможно исправить"
+    },
+    {
+      "id": "proc_003_flow_task3_to_timer",
+      "source": "proc_003_task_3",
+      "target": "proc_003_timer_docs"
+    },
+    {
+      "id": "proc_003_flow_timer_to_task4",
+      "source": "proc_003_timer_docs",
+      "target": "proc_003_task_4"
+    }
+  ],
+  "participants": [
+    {
+      "id": "proc_003_pool",
+      "name": "Отгрузка товара клиенту",
+      "processRef": "proc_003"
+    },
+    {
+      "id": "lane_1b0d3d71",
+      "name": "Заведующий складом",
+      "lane_id": "lane_1b0d3d71"
+    },
+    {
+      "id": "lane_a064d6ef",
+      "name": "Грузчик",
+      "lane_id": "lane_a064d6ef"
+    },
+    {
+      "id": "lane_8a6c85a1",
+      "name": "Менеджер по продажам",
+      "lane_id": "lane_8a6c85a1"
+    },
+    {
+      "id": "lane_f528abeb",
+      "name": "Бухгалтер",
+      "lane_id": "lane_f528abeb"
+    },
+    {
+      "id": "lane_d276ec1e",
+      "name": "Водитель",
+      "lane_id": "lane_d276ec1e"
+    }
+  ],
+  "annotations": [],
+  "associations": [],
+  "message_flows": [
+    {
+      "id": "mf_003_to_001",
+      "name": "Уведомление о нехватке товара",
+      "source_process": "proc_003",
+      "source_element": "proc_003_no_1",
+      "target_process": "proc_001",
+      "target_element": "proc_001_task_1"
+    },
+    {
+      "id": "mf_001_to_003",
+      "name": "Заявка на отгрузку",
+      "source_process": "proc_001",
+      "source_element": "proc_001_task_7",
+      "target_process": "proc_003",
+      "target_element": "proc_003_start"
+    }
+  ],
+  "data_objects": [
+    {
+      "id": "do_zayavka_otgr",
+      "name": "Заявка на отгрузку",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_zadaniye",
+      "name": "Задание на комплектацию",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_nakl",
+      "name": "Товарная накладная",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_sf",
+      "name": "Счёт-фактура",
+      "type": "DataObject"
+    },
+    {
+      "id": "do_podtv",
+      "name": "Подтверждение комплектности",
+      "type": "DataObject"
+    }
+  ],
+  "data_stores": [
+    {
+      "id": "ds_excel",
+      "name": "Excel (реестр отгрузок)",
+      "type": "DataStore"
+    },
+    {
+      "id": "ds_1c",
+      "name": "1С:Торговля",
+      "type": "DataStore"
+    }
+  ],
+  "layout": {
+    "elements": {
+      "proc_003_start": {
+        "x": 125.0,
+        "y": 305.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_003_task_1": {
+        "x": 280.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_gw_split_1": {
+        "x": 520.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_003_yes_1": {
+        "x": 680.0,
+        "y": 220.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_no_1": {
+        "x": 680.0,
+        "y": 360.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_gw_merge_1": {
+        "x": 920.0,
+        "y": 240.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_003_end_shortage": {
+        "x": 925.0,
+        "y": 360.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_003_task_2": {
+        "x": 1080.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_gw_split_2": {
+        "x": 1320.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_003_yes_2": {
+        "x": 1480.0,
+        "y": 220.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_no_2": {
+        "x": 1480.0,
+        "y": 360.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_gw_merge_2": {
+        "x": 1720.0,
+        "y": 300.0,
+        "width": 40.0,
+        "height": 40.0
+      },
+      "proc_003_task_3": {
+        "x": 1880.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_task_4": {
+        "x": 2080.0,
+        "y": 1110.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_task_5": {
+        "x": 2280.0,
+        "y": 730.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_task_6": {
+        "x": 2480.0,
+        "y": 290.0,
+        "width": 120.0,
+        "height": 60.0
+      },
+      "proc_003_end": {
+        "x": 2725.0,
+        "y": 305.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_003_end_error": {
+        "x": 1720.0,
+        "y": 430.0,
+        "width": 30.0,
+        "height": 30.0
+      },
+      "proc_003_timer_docs": {
+        "x": 1985.0,
+        "y": 305.0,
+        "width": 30.0,
+        "height": 30.0
+      }
+    },
+    "flows": {
+      "proc_003_flow_proc_003_start_to_proc_003_task_1": [
+        {
+          "x": 155.0,
+          "y": 320.0
+        },
+        {
+          "x": 280.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_task_1_to_proc_003_gw_split_1": [
+        {
+          "x": 400.0,
+          "y": 320.0
+        },
+        {
+          "x": 520.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_gw_split_1_to_proc_003_yes_1": [
+        {
+          "x": 560.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 250.0
+        },
+        {
+          "x": 680.0,
+          "y": 250.0
+        }
+      ],
+      "proc_003_flow_proc_003_gw_split_1_to_proc_003_no_1": [
+        {
+          "x": 560.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 320.0
+        },
+        {
+          "x": 620.0,
+          "y": 390.0
+        },
+        {
+          "x": 680.0,
+          "y": 390.0
+        }
+      ],
+      "proc_003_flow_proc_003_yes_1_to_proc_003_gw_merge_1": [
+        {
+          "x": 800.0,
+          "y": 250.0
+        },
+        {
+          "x": 860.0,
+          "y": 250.0
+        },
+        {
+          "x": 860.0,
+          "y": 260.0
+        },
+        {
+          "x": 920.0,
+          "y": 260.0
+        }
+      ],
+      "proc_003_flow_proc_003_no_1_to_proc_003_end_shortage": [
+        {
+          "x": 800.0,
+          "y": 390.0
+        },
+        {
+          "x": 862.5,
+          "y": 390.0
+        },
+        {
+          "x": 862.5,
+          "y": 375.0
+        },
+        {
+          "x": 925.0,
+          "y": 375.0
+        }
+      ],
+      "proc_003_flow_proc_003_gw_merge_1_to_proc_003_task_2": [
+        {
+          "x": 960.0,
+          "y": 260.0
+        },
+        {
+          "x": 1020.0,
+          "y": 260.0
+        },
+        {
+          "x": 1020.0,
+          "y": 320.0
+        },
+        {
+          "x": 1080.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_task_2_to_proc_003_gw_split_2": [
+        {
+          "x": 1200.0,
+          "y": 320.0
+        },
+        {
+          "x": 1320.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_gw_split_2_to_proc_003_yes_2": [
+        {
+          "x": 1360.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 250.0
+        },
+        {
+          "x": 1480.0,
+          "y": 250.0
+        }
+      ],
+      "proc_003_flow_proc_003_gw_split_2_to_proc_003_no_2": [
+        {
+          "x": 1360.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 320.0
+        },
+        {
+          "x": 1420.0,
+          "y": 390.0
+        },
+        {
+          "x": 1480.0,
+          "y": 390.0
+        }
+      ],
+      "proc_003_flow_proc_003_yes_2_to_proc_003_gw_merge_2": [
+        {
+          "x": 1600.0,
+          "y": 250.0
+        },
+        {
+          "x": 1660.0,
+          "y": 250.0
+        },
+        {
+          "x": 1660.0,
+          "y": 320.0
+        },
+        {
+          "x": 1720.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_no_2_to_proc_003_gw_merge_2": [
+        {
+          "x": 1600.0,
+          "y": 390.0
+        },
+        {
+          "x": 1660.0,
+          "y": 390.0
+        },
+        {
+          "x": 1660.0,
+          "y": 320.0
+        },
+        {
+          "x": 1720.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_gw_merge_2_to_proc_003_task_3": [
+        {
+          "x": 1760.0,
+          "y": 320.0
+        },
+        {
+          "x": 1880.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_task_4_to_proc_003_task_5": [
+        {
+          "x": 2200.0,
+          "y": 1140.0
+        },
+        {
+          "x": 2240.0,
+          "y": 1140.0
+        },
+        {
+          "x": 2240.0,
+          "y": 760.0
+        },
+        {
+          "x": 2280.0,
+          "y": 760.0
+        }
+      ],
+      "proc_003_flow_proc_003_task_5_to_proc_003_task_6": [
+        {
+          "x": 2400.0,
+          "y": 760.0
+        },
+        {
+          "x": 2440.0,
+          "y": 760.0
+        },
+        {
+          "x": 2440.0,
+          "y": 320.0
+        },
+        {
+          "x": 2480.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_proc_003_task_6_to_proc_003_end": [
+        {
+          "x": 2600.0,
+          "y": 320.0
+        },
+        {
+          "x": 2725.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_no2_to_error": [
+        {
+          "x": 1600.0,
+          "y": 390.0
+        },
+        {
+          "x": 1660.0,
+          "y": 390.0
+        },
+        {
+          "x": 1660.0,
+          "y": 445.0
+        },
+        {
+          "x": 1720.0,
+          "y": 445.0
+        }
+      ],
+      "proc_003_flow_task3_to_timer": [
+        {
+          "x": 2000.0,
+          "y": 320.0
+        },
+        {
+          "x": 1985.0,
+          "y": 320.0
+        }
+      ],
+      "proc_003_flow_timer_to_task4": [
+        {
+          "x": 2015.0,
+          "y": 320.0
+        },
+        {
+          "x": 2040.0,
+          "y": 320.0
+        },
+        {
+          "x": 2040.0,
+          "y": 1140.0
+        },
+        {
+          "x": 2080.0,
+          "y": 1140.0
+        }
+      ]
+    },
+    "lanes": {
+      "lane_1b0d3d71": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 580
+      },
+      "lane_a064d6ef": {
+        "x": 30.0,
+        "y": 610,
+        "width": 2865.0,
+        "height": 300
+      },
+      "lane_8a6c85a1": {
+        "x": 30.0,
+        "y": 910,
+        "width": 2865.0,
+        "height": 80.0
+      },
+      "lane_f528abeb": {
+        "x": 30.0,
+        "y": 990.0,
+        "width": 2865.0,
+        "height": 300
+      },
+      "lane_d276ec1e": {
+        "x": 30.0,
+        "y": 1290.0,
+        "width": 2865.0,
+        "height": 80.0
+      }
+    },
+    "participants": {
+      "proc_003_pool": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 1340.0
+      },
+      "lane_1b0d3d71": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 1340.0
+      },
+      "lane_a064d6ef": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 1340.0
+      },
+      "lane_8a6c85a1": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 1340.0
+      },
+      "lane_f528abeb": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 1340.0
+      },
+      "lane_d276ec1e": {
+        "x": 30.0,
+        "y": 30,
+        "width": 2865.0,
+        "height": 1340.0
+      }
+    }
+  }
+}

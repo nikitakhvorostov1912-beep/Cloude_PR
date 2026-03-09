@@ -109,7 +109,7 @@ export const uploadApi = {
 
   importFolder(projectId: string, path: string): Promise<ImportFolderResponse> {
     return fetchAPI<ImportFolderResponse>(
-      `/api/projects/${projectId}/import-folder`,
+      `/api/projects/${projectId}/upload/import-folder`,
       { method: "POST", body: JSON.stringify({ path }) },
     );
   },

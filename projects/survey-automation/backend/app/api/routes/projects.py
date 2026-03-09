@@ -19,7 +19,7 @@ from app.api.models import (
     ProjectListResponse,
     ProjectResponse,
 )
-from app.exceptions import AppError
+from app.exceptions import AppError, NotFoundError
 from app.services.project_service import ProjectService
 
 logger = logging.getLogger(__name__)

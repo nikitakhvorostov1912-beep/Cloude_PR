@@ -240,16 +240,31 @@ def _load_config_from_yaml(path: Path) -> dict:
 
 @functools.lru_cache(maxsize=1)
 def get_config() -> AppConfig:
-    """Загружает и кэширует конфигурацию приложения из config.yaml.
+    """Загружает и кэширует конфигурацию приложения из config.yaml и env переменных.
 
-    Конфигурация загружается один раз при первом вызове.
-    Файл config.yaml ищется в корне backend-директории.
+    Env переменные (Desktop режим):
+      SURVEY_DATA_DIR  — абсолютный путь к директории данных пользователя
+      BACKEND_PORT     — порт backend сервера
 
     Returns:
         AppConfig с загруженными настройками.
     """
+    import os
+
     config_path = BACKEND_DIR / "config.yaml"
     raw = _load_config_from_yaml(config_path)
+
+    # Поддержка env переменных для desktop режима
+    if "SURVEY_DATA_DIR" in os.environ:
+        data_dir = os.environ["SURVEY_DATA_DIR"]
+        raw.setdefault("app", {})["data_dir"] = str(Path(data_dir) / "projects")
+
+    if "BACKEND_PORT" in os.environ:
+        try:
+            raw.setdefault("app", {})["port"] = int(os.environ["BACKEND_PORT"])
+        except ValueError:
+            pass
+
     return AppConfig(**raw)
 
 
@@ -262,24 +277,7 @@ def get_project_dir(project_name: str, config: AppConfig | None = None) -> Proje
 
     Returns:
         ProjectDir для управления структурой проекта.
-
-    Raises:
-        ValueError: Если project_name содержит недопустимые символы.
     """
-    import re
-
-    if not re.match(r"^[a-zA-Z0-9_\-]+$", project_name):
-        raise ValueError(f"Недопустимый идентификатор проекта: {project_name}")
-
     if config is None:
         config = get_config()
-    project_dir = ProjectDir(config.data_dir / project_name)
-
-    # Защита от path traversal: resolved путь должен быть внутри data_dir
-    resolved = project_dir.root.resolve()
-    try:
-        resolved.relative_to(config.data_dir.resolve())
-    except ValueError:
-        raise ValueError(f"Недопустимый путь проекта: {project_name}")
-
-    return project_dir
+    return ProjectDir(config.data_dir / project_name)

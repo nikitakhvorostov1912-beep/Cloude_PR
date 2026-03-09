@@ -207,7 +207,10 @@ def main() -> None:
     requirements = load_json(processes_dir / "_requirements.json")
     if requirements:
         try:
-            from app.docs.doc_generator import DocGenerator, safe_str
+            from app.docs.doc_generator import DocGenerator, format_date_russian, safe_str
+            from docx import Document
+            from docx.enum.text import WD_ALIGN_PARAGRAPH
+            from docx.shared import Pt
 
             gen = ProcessDocGenerator(company=project_name)
             doc = gen._create_document(title=f"Лист требований — {project_name}")

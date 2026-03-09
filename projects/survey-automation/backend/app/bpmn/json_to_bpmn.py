@@ -246,19 +246,13 @@ class BpmnConverter:
 
             # Message flows (между пулами)
             for mf in bpmn_json.get("message_flows") or []:
-                # Поддерживаем оба формата: source/target и from/to
-                src_ref = mf.get("source") or mf.get("from", "")
-                tgt_ref = mf.get("target") or mf.get("to", "")
-                if not src_ref or not tgt_ref:
-                    continue
                 mf_attrib: dict[str, str] = {
                     "id": mf.get("id", f"MsgFlow_{_short_uuid()}"),
-                    "sourceRef": src_ref,
-                    "targetRef": tgt_ref,
+                    "sourceRef": mf["source"],
+                    "targetRef": mf["target"],
                 }
-                label = mf.get("name") or mf.get("label", "")
-                if label:
-                    mf_attrib["name"] = label
+                if mf.get("name"):
+                    mf_attrib["name"] = mf["name"]
                 etree.SubElement(
                     collab_elem,
                     f"{_BPMN}messageFlow",

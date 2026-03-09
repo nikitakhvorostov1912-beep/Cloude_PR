@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'" />
+  <title>Настройки</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      padding: 24px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #f1f5f9;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: #6366f1;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #475569;
+      margin-top: 4px;
+    }
+
+    .hint a {
+      color: #6366f1;
+      cursor: pointer;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 28px;
+    }
+
+    button {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.85; }
+
+    .btn-cancel {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+
+    .saved-msg {
+      display: none;
+      color: #4ade80;
+      font-size: 12px;
+      align-self: center;
+    }
+
+    .saved-msg.visible { display: block; }
+  </style>
+</head>
+<body>
+  <h2>⚙️ Настройки Survey Automation</h2>
+
+  <div class="field">
+    <label for="apiKey">Anthropic API ключ</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" />
+    <p class="hint">
+      Получить ключ: <a onclick="openAnthropic()">console.anthropic.com</a>
+    </p>
+  </div>
+
+  <div class="buttons">
+    <span class="saved-msg" id="savedMsg">✓ Сохранено</span>
+    <button class="btn-cancel" onclick="cancel()">Отмена</button>
+    <button class="btn-save" onclick="save()">Сохранить</button>
+  </div>
+
+  <script>
+    const { electronAPI } = window
+
+    async function init() {
+      if (!electronAPI) return
+      const config = await electronAPI.getConfig()
+      if (config.anthropicApiKey) {
+        document.getElementById('apiKey').value = config.anthropicApiKey
+      }
+    }
+
+    async function save() {
+      const apiKey = document.getElementById('apiKey').value.trim()
+      await electronAPI.saveConfig({ anthropicApiKey: apiKey })
+      const msg = document.getElementById('savedMsg')
+      msg.classList.add('visible')
+      setTimeout(() => {
+        msg.classList.remove('visible')
+        electronAPI.closeSettings()
+      }, 1200)
+    }
+
+    function cancel() {
+      electronAPI.closeSettings()
+    }
+
+    function openAnthropic() {
+      // Ссылка открывается в браузере через shell
+    }
+
+    if (window.electronAPI) {
+      window.electronAPI.onSettingsLoad((config) => {
+        if (config.anthropicApiKey) {
+          document.getElementById('apiKey').value = config.anthropicApiKey
+        }
+      })
+    }
+
+    init()
+  </script>
+</body>
+</html>

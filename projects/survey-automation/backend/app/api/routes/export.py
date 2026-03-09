@@ -17,8 +17,6 @@ from urllib.parse import quote
 from fastapi import APIRouter, Depends
 from fastapi.responses import FileResponse, Response, StreamingResponse
 
-import re
-
 from app.api.deps import get_export_service, get_project_service
 from app.api.models import ErrorResponse
 from app.bpmn.renderer import BPMNRenderer
@@ -27,17 +25,19 @@ from app.exceptions import AppError, NotFoundError, ValidationError
 from app.services.export_service import ExportService
 from app.services.project_service import ProjectService
 
-# Валидация process_id: только безопасные символы
-_SAFE_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_\-]+$")
+import re
+
+_SAFE_ID_RE = re.compile(r"^[\w\-]+$")
 
 
-def _validate_process_id(process_id: str) -> None:
-    """Проверяет process_id на безопасные символы (защита от path traversal)."""
-    if not _SAFE_ID_PATTERN.match(process_id):
+def _validate_resource_id(value: str, label: str = "ID") -> str:
+    """Проверяет, что ID не содержит компонентов пути."""
+    if not value or not _SAFE_ID_RE.match(value):
         raise ValidationError(
-            f"Недопустимый идентификатор процесса: {process_id}",
-            detail="Идентификатор может содержать только буквы, цифры, _ и -",
+            f"Некорректный {label}: {value!r}",
+            detail="Допустимы только буквы, цифры, дефис и подчёркивание",
         )
+    return value
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,6 @@ async def download_visio(
     export_service: Annotated[ExportService, Depends(get_export_service)],
 ) -> FileResponse:
     """Скачивает Visio-файл для процесса."""
-    _validate_process_id(process_id)
     logger.info(
         "Скачивание Visio для процесса %s проекта %s", process_id, project_id
     )
@@ -86,6 +85,8 @@ async def download_visio(
         await project_service.get_project(project_id)
     except AppError:
         raise
+
+    _validate_resource_id(process_id, "ID процесса")
 
     try:
         project_dir = get_project_dir(project_id)
@@ -139,7 +140,6 @@ async def preview_svg(
     project_service: Annotated[ProjectService, Depends(get_project_service)],
 ) -> Response:
     """Рендерит SVG-диаграмму из BPMN XML для inline-просмотра в браузере."""
-    _validate_process_id(process_id)
     logger.info(
         "Просмотр SVG для процесса %s проекта %s", process_id, project_id
     )
@@ -148,6 +148,8 @@ async def preview_svg(
         await project_service.get_project(project_id)
     except AppError:
         raise
+
+    _validate_resource_id(process_id, "ID процесса")
 
     try:
         project_dir = get_project_dir(project_id)
@@ -168,6 +170,7 @@ async def preview_svg(
                     "Content-Disposition": _make_inline_disposition(
                         f"{process_id}.svg"
                     ),
+                    "Access-Control-Allow-Origin": "*",
                 },
             )
 
@@ -218,7 +221,6 @@ async def download_bpmn(
     project_service: Annotated[ProjectService, Depends(get_project_service)],
 ) -> FileResponse:
     """Скачивает BPMN 2.0 XML-файл."""
-    _validate_process_id(process_id)
     logger.info(
         "Скачивание BPMN для процесса %s проекта %s", process_id, project_id
     )
@@ -227,6 +229,8 @@ async def download_bpmn(
         await project_service.get_project(project_id)
     except AppError:
         raise
+
+    _validate_resource_id(process_id, "ID процесса")
 
     try:
         project_dir = get_project_dir(project_id)

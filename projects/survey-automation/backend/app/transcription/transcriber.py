@@ -324,7 +324,7 @@ class Transcriber:
                     torch.cuda.empty_cache()
                     logger.debug("Кэш CUDA очищен")
             except ImportError:
-                logger.debug("torch не установлен, пропуск очистки CUDA-кэша")
+                pass
 
     # ------------------------------------------------------------------
     # Приватные методы

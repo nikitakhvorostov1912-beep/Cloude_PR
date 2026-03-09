@@ -129,6 +129,45 @@ class ProcessUpdate(BaseModel):
 
 
 # ----------------------------------------------------------------------
+# GAP-анализ
+# ----------------------------------------------------------------------
+
+
+class GapResponse(BaseModel):
+    """Ответ с данными GAP-анализа."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str = Field(..., description="Идентификатор GAP")
+    process_name: str = Field(..., description="Название процесса")
+    function_name: str = Field(default="", description="Название функции")
+    coverage: str = Field(default="", description="Степень покрытия (полное/частичное/отсутствует)")
+    erp_module: str = Field(default="", description="Модуль ERP-системы")
+    gap_description: str = Field(default="", description="Описание разрыва")
+    recommendation: str = Field(default="", description="Рекомендация")
+    effort: str = Field(default="", description="Оценка трудозатрат")
+
+
+# ----------------------------------------------------------------------
+# Требования
+# ----------------------------------------------------------------------
+
+
+class RequirementResponse(BaseModel):
+    """Ответ с данными требования."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str = Field(..., description="Идентификатор требования")
+    type: str = Field(default="", description="Тип требования (функциональное/нефункциональное)")
+    module: str = Field(default="", description="Модуль системы")
+    description: str = Field(default="", description="Описание требования")
+    priority: str = Field(default="", description="Приоритет (высокий/средний/низкий)")
+    source: str = Field(default="", description="Источник требования")
+    effort: str = Field(default="", description="Оценка трудозатрат")
+
+
+# ----------------------------------------------------------------------
 # Пайплайн
 # ----------------------------------------------------------------------
 
@@ -162,6 +201,12 @@ class PipelineStatusResponse(BaseModel):
     overall_progress: float = Field(
         default=0.0, ge=0.0, le=100.0, description="Общий прогресс в процентах"
     )
+
+
+class PipelineStageRequest(BaseModel):
+    """Запрос на запуск этапа пайплайна."""
+
+    stage: str = Field(..., description="Название этапа для запуска")
 
 
 class ErpConfigRequest(BaseModel):
@@ -220,59 +265,3 @@ class MessageResponse(BaseModel):
     """Простой ответ с сообщением."""
 
     message: str = Field(..., description="Сообщение")
-
-
-# ----------------------------------------------------------------------
-# Списки процессов / GAP / требований
-# ----------------------------------------------------------------------
-
-
-class ProcessListResponse(BaseModel):
-    """Список процессов проекта."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    processes: list[ProcessResponse] = Field(default_factory=list, description="Список процессов")
-    total: int = Field(default=0, description="Общее количество процессов")
-
-
-class GapResponse(BaseModel):
-    """Одна позиция GAP-анализа."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: str = Field(default="", description="Идентификатор")
-    process_name: str = Field(default="", description="Название процесса")
-    current_state: str = Field(default="", description="Текущее состояние (AS-IS)")
-    target_state: str = Field(default="", description="Целевое состояние (TO-BE)")
-    gap_type: str = Field(default="", description="Тип разрыва")
-    priority: str = Field(default="medium", description="Приоритет")
-    recommendation: str = Field(default="", description="Рекомендация")
-
-
-class GapListResponse(BaseModel):
-    """Список GAP-анализа."""
-
-    gaps: list[GapResponse] = Field(default_factory=list, description="Список разрывов")
-    total: int = Field(default=0, description="Общее количество")
-    summary: dict[str, Any] = Field(default_factory=dict, description="Сводка по типам")
-
-
-class RequirementResponse(BaseModel):
-    """Одно требование."""
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: str = Field(default="", description="Идентификатор")
-    title: str = Field(default="", description="Название требования")
-    description: str = Field(default="", description="Описание")
-    type: str = Field(default="FR", description="Тип (FR/NFR/IR)")
-    priority: str = Field(default="medium", description="Приоритет (MoSCoW)")
-    source: str = Field(default="", description="Источник требования")
-
-
-class RequirementListResponse(BaseModel):
-    """Список требований."""
-
-    requirements: list[RequirementResponse] = Field(default_factory=list, description="Список требований")
-    total: int = Field(default=0, description="Общее количество")

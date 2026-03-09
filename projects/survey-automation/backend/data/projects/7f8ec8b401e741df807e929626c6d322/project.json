@@ -1,0 +1,13 @@
+{
+  "id": "7f8ec8b401e741df807e929626c6d322",
+  "name": "TestProject",
+  "description": "Full pipeline test",
+  "created_at": "2026-03-01T20:59:24.390427+00:00",
+  "updated_at": "2026-03-01T20:59:24.390427+00:00",
+  "status": "new",
+  "pipeline_state": {
+    "stage": null,
+    "progress": 0,
+    "completed_stages": []
+  }
+}

@@ -1,0 +1,546 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="50.0 50.0 7838.0 3270.0" width="7838" height="3270" preserveAspectRatio="xMidYMid meet">
+  <style>  .bpmn-task {
+    fill: var(--bpmn-task-fill, #ffffff);
+    stroke: var(--bpmn-task-stroke, #333333);
+    stroke-width: 2;
+  }
+  .bpmn-task-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .bpmn-gateway {
+    fill: var(--bpmn-gateway-fill, #ffd700);
+    stroke: var(--bpmn-gateway-stroke, #b8860b);
+    stroke-width: 2;
+  }
+  .bpmn-gateway-marker {
+    fill: none;
+    stroke: var(--bpmn-gateway-stroke, #b8860b);
+    stroke-width: 2.5;
+  }
+  .bpmn-gateway-marker-filled {
+    fill: var(--bpmn-gateway-stroke, #b8860b);
+    stroke: var(--bpmn-gateway-stroke, #b8860b);
+    stroke-width: 2.5;
+  }
+  .bpmn-gateway-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 11px;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+  }
+  .bpmn-start-event {
+    fill: var(--bpmn-start-fill, #d4edda);
+    stroke: var(--bpmn-start-stroke, #28a745);
+    stroke-width: 2;
+  }
+  .bpmn-end-event {
+    fill: var(--bpmn-end-fill, #f8d7da);
+    stroke: var(--bpmn-end-stroke, #dc3545);
+    stroke-width: 3.5;
+  }
+  .bpmn-intermediate-event {
+    fill: var(--bpmn-intermediate-fill, #fff3cd);
+    stroke: var(--bpmn-intermediate-stroke, #fd7e14);
+    stroke-width: 2;
+  }
+  .bpmn-intermediate-event-inner {
+    fill: none;
+    stroke: var(--bpmn-intermediate-stroke, #fd7e14);
+    stroke-width: 1.5;
+  }
+  .bpmn-event-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 11px;
+    text-anchor: middle;
+    dominant-baseline: hanging;
+  }
+  .bpmn-flow {
+    fill: none;
+    stroke: var(--bpmn-flow-stroke, #555555);
+    stroke-width: 1.5;
+  }
+  .bpmn-flow-arrow {
+    fill: var(--bpmn-flow-stroke, #555555);
+    stroke: none;
+  }
+  .bpmn-flow-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 10px;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .bpmn-pool {
+    fill: var(--bpmn-pool-fill, #f0f4f8);
+    stroke: var(--bpmn-pool-stroke, #333333);
+    stroke-width: 2;
+  }
+  .bpmn-pool-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .bpmn-lane {
+    fill: var(--bpmn-lane-fill, none);
+    stroke: var(--bpmn-lane-stroke, #999999);
+    stroke-width: 1;
+    stroke-dasharray: 5 3;
+  }
+  .bpmn-lane-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+  .bpmn-annotation {
+    fill: var(--bpmn-annotation-fill, #fffbe6);
+    stroke: var(--bpmn-annotation-stroke, #bbb);
+    stroke-width: 1;
+  }
+  .bpmn-annotation-label {
+    fill: var(--bpmn-label-color, #222222);
+    font-family: 'Segoe UI', 'Noto Sans', Arial, sans-serif;
+    font-size: 10px;
+    text-anchor: start;
+    dominant-baseline: hanging;
+  }
+  .bpmn-data-object {
+    fill: var(--bpmn-data-fill, #ffffff);
+    stroke: var(--bpmn-data-stroke, #888888);
+    stroke-width: 1.5;
+  }
+</style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto" markerUnits="strokeWidth">
+      <polygon points="0 0, 10 3.5, 0 7" class="bpmn-flow-arrow"/>
+    </marker>
+    <clipPath id="clip-task-1">
+      <rect x="462.0" y="217.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-2">
+      <rect x="1022.0" y="87.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-3">
+      <rect x="1022.0" y="347.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-4">
+      <rect x="1582.0" y="567.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-5">
+      <rect x="2142.0" y="437.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-6">
+      <rect x="2142.0" y="697.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-7">
+      <rect x="2702.0" y="1617.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-8">
+      <rect x="3262.0" y="1487.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-9">
+      <rect x="3262.0" y="1747.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-10">
+      <rect x="3822.0" y="917.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-11">
+      <rect x="4382.0" y="787.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-12">
+      <rect x="4382.0" y="1047.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-13">
+      <rect x="4942.0" y="1267.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-14">
+      <rect x="5222.0" y="1967.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-15">
+      <rect x="5502.0" y="1267.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-16">
+      <rect x="5782.0" y="917.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-17">
+      <rect x="6062.0" y="917.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-18">
+      <rect x="6342.0" y="2317.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-19">
+      <rect x="6622.0" y="217.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-20">
+      <rect x="6902.0" y="2317.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+    <clipPath id="clip-task-21">
+      <rect x="7182.0" y="1617.0" width="116.0" height="76.0" rx="6" ry="6"/>
+    </clipPath>
+  </defs>
+  <g class="bpmn-pool-group">
+    <rect x="80.0" y="80.0" width="7778.0" height="3210.0" rx="0" ry="0" class="bpmn-pool"/>
+    <text x="95.0" y="1685.0" class="bpmn-pool-label" transform="rotate(-90, 95.0, 1685.0)">Закупка товаров и материалов</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="80.0" width="7778.0" height="540.0" class="bpmn-lane"/>
+    <text x="95.0" y="350.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 350.0)">Инициатор заявки</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="620.0" width="7778.0" height="540.0" class="bpmn-lane"/>
+    <text x="95.0" y="890.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 890.0)">Руководитель подразделения</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="1160.0" width="7778.0" height="540.0" class="bpmn-lane"/>
+    <text x="95.0" y="1430.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 1430.0)">Менеджер по закупкам</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="1700.0" width="7778.0" height="350.0" class="bpmn-lane"/>
+    <text x="95.0" y="1875.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 1875.0)">Руководитель отдела закупок</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="2050.0" width="7778.0" height="540.0" class="bpmn-lane"/>
+    <text x="95.0" y="2320.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 2320.0)">Финансовый контролёр</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="2590.0" width="7778.0" height="350.0" class="bpmn-lane"/>
+    <text x="95.0" y="2765.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 2765.0)">Юрист</text>
+  </g>
+  <g class="bpmn-lane-group">
+    <rect x="80.0" y="2940.0" width="7778.0" height="350.0" class="bpmn-lane"/>
+    <text x="95.0" y="3115.0" class="bpmn-lane-label" transform="rotate(-90, 95.0, 3115.0)">Кладовщик</text>
+  </g>
+  <g class="bpmn-flows">
+    <g class="bpmn-flow-group">
+      <polyline points="258.0,255.0 460.0,255.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="580.0,255.0 775.0,255.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="825.0,255.0 922.5,255.0 922.5,125.0 1020.0,125.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="912.5" y="182.0" width="20.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="922.5" y="190.0" class="bpmn-flow-label">Да</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="825.0,255.0 922.5,255.0 922.5,385.0 1020.0,385.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="909.5" y="312.0" width="26.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="922.5" y="320.0" class="bpmn-flow-label">Нет</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="1140.0,125.0 1237.5,125.0 1237.5,255.0 1335.0,255.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="1140.0,385.0 1237.5,385.0 1237.5,255.0 1335.0,255.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="1385.0,255.0 1482.5,255.0 1482.5,605.0 1580.0,605.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="1700.0,605.0 1895.0,605.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="1945.0,605.0 2042.5,605.0 2042.5,475.0 2140.0,475.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="2032.5" y="532.0" width="20.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="2042.5" y="540.0" class="bpmn-flow-label">Да</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="1945.0,605.0 2042.5,605.0 2042.5,735.0 2140.0,735.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="2029.5" y="662.0" width="26.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="2042.5" y="670.0" class="bpmn-flow-label">Нет</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="2260.0,475.0 2357.5,475.0 2357.5,605.0 2455.0,605.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="2260.0,735.0 2357.5,735.0 2357.5,605.0 2455.0,605.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="2505.0,605.0 2602.5,605.0 2602.5,1655.0 2700.0,1655.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="2820.0,1655.0 3015.0,1655.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="3065.0,1655.0 3162.5,1655.0 3162.5,1525.0 3260.0,1525.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="3152.5" y="1582.0" width="20.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="3162.5" y="1590.0" class="bpmn-flow-label">Да</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="3065.0,1655.0 3162.5,1655.0 3162.5,1785.0 3260.0,1785.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="3149.5" y="1712.0" width="26.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="3162.5" y="1720.0" class="bpmn-flow-label">Нет</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="3380.0,1525.0 3477.5,1525.0 3477.5,1655.0 3575.0,1655.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="3380.0,1785.0 3477.5,1785.0 3477.5,1655.0 3575.0,1655.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="3625.0,1655.0 3722.5,1655.0 3722.5,955.0 3820.0,955.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="3940.0,955.0 4135.0,955.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="4185.0,955.0 4282.5,955.0 4282.5,825.0 4380.0,825.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="4272.5" y="882.0" width="20.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="4282.5" y="890.0" class="bpmn-flow-label">Да</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="4185.0,955.0 4282.5,955.0 4282.5,1085.0 4380.0,1085.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+      <rect x="4269.5" y="1012.0" width="26.0" height="16.0" fill="var(--bpmn-task-fill, #ffffff)" stroke="none" rx="3" ry="3" opacity="0.85"/>
+      <text x="4282.5" y="1020.0" class="bpmn-flow-label">Нет</text>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="4500.0,825.0 4597.5,825.0 4597.5,955.0 4695.0,955.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="4500.0,1085.0 4597.5,1085.0 4597.5,955.0 4695.0,955.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="4745.0,955.0 4842.5,955.0 4842.5,1305.0 4940.0,1305.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="5060.0,1305.0 5140.0,1305.0 5140.0,2005.0 5220.0,2005.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="5340.0,2005.0 5420.0,2005.0 5420.0,1305.0 5500.0,1305.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="5620.0,1305.0 5700.0,1305.0 5700.0,955.0 5780.0,955.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="5900.0,955.0 6060.0,955.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="6180.0,955.0 6260.0,955.0 6260.0,2355.0 6340.0,2355.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="6460.0,2355.0 6540.0,2355.0 6540.0,255.0 6620.0,255.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="6740.0,255.0 6820.0,255.0 6820.0,2355.0 6900.0,2355.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="7020.0,2355.0 7100.0,2355.0 7100.0,1655.0 7180.0,1655.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+    <g class="bpmn-flow-group">
+      <polyline points="7300.0,1655.0 7401.0,1655.0 7401.0,255.0 7502.0,255.0" class="bpmn-flow" marker-end="url(#arrowhead)"/>
+    </g>
+  </g>
+  <g class="bpmn-event-group bpmn-startEvent">
+    <circle cx="240.0" cy="255.0" r="18.0" class="bpmn-start-event"/>
+    <text x="240.0" y="278.0" class="bpmn-event-label">Формирование</text>
+    <text x="240.0" y="293.0" class="bpmn-event-label">потребности в</text>
+    <text x="240.0" y="308.0" class="bpmn-event-label">материалах</text>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="460.0" y="215.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-1)">
+      <text x="520.0" y="240.0" class="bpmn-task-label">Формирование</text>
+      <text x="520.0" y="255.0" class="bpmn-task-label">заявки на</text>
+      <text x="520.0" y="270.0" class="bpmn-task-label">закупку</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="800.0,230.0 825.0,255.0 800.0,280.0 775.0,255.0" class="bpmn-gateway"/>
+    <line x1="788.8" y1="243.8" x2="811.2" y2="266.2" class="bpmn-gateway-marker"/>
+    <line x1="811.2" y1="243.8" x2="788.8" y2="266.2" class="bpmn-gateway-marker"/>
+    <text x="800.0" y="285.0" class="bpmn-gateway-label">Заявка</text>
+    <text x="800.0" y="300.0" class="bpmn-gateway-label">обоснована?</text>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="1020.0" y="85.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-2)">
+      <text x="1080.0" y="125.0" class="bpmn-task-label">Проверка бюджета</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="1020.0" y="345.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-3)">
+      <text x="1080.0" y="377.5" class="bpmn-task-label">Возврат</text>
+      <text x="1080.0" y="392.5" class="bpmn-task-label">инициатору</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="1360.0,230.0 1385.0,255.0 1360.0,280.0 1335.0,255.0" class="bpmn-gateway"/>
+    <line x1="1348.8" y1="243.8" x2="1371.2" y2="266.2" class="bpmn-gateway-marker"/>
+    <line x1="1371.2" y1="243.8" x2="1348.8" y2="266.2" class="bpmn-gateway-marker"/>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="1580.0" y="565.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-4)">
+      <text x="1640.0" y="597.5" class="bpmn-task-label">Согласование</text>
+      <text x="1640.0" y="612.5" class="bpmn-task-label">руководителем</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="1920.0,580.0 1945.0,605.0 1920.0,630.0 1895.0,605.0" class="bpmn-gateway"/>
+    <line x1="1908.8" y1="593.8" x2="1931.2" y2="616.2" class="bpmn-gateway-marker"/>
+    <line x1="1931.2" y1="593.8" x2="1908.8" y2="616.2" class="bpmn-gateway-marker"/>
+    <text x="1920.0" y="635.0" class="bpmn-gateway-label">Бюджет</text>
+    <text x="1920.0" y="650.0" class="bpmn-gateway-label">достаточен?</text>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="2140.0" y="435.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-5)">
+      <text x="2200.0" y="467.5" class="bpmn-task-label">Поиск</text>
+      <text x="2200.0" y="482.5" class="bpmn-task-label">поставщиков</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="2140.0" y="695.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-6)">
+      <text x="2200.0" y="727.5" class="bpmn-task-label">Запрос доп.</text>
+      <text x="2200.0" y="742.5" class="bpmn-task-label">финансирования</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="2480.0,580.0 2505.0,605.0 2480.0,630.0 2455.0,605.0" class="bpmn-gateway"/>
+    <line x1="2468.8" y1="593.8" x2="2491.2" y2="616.2" class="bpmn-gateway-marker"/>
+    <line x1="2491.2" y1="593.8" x2="2468.8" y2="616.2" class="bpmn-gateway-marker"/>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="2700.0" y="1615.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-7)">
+      <text x="2760.0" y="1655.0" class="bpmn-task-label">Проверка бюджета</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="3040.0,1630.0 3065.0,1655.0 3040.0,1680.0 3015.0,1655.0" class="bpmn-gateway"/>
+    <line x1="3028.8" y1="1643.8" x2="3051.2" y2="1666.2" class="bpmn-gateway-marker"/>
+    <line x1="3051.2" y1="1643.8" x2="3028.8" y2="1666.2" class="bpmn-gateway-marker"/>
+    <text x="3040.0" y="1685.0" class="bpmn-gateway-label">Сумма &gt; 500 тыс?</text>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="3260.0" y="1485.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-8)">
+      <text x="3320.0" y="1525.0" class="bpmn-task-label">Тендер</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="3260.0" y="1745.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-9)">
+      <text x="3320.0" y="1785.0" class="bpmn-task-label">Прямая закупка</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="3600.0,1630.0 3625.0,1655.0 3600.0,1680.0 3575.0,1655.0" class="bpmn-gateway"/>
+    <line x1="3588.8" y1="1643.8" x2="3611.2" y2="1666.2" class="bpmn-gateway-marker"/>
+    <line x1="3611.2" y1="1643.8" x2="3588.8" y2="1666.2" class="bpmn-gateway-marker"/>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="3820.0" y="915.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-10)">
+      <text x="3880.0" y="947.5" class="bpmn-task-label">Поиск и выбор</text>
+      <text x="3880.0" y="962.5" class="bpmn-task-label">поставщиков</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="4160.0,930.0 4185.0,955.0 4160.0,980.0 4135.0,955.0" class="bpmn-gateway"/>
+    <line x1="4148.8" y1="943.8" x2="4171.2" y2="966.2" class="bpmn-gateway-marker"/>
+    <line x1="4171.2" y1="943.8" x2="4148.8" y2="966.2" class="bpmn-gateway-marker"/>
+    <text x="4160.0" y="985.0" class="bpmn-gateway-label">Товар</text>
+    <text x="4160.0" y="1000.0" class="bpmn-gateway-label">соответствует?</text>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="4380.0" y="785.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-11)">
+      <text x="4440.0" y="825.0" class="bpmn-task-label">Оприходование</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="4380.0" y="1045.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-12)">
+      <text x="4440.0" y="1085.0" class="bpmn-task-label">Рекламация</text>
+    </g>
+  </g>
+  <g class="bpmn-gateway-group bpmn-exclusiveGateway">
+    <polygon points="4720.0,930.0 4745.0,955.0 4720.0,980.0 4695.0,955.0" class="bpmn-gateway"/>
+    <line x1="4708.8" y1="943.8" x2="4731.2" y2="966.2" class="bpmn-gateway-marker"/>
+    <line x1="4731.2" y1="943.8" x2="4708.8" y2="966.2" class="bpmn-gateway-marker"/>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="4940.0" y="1265.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-13)">
+      <text x="5000.0" y="1297.5" class="bpmn-task-label">Проведение</text>
+      <text x="5000.0" y="1312.5" class="bpmn-task-label">тендера</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="5220.0" y="1965.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-14)">
+      <text x="5280.0" y="1997.5" class="bpmn-task-label">Согласование</text>
+      <text x="5280.0" y="2012.5" class="bpmn-task-label">договора</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="5500.0" y="1265.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-15)">
+      <text x="5560.0" y="1297.5" class="bpmn-task-label">Подписание</text>
+      <text x="5560.0" y="1312.5" class="bpmn-task-label">договора</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="5780.0" y="915.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-16)">
+      <text x="5840.0" y="940.0" class="bpmn-task-label">Формирование</text>
+      <text x="5840.0" y="955.0" class="bpmn-task-label">заказа</text>
+      <text x="5840.0" y="970.0" class="bpmn-task-label">поставщику</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="6060.0" y="915.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-17)">
+      <text x="6120.0" y="947.5" class="bpmn-task-label">Контроль сроков</text>
+      <text x="6120.0" y="962.5" class="bpmn-task-label">поставки</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="6340.0" y="2315.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-18)">
+      <text x="6400.0" y="2347.5" class="bpmn-task-label">Приёмка товара</text>
+      <text x="6400.0" y="2362.5" class="bpmn-task-label">на складе</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="6620.0" y="215.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-19)">
+      <text x="6680.0" y="247.5" class="bpmn-task-label">Контроль</text>
+      <text x="6680.0" y="262.5" class="bpmn-task-label">качества</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="6900.0" y="2315.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-20)">
+      <text x="6960.0" y="2347.5" class="bpmn-task-label">Оприходование на</text>
+      <text x="6960.0" y="2362.5" class="bpmn-task-label">склад</text>
+    </g>
+  </g>
+  <g class="bpmn-task-group">
+    <rect x="7180.0" y="1615.0" width="120.0" height="80.0" rx="8" ry="8" class="bpmn-task"/>
+    <g clip-path="url(#clip-task-21)">
+      <text x="7240.0" y="1655.0" class="bpmn-task-label">Обработка оплаты</text>
+    </g>
+  </g>
+  <g class="bpmn-event-group bpmn-endEvent">
+    <circle cx="7520.0" cy="255.0" r="18.0" class="bpmn-end-event"/>
+    <text x="7520.0" y="278.0" class="bpmn-event-label">Товар</text>
+    <text x="7520.0" y="293.0" class="bpmn-event-label">оприходован на</text>
+    <text x="7520.0" y="308.0" class="bpmn-event-label">склад</text>
+  </g>
+</svg>

@@ -17,7 +17,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { dataApi } from "@/lib/api";
-import type { Transcript, TranscriptSegment } from "@/lib/types";
 
 const speakerColors = [
   "text-blue-400",
@@ -65,7 +64,7 @@ export default function TranscriptsPage() {
     enabled: !!projectId && !!selectedId,
   });
 
-  const transcripts = data ?? [];
+  const transcripts = React.useMemo(() => data?.transcripts ?? [], [data]);
 
   // Auto-select first transcript
   React.useEffect(() => {
@@ -88,7 +87,7 @@ export default function TranscriptsPage() {
         stats[seg.speaker] = { count: 0, totalDuration: 0 };
       }
       stats[seg.speaker].count += 1;
-      stats[seg.speaker].totalDuration += (seg.end_time ?? 0) - (seg.start_time ?? 0);
+      stats[seg.speaker].totalDuration += seg.end_time - seg.start_time;
     });
     return Object.entries(stats).map(([speaker, data]) => ({
       speaker,
@@ -204,7 +203,7 @@ export default function TranscriptsPage() {
                   <TabsContent value="dialogue" className="mt-4">
                     <ScrollArea className="h-[calc(100vh-420px)]">
                       <div className="space-y-3 pr-4">
-                        {(selectedTranscript.segments ?? []).map((seg) => (
+                        {selectedTranscript.segments.map((seg) => (
                           <div key={seg.id} className="group">
                             <div className="flex items-baseline gap-2 text-xs">
                               <span
@@ -213,7 +212,7 @@ export default function TranscriptsPage() {
                                 {seg.speaker}
                               </span>
                               <span className="text-muted-foreground">
-                                {formatTime(seg.start_time ?? 0)} — {formatTime(seg.end_time ?? 0)}
+                                {formatTime(seg.start_time)} — {formatTime(seg.end_time)}
                               </span>
                             </div>
                             <p className="mt-0.5 text-sm leading-relaxed">

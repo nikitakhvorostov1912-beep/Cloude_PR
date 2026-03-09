@@ -116,7 +116,7 @@ class ProcessToBpmnConverter:
         elements.append({
             "id": start_id,
             "type": "startEvent",
-            "name": self._truncate(trigger_text, 60),
+            "name": self._truncate(trigger_text, 40),
             "lane": self._get_first_lane(lanes),
         })
 
@@ -132,46 +132,15 @@ class ProcessToBpmnConverter:
             performer = step.get("performer", step.get("executor", ""))
             lane_id = lane_id_map.get(performer)
 
-            # Определяем тип задачи (event_type имеет приоритет)
-            event_type_raw = step.get("event_type", "")
-            _event_type_map: dict[str, str] = {
-                "messageStartEvent": "messageStartEvent",
-                "messageEndEvent": "messageEndEvent",
-                "timerEvent": "timerIntermediateCatchEvent",
-                "timerIntermediateCatchEvent": "timerIntermediateCatchEvent",
-                "cancelEvent": "cancelEndEvent",
-                "cancelEndEvent": "cancelEndEvent",
-            }
-            if event_type_raw in _event_type_map:
-                task_type = _event_type_map[event_type_raw]
-            elif step.get("timer_wait") and event_type_raw in ("task", ""):
-                # Шаг с ожиданием (timer_wait) без явного типа → timerIntermediateCatchEvent
-                task_type = "timerIntermediateCatchEvent"
-            else:
-                task_type = self._infer_task_type(step)
-
+            # Определяем тип задачи
+            task_type = self._infer_task_type(step)
             task_id = f"{proc_id}_task_{step_order}"
-
-            # Формируем отображаемое имя: "N. Название"
-            # Исполнитель не добавляется в имя — он уже задан дорожкой (lane)
-            display_name = f"{step_order}. {step_name}"
-
-            # Определяем, является ли шаг подпроцессом (>= 2 подшагов или явно указано)
-            sub_steps = step.get("sub_steps", step.get("substeps", []))
-            is_subprocess = step.get("is_subprocess", len(sub_steps) >= 2 if sub_steps else False)
-
-            # Метаданные для диаграммы
-            multi_instance = step.get("multi_instance", False)
-            timer_wait = step.get("timer_wait", "")
 
             elements.append({
                 "id": task_id,
                 "type": task_type,
-                "name": self._truncate(display_name, 120),
+                "name": step_name,
                 "lane": lane_id,
-                "is_subprocess": is_subprocess,
-                "multi_instance": multi_instance,
-                "timer_wait": timer_wait,
             })
 
             # Поток от предыдущего элемента
@@ -190,7 +159,6 @@ class ProcessToBpmnConverter:
                 gw_result = self._add_gateway_for_decision(
                     proc_id, step_decision, step_order,
                     prev_id, lane_id, elements, flows,
-                    lane_id_map=lane_id_map,
                 )
                 prev_id = gw_result["merge_id"]
 
@@ -200,7 +168,7 @@ class ProcessToBpmnConverter:
         elements.append({
             "id": end_id,
             "type": "endEvent",
-            "name": self._truncate(result_text, 100),
+            "name": self._truncate(result_text, 40),
             "lane": self._get_first_lane(lanes),
         })
 
@@ -221,9 +189,6 @@ class ProcessToBpmnConverter:
             for lane in lanes:
                 lane["participant_id"] = f"{proc_id}_pool"
 
-        # Собираем message_flows из исходных данных процесса
-        raw_message_flows = process.get("message_flows", [])
-
         result = {
             "process_id": proc_id,
             "process_name": proc_name,
@@ -232,7 +197,7 @@ class ProcessToBpmnConverter:
             "participants": bpmn_participants,
             "annotations": [],
             "associations": [],
-            "message_flows": raw_message_flows,
+            "message_flows": [],
             "data_objects": [],
             "data_stores": [],
         }
@@ -352,35 +317,25 @@ class ProcessToBpmnConverter:
         lane_id: str | None,
         elements: list[dict[str, Any]],
         flows: list[dict[str, Any]],
-        lane_id_map: dict[str, str] | None = None,
     ) -> dict[str, str]:
         """Добавляет шлюз с ветвлением для решения.
 
         Создаёт: exclusiveGateway (split) → ветки Да/Нет → exclusiveGateway (merge).
-        Автоматически определяет lane для веток по упоминанию участников в тексте.
 
         Returns:
             Словарь с ключом ``merge_id`` — ID элемента слияния.
         """
-        # Для имени шлюза используем краткое "name" ("Товар в наличии?"),
-        # а не verbose "condition" ("Проверка остатков в Excel-таблице кладовщика и...")
         condition = decision.get("condition", decision.get("question", "Условие?"))
-        gw_name = decision.get("name", decision.get("condition", decision.get("question", "Условие?")))
         yes_branch = decision.get("yes_branch", decision.get("yes", "Да"))
         no_branch = decision.get("no_branch", decision.get("no", "Нет"))
-
-        # Определяем lane для веток по тексту (ищем упоминания участников)
-        yes_lane = self._detect_lane_from_text(yes_branch, lane_id_map) or lane_id
-        no_lane = self._detect_lane_from_text(no_branch, lane_id_map) or lane_id
 
         # Шлюз разветвления
         gw_split_id = f"{proc_id}_gw_split_{step_order}"
         elements.append({
             "id": gw_split_id,
             "type": "exclusiveGateway",
-            "name": self._truncate(gw_name, 50),
+            "name": self._truncate(condition, 35),
             "lane": lane_id,
-            "condition_label": self._truncate(condition, 60),
         })
 
         flows.append({
@@ -394,8 +349,8 @@ class ProcessToBpmnConverter:
         elements.append({
             "id": yes_task_id,
             "type": "task",
-            "name": self._truncate(yes_branch, 100),
-            "lane": yes_lane,
+            "name": self._truncate(yes_branch, 30),
+            "lane": lane_id,
         })
 
         flows.append({
@@ -411,8 +366,8 @@ class ProcessToBpmnConverter:
         elements.append({
             "id": no_task_id,
             "type": "task",
-            "name": self._truncate(no_branch, 100),
-            "lane": no_lane,
+            "name": self._truncate(no_branch, 30),
+            "lane": lane_id,
         })
 
         flows.append({
@@ -443,51 +398,6 @@ class ProcessToBpmnConverter:
         })
 
         return {"merge_id": gw_merge_id}
-
-    @staticmethod
-    def _detect_lane_from_text(
-        text: str,
-        lane_id_map: dict[str, str] | None,
-    ) -> str | None:
-        """Определяет lane по упоминанию роли участника в тексте.
-
-        Ищет имена участников (ключи lane_id_map) в тексте ветки.
-        Например, "Согласование коммерческим директором" → "Коммерческий директор".
-        Использует нечёткое сравнение основ слов для русского языка.
-
-        Args:
-            text: Текст ветки решения.
-            lane_id_map: Словарь {имя_участника: lane_id}.
-
-        Returns:
-            ID дорожки или None если совпадение не найдено.
-        """
-        if not lane_id_map or not text:
-            return None
-
-        text_lower = text.lower()
-
-        # Точное вхождение (приведённое к нижнему регистру)
-        for name, lid in lane_id_map.items():
-            if name.lower() in text_lower:
-                return lid
-
-        # Нечёткое: сравниваем основы слов (первые 4+ буквы каждого слова)
-        text_stems = {w[:4] for w in text_lower.split() if len(w) >= 4}
-        best_match: str | None = None
-        best_score = 0
-
-        for name, lid in lane_id_map.items():
-            name_stems = {w[:4] for w in name.lower().split() if len(w) >= 4}
-            if not name_stems:
-                continue
-            # Количество совпавших основ
-            overlap = len(text_stems & name_stems)
-            if overlap > best_score and overlap >= 1:
-                best_score = overlap
-                best_match = lid
-
-        return best_match
 
     # ------------------------------------------------------------------
     # Тип задачи

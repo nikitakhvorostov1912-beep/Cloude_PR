@@ -1,0 +1,31 @@
+{
+  "project_id": "6fa5881144a34dcf9ea274c5ca448e07",
+  "stages": {
+    "transcribe": {
+      "status": "completed",
+      "progress": 100
+    },
+    "extract": {
+      "status": "completed",
+      "progress": 100
+    },
+    "generate-bpmn": {
+      "status": "completed",
+      "progress": 100
+    },
+    "gap-analysis": {
+      "status": "completed",
+      "progress": 100
+    },
+    "generate-tobe": {
+      "status": "completed",
+      "progress": 100
+    },
+    "generate-docs": {
+      "status": "completed",
+      "progress": 100
+    }
+  },
+  "current_stage": null,
+  "error": null
+}

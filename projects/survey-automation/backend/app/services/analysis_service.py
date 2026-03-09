@@ -8,8 +8,6 @@ from pathlib import Path
 from typing import Any, Callable
 from uuid import uuid4
 
-import aiofiles
-
 from app.analysis.llm_client import LLMClient
 from app.analysis.prompts import (
     EXTRACT_PROCESSES_PROMPT,
@@ -75,7 +73,7 @@ class AnalysisService:
         if on_progress:
             on_progress(0, 100, "Загрузка транскрипций...")
 
-        transcripts = await self._load_transcripts(project_dir, transcript_ids)
+        transcripts = self._load_transcripts(project_dir, transcript_ids)
         if not transcripts:
             raise NotFoundError(
                 "Транскрипции не найдены в проекте",
@@ -123,10 +121,10 @@ class AnalysisService:
 
         # Сохраняем каждый процесс как отдельный файл
         for proc in all_processes:
-            await self._save_process(project_dir, proc)
+            self._save_process(project_dir, proc)
 
         # Сохраняем общий файл со всеми процессами
-        await self._save_json(
+        self._save_json(
             project_dir.processes / "_all_processes.json",
             all_processes,
         )
@@ -167,7 +165,7 @@ class AnalysisService:
             ProcessingError: При ошибке анализа.
         """
         project_dir = self._ensure_project_exists(project_id)
-        processes = await self._load_all_processes(project_dir)
+        processes = self._load_all_processes(project_dir)
 
         if not processes:
             raise NotFoundError(
@@ -210,12 +208,12 @@ class AnalysisService:
 
         # Сохраняем результаты
         gaps_dir = project_dir.processes
-        await self._save_json(gaps_dir / "_gap_analysis.json", all_gaps)
+        self._save_json(gaps_dir / "_gap_analysis.json", all_gaps)
 
         for gap in all_gaps:
             pid = gap.get("process_id", "")
             if pid:
-                await self._save_json(gaps_dir / f"{pid}_gap.json", gap)
+                self._save_json(gaps_dir / f"{pid}_gap.json", gap)
 
         if on_progress:
             on_progress(100, 100, "GAP-анализ завершён")
@@ -250,8 +248,8 @@ class AnalysisService:
             ProcessingError: При ошибке генерации.
         """
         project_dir = self._ensure_project_exists(project_id)
-        processes = await self._load_all_processes(project_dir)
-        gaps = await self._load_gaps(project_dir)
+        processes = self._load_all_processes(project_dir)
+        gaps = self._load_gaps(project_dir)
 
         if not processes:
             raise NotFoundError(
@@ -310,11 +308,11 @@ class AnalysisService:
             on_progress(90, 100, "Сохранение TO-BE процессов...")
 
         # Сохраняем результаты
-        await self._save_json(project_dir.processes / "_tobe_processes.json", all_tobe)
+        self._save_json(project_dir.processes / "_tobe_processes.json", all_tobe)
         for tobe in all_tobe:
             tobe_id = tobe.get("process_id", tobe.get("original_process_id", ""))
             if tobe_id:
-                await self._save_json(
+                self._save_json(
                     project_dir.processes / f"{tobe_id}_tobe.json",
                     tobe,
                 )
@@ -352,7 +350,7 @@ class AnalysisService:
             ProcessingError: При ошибке генерации.
         """
         project_dir = self._ensure_project_exists(project_id)
-        processes = await self._load_all_processes(project_dir)
+        processes = self._load_all_processes(project_dir)
 
         if not processes:
             raise NotFoundError(
@@ -363,7 +361,7 @@ class AnalysisService:
         if on_progress:
             on_progress(0, 100, "Генерация листа требований...")
 
-        gaps = await self._load_gaps(project_dir)
+        gaps = self._load_gaps(project_dir)
 
         # Формируем данные для промпта (процессы + GAP)
         enriched_processes = []
@@ -411,7 +409,7 @@ class AnalysisService:
         if on_progress:
             on_progress(80, 100, "Сохранение требований...")
 
-        await self._save_json(project_dir.processes / "_requirements.json", response)
+        self._save_json(project_dir.processes / "_requirements.json", response)
 
         if on_progress:
             on_progress(100, 100, "Генерация требований завершена")
@@ -437,7 +435,7 @@ class AnalysisService:
             Список процессов.
         """
         project_dir = self._ensure_project_exists(project_id)
-        return await self._load_all_processes(project_dir)
+        return self._load_all_processes(project_dir)
 
     async def get_process(
         self,
@@ -464,7 +462,7 @@ class AnalysisService:
                 f"Процесс не найден: {process_id}",
                 detail={"project_id": project_id, "process_id": process_id},
             )
-        return await self._load_json(process_path)
+        return self._load_json(process_path)
 
     async def update_process(
         self,
@@ -495,14 +493,14 @@ class AnalysisService:
                 detail={"project_id": project_id, "process_id": process_id},
             )
 
-        process_data = await self._load_json(process_path)
+        process_data = self._load_json(process_path)
 
         # Обновляем поля (кроме id)
         for key, value in data.items():
             if key != "id":
                 process_data[key] = value
 
-        await self._save_json(process_path, process_data)
+        self._save_json(process_path, process_data)
         logger.info("Процесс обновлён: %s (проект: %s)", process_id, project_id)
         return process_data
 
@@ -516,7 +514,7 @@ class AnalysisService:
             Список результатов GAP-анализа.
         """
         project_dir = self._ensure_project_exists(project_id)
-        return await self._load_gaps(project_dir)
+        return self._load_gaps(project_dir)
 
     async def get_requirements(self, project_id: str) -> list[dict[str, Any]]:
         """Возвращает лист требований.
@@ -533,7 +531,7 @@ class AnalysisService:
         if not requirements_path.is_file():
             return []
 
-        data = await self._load_json(requirements_path)
+        data = self._load_json(requirements_path)
         if isinstance(data, dict):
             return data.get("requirements", [data])
         return data if isinstance(data, list) else []
@@ -554,7 +552,7 @@ class AnalysisService:
         return project_dir
 
     @staticmethod
-    async def _load_transcripts(
+    def _load_transcripts(
         project_dir: ProjectDir,
         transcript_ids: list[str] | None = None,
     ) -> dict[str, dict[str, Any]]:
@@ -574,9 +572,8 @@ class AnalysisService:
             if transcript_ids and tid not in transcript_ids:
                 continue
             try:
-                async with aiofiles.open(jf, "r", encoding="utf-8") as f:
-                    content = await f.read()
-                data = json.loads(content)
+                with open(jf, "r", encoding="utf-8") as f:
+                    data = json.load(f)
                 if isinstance(data, dict):
                     result[tid] = data
             except Exception as exc:
@@ -608,17 +605,17 @@ class AnalysisService:
 
         return str(transcript_data)
 
-    async def _load_all_processes(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
+    def _load_all_processes(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
         """Загружает все процессы проекта."""
         # Сначала пробуем общий файл
         all_path = project_dir.processes / "_all_processes.json"
         if all_path.is_file():
             try:
-                data = await self._load_json_raw(all_path)
+                data = self._load_json_raw(all_path)
                 if isinstance(data, list):
                     return data
-            except Exception as exc:
-                logger.warning("Не удалось загрузить %s: %s", all_path.name, exc)
+            except Exception:
+                pass
 
         # Загружаем отдельные файлы процессов
         if not project_dir.processes.is_dir():
@@ -634,7 +631,7 @@ class AnalysisService:
                 and not jf.name.endswith("_tobe.json")
             ):
                 try:
-                    data = await self._load_json(jf)
+                    data = self._load_json(jf)
                     processes.append(data)
                 except Exception as exc:
                     logger.warning("Не удалось прочитать процесс %s: %s", jf.name, exc)
@@ -642,19 +639,19 @@ class AnalysisService:
 
         return processes
 
-    async def _load_gaps(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
+    def _load_gaps(self, project_dir: ProjectDir) -> list[dict[str, Any]]:
         """Загружает результаты GAP-анализа."""
         gaps_path = project_dir.processes / "_gap_analysis.json"
         if gaps_path.is_file():
             try:
-                data = await self._load_json_raw(gaps_path)
+                data = self._load_json_raw(gaps_path)
                 if isinstance(data, list):
                     return data
-            except Exception as exc:
-                logger.warning("Не удалось загрузить GAP-анализ %s: %s", gaps_path.name, exc)
+            except Exception:
+                pass
         return []
 
-    async def _save_process(
+    def _save_process(
         self,
         project_dir: ProjectDir,
         process: dict[str, Any],
@@ -662,28 +659,28 @@ class AnalysisService:
         """Сохраняет процесс в отдельный JSON-файл."""
         pid = process.get("id", f"proc_{uuid4().hex[:8]}")
         path = project_dir.get_process_path(pid)
-        await self._save_json(path, process)
+        self._save_json(path, process)
         return path
 
-    async def _save_json(self, path: Path, data: Any) -> None:
+    @staticmethod
+    def _save_json(path: Path, data: Any) -> None:
         """Сохраняет данные в JSON-файл."""
         path.parent.mkdir(parents=True, exist_ok=True)
-        content = json.dumps(data, ensure_ascii=False, indent=2)
         try:
-            async with aiofiles.open(path, "w", encoding="utf-8") as f:
-                await f.write(content)
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
         except OSError as exc:
             raise ProcessingError(
                 f"Ошибка сохранения файла: {path.name}",
                 detail=str(exc),
             ) from exc
 
-    async def _load_json(self, path: Path) -> dict[str, Any]:
+    @staticmethod
+    def _load_json(path: Path) -> dict[str, Any]:
         """Загружает JSON-файл как словарь."""
         try:
-            async with aiofiles.open(path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
         except json.JSONDecodeError as exc:
             raise ProcessingError(
                 f"Некорректный JSON в файле: {path.name}",
@@ -702,12 +699,12 @@ class AnalysisService:
             )
         return data
 
-    async def _load_json_raw(self, path: Path) -> Any:
+    @staticmethod
+    def _load_json_raw(path: Path) -> Any:
         """Загружает JSON-файл без проверки типа (может быть list или dict)."""
         try:
-            async with aiofiles.open(path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            return json.loads(content)
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
         except (json.JSONDecodeError, OSError) as exc:
             raise ProcessingError(
                 f"Ошибка чтения файла: {path.name}",

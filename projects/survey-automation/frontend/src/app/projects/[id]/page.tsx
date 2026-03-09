@@ -10,7 +10,6 @@ import {
   XCircle,
   Clock,
   Loader2,
-  Upload,
   FileSearch,
   Workflow,
   GitCompareArrows,

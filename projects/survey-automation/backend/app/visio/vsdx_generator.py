@@ -141,7 +141,7 @@ class VsdxGenerator:
             )
 
             # Словарь элементов для быстрого доступа
-            {
+            elem_map: dict[str, dict[str, Any]] = {
                 e["id"]: e for e in elements if "id" in e
             }
 
@@ -1037,8 +1037,8 @@ class VsdxGenerator:
             try:
                 if hasattr(shape, "fill"):
                     shape.fill.color = hex_color
-            except (AttributeError, TypeError) as exc:
-                logger.debug("Не удалось применить заливку (fallback): %s", exc)
+            except (AttributeError, TypeError):
+                pass
 
     @staticmethod
     def _apply_line(
@@ -1063,8 +1063,8 @@ class VsdxGenerator:
                 if hasattr(shape, "line"):
                     shape.line.color = hex_color
                     shape.line.weight = weight
-            except (AttributeError, TypeError) as exc:
-                logger.debug("Не удалось применить обводку (fallback): %s", exc)
+            except (AttributeError, TypeError):
+                pass
 
     @staticmethod
     def _apply_font(shape: Any, font_size: int) -> None:
@@ -1077,8 +1077,8 @@ class VsdxGenerator:
         try:
             # Размер шрифта в pt
             shape.set_cell_value("Char.Size", f"{font_size}pt")
-        except (AttributeError, TypeError, KeyError) as exc:
-            logger.debug("Не удалось применить размер шрифта: %s", exc)
+        except (AttributeError, TypeError, KeyError):
+            pass
 
     @staticmethod
     def _apply_rounding(shape: Any, rounding: float) -> None:
@@ -1090,8 +1090,8 @@ class VsdxGenerator:
         """
         try:
             shape.set_cell_value("Rounding", f"{rounding:.4f}")
-        except (AttributeError, TypeError, KeyError) as exc:
-            logger.debug("Не удалось применить скругление: %s", exc)
+        except (AttributeError, TypeError, KeyError):
+            pass
 
     @staticmethod
     def _apply_ellipse_geometry(shape: Any) -> None:
@@ -1112,8 +1112,8 @@ class VsdxGenerator:
             shape.set_cell_value(
                 "Geometry1.NoLine", "0",
             )
-        except (AttributeError, TypeError, KeyError) as exc:
-            logger.debug("Не удалось применить геометрию эллипса: %s", exc)
+        except (AttributeError, TypeError, KeyError):
+            pass
 
     @staticmethod
     def _apply_diamond_geometry(shape: Any) -> None:
@@ -1128,8 +1128,8 @@ class VsdxGenerator:
         try:
             shape.set_cell_value("Geometry1.NoFill", "0")
             shape.set_cell_value("Geometry1.NoLine", "0")
-        except (AttributeError, TypeError, KeyError) as exc:
-            logger.debug("Не удалось применить геометрию ромба: %s", exc)
+        except (AttributeError, TypeError, KeyError):
+            pass
 
     @staticmethod
     def _apply_dash_pattern(shape: Any, pattern: str) -> None:
@@ -1148,8 +1148,8 @@ class VsdxGenerator:
             }
             pattern_value = pattern_map.get(pattern, "1")
             shape.set_cell_value("LinePattern", pattern_value)
-        except (AttributeError, TypeError, KeyError) as exc:
-            logger.debug("Не удалось применить паттерн линии: %s", exc)
+        except (AttributeError, TypeError, KeyError):
+            pass
 
     @staticmethod
     def _apply_line_geometry(
@@ -1202,5 +1202,5 @@ class VsdxGenerator:
                 shape.set_cell_value(
                     f"Geometry1.Y{i}", f"{ly:.6f}",
                 )
-        except (AttributeError, TypeError, KeyError) as exc:
-            logger.debug("Не удалось применить геометрию линии: %s", exc)
+        except (AttributeError, TypeError, KeyError):
+            pass

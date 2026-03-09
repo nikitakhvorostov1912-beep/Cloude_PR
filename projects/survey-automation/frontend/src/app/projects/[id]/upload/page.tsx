@@ -9,16 +9,14 @@ import {
   FileAudio,
   FileText,
   FolderInput,
-  X,
   File,
   Loader2,
-  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
+
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,11 +25,6 @@ import { uploadApi, dataApi } from "@/lib/api";
 const ACCEPTED_AUDIO = [".wav", ".mp3", ".ogg", ".m4a", ".flac"];
 const ACCEPTED_TEXT = [".txt", ".json"];
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 export default function UploadPage() {
   const params = useParams<{ id: string }>();
@@ -39,7 +32,7 @@ export default function UploadPage() {
   const queryClient = useQueryClient();
 
   const [dragActive, setDragActive] = React.useState(false);
-  const [uploadProgress, setUploadProgress] = React.useState<Record<string, number>>({});
+
   const [folderPath, setFolderPath] = React.useState("");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const textInputRef = React.useRef<HTMLInputElement>(null);
@@ -50,26 +43,16 @@ export default function UploadPage() {
     enabled: !!projectId,
   });
 
+  const [uploadingFiles, setUploadingFiles] = React.useState<Set<string>>(new Set());
+
   const uploadAudioMutation = useMutation({
     mutationFn: (file: File) => {
-      setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
-      // Simulate progress since fetch API doesn't natively support it
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          const current = prev[file.name] ?? 0;
-          if (current >= 90) {
-            clearInterval(interval);
-            return prev;
-          }
-          return { ...prev, [file.name]: current + 10 };
-        });
-      }, 300);
+      setUploadingFiles((prev) => new Set(prev).add(file.name));
 
       return uploadApi.audio(projectId, file).finally(() => {
-        clearInterval(interval);
-        setUploadProgress((prev) => {
-          const next = { ...prev };
-          delete next[file.name];
+        setUploadingFiles((prev) => {
+          const next = new Set(prev);
+          next.delete(file.name);
           return next;
         });
       });
@@ -97,7 +80,7 @@ export default function UploadPage() {
   const importFolderMutation = useMutation({
     mutationFn: (path: string) => uploadApi.importFolder(projectId, path),
     onSuccess: (data) => {
-      toast.success(`Импортировано файлов: ${data.total_imported}`);
+      toast.success(`Импортировано файлов: ${data.imported_count}`);
       setFolderPath("");
       queryClient.invalidateQueries({ queryKey: ["transcripts", projectId] });
     },
@@ -147,7 +130,7 @@ export default function UploadPage() {
     e.target.value = "";
   };
 
-  const transcripts = transcriptsData ?? [];
+  const transcripts = transcriptsData?.transcripts ?? [];
 
   return (
     <div className="space-y-6">
@@ -212,14 +195,13 @@ export default function UploadPage() {
           </div>
 
           {/* Upload progress */}
-          {Object.entries(uploadProgress).length > 0 && (
+          {uploadingFiles.size > 0 && (
             <div className="mt-4 space-y-2">
-              {Object.entries(uploadProgress).map(([name, progress]) => (
+              {Array.from(uploadingFiles).map((name) => (
                 <div key={name} className="flex items-center gap-3">
-                  <FileAudio className="size-4 shrink-0 text-muted-foreground" />
+                  <Loader2 className="size-4 shrink-0 animate-spin text-primary" />
                   <span className="min-w-0 flex-1 truncate text-sm">{name}</span>
-                  <Progress value={progress} className="w-32" />
-                  <span className="text-xs text-muted-foreground">{progress}%</span>
+                  <span className="text-xs text-muted-foreground">Загрузка...</span>
                 </div>
               ))}
             </div>

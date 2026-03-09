@@ -2,11 +2,6 @@
 
 Содержит константы размеров, цвета, шрифты и маппинг типов
 BPMN-элементов на мастер-фигуры Visio.
-
-Обновлено для соответствия стилю Bitrix24:
-- белые задачи с цветной акцент-полосой слева
-- тёмные широкие заголовки дорожек
-- геометрические BPMN-события без emoji
 """
 
 from __future__ import annotations
@@ -15,18 +10,18 @@ from __future__ import annotations
 # Размеры фигур (в дюймах для Visio)
 # ----------------------------------------------------------------------
 
-#: Размеры задач (task, userTask, serviceTask и т.д.) — 200×100 px / 96
-TASK_WIDTH: float = 2.083
-TASK_HEIGHT: float = 1.042
+#: Размеры задач (task, userTask, serviceTask и т.д.)
+TASK_WIDTH: float = 1.5
+TASK_HEIGHT: float = 0.75
 
-#: Размеры шлюзов (ромб) — 50×50 px / 96
-GATEWAY_SIZE: float = 0.521
+#: Размеры шлюзов (ромб)
+GATEWAY_SIZE: float = 0.5
 
-#: Размеры событий (круг) — ~40px / 96
-EVENT_SIZE: float = 0.40
+#: Размеры событий (круг)
+EVENT_SIZE: float = 0.4
 
-#: Ширина заголовка дорожки (широкий тёмный блок с названием)
-LANE_HEADER_WIDTH: float = 0.70
+#: Ширина заголовка дорожки (левый блок с названием)
+LANE_HEADER_WIDTH: float = 0.4
 
 #: Высота заголовка пула
 POOL_HEADER_HEIGHT: float = 0.3
@@ -53,11 +48,11 @@ ANNOTATION_HEIGHT: float = 0.5
 # Отступы и интервалы (в дюймах)
 # ----------------------------------------------------------------------
 
-#: Горизонтальный интервал между элементами — 270px / 96
-HORIZONTAL_SPACING: float = 2.813
+#: Горизонтальный интервал между элементами
+HORIZONTAL_SPACING: float = 1.0
 
-#: Вертикальный интервал между элементами при ветвлении — 250px / 96
-VERTICAL_SPACING: float = 2.604
+#: Вертикальный интервал между элементами при ветвлении
+VERTICAL_SPACING: float = 0.75
 
 #: Отступ от левого края страницы
 LEFT_MARGIN: float = 1.0
@@ -69,57 +64,33 @@ TOP_MARGIN: float = 0.75
 LANE_PADDING: float = 0.5
 
 # ----------------------------------------------------------------------
-# Цвета (RGB hex) — стиль Bitrix24
+# Цвета (RGB hex)
 # ----------------------------------------------------------------------
-
-#: Ширина акцент-полосы задачи (5pt = 0.069")
-ACCENT_BAR_WIDTH: float = 0.069
-
-#: Заливка задачи — белая
-TASK_FILL: str = "#FFFFFF"
-
-#: Граница задачи — светло-серая
-TASK_BORDER: str = "#CBD4E1"
-
-#: Цвет текста задачи — почти чёрный
-TASK_TEXT: str = "#1A202C"
-
-#: Скругление углов задачи (6pt)
-TASK_ROUNDING: float = 0.0833
-
-#: Заливка шлюза — светло-жёлтая
-GATEWAY_FILL: str = "#FFF8E7"
-
-#: Граница шлюза
-GATEWAY_LINE: str = "#F9A825"
-
-#: Цвет соединителей
-CONNECTOR_LINE: str = "#5A6475"
 
 COLORS: dict[str, str] = {
     # Задачи
-    "task_fill": TASK_FILL,
-    "task_stroke": TASK_BORDER,
-    "task_text": TASK_TEXT,
+    "task_fill": "#FFFFFF",
+    "task_stroke": "#333333",
     # Шлюзы
-    "gateway_fill": GATEWAY_FILL,
-    "gateway_stroke": GATEWAY_LINE,
+    "gateway_fill": "#FFF7CC",
+    "gateway_stroke": "#D4A800",
     # Стартовые события
-    "start_fill": "#F1FAF1",
-    "start_stroke": "#43A047",
+    "start_fill": "#E8F5E9",
+    "start_stroke": "#2E7D32",
     # Конечные события
-    "end_fill": "#FFF0EE",
-    "end_stroke": "#E53935",
-    # Промежуточные события (таймер)
-    "intermediate_fill": "#FFFDE7",
-    "intermediate_stroke": "#F9A825",
-    # Дорожки (заглушка, реальные берутся из LANE_PALETTE_V2)
-    "lane_fill": "#EEF2FA",
-    "lane_stroke": "#C5D3E8",
-    "lane_header_fill": "#2B5091",
-    "lane_header_text": "#FFFFFF",
+    "end_fill": "#FFEBEE",
+    "end_stroke": "#C62828",
+    # Промежуточные события
+    "intermediate_fill": "#FFF3E0",
+    "intermediate_stroke": "#EF6C00",
+    # Дорожки
+    "lane_fill": "#F5F5F5",
+    "lane_stroke": "#BDBDBD",
+    # Пулы
+    "pool_fill": "#E3F2FD",
+    "pool_stroke": "#1565C0",
     # Соединители
-    "connector_stroke": CONNECTOR_LINE,
+    "connector_stroke": "#666666",
     # Подпроцессы
     "subprocess_fill": "#F3E5F5",
     "subprocess_stroke": "#7B1FA2",
@@ -132,21 +103,6 @@ COLORS: dict[str, str] = {
 }
 
 # ----------------------------------------------------------------------
-# Палитра дорожек (стиль Bitrix24)
-# Каждая запись: (bg_fill, accent_color, dark_header, border_color)
-# ----------------------------------------------------------------------
-
-LANE_PALETTE_V2: list[tuple[str, str, str, str]] = [
-    ("#EEF2FA", "#4472C4", "#2B5091", "#C5D3E8"),  # Синий
-    ("#EEF5EE", "#4CAF50", "#2E7D32", "#C3DFC3"),  # Зелёный
-    ("#FFF8E7", "#F9A825", "#F57F17", "#F0DAAA"),  # Жёлтый
-    ("#FEF0EE", "#E53935", "#B71C1C", "#F0C4C2"),  # Красный
-    ("#F3EEF9", "#7B1FA2", "#4A148C", "#D4BEDF"),  # Фиолетовый
-    ("#E8F8F8", "#00796B", "#004D40", "#B0D5D2"),  # Бирюзовый
-    ("#FFF3E0", "#E65100", "#BF360C", "#F0C89A"),  # Оранжевый
-]
-
-# ----------------------------------------------------------------------
 # Настройки шрифтов
 # ----------------------------------------------------------------------
 
@@ -154,7 +110,7 @@ LANE_PALETTE_V2: list[tuple[str, str, str, str]] = [
 FONT_NAME: str = "Calibri"
 
 #: Размер шрифта для меток элементов (pt)
-FONT_SIZE_LABEL: int = 11
+FONT_SIZE_LABEL: int = 10
 
 #: Размер шрифта для заголовков дорожек/пулов (pt)
 FONT_SIZE_HEADER: int = 12
@@ -167,16 +123,16 @@ FONT_SIZE_ANNOTATION: int = 8
 # ----------------------------------------------------------------------
 
 #: Обводка фигур
-LINE_WEIGHT_SHAPE: float = 0.75
+LINE_WEIGHT_SHAPE: float = 1.0
 
 #: Обводка событий
 LINE_WEIGHT_EVENT: float = 1.5
 
-#: Конечные события (жирная обводка — 3pt)
+#: Конечные события (жирная обводка)
 LINE_WEIGHT_END_EVENT: float = 3.0
 
 #: Соединительные линии
-LINE_WEIGHT_CONNECTOR: float = 0.75
+LINE_WEIGHT_CONNECTOR: float = 1.0
 
 #: Обводка пулов/дорожек
 LINE_WEIGHT_LANE: float = 0.5
@@ -185,6 +141,15 @@ LINE_WEIGHT_LANE: float = 0.5
 # Маппинг типов BPMN-элементов на мастер-фигуры Visio
 # ----------------------------------------------------------------------
 
+#: Конфигурация фигуры Visio для каждого типа BPMN-элемента.
+#: Ключ — тип элемента из BPMN JSON.
+#: Значение — словарь с параметрами отрисовки:
+#:   - shape: тип геометрической фигуры ("rectangle", "diamond", "circle")
+#:   - width, height: размеры фигуры в дюймах
+#:   - fill_color: ключ из словаря COLORS для заливки
+#:   - stroke_color: ключ из словаря COLORS для обводки
+#:   - line_weight: толщина обводки (pt)
+#:   - rounding: скругление углов в дюймах (для прямоугольников)
 BPMN_SHAPE_MAP: dict[str, dict[str, object]] = {
     # --- Задачи ---
     "task": {
@@ -194,7 +159,7 @@ BPMN_SHAPE_MAP: dict[str, dict[str, object]] = {
         "fill_color": "task_fill",
         "stroke_color": "task_stroke",
         "line_weight": LINE_WEIGHT_SHAPE,
-        "rounding": TASK_ROUNDING,
+        "rounding": 0.1,
     },
     "userTask": {
         "shape": "rectangle",
@@ -203,7 +168,7 @@ BPMN_SHAPE_MAP: dict[str, dict[str, object]] = {
         "fill_color": "task_fill",
         "stroke_color": "task_stroke",
         "line_weight": LINE_WEIGHT_SHAPE,
-        "rounding": TASK_ROUNDING,
+        "rounding": 0.1,
     },
     "serviceTask": {
         "shape": "rectangle",
@@ -212,7 +177,7 @@ BPMN_SHAPE_MAP: dict[str, dict[str, object]] = {
         "fill_color": "task_fill",
         "stroke_color": "task_stroke",
         "line_weight": LINE_WEIGHT_SHAPE,
-        "rounding": TASK_ROUNDING,
+        "rounding": 0.1,
     },
     "scriptTask": {
         "shape": "rectangle",
@@ -221,7 +186,7 @@ BPMN_SHAPE_MAP: dict[str, dict[str, object]] = {
         "fill_color": "task_fill",
         "stroke_color": "task_stroke",
         "line_weight": LINE_WEIGHT_SHAPE,
-        "rounding": TASK_ROUNDING,
+        "rounding": 0.1,
     },
     "manualTask": {
         "shape": "rectangle",
@@ -230,7 +195,7 @@ BPMN_SHAPE_MAP: dict[str, dict[str, object]] = {
         "fill_color": "task_fill",
         "stroke_color": "task_stroke",
         "line_weight": LINE_WEIGHT_SHAPE,
-        "rounding": TASK_ROUNDING,
+        "rounding": 0.1,
     },
     # --- Шлюзы ---
     "exclusiveGateway": {
@@ -355,8 +320,8 @@ PIXELS_PER_INCH: float = 96.0
 # ----------------------------------------------------------------------
 
 #: Тип стрелки на конце соединителя (наконечник)
-ARROW_TYPE_SEQUENCE: str = "open"
-ARROW_TYPE_MESSAGE: str = "open"
+ARROW_TYPE_SEQUENCE: str = "open"  # открытая стрелка для sequence flow
+ARROW_TYPE_MESSAGE: str = "open"  # открытая стрелка для message flow
 
 #: Паттерн линии для message flow (пунктирная)
 MESSAGE_FLOW_PATTERN: str = "dash"

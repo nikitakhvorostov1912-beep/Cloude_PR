@@ -10,9 +10,15 @@ export interface Project {
   description: string;
   created_at: string;
   updated_at: string;
-  status: string;
-  pipeline_state: Record<string, unknown> & { completed_stages?: string[] };
+  status: ProjectStatus;
+  pipeline_state: PipelineState;
 }
+
+export type ProjectStatus =
+  | "new"
+  | "in_progress"
+  | "completed"
+  | "error";
 
 export interface ProjectCreate {
   name: string;
@@ -27,6 +33,14 @@ export interface ProjectListResponse {
 export type ProjectResponse = Project;
 
 // --- Pipeline ---
+
+export interface PipelineState {
+  stage: PipelineStage;
+  progress: number;
+  completed_stages: PipelineStage[];
+  current_stage_status: StageStatus;
+  error: string | null;
+}
 
 export type PipelineStage =
   | "upload"
@@ -45,15 +59,12 @@ export type StageStatus =
   | "skipped";
 
 export interface PipelineStatus {
-  project_id?: string;
-  current_stage?: string | null;
   stages: StageInfo[];
-  completed_stages?: string[];
   overall_progress: number;
 }
 
 export interface StageInfo {
-  name: string;
+  name: PipelineStage;
   label: string;
   status: StageStatus;
   progress: number;
@@ -62,42 +73,38 @@ export interface StageInfo {
 }
 
 // --- Transcript ---
-// Backend returns: id, filename, dialogue, full_text, metadata, speaker_stats
 
 export interface Transcript {
   id: string;
+  project_id: string;
   filename: string;
-  // Backend fields
-  dialogue?: TranscriptSegment[];
-  full_text?: string;
-  metadata?: Record<string, unknown>;
-  speaker_stats?: Record<string, unknown>;
-  // Frontend convenience fields (mapped from backend data)
-  project_id?: string;
-  source_type?: "audio" | "text" | "imported";
-  language?: string;
-  duration_seconds?: number | null;
-  speaker_count?: number;
-  text?: string;
-  segments?: TranscriptSegment[];
-  created_at?: string;
+  source_type: "audio" | "text" | "imported";
+  language: string;
+  duration_seconds: number | null;
+  speaker_count: number;
+  text: string;
+  segments: TranscriptSegment[];
+  created_at: string;
 }
 
 export interface TranscriptSegment {
-  id?: string;
+  id: string;
   speaker: string;
-  start_time?: number;
-  end_time?: number;
+  start_time: number;
+  end_time: number;
   text: string;
 }
 
-// Backend returns list[TranscriptResponse] (flat array)
-export type TranscriptListResponse = Transcript[];
+export interface TranscriptListResponse {
+  transcripts: Transcript[];
+  total: number;
+}
 
 // --- Process ---
 
 export interface Process {
   id: string;
+  project_id: string;
   name: string;
   description: string;
   department: string;
@@ -109,7 +116,11 @@ export interface Process {
   pain_points: (PainPoint | string)[];
   integrations: string[];
   metrics: Record<string, string | number>;
+  source_transcript_ids: string[];
+  bpmn_xml: string | null;
   status: "draft" | "reviewed" | "approved";
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ProcessStep {
@@ -154,33 +165,19 @@ export interface ProcessListResponse {
 }
 
 // --- Gap Analysis ---
-// Backend returns mixed field names; accept both variants
 
 export interface Gap {
   id: string;
-  process_id?: string;
+  project_id: string;
+  process_id: string;
   process_name: string;
-  // Frontend names
-  description?: string;
-  gap_type?: string;
-  severity?: string;
-  effort_estimate?: string | null;
-  // Backend names
-  function_name?: string;
-  coverage?: string | number;
-  gap_description?: string;
-  effort_days?: number;
-  priority?: string;
-  erp_module?: string | null;
-  erp_document?: string;
-  recommendation?: string;
-}
-
-export interface GapSummary {
-  total_gaps?: number;
-  by_severity?: Record<string, number>;
-  by_type?: Record<string, number>;
-  [key: string]: unknown;
+  description: string;
+  gap_type: "missing_feature" | "customization" | "integration" | "workflow" | "data_migration";
+  severity: "low" | "medium" | "high" | "critical";
+  erp_module: string | null;
+  recommendation: string;
+  effort_estimate: string | null;
+  created_at: string;
 }
 
 export interface GapListResponse {
@@ -189,24 +186,26 @@ export interface GapListResponse {
   summary: GapSummary;
 }
 
+export interface GapSummary {
+  total_gaps: number;
+  by_severity: Record<string, number>;
+  by_type: Record<string, number>;
+}
+
 // --- Requirements ---
-// Backend returns raw JSON; accept both frontend and backend field names
 
 export interface Requirement {
   id: string;
-  // Frontend field names
-  title?: string;
-  description?: string;
-  requirement_type?: string;
-  priority?: string;
-  status?: string;
-  acceptance_criteria?: string[];
-  // Backend field names
-  type?: string;
-  module?: string;
-  source?: string;
-  effort?: string;
-  [key: string]: unknown;
+  project_id: string;
+  process_id: string | null;
+  gap_id: string | null;
+  title: string;
+  description: string;
+  requirement_type: "functional" | "non_functional" | "integration" | "data" | "security";
+  priority: "low" | "medium" | "high" | "critical";
+  status: "draft" | "reviewed" | "approved" | "rejected";
+  acceptance_criteria: string[];
+  created_at: string;
 }
 
 export interface RequirementListResponse {
@@ -215,26 +214,24 @@ export interface RequirementListResponse {
 }
 
 // --- Upload responses ---
-// Backend: { message, file_id, filename }
 
 export interface UploadResponse {
-  message: string;
-  file_id: string;
+  id: string;
   filename: string;
+  size: number;
+  status: string;
+  message: string;
 }
 
-// Backend: { message, imported_files, skipped_files, total_imported }
-
 export interface ImportFolderResponse {
+  imported_count: number;
+  files: string[];
   message: string;
-  imported_files: string[];
-  skipped_files: string[];
-  total_imported: number;
 }
 
 // --- API error ---
 
 export interface ApiError {
   detail: string;
-  error_code?: string;
+  status_code: number;
 }

@@ -9,7 +9,6 @@ import {
   Play,
   Loader2,
   AlertTriangle,
-  TrendingUp,
   BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,6 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { pipelineApi, dataApi } from "@/lib/api";
-import type { Gap } from "@/lib/types";
 
 const erpOptions = [
   { value: "1c_erp", label: "1С:ERP" },
@@ -68,17 +66,6 @@ const gapTypeLabels: Record<string, string> = {
   data_migration: "Миграция данных",
 };
 
-function getCoverageClass(coverage: number): string {
-  if (coverage >= 80) return "text-green-400";
-  if (coverage >= 50) return "text-yellow-400";
-  return "text-red-400";
-}
-
-function getCoverageBg(coverage: number): string {
-  if (coverage >= 80) return "bg-green-500/10";
-  if (coverage >= 50) return "bg-yellow-500/10";
-  return "bg-red-500/10";
-}
 
 export default function GapsPage() {
   const params = useParams<{ id: string }>();
@@ -244,16 +231,16 @@ export default function GapsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="text-xs whitespace-nowrap">
-                      {gap.gap_type ? (gapTypeLabels[gap.gap_type] ?? gap.gap_type) : "—"}
+                      {gapTypeLabels[gap.gap_type] ?? gap.gap_type}
                     </Badge>
                   </TableCell>
                   <TableCell>{gap.erp_module || "—"}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={gap.severity ? (severityVariants[gap.severity] ?? "outline") : "outline"}
+                      variant={severityVariants[gap.severity] ?? "outline"}
                       className="text-xs"
                     >
-                      {gap.severity ? (severityLabels[gap.severity] ?? gap.severity) : "—"}
+                      {severityLabels[gap.severity] ?? gap.severity}
                     </Badge>
                   </TableCell>
                   <TableCell className="max-w-[200px]">

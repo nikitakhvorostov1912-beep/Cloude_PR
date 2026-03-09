@@ -8,11 +8,12 @@ from pathlib import Path
 from typing import Any
 
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.shared import Pt, RGBColor
+from docx.shared import Cm, Pt, RGBColor
 from openpyxl.styles import Alignment, Font, PatternFill
 
 from ..exceptions import ExportError
 from .doc_generator import (
+    COLORS,
     EXCEL_ALIGNMENT_CENTER,
     EXCEL_ALIGNMENT_LEFT,
     EXCEL_BORDER,

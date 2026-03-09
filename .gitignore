@@ -22,6 +22,7 @@ env/
 # OS
 Thumbs.db
 .DS_Store
+nul
 
 # Archives (originals kept separately)
 archives/
@@ -35,6 +36,12 @@ archives/
 *.wma
 *.aac
 
+# Generated output (reproducible)
+*.docx
+*.bpmn
+*.svg
+*_audio/
+
 # Secrets
 .env
 *.key
@@ -43,3 +50,50 @@ config_local.yaml
 # Logs
 *.log
 logs/
+
+# Claude worktrees
+.claude/worktrees/
+
+# Claude memory credentials (sensitive data)
+.claude/memory/categories/credentials.md
+
+# Session plans (temporary, per-task)
+.claude/plans/task_plan.md
+.claude/plans/findings.md
+.claude/plans/progress.md
+
+# Tools (cloned reference repos, not our code)
+tools/
+
+# Voice agent local files
+voice-agent-1c/venv/
+voice-agent-1c/.env
+voice-agent-1c/.pytest_cache/
+
+# Desktop app build artifacts
+desktop/node_modules/
+desktop/dist/
+desktop/resources/python/
+desktop/.cache/
+
+# Temp debug artifacts (visio screenshots, test images)
+projects/survey-automation/proc_*.png
+projects/survey-automation/visio_*.png
+projects/survey-automation/v6*.png
+projects/survey-automation/nul
+projects/survey-automation/backend/nul
+projects/survey-automation/test_visio.vsdx
+projects/survey-automation/vsdx_check/
+projects/survey-automation/view_visio_com.py
+projects/survey-automation/crop_visio.py
+projects/survey-automation/export_proc001.py
+projects/survey-automation/inspect_visio.py
+projects/survey-automation/zoom_visio.ps1
+projects/survey-automation/zoom_all_visio.ps1
+projects/survey-automation/view_visio.ps1
+projects/survey-automation/capture_visio.ps1
+projects/survey-automation/fit_visio.ps1
+projects/survey-automation/verify_*.ps1
+projects/survey-automation/start_debug.bat
+projects/survey-automation/test_run.bat
+projects/survey-automation/regenerate_all.py

@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_d76bdacb" targetNamespace="http://bpmn.io/schema/bpmn" exporter="SurveyAutomation" exporterVersion="1.0">
+  <collaboration id="Collaboration_e915b1d7">
+    <participant id="proc_002_pool" processRef="proc_002" name="Приёмка товара на склад"/>
+    <participant id="lane___________________" processRef="proc_002" name="Заведующий складом"/>
+    <participant id="lane________" processRef="proc_002" name="Грузчик"/>
+    <participant id="lane__________" processRef="proc_002" name="Бухгалтер"/>
+    <participant id="lane_____________________" processRef="proc_002" name="Менеджер по закупкам"/>
+  </collaboration>
+  <process id="proc_002" isExecutable="true" name="Приёмка товара на склад">
+    <laneSet id="LaneSet_9c596cb4">
+      <lane id="lane___________________" name="Заведующий складом">
+        <flowNodeRef>proc_002_start</flowNodeRef>
+        <flowNodeRef>proc_002_task_1</flowNodeRef>
+        <flowNodeRef>proc_002_gw_split_1</flowNodeRef>
+        <flowNodeRef>proc_002_yes_1</flowNodeRef>
+        <flowNodeRef>proc_002_no_1</flowNodeRef>
+        <flowNodeRef>proc_002_gw_merge_1</flowNodeRef>
+        <flowNodeRef>proc_002_task_2</flowNodeRef>
+        <flowNodeRef>proc_002_task_3</flowNodeRef>
+        <flowNodeRef>proc_002_task_5</flowNodeRef>
+        <flowNodeRef>proc_002_end</flowNodeRef>
+      </lane>
+      <lane id="lane________" name="Грузчик">
+        <flowNodeRef>proc_002_task_4</flowNodeRef>
+      </lane>
+      <lane id="lane__________" name="Бухгалтер">
+        <flowNodeRef>proc_002_task_6</flowNodeRef>
+      </lane>
+      <lane id="lane_____________________" name="Менеджер по закупкам"/>
+    </laneSet>
+    <startEvent id="proc_002_start" name="Прибытие транспорта с товаром от постав…"/>
+    <userTask id="proc_002_task_1" name="Получение документов"/>
+    <exclusiveGateway id="proc_002_gw_split_1" name="Фактическое количество или состоян…"/>
+    <task id="proc_002_yes_1" name="Составление акта расхождения,…"/>
+    <task id="proc_002_no_1" name="Размещение на складе"/>
+    <exclusiveGateway id="proc_002_gw_merge_1"/>
+    <userTask id="proc_002_task_2" name="Физическая приёмка и пересчёт"/>
+    <userTask id="proc_002_task_3" name="Фиксация расхождений"/>
+    <userTask id="proc_002_task_4" name="Размещение на складе"/>
+    <userTask id="proc_002_task_5" name="Обновление складского учёта"/>
+    <serviceTask id="proc_002_task_6" name="Проведение в 1С"/>
+    <endEvent id="proc_002_end" name="Оприходованный товар с актуальными оста…"/>
+    <sequenceFlow id="proc_002_flow_proc_002_start_to_proc_002_task_1" sourceRef="proc_002_start" targetRef="proc_002_task_1"/>
+    <sequenceFlow id="proc_002_flow_proc_002_task_1_to_proc_002_gw_split_1" sourceRef="proc_002_task_1" targetRef="proc_002_gw_split_1"/>
+    <sequenceFlow id="proc_002_flow_proc_002_gw_split_1_to_proc_002_yes_1" sourceRef="proc_002_gw_split_1" targetRef="proc_002_yes_1" name="Да">
+      <conditionExpression xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tFormalExpression">Фактическое количество или состояние товара не соответствует данным в ТТН</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="proc_002_flow_proc_002_gw_split_1_to_proc_002_no_1" sourceRef="proc_002_gw_split_1" targetRef="proc_002_no_1" name="Нет"/>
+    <sequenceFlow id="proc_002_flow_proc_002_yes_1_to_proc_002_gw_merge_1" sourceRef="proc_002_yes_1" targetRef="proc_002_gw_merge_1"/>
+    <sequenceFlow id="proc_002_flow_proc_002_no_1_to_proc_002_gw_merge_1" sourceRef="proc_002_no_1" targetRef="proc_002_gw_merge_1"/>
+    <sequenceFlow id="proc_002_flow_proc_002_gw_merge_1_to_proc_002_task_2" sourceRef="proc_002_gw_merge_1" targetRef="proc_002_task_2"/>
+    <sequenceFlow id="proc_002_flow_proc_002_task_2_to_proc_002_task_3" sourceRef="proc_002_task_2" targetRef="proc_002_task_3"/>
+    <sequenceFlow id="proc_002_flow_proc_002_task_3_to_proc_002_task_4" sourceRef="proc_002_task_3" targetRef="proc_002_task_4"/>
+    <sequenceFlow id="proc_002_flow_proc_002_task_4_to_proc_002_task_5" sourceRef="proc_002_task_4" targetRef="proc_002_task_5"/>
+    <sequenceFlow id="proc_002_flow_proc_002_task_5_to_proc_002_task_6" sourceRef="proc_002_task_5" targetRef="proc_002_task_6"/>
+    <sequenceFlow id="proc_002_flow_proc_002_task_6_to_proc_002_end" sourceRef="proc_002_task_6" targetRef="proc_002_end"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ad67ade5">
+    <bpmndi:BPMNPlane id="BPMNPlane_56b5ea96" bpmnElement="Collaboration_e915b1d7">
+      <bpmndi:BPMNShape id="proc_002_pool_di" bpmnElement="proc_002_pool">
+        <dc:Bounds x="80.0" y="60" width="2358.0" height="900.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane____________________di" bpmnElement="lane___________________">
+        <dc:Bounds x="80.0" y="60" width="2358.0" height="900.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_________di" bpmnElement="lane________">
+        <dc:Bounds x="80.0" y="60" width="2358.0" height="900.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane___________di" bpmnElement="lane__________">
+        <dc:Bounds x="80.0" y="60" width="2358.0" height="900.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane______________________di" bpmnElement="lane_____________________">
+        <dc:Bounds x="80.0" y="60" width="2358.0" height="900.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane____________________di" bpmnElement="lane___________________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="60" width="2358.0" height="300.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane_________di" bpmnElement="lane________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="360.0" width="2358.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane___________di" bpmnElement="lane__________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="560.0" width="2358.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="lane______________________di" bpmnElement="lane_____________________" isHorizontal="true">
+        <dc:Bounds x="80.0" y="760.0" width="2358.0" height="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_start_di" bpmnElement="proc_002_start">
+        <dc:Bounds x="162.0" y="142.0" width="36.0" height="36.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_task_1_di" bpmnElement="proc_002_task_1">
+        <dc:Bounds x="320.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_gw_split_1_di" bpmnElement="proc_002_gw_split_1">
+        <dc:Bounds x="555.0" y="135.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_yes_1_di" bpmnElement="proc_002_yes_1">
+        <dc:Bounds x="720.0" y="50.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_no_1_di" bpmnElement="proc_002_no_1">
+        <dc:Bounds x="720.0" y="190.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_gw_merge_1_di" bpmnElement="proc_002_gw_merge_1">
+        <dc:Bounds x="955.0" y="135.0" width="50.0" height="50.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_task_2_di" bpmnElement="proc_002_task_2">
+        <dc:Bounds x="1120.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_task_3_di" bpmnElement="proc_002_task_3">
+        <dc:Bounds x="1320.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_task_4_di" bpmnElement="proc_002_task_4">
+        <dc:Bounds x="1520.0" y="320.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_task_5_di" bpmnElement="proc_002_task_5">
+        <dc:Bounds x="1720.0" y="120.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_task_6_di" bpmnElement="proc_002_task_6">
+        <dc:Bounds x="1920.0" y="520.0" width="120.0" height="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="proc_002_end_di" bpmnElement="proc_002_end">
+        <dc:Bounds x="2162.0" y="142.0" width="36.0" height="36.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_start_to_proc_002_task_1_di" bpmnElement="proc_002_flow_proc_002_start_to_proc_002_task_1">
+        <di:waypoint x="198.0" y="160.0"/>
+        <di:waypoint x="320.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_task_1_to_proc_002_gw_split_1_di" bpmnElement="proc_002_flow_proc_002_task_1_to_proc_002_gw_split_1">
+        <di:waypoint x="440.0" y="160.0"/>
+        <di:waypoint x="555.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_gw_split_1_to_proc_002_yes_1_di" bpmnElement="proc_002_flow_proc_002_gw_split_1_to_proc_002_yes_1">
+        <di:waypoint x="605.0" y="160.0"/>
+        <di:waypoint x="662.5" y="160.0"/>
+        <di:waypoint x="662.5" y="90.0"/>
+        <di:waypoint x="720.0" y="90.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_gw_split_1_to_proc_002_no_1_di" bpmnElement="proc_002_flow_proc_002_gw_split_1_to_proc_002_no_1">
+        <di:waypoint x="605.0" y="160.0"/>
+        <di:waypoint x="662.5" y="160.0"/>
+        <di:waypoint x="662.5" y="230.0"/>
+        <di:waypoint x="720.0" y="230.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_yes_1_to_proc_002_gw_merge_1_di" bpmnElement="proc_002_flow_proc_002_yes_1_to_proc_002_gw_merge_1">
+        <di:waypoint x="840.0" y="90.0"/>
+        <di:waypoint x="897.5" y="90.0"/>
+        <di:waypoint x="897.5" y="160.0"/>
+        <di:waypoint x="955.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_no_1_to_proc_002_gw_merge_1_di" bpmnElement="proc_002_flow_proc_002_no_1_to_proc_002_gw_merge_1">
+        <di:waypoint x="840.0" y="230.0"/>
+        <di:waypoint x="897.5" y="230.0"/>
+        <di:waypoint x="897.5" y="160.0"/>
+        <di:waypoint x="955.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_gw_merge_1_to_proc_002_task_2_di" bpmnElement="proc_002_flow_proc_002_gw_merge_1_to_proc_002_task_2">
+        <di:waypoint x="1005.0" y="160.0"/>
+        <di:waypoint x="1120.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_task_2_to_proc_002_task_3_di" bpmnElement="proc_002_flow_proc_002_task_2_to_proc_002_task_3">
+        <di:waypoint x="1240.0" y="160.0"/>
+        <di:waypoint x="1320.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_task_3_to_proc_002_task_4_di" bpmnElement="proc_002_flow_proc_002_task_3_to_proc_002_task_4">
+        <di:waypoint x="1440.0" y="160.0"/>
+        <di:waypoint x="1480.0" y="160.0"/>
+        <di:waypoint x="1480.0" y="360.0"/>
+        <di:waypoint x="1520.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_task_4_to_proc_002_task_5_di" bpmnElement="proc_002_flow_proc_002_task_4_to_proc_002_task_5">
+        <di:waypoint x="1640.0" y="360.0"/>
+        <di:waypoint x="1680.0" y="360.0"/>
+        <di:waypoint x="1680.0" y="160.0"/>
+        <di:waypoint x="1720.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_task_5_to_proc_002_task_6_di" bpmnElement="proc_002_flow_proc_002_task_5_to_proc_002_task_6">
+        <di:waypoint x="1840.0" y="160.0"/>
+        <di:waypoint x="1880.0" y="160.0"/>
+        <di:waypoint x="1880.0" y="560.0"/>
+        <di:waypoint x="1920.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="proc_002_flow_proc_002_task_6_to_proc_002_end_di" bpmnElement="proc_002_flow_proc_002_task_6_to_proc_002_end">
+        <di:waypoint x="2040.0" y="560.0"/>
+        <di:waypoint x="2101.0" y="560.0"/>
+        <di:waypoint x="2101.0" y="160.0"/>
+        <di:waypoint x="2162.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

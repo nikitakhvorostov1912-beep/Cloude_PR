@@ -15,6 +15,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.shared import Cm, Pt, RGBColor
 
 from .doc_generator import (
+    COLORS,
     DocGenerator,
     format_date_russian,
     safe_list,

@@ -5,8 +5,6 @@ from __future__ import annotations
 import json
 import logging
 import shutil
-
-import aiofiles
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -79,7 +77,7 @@ class ProjectService:
                 detail=str(exc),
             ) from exc
 
-        await self._save_project_json(project_dir, project_data)
+        self._save_project_json(project_dir, project_data)
 
         logger.info("Проект создан: id=%s, name=%s", project_id, name)
         return project_data
@@ -105,7 +103,7 @@ class ProjectService:
             if not project_json_path.is_file():
                 continue
             try:
-                data = await self._load_json(project_json_path)
+                data = self._load_json(project_json_path)
                 projects.append({
                     "id": data.get("id", child.name),
                     "name": data.get("name", ""),
@@ -139,7 +137,7 @@ class ProjectService:
         """
         project_dir = self._ensure_project_exists(project_id)
         project_json_path = project_dir.root / "project.json"
-        return await self._load_json(project_json_path)
+        return self._load_json(project_json_path)
 
     async def delete_project(self, project_id: str) -> None:
         """Удаляет проект и все его файлы.
@@ -183,7 +181,7 @@ class ProjectService:
         """
         project_dir = self._ensure_project_exists(project_id)
         project_json_path = project_dir.root / "project.json"
-        project_data = await self._load_json(project_json_path)
+        project_data = self._load_json(project_json_path)
 
         # Обновляем только разрешённые поля
         allowed_fields = {"name", "description", "status", "pipeline_state"}
@@ -193,7 +191,7 @@ class ProjectService:
 
         project_data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
-        await self._save_project_json(project_dir, project_data)
+        self._save_project_json(project_dir, project_data)
         logger.info("Проект обновлён: id=%s", project_id)
         return project_data
 
@@ -216,17 +214,16 @@ class ProjectService:
             )
         return project_dir
 
-    async def _save_project_json(
-        self,
+    @staticmethod
+    def _save_project_json(
         project_dir: ProjectDir,
         data: dict[str, Any],
     ) -> Path:
         """Сохраняет project.json в корне директории проекта."""
         json_path = project_dir.root / "project.json"
         try:
-            content = json.dumps(data, ensure_ascii=False, indent=2)
-            async with aiofiles.open(json_path, "w", encoding="utf-8") as f:
-                await f.write(content)
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
         except OSError as exc:
             raise ProcessingError(
                 "Ошибка сохранения метаданных проекта",
@@ -234,12 +231,12 @@ class ProjectService:
             ) from exc
         return json_path
 
-    async def _load_json(self, path: Path) -> dict[str, Any]:
+    @staticmethod
+    def _load_json(path: Path) -> dict[str, Any]:
         """Загружает и парсит JSON-файл."""
         try:
-            async with aiofiles.open(path, "r", encoding="utf-8") as f:
-                content = await f.read()
-            data = json.loads(content)
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
         except json.JSONDecodeError as exc:
             raise ProcessingError(
                 f"Некорректный JSON в файле: {path.name}",
