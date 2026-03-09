@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "streamlit",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["interview-to-bpmn/start_preview.py"],
+      "port": 8501
+    },
+    {
+      "name": "survey-backend",
+      "runtimeExecutable": "C:\\Windows\\py.exe",
+      "runtimeArgs": ["projects/survey-automation/backend/start_dev.py"],
+      "port": 8000
+    },
+    {
+      "name": "survey-frontend",
+      "runtimeExecutable": "C:\\CLOUDE_PR\\nodejs\\node.exe",
+      "runtimeArgs": ["C:\\CLOUDE_PR\\projects\\survey-automation\\frontend\\start_dev.js"],
+      "port": 3000
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>BPMN Диаграмма — Грузоперевозка</title>
+<style>
+  body { margin: 0; padding: 8px; background: #f0f0f0; font-family: sans-serif; }
+  h2 { margin: 0 0 8px; font-size: 14px; color: #333; }
+  .controls { margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+  button { padding: 4px 10px; cursor: pointer; border: 1px solid #999; border-radius: 4px; background: #fff; }
+  button:hover { background: #e0e0e0; }
+  .zoom-label { font-size: 13px; color: #555; }
+  #container {
+    width: 100%;
+    overflow: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  #inner {
+    transform-origin: top left;
+    display: inline-block;
+    transition: transform 0.1s;
+  }
+  #inner img {
+    display: block;
+    max-width: none;
+  }
+</style>
+</head>
+<body>
+<h2 id="diagTitle">BPMN Диаграмма: Процесс грузоперевозки — 6 дорожек, 31 элемент</h2>
+<div class="controls">
+  <button onclick="zoom(-0.05)">−</button>
+  <span class="zoom-label" id="zlabel">По экрану</span>
+  <button onclick="zoom(+0.05)">+</button>
+  <button onclick="fitView()">По экрану</button>
+  <button onclick="setScale(0.3)">30%</button>
+  <button onclick="setScale(0.5)">50%</button>
+  <button onclick="setScale(1.0)">100%</button>
+  <a href="/logistics_diagram.svg" download="logistics_bpmn.svg" style="margin-left:16px; font-size:12px; color:#1565c0">↓ Скачать SVG</a>
+</div>
+<div id="container">
+  <div id="inner">
+    <img id="svgImg" src="/logistics_diagram.svg?v=2" />
+  </div>
+</div>
+<script>
+  let scale = 0.07;
+  function setScale(s) {
+    scale = s;
+    document.getElementById('inner').style.transform = 'scale(' + scale + ')';
+    document.getElementById('zlabel').textContent = Math.round(scale * 100) + '%';
+    const img = document.getElementById('svgImg');
+    const h = img.naturalHeight * scale;
+    document.getElementById('container').style.height = (h + 30) + 'px';
+  }
+  function fitView() {
+    const img = document.getElementById('svgImg');
+    if (!img.naturalWidth) return;
+    const vw = document.body.clientWidth - 32;
+    setScale(vw / img.naturalWidth);
+  }
+  function zoom(delta) { setScale(Math.max(0.03, Math.min(2.0, scale + delta))); }
+  document.getElementById('svgImg').onload = function() {
+    const img = document.getElementById('svgImg');
+    document.getElementById('diagTitle').textContent =
+      'BPMN Диаграмма: Процесс грузоперевозки (' + img.naturalWidth + '\u00d7' + img.naturalHeight + 'px — 6 дорожек, 31 элемент)';
+    fitView();
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="13498" height="3240" viewBox="0 0 13498 3240" font-family="Segoe UI, Arial, sans-serif">
+<defs>
+  <marker id="arrowhead" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#5A6475" />
+  </marker>
+  <marker id="arrowhead-msg" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+    <polygon points="0 0, 9 3.5, 0 7" fill="#7B8EA8" />
+  </marker>
+  <filter id="shadow" x="-5%" y="-5%" width="120%" height="120%">
+    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.10" />
+  </filter>
+  <filter id="shadow-lane" x="-2%" y="-2%" width="104%" height="104%">
+    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.08" />
+  </filter>
+</defs>
+<rect width="13498" height="3240" fill="#F0F2F5" />
+<rect x="80.0" y="80" width="13358.0" height="400.0" fill="#EEF2FA" stroke="#4472C4" stroke-width="1.5" rx="6" filter="url(#shadow-lane)" />
+<rect x="80.0" y="80" width="55" height="400.0" fill="#2B5091" rx="6" />
+<line x1="135.0" y1="80" x2="135.0" y2="480.0" stroke="#4472C4" stroke-width="1" />
+<text x="107.5" y="280.0" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="bold" letter-spacing="1" fill="#FFFFFF" transform="rotate(-90 107.5 280.0)">Клиент</text>
+<rect x="80.0" y="480.0" width="13358.0" height="400.0" fill="#EEF5EE" stroke="#4CAF50" stroke-width="1.5" rx="6" filter="url(#shadow-lane)" />
+<rect x="80.0" y="480.0" width="55" height="400.0" fill="#2E7D32" rx="6" />
+<line x1="135.0" y1="480.0" x2="135.0" y2="880.0" stroke="#4CAF50" stroke-width="1" />
+<text x="107.5" y="680.0" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="bold" letter-spacing="1" fill="#FFFFFF" transform="rotate(-90 107.5 680.0)">Коммуникационный центр</text>
+<rect x="80.0" y="880.0" width="13358.0" height="400.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="1.5" rx="6" filter="url(#shadow-lane)" />
+<rect x="80.0" y="880.0" width="55" height="400.0" fill="#F57F17" rx="6" />
+<line x1="135.0" y1="880.0" x2="135.0" y2="1280.0" stroke="#F9A825" stroke-width="1" />
+<text x="107.5" y="1080.0" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="bold" letter-spacing="1" fill="#FFFFFF" transform="rotate(-90 107.5 1080.0)">Отдел логистики</text>
+<rect x="80.0" y="1280.0" width="13358.0" height="400.0" fill="#FEF0EE" stroke="#E53935" stroke-width="1.5" rx="6" filter="url(#shadow-lane)" />
+<rect x="80.0" y="1280.0" width="55" height="400.0" fill="#B71C1C" rx="6" />
+<line x1="135.0" y1="1280.0" x2="135.0" y2="1680.0" stroke="#E53935" stroke-width="1" />
+<text x="107.5" y="1480.0" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="bold" letter-spacing="1" fill="#FFFFFF" transform="rotate(-90 107.5 1480.0)">Коммерческий отдел</text>
+<rect x="80.0" y="1680.0" width="13358.0" height="750.0" fill="#F3EEF9" stroke="#7B1FA2" stroke-width="1.5" rx="6" filter="url(#shadow-lane)" />
+<rect x="80.0" y="1680.0" width="55" height="750.0" fill="#4A148C" rx="6" />
+<line x1="135.0" y1="1680.0" x2="135.0" y2="2430.0" stroke="#7B1FA2" stroke-width="1" />
+<text x="107.5" y="2055.0" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="bold" letter-spacing="1" fill="#FFFFFF" transform="rotate(-90 107.5 2055.0)">Отдел диспетчеризации</text>
+<rect x="80.0" y="2430.0" width="13358.0" height="750.0" fill="#E8F8F8" stroke="#00796B" stroke-width="1.5" rx="6" filter="url(#shadow-lane)" />
+<rect x="80.0" y="2430.0" width="55" height="750.0" fill="#004D40" rx="6" />
+<line x1="135.0" y1="2430.0" x2="135.0" y2="3180.0" stroke="#00796B" stroke-width="1" />
+<text x="107.5" y="2805.0" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="bold" letter-spacing="1" fill="#FFFFFF" transform="rotate(-90 107.5 2805.0)">Подрядчик</text>
+<polyline points="318.0,280.0 752.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="788.0,280.0 964.0,280.0 964.0,680.0 1140.0,680.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="1340.0,680.0 1475.0,680.0 1475.0,1080.0 1610.0,1080.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="1810.0,1080.0 1945.0,1080.0 1945.0,1480.0 2080.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="2280.0,1480.0 2415.0,1480.0 2415.0,280.0 2550.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="2750.0,280.0 3020.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="3220.0,280.0 3396.0,280.0 3396.0,1480.0 3572.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="3608.0,1480.0 4035.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="4085.0,1480.0 4257.5,1480.0 4257.5,1080.0 4430.0,1080.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<rect x="4156.25" y="1469.0" width="30" height="14" fill="white" rx="3" stroke="#5A6475" stroke-width="0.5" />
+<text x="4171.25" y="1480.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="600" fill="#5A6475">Да</text>
+<polyline points="4085.0,1480.0 4430.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<rect x="4242.0" y="1469.0" width="31" height="14" fill="white" rx="3" stroke="#5A6475" stroke-width="0.5" />
+<text x="4257.5" y="1480.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="600" fill="#5A6475">Нет</text>
+<polyline points="4630.0,1080.0 4802.5,1080.0 4802.5,1480.0 4975.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="4630.0,1480.0 4975.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="5025.0,1480.0 5452.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="5488.0,1480.0 5664.0,1480.0 5664.0,1080.0 5840.0,1080.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="6040.0,1080.0 6175.0,1080.0 6175.0,2805.0 6310.0,2805.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="6510.0,2805.0 6855.0,2805.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="6905.0,2805.0 7077.5,2805.0 7077.5,2630.0 7250.0,2630.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<rect x="6976.25" y="2794.0" width="30" height="14" fill="white" rx="3" stroke="#5A6475" stroke-width="0.5" />
+<text x="6991.25" y="2805.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="600" fill="#5A6475">Да</text>
+<polyline points="6905.0,2805.0 7077.5,2805.0 7077.5,2980.0 7250.0,2980.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<rect x="6975.75" y="2794.0" width="31" height="14" fill="white" rx="3" stroke="#5A6475" stroke-width="0.5" />
+<text x="6991.25" y="2805.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="600" fill="#5A6475">Нет</text>
+<polyline points="7450.0,2630.0 7622.5,2630.0 7622.5,2805.0 7795.0,2805.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="7450.0,2980.0 7622.5,2980.0 7622.5,2805.0 7795.0,2805.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="7845.0,2805.0 8017.5,2805.0 8017.5,2055.0 8190.0,2055.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="8390.0,2055.0 8735.0,2055.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="8785.0,2055.0 8957.5,2055.0 8957.5,1880.0 9130.0,1880.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<rect x="8856.25" y="2044.0" width="30" height="14" fill="white" rx="3" stroke="#5A6475" stroke-width="0.5" />
+<text x="8871.25" y="2055.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="600" fill="#5A6475">Да</text>
+<polyline points="8785.0,2055.0 8957.5,2055.0 8957.5,2230.0 9130.0,2230.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<rect x="8855.75" y="2044.0" width="31" height="14" fill="white" rx="3" stroke="#5A6475" stroke-width="0.5" />
+<text x="8871.25" y="2055.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="600" fill="#5A6475">Нет</text>
+<polyline points="9330.0,1880.0 9502.5,1880.0 9502.5,2055.0 9675.0,2055.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="9330.0,2230.0 9502.5,2230.0 9502.5,2055.0 9675.0,2055.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="9725.0,2055.0 9897.5,2055.0 9897.5,2805.0 10070.0,2805.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="10270.0,2805.0 10405.0,2805.0 10405.0,280.0 10540.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="10740.0,280.0 11010.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="11210.0,280.0 11562.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="11598.0,280.0 11774.0,280.0 11774.0,2805.0 11950.0,2805.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="12150.0,2805.0 12285.0,2805.0 12285.0,1480.0 12420.0,1480.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<polyline points="12620.0,1480.0 12796.0,1480.0 12796.0,280.0 12972.0,280.0" fill="none" stroke="#5A6475" stroke-width="1.5"  marker-end="url(#arrowhead)" />
+<circle cx="300.0" cy="280.0" r="18.0" fill="#F1FAF1" stroke="#43A047" stroke-width="2.5" filter="url(#shadow)" />
+<polygon points="295.0,274.0 307.0,280.0 295.0,286.0" fill="#43A047" />
+<text x="300.0" y="312.0" text-anchor="middle" font-size="11" fill="#2E7D32" font-weight="500">Потребность в перевозке</text>
+<circle cx="770.0" cy="280.0" r="18.0" fill="#F1FAF1" stroke="#43A047" stroke-width="2.5" filter="url(#shadow)" />
+<rect x="760.1" y="272.8" width="19.8" height="14.4" fill="#A5D6A7" stroke="#2E7D32" stroke-width="1" rx="1" />
+<polyline points="760.1,272.8 770.0,282.0 779.9,272.8" fill="none" stroke="#2E7D32" stroke-width="1" />
+<text x="770.0" y="312.0" text-anchor="middle" font-size="11" fill="#2E7D32" font-weight="500">1. Формирование заявки на перевозку через Web-Портал (Клиент)</text>
+<rect x="1140.0" y="630.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="1140.0" y="638.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="1140.0" y="630.0" width="5" height="8" fill="#2B5091" />
+<rect x="1140.0" y="722.0" width="5" height="8" fill="#2B5091" />
+<circle cx="1325.0" cy="641.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="1325.0" cy="650.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="1233.5" y="713.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="1240.0" y="724.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<text x="1152.0" y="654.5" font-size="12" fill="#1A202C" font-weight="500">2. Обработка заявок</text>
+<text x="1152.0" y="669.5" font-size="12" fill="#1A202C" font-weight="500">(Коммуникационный</text>
+<text x="1152.0" y="684.5" font-size="12" fill="#1A202C" font-weight="500">центр)</text>
+<rect x="1610.0" y="1030.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="1610.0" y="1038.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="1610.0" y="1030.0" width="5" height="8" fill="#2B5091" />
+<rect x="1610.0" y="1122.0" width="5" height="8" fill="#2B5091" />
+<circle cx="1795.0" cy="1041.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="1795.0" cy="1050.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="1703.5" y="1113.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="1710.0" y="1124.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<text x="1622.0" y="1054.5" font-size="12" fill="#1A202C" font-weight="500">3. Разработка</text>
+<text x="1622.0" y="1069.5" font-size="12" fill="#1A202C" font-weight="500">маршрутов перевозки</text>
+<text x="1622.0" y="1084.5" font-size="12" fill="#1A202C" font-weight="500">(Отдел логистики)</text>
+<rect x="2080.0" y="1430.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="2080.0" y="1438.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="2080.0" y="1430.0" width="5" height="8" fill="#2B5091" />
+<rect x="2080.0" y="1522.0" width="5" height="8" fill="#2B5091" />
+<circle cx="2265.0" cy="1441.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="2265.0" cy="1450.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="2173.5" y="1513.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="2180.0" y="1524.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<text x="2092.0" y="1447.0" font-size="12" fill="#1A202C" font-weight="500">4. Согласование</text>
+<text x="2092.0" y="1462.0" font-size="12" fill="#1A202C" font-weight="500">стоимости и срока</text>
+<text x="2092.0" y="1477.0" font-size="12" fill="#1A202C" font-weight="500">перевозки</text>
+<text x="2092.0" y="1492.0" font-size="12" fill="#1A202C" font-weight="500">(Коммерческий отдел)</text>
+<rect x="2550.0" y="230.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="2550.0" y="238.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="2550.0" y="230.0" width="5" height="8" fill="#4472C4" />
+<rect x="2550.0" y="322.0" width="5" height="8" fill="#4472C4" />
+<circle cx="2735.0" cy="241.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="2735.0" cy="250.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="2562.0" y="269.0" font-size="12" fill="#1A202C" font-weight="500">5. Выбор варианта</text>
+<text x="2562.0" y="284.0" font-size="12" fill="#1A202C" font-weight="500">перевозки (Клиент)</text>
+<rect x="3020.0" y="230.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="3020.0" y="238.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="3020.0" y="230.0" width="5" height="8" fill="#4472C4" />
+<rect x="3020.0" y="322.0" width="5" height="8" fill="#4472C4" />
+<circle cx="3205.0" cy="241.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="3205.0" cy="250.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="3032.0" y="269.0" font-size="12" fill="#1A202C" font-weight="500">6. Оплата счёта</text>
+<text x="3032.0" y="284.0" font-size="12" fill="#1A202C" font-weight="500">(Клиент)</text>
+<circle cx="3590.0" cy="1480.0" r="18.0" fill="#FFFDE7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<circle cx="3590.0" cy="1480.0" r="14.0" fill="none" stroke="#F9A825" stroke-width="1.5" />
+<line x1="3590.0" y1="1472.0" x2="3590.0" y2="1469.0" stroke="#F57F17" stroke-width="1.5" />
+<line x1="3598.0" y1="1480.0" x2="3601.0" y2="1480.0" stroke="#F57F17" stroke-width="1.5" />
+<line x1="3590.0" y1="1488.0" x2="3590.0" y2="1491.0" stroke="#F57F17" stroke-width="1.5" />
+<line x1="3582.0" y1="1480.0" x2="3579.0" y2="1480.0" stroke="#F57F17" stroke-width="1.5" />
+<line x1="3590.0" y1="1480.0" x2="3590.0" y2="1471.0" stroke="#F57F17" stroke-width="1.5" stroke-linecap="round" />
+<line x1="3590.0" y1="1480.0" x2="3597.7" y2="1480.0" stroke="#F57F17" stroke-width="1.5" stroke-linecap="round" />
+<text x="3590.0" y="1512.0" text-anchor="middle" font-size="11" fill="#F57F17" font-weight="500">3 рабочих дня</text>
+<polygon points="4060.0,1455.0 4085.0,1480.0 4060.0,1505.0 4035.0,1480.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<line x1="4050.0" y1="1470.0" x2="4070.0" y2="1490.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<line x1="4070.0" y1="1470.0" x2="4050.0" y2="1490.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<text x="4060.0" y="1447.0" text-anchor="middle" font-size="10" fill="#5A6475" font-style="italic">Счёт оплачен?</text>
+<rect x="4430.0" y="1030.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="4430.0" y="1038.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="4430.0" y="1030.0" width="5" height="8" fill="#4472C4" />
+<rect x="4430.0" y="1122.0" width="5" height="8" fill="#4472C4" />
+<circle cx="4615.0" cy="1041.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="4615.0" cy="1050.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="4442.0" y="1061.5" font-size="12" fill="#1A202C" font-weight="500">Планирование</text>
+<text x="4442.0" y="1076.5" font-size="12" fill="#1A202C" font-weight="500">перевозки (Отдел</text>
+<text x="4442.0" y="1091.5" font-size="12" fill="#1A202C" font-weight="500">логистики)</text>
+<rect x="4430.0" y="1430.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="4430.0" y="1438.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="4430.0" y="1430.0" width="5" height="8" fill="#4472C4" />
+<rect x="4430.0" y="1522.0" width="5" height="8" fill="#4472C4" />
+<circle cx="4615.0" cy="1441.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="4615.0" cy="1450.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="4442.0" y="1469.0" font-size="12" fill="#1A202C" font-weight="500">Аннулирование заявки</text>
+<text x="4442.0" y="1484.0" font-size="12" fill="#1A202C" font-weight="500">(Коммерческий отдел)</text>
+<polygon points="5000.0,1455.0 5025.0,1480.0 5000.0,1505.0 4975.0,1480.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<line x1="4990.0" y1="1470.0" x2="5010.0" y2="1490.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<line x1="5010.0" y1="1470.0" x2="4990.0" y2="1490.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<circle cx="5470.0" cy="1480.0" r="18.0" fill="#FFF0EE" stroke="#E53935" stroke-width="4" filter="url(#shadow)" />
+<circle cx="5470.0" cy="1480.0" r="13.0" fill="none" stroke="#E53935" stroke-width="1.5" />
+<line x1="5461.9" y1="1471.9" x2="5478.1" y2="1488.1" stroke="#E53935" stroke-width="2.5" stroke-linecap="round" />
+<line x1="5478.1" y1="1471.9" x2="5461.9" y2="1488.1" stroke="#E53935" stroke-width="2.5" stroke-linecap="round" />
+<text x="5470.0" y="1512.0" text-anchor="middle" font-size="11" fill="#B71C1C" font-weight="500">8. Аннулирование заявки (Коммерческий отдел)</text>
+<rect x="5840.0" y="1030.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="5840.0" y="1038.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="5840.0" y="1030.0" width="5" height="8" fill="#4472C4" />
+<rect x="5840.0" y="1122.0" width="5" height="8" fill="#4472C4" />
+<circle cx="6025.0" cy="1041.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="6025.0" cy="1050.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="5852.0" y="1061.5" font-size="12" fill="#1A202C" font-weight="500">9. Планирование</text>
+<text x="5852.0" y="1076.5" font-size="12" fill="#1A202C" font-weight="500">перевозки (Отдел</text>
+<text x="5852.0" y="1091.5" font-size="12" fill="#1A202C" font-weight="500">логистики)</text>
+<rect x="6310.0" y="2755.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="6310.0" y="2763.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="6310.0" y="2755.0" width="5" height="8" fill="#2B5091" />
+<rect x="6310.0" y="2847.0" width="5" height="8" fill="#2B5091" />
+<circle cx="6495.0" cy="2766.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="6495.0" cy="2775.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="6403.5" y="2838.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="6410.0" y="2849.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<text x="6322.0" y="2787.0" font-size="12" fill="#1A202C" font-weight="500">10. Подтверждение</text>
+<text x="6322.0" y="2802.0" font-size="12" fill="#1A202C" font-weight="500">брони (Подрядчик)</text>
+<polygon points="6880.0,2780.0 6905.0,2805.0 6880.0,2830.0 6855.0,2805.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<line x1="6870.0" y1="2795.0" x2="6890.0" y2="2815.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<line x1="6890.0" y1="2795.0" x2="6870.0" y2="2815.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<text x="6880.0" y="2772.0" text-anchor="middle" font-size="10" fill="#5A6475" font-style="italic">Ресурсы есть?</text>
+<rect x="7250.0" y="2580.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="7250.0" y="2588.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="7250.0" y="2580.0" width="5" height="8" fill="#4472C4" />
+<rect x="7250.0" y="2672.0" width="5" height="8" fill="#4472C4" />
+<circle cx="7435.0" cy="2591.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="7435.0" cy="2600.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="7262.0" y="2619.0" font-size="12" fill="#1A202C" font-weight="500">Заявка подтверждена</text>
+<text x="7262.0" y="2634.0" font-size="12" fill="#1A202C" font-weight="500">подрядчиком</text>
+<rect x="7250.0" y="2930.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="7250.0" y="2938.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="7250.0" y="2930.0" width="5" height="8" fill="#4472C4" />
+<rect x="7250.0" y="3022.0" width="5" height="8" fill="#4472C4" />
+<circle cx="7435.0" cy="2941.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="7435.0" cy="2950.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="7262.0" y="2969.0" font-size="12" fill="#1A202C" font-weight="500">Нет ресурсов — поиск</text>
+<text x="7262.0" y="2984.0" font-size="12" fill="#1A202C" font-weight="500">другого подрядчика</text>
+<polygon points="7820.0,2780.0 7845.0,2805.0 7820.0,2830.0 7795.0,2805.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<line x1="7810.0" y1="2795.0" x2="7830.0" y2="2815.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<line x1="7830.0" y1="2795.0" x2="7810.0" y2="2815.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<rect x="8190.0" y="2005.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="8190.0" y="2013.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="8190.0" y="2005.0" width="5" height="8" fill="#2B5091" />
+<rect x="8190.0" y="2097.0" width="5" height="8" fill="#2B5091" />
+<circle cx="8375.0" cy="2016.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="8375.0" cy="2025.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="8283.5" y="2088.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="8290.0" y="2099.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<text x="8202.0" y="2022.0" font-size="12" fill="#1A202C" font-weight="500">11. Управление и</text>
+<text x="8202.0" y="2037.0" font-size="12" fill="#1A202C" font-weight="500">контроль перевозки</text>
+<text x="8202.0" y="2052.0" font-size="12" fill="#1A202C" font-weight="500">(Отдел</text>
+<text x="8202.0" y="2067.0" font-size="12" fill="#1A202C" font-weight="500">диспетчеризации)</text>
+<polygon points="8760.0,2030.0 8785.0,2055.0 8760.0,2080.0 8735.0,2055.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<line x1="8750.0" y1="2045.0" x2="8770.0" y2="2065.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<line x1="8770.0" y1="2045.0" x2="8750.0" y2="2065.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<text x="8760.0" y="2022.0" text-anchor="middle" font-size="10" fill="#5A6475" font-style="italic">Перевозка завершена?</text>
+<rect x="9130.0" y="1830.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="9130.0" y="1838.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="9130.0" y="1830.0" width="5" height="8" fill="#4472C4" />
+<rect x="9130.0" y="1922.0" width="5" height="8" fill="#4472C4" />
+<circle cx="9315.0" cy="1841.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="9315.0" cy="1850.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="9142.0" y="1869.0" font-size="12" fill="#1A202C" font-weight="500">Заявка исполнена —</text>
+<text x="9142.0" y="1884.0" font-size="12" fill="#1A202C" font-weight="500">закрытие в системе</text>
+<rect x="9130.0" y="2180.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="9130.0" y="2188.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="9130.0" y="2180.0" width="5" height="8" fill="#4472C4" />
+<rect x="9130.0" y="2272.0" width="5" height="8" fill="#4472C4" />
+<circle cx="9315.0" cy="2191.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="9315.0" cy="2200.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="9142.0" y="2219.0" font-size="12" fill="#1A202C" font-weight="500">Продолжение контроля</text>
+<text x="9142.0" y="2234.0" font-size="12" fill="#1A202C" font-weight="500">перевозки</text>
+<polygon points="9700.0,2030.0 9725.0,2055.0 9700.0,2080.0 9675.0,2055.0" fill="#FFF8E7" stroke="#F9A825" stroke-width="2" filter="url(#shadow)" />
+<line x1="9690.0" y1="2045.0" x2="9710.0" y2="2065.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<line x1="9710.0" y1="2045.0" x2="9690.0" y2="2065.0" stroke="#F9A825" stroke-width="2.5" stroke-linecap="round" />
+<rect x="10070.0" y="2755.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="10070.0" y="2763.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="10070.0" y="2755.0" width="5" height="8" fill="#2B5091" />
+<rect x="10070.0" y="2847.0" width="5" height="8" fill="#2B5091" />
+<circle cx="10255.0" cy="2766.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="10255.0" cy="2775.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="10152.0" y="2838.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="10158.5" y="2849.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<line x1="10176.0" y1="2843.0" x2="10176.0" y2="2851.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<line x1="10181.0" y1="2843.0" x2="10181.0" y2="2851.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<line x1="10186.0" y1="2843.0" x2="10186.0" y2="2851.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<text x="10082.0" y="2779.5" font-size="12" fill="#1A202C" font-weight="500">12. Погрузка,</text>
+<text x="10082.0" y="2794.5" font-size="12" fill="#1A202C" font-weight="500">перевозка, разгрузка</text>
+<text x="10082.0" y="2809.5" font-size="12" fill="#1A202C" font-weight="500">(Подрядчик)</text>
+<rect x="10540.0" y="230.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="10540.0" y="238.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="10540.0" y="230.0" width="5" height="8" fill="#4472C4" />
+<rect x="10540.0" y="322.0" width="5" height="8" fill="#4472C4" />
+<circle cx="10725.0" cy="241.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="10725.0" cy="250.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="10552.0" y="269.0" font-size="12" fill="#1A202C" font-weight="500">13. Передать груз на</text>
+<text x="10552.0" y="284.0" font-size="12" fill="#1A202C" font-weight="500">погрузку (Клиент)</text>
+<rect x="11010.0" y="230.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="11010.0" y="238.0" width="5" height="84.0" fill="#4472C4" rx="3" />
+<rect x="11010.0" y="230.0" width="5" height="8" fill="#4472C4" />
+<rect x="11010.0" y="322.0" width="5" height="8" fill="#4472C4" />
+<circle cx="11195.0" cy="241.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="11195.0" cy="250.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<text x="11022.0" y="269.0" font-size="12" fill="#1A202C" font-weight="500">14. Контроль</text>
+<text x="11022.0" y="284.0" font-size="12" fill="#1A202C" font-weight="500">перевозки (Клиент)</text>
+<circle cx="11580.0" cy="280.0" r="18.0" fill="#FFF0EE" stroke="#E53935" stroke-width="3.5" filter="url(#shadow)" />
+<rect x="11570.1" y="272.8" width="19.8" height="14.4" fill="#EF9A9A" stroke="#B71C1C" stroke-width="1" rx="1" />
+<polyline points="11570.1,272.8 11580.0,282.0 11589.9,272.8" fill="none" stroke="#B71C1C" stroke-width="1" />
+<text x="11580.0" y="312.0" text-anchor="middle" font-size="11" fill="#B71C1C" font-weight="500">15. Принять груз (Клиент)</text>
+<rect x="11950.0" y="2755.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="11950.0" y="2763.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="11950.0" y="2755.0" width="5" height="8" fill="#2B5091" />
+<rect x="11950.0" y="2847.0" width="5" height="8" fill="#2B5091" />
+<circle cx="12135.0" cy="2766.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="12135.0" cy="2775.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="12032.0" y="2838.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="12038.5" y="2849.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<line x1="12056.0" y1="2843.0" x2="12056.0" y2="2851.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<line x1="12061.0" y1="2843.0" x2="12061.0" y2="2851.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<line x1="12066.0" y1="2843.0" x2="12066.0" y2="2851.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<text x="11962.0" y="2787.0" font-size="12" fill="#1A202C" font-weight="500">16. Получение оплаты</text>
+<text x="11962.0" y="2802.0" font-size="12" fill="#1A202C" font-weight="500">за услуги (Подрядчик)</text>
+<rect x="12420.0" y="1430.0" width="200.0" height="100.0" rx="8" ry="8" fill="#FFFFFF" stroke="#CBD4E1" stroke-width="1.5" filter="url(#shadow)" />
+<rect x="12420.0" y="1438.0" width="5" height="84.0" fill="#2B5091" rx="3" />
+<rect x="12420.0" y="1430.0" width="5" height="8" fill="#2B5091" />
+<rect x="12420.0" y="1522.0" width="5" height="8" fill="#2B5091" />
+<circle cx="12605.0" cy="1441.0" r="4" fill="#4472C4" opacity="0.55" /><ellipse cx="12605.0" cy="1450.0" rx="6" ry="4" fill="#4472C4" opacity="0.55" />
+<rect x="12502.0" y="1513.0" width="13" height="13" fill="white" stroke="#2B5091" stroke-width="1.5" />
+<text x="12508.5" y="1524.0" text-anchor="middle" font-size="11" font-weight="bold" fill="#2B5091">+</text>
+<line x1="12526.0" y1="1518.0" x2="12526.0" y2="1526.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<line x1="12531.0" y1="1518.0" x2="12531.0" y2="1526.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<line x1="12536.0" y1="1518.0" x2="12536.0" y2="1526.0" stroke="#2B5091" stroke-width="1.8" stroke-linecap="round" />
+<text x="12432.0" y="1454.5" font-size="12" fill="#1A202C" font-weight="500">17. Расчёт с</text>
+<text x="12432.0" y="1469.5" font-size="12" fill="#1A202C" font-weight="500">подрядчиком</text>
+<text x="12432.0" y="1484.5" font-size="12" fill="#1A202C" font-weight="500">(Коммерческий отдел)</text>
+<circle cx="12990.0" cy="280.0" r="18.0" fill="#FFF0EE" stroke="#E53935" stroke-width="3.5" filter="url(#shadow)" />
+<rect x="12980.1" y="270.1" width="19.8" height="19.8" fill="#E53935" />
+<text x="12990.0" y="312.0" text-anchor="middle" font-size="11" fill="#B71C1C" font-weight="500">Перевозка произведена</text>
+</svg>

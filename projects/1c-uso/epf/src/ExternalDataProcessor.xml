@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.1/data/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:v8="http://v8.1c.ru/8.1/data/core"
+    xmlns:v8ui="http://v8.1c.ru/8.1/data/ui"
+    xsi:schemaLocation="http://v8.1c.ru/8.1/data/core http://v8.1c.ru/8.1/data/core">
+  <ExternalDataProcessor uuid="a1b2c3d4-0001-0001-0001-000000000001">
+    <Properties>
+      <Name>МетаданныеУСО</Name>
+      <Synonym>
+        <v>
+          <key>ru</key>
+          <value>Сборщик метаданных УСО 2.5</value>
+        </v>
+      </Synonym>
+      <Comment>Собирает точные имена документов, реквизиты и пути в меню из конфигурации 1С:ERP УСО 2.5</Comment>
+    </Properties>
+    <ChildObjects>
+      <Form name="ОсновнаяФорма" uuid="a1b2c3d4-0002-0002-0002-000000000002">
+        <Properties>
+          <Name>ОсновнаяФорма</Name>
+          <Synonym>
+            <v>
+              <key>ru</key>
+              <value>Основная форма</value>
+            </v>
+          </Synonym>
+        </Properties>
+      </Form>
+    </ChildObjects>
+  </ExternalDataProcessor>
+</MetaDataObject>
