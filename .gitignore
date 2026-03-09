@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Archives (originals kept separately)
+archives/
+
+# Data files (large audio/models)
+*.wav
+*.mp3
+*.m4a
+*.ogg
+*.flac
+*.wma
+*.aac
+
+# Secrets
+.env
+*.key
+config_local.yaml
+
+# Logs
+*.log
+logs/
