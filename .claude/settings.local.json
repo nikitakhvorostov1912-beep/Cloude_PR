@@ -23,7 +23,8 @@
       "Bash(done)",
       "WebFetch(domain:developer.chrome.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm view @anthropic-ai/claude-code version)"
     ]
   },
   "hooks": {
@@ -34,6 +35,50 @@
           {
             "type": "prompt",
             "prompt": "Check if Claude is about to stop prematurely. Evaluate:\n\n1. Did the user ask for code changes? If yes - was code actually written/edited?\n2. Did the user ask to run tests? If yes - were tests actually executed?\n3. Did the user ask for multiple things? If yes - were ALL of them addressed?\n4. Is there a TodoWrite list with pending items? If yes - those should be completed first.\n5. Did Claude promise to do something and hasn't done it yet?\n\nIf ALL tasks are genuinely complete, respond: {\"decision\": \"approve\"}\n\nIf something is incomplete, respond:\n{\"decision\": \"block\", \"reason\": \"Incomplete\", \"systemMessage\": \"Ты не завершил все задачи. Проверь: [конкретно что не сделано]. Заверши ВСЁ перед остановкой.\"}",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Check if the edited file is a Python file (.py). If yes, remind to run ruff/mypy. If it's a TypeScript/TSX file (.ts/.tsx), remind to check types with tsc. Respond: {\"decision\": \"approve\", \"systemMessage\": \"Auto-lint: проверь линтером после редактирования.\"}",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "A new file was created. Check: does a similar file already exist in the project? If this might be a duplicate, warn. Respond: {\"decision\": \"approve\", \"systemMessage\": \"Проверь: нет ли дубля этого файла в проекте.\"}",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash D:/Cloude_PR/.claude/hooks-handlers/session-boot.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash D:/Cloude_PR/.claude/hooks-handlers/session-resume.sh",
             "timeout": 10
           }
         ]
