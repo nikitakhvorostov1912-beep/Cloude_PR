@@ -28,5 +28,12 @@ export default defineConfig(async () => ({
     watch: {
       ignored: ["**/src-tauri/**"],
     },
+    proxy: {
+      "/api/anthropic": {
+        target: "https://api.anthropic.com",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/anthropic/, ""),
+      },
+    },
   },
 }));
