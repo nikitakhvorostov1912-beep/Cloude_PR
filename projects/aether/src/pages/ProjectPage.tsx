@@ -248,6 +248,22 @@ export function ProjectPage() {
                             </svg>
                             Обработать
                           </GlassButton>
+                          {meeting.status === 'completed' && (
+                            <GlassButton
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => {
+                                play('navigate');
+                                navigate(`/viewer?meetingId=${meeting.id}`);
+                              }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M2 2H8L12 6V12H2V2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                                <path d="M5 7H9M5 9H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                              </svg>
+                              Артефакты
+                            </GlassButton>
+                          )}
                         </div>
                       </motion.div>
                     )}
