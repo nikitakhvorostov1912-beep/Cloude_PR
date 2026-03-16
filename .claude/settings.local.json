@@ -23,7 +23,33 @@
       "Bash(done)",
       "WebFetch(domain:developer.chrome.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(wc -l \"C:\\\\CLOUDE_PR\\\\projects\\\\1c-uso\\\\knowledge\"/*.md)",
+      "Skill(ralph-loop)",
+      "Skill(ralph-loop:*)",
+      "Bash(where python)",
+      "Bash(where node)",
+      "Bash(where npm)",
+      "Bash(powershell -Command \"Get-Command python | Select-Object -ExpandProperty Source\")",
+      "Bash(powershell -Command \"Get-Command python3,py,python311,python312 -ErrorAction SilentlyContinue | Select Name,Source\")",
+      "Bash(powershell -Command \"py C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz.py 2>&1\")",
+      "Bash(powershell -Command \"Test-Path ''C:\\\\CLOUDE_PR\\\\projects\\\\ТЗ_Перенос_данных_УТ.docx''\")",
+      "Bash(powershell -Command \"Remove-Item ''C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz.py''\")",
+      "Bash(powershell -Command \"py C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz_excel.py 2>&1; Remove-Item C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz_excel.py; Remove-Item C:\\\\CLOUDE_PR\\\\projects\\\\hdr.txt\")",
+      "Bash(pandoc \"C:\\\\Users\\\\Khvorostov\\\\AppData\\\\Local\\\\Temp\\\\Лист_требований_Зиповская_ул_\\(2\\).docx\" -t plain --wrap=none)",
+      "Bash(pandoc \"C:\\\\Users\\\\Khvorostov\\\\AppData\\\\Local\\\\Temp\\\\Лист_требований_Зиповская_ул_8.docx\" -t plain --wrap=none)",
+      "Bash(py -3 -c \"import docx; print\\(''ok''\\)\")",
+      "Bash(py -3 -c \":*)",
+      "Bash(gh repo:*)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(npm install:*)",
+      "Bash(cmd.exe /c \"where npm\")",
+      "Bash(cmd.exe /c \"npm --version\")",
+      "Bash(dir \"C:\\\\Users\\\\Khvorostov\\\\Desktop\\\\Масло продукт\" /s /b)",
+      "Bash(/c/Users/Khvorostov/.local/bin/claude.exe update:*)",
+      "Bash(/c/Users/Khvorostov/.local/bin/claude.exe --version)",
+      "Bash(cmd /c \"where npm\")",
+      "Bash(cmd /c \"where node\")"
     ]
   },
   "hooks": {
@@ -32,8 +58,29 @@
         "matcher": "*",
         "hooks": [
           {
+            "type": "command",
+            "command": "bash .claude/plugins/ralph-wiggum/hooks/stop-hook.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
             "type": "prompt",
             "prompt": "Check if Claude is about to stop prematurely. Evaluate:\n\n1. Did the user ask for code changes? If yes - was code actually written/edited?\n2. Did the user ask to run tests? If yes - were tests actually executed?\n3. Did the user ask for multiple things? If yes - were ALL of them addressed?\n4. Is there a TodoWrite list with pending items? If yes - those should be completed first.\n5. Did Claude promise to do something and hasn't done it yet?\n\nIf ALL tasks are genuinely complete, respond: {\"decision\": \"approve\"}\n\nIf something is incomplete, respond:\n{\"decision\": \"block\", \"reason\": \"Incomplete\", \"systemMessage\": \"Ты не завершил все задачи. Проверь: [конкретно что не сделано]. Заверши ВСЁ перед остановкой.\"}",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if [ -f \".planning/erp-migration/STATE.md\" ]; then cp \".planning/erp-migration/STATE.md\" \".planning/erp-migration/STATE.backup.md\"; fi; echo \"{\\\"continue\\\": true}\"'",
             "timeout": 10
           }
         ]

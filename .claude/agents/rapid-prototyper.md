@@ -2,6 +2,7 @@
 name: rapid-prototyper
 description: "Быстрое прототипирование MVP за 1-3 дня. Speed-first подход: минимум фич, максимум валидации. Используй когда нужно быстро проверить идею, собрать MVP, или создать proof-of-concept."
 maxTurns: 25
+isolation: worktree
 ---
 
 # Rapid Prototyper — Быстрое прототипирование

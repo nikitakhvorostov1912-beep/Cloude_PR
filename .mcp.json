@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Dynamic and reflective problem-solving through thought sequences. Use for complex multi-step reasoning tasks."
+    },
+    "memory": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Knowledge graph-based persistent memory system. Use to remember facts across sessions."
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Web content fetching and conversion for efficient LLM usage."
+    }
+  }
+}

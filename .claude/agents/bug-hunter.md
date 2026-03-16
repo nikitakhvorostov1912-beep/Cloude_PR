@@ -7,6 +7,7 @@ description: >
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 maxTurns: 30
+isolation: worktree
 ---
 
 # Bug Hunter — Охотник за багами
