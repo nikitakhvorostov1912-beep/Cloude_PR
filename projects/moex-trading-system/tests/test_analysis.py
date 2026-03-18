@@ -267,7 +267,8 @@ class TestPreScoreLong:
     def test_breakdown_keys(self) -> None:
         _, breakdown = self._sber_score()
         assert set(breakdown.keys()) == {
-            "trend", "momentum", "structure", "volume", "sentiment", "fundamental", "macro"
+            "trend", "momentum", "structure", "volume", "sentiment",
+            "fundamental", "macro", "ml_prediction",
         }
 
     def test_breakdown_sum_equals_total(self) -> None:
@@ -277,7 +278,7 @@ class TestPreScoreLong:
     def test_structure_full_score(self) -> None:
         """Full EMA stack → structure component should be at weight maximum."""
         _, breakdown = self._sber_score()
-        expected_max = 100.0 * 0.18  # updated weight after macro factor added
+        expected_max = 100.0 * 0.14  # updated weight after ml_prediction factor added
         assert abs(breakdown["structure"] - expected_max) < 1e-6
 
 
@@ -322,7 +323,7 @@ class TestPreScoreShort:
             sentiment_score=0.0,
             direction="short",
         )
-        expected_max = 100.0 * 0.18  # updated weight after macro factor added
+        expected_max = 100.0 * 0.14  # updated weight after ml_prediction factor added
         assert abs(breakdown["structure"] - expected_max) < 1e-6
 
 

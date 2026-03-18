@@ -206,7 +206,7 @@ def generate_report(result: "BacktestResult") -> str:
         "-" * 60,
         f"  Total Trades       : {result.total_trades}",
         f"  Win Rate           : {result.win_rate:>.2%}",
-        f"  Avg Trade P&L      : {result.avg_trade_pnl:>+.2f} ₽",
+        f"  Avg Trade P&L      : {result.avg_trade_pnl:>+.2f} RUB",
         f"  Profit Factor      : {result.profit_factor:>.3f}",
         f"  Max Consec. Losses : {result.max_consecutive_losses}",
         f"  Time in Market     : {result.time_in_market_pct:>.2%}",

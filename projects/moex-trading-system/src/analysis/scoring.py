@@ -1,16 +1,17 @@
-"""Pre-Score Engine — 7-factor scoring model (0–100).
+"""Pre-Score Engine — 8-factor scoring model (0–100).
 
 Produces a pre-score that reflects the quality of a trade setup BEFORE
 Claude is consulted.  A higher score means more favourable conditions.
 
 Factor weights:
-    trend        0.22  — ADX strength + DI alignment
-    momentum     0.18  — RSI position + MACD histogram
-    structure    0.18  — EMA alignment
-    volume       0.08  — volume ratio + OBV trend
-    sentiment    0.09  — external news/sentiment score
-    fundamental  0.15  — P/E ratio vs sector, dividend yield
+    trend        0.18  — ADX strength + DI alignment
+    momentum     0.15  — RSI position + MACD histogram
+    structure    0.14  — EMA alignment
+    volume       0.07  — volume ratio + OBV trend
+    sentiment    0.08  — external news/sentiment score
+    fundamental  0.13  — P/E ratio vs sector, dividend yield
     macro        0.10  — macroeconomic environment
+    ml_prediction 0.15 — ML ensemble (LightGBM + XGBoost + CatBoost)
 
 For SHORT positions the momentum and structure sub-scores are inverted
 (bearish conditions become high scores).
@@ -18,13 +19,14 @@ For SHORT positions the momentum and structure sub-scores are inverted
 from __future__ import annotations
 
 SCORING_WEIGHTS: dict[str, float] = {
-    "trend": 0.22,
-    "momentum": 0.18,
-    "structure": 0.18,
-    "volume": 0.08,
-    "sentiment": 0.09,
-    "fundamental": 0.15,
+    "trend": 0.18,
+    "momentum": 0.15,
+    "structure": 0.14,
+    "volume": 0.07,
+    "sentiment": 0.08,
+    "fundamental": 0.13,
     "macro": 0.10,
+    "ml_prediction": 0.15,
 }
 
 SECTOR_SENSITIVITY: dict[str, dict[str, float]] = {
@@ -284,6 +286,7 @@ def calculate_pre_score(
     usd_rub_delta_pct: float = 0.0,
     imoex_above_sma200: bool = True,
     sector: str = "banks",
+    ml_score: float | None = None,
 ) -> tuple[float, dict[str, float]]:
     """Calculate pre-score for a potential trade setup.
 
@@ -309,6 +312,7 @@ def calculate_pre_score(
         "sentiment": _score_sentiment(sentiment_score),
         "fundamental": _score_fundamental(pe_ratio, sector_pe, div_yield),
         "macro": _score_macro(key_rate_delta, brent_delta_pct, usd_rub_delta_pct, imoex_above_sma200, sector),
+        "ml_prediction": ml_score if ml_score is not None else 50.0,
     }
 
     breakdown: dict[str, float] = {
