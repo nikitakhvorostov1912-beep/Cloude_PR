@@ -1,9 +1,8 @@
-"""V3.1 Neural Simulation — ALL modules + Chronos-Bolt + TSFRESH.
+"""V3.1 Neural Simulation — ALL modules + Chronos-Bolt.
 
 Everything from V3 PLUS:
 - Chronos-Bolt (Transformer 9M): zero-shot price forecast, direction + confidence
-- TSFRESH: 794 auto-features, filtered to top-50 significant
-- Neural score integrated as 9th factor in ranking
+- Neural score integrated into ranking (+15 bullish boost / -10 bearish)
 
 Usage:
     python scripts/simulate_v3_neural.py
@@ -35,12 +34,7 @@ try:
 except ImportError:
     pass
 
-TSFRESH_AVAILABLE = False
-try:
-    from src.analysis.tsfresh_features import extract_features as tsfresh_extract
-    TSFRESH_AVAILABLE = True
-except ImportError:
-    pass
+TSFRESH_AVAILABLE = False  # disabled: no improvement over Chronos alone
 
 DB = Path("data/trading.db")
 CAPITAL = 1_000_000.0
@@ -504,17 +498,7 @@ def main():
                     elif cf.direction == -1 and cf.confidence > 0.3:
                         chronos_boost = -10 * cf.confidence  # up to -10
 
-                # TSFRESH feature boost: use as additional confidence signal
-                tsfresh_boost = 0
-                tsf = tsfresh_features.get(tk, {}).get(today)
-                if tsf:
-                    # Count positive momentum features
-                    positive_features = sum(1 for v in tsf.values() if isinstance(v, (int, float)) and v > 0)
-                    total_features = len(tsf) or 1
-                    ratio = positive_features / total_features
-                    tsfresh_boost = (ratio - 0.5) * 20  # -10 to +10
-
-                ml = max(0, min(100, ml + news_adj.get(tk, 0) + chronos_boost + tsfresh_boost))
+                ml = max(0, min(100, ml + news_adj.get(tk, 0) + chronos_boost))
                 sec = SECTORS.get(tk, "other")
                 tdata.append({"ticker": tk, "sector": sec, "close": feat["close"], "ml_score": ml,
                               "rsi": feat["rsi_14"], "returns_1m": feat["returns_1m"], "returns_3m": feat["returns_3m"],
@@ -568,7 +552,7 @@ def main():
     print(f"  Final:      {final:>12,.0f}")
     print(f"  Return:     {ret:>+11.2%}  (~{ret*12*100:.0f}% ann.)")
     print(f"  Chronos:    {'ON (' + str(len(chronos_forecasts)) + ' tickers)' if chronos_forecasts else 'OFF'}")
-    print(f"  TSFRESH:    {'ON (' + str(len(tsfresh_features)) + ' tickers)' if tsfresh_features else 'OFF'}")
+    print(f"  TSFRESH:    OFF (disabled, no improvement)")
     print(f"  Max DD:     {dd:>11.2%}")
     print(f"  Kelly:      {kelly_fraction*100:>10.2f}%")
 
@@ -625,7 +609,7 @@ def main():
     print("=" * 70)
     try:
         from src.backtest.report import generate_html_report
-        p = generate_html_report(equity_curve, output_path="data/simulation_v3_neural.html", title="MOEX V3.1 Neural (Chronos + TSFRESH)")
+        p = generate_html_report(equity_curve, output_path="data/simulation_v3_neural.html", title="MOEX V1.1 Production (Chronos-Bolt)")
         if p: print(f"  Report: {p}")
     except Exception as e: print(f"  Report error: {e}")
     Path("data/simulation_v3_neural.json").write_text(json.dumps({"return": round(ret*100,2), "trades": len(cl), "pf": round(pf,2), "trade_log": trades}, indent=2, ensure_ascii=False))
