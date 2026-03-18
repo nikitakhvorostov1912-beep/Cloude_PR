@@ -44,6 +44,12 @@ scikit-learn>=1.4.0
 # Feature Engineering
 tsfresh>=0.21.0
 
+# Time Series Foundation Models
+chronos-forecasting>=2.0
+
+# Fast backtesting
+vectorbt>=0.26.0
+
 # Логирование
 structlog>=24.0.0
 
