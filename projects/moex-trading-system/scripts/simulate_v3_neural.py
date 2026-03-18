@@ -242,35 +242,69 @@ def main():
     # === TSFRESH: precompute features for top tickers ===
     tsfresh_features: dict[str, dict[str, dict]] = {}  # ticker -> {date -> {feature: value}}
     if TSFRESH_AVAILABLE:
-        print("\nComputing TSFRESH features (794 extractors)...")
-        tsfresh_count = 0
-        top_tickers = sorted(ml_models.keys(), key=lambda t: len(stocks.get(t, [])), reverse=True)[:30]
-        for tk in top_tickers:
-            candles = stocks.get(tk, [])
-            train = [c for c in candles if c["date"] <= ML_CUTOFF]
-            if len(train) < 100:
-                continue
-            # Extract features on training data
-            candle_dicts = [{"close": float(c["close"]), "volume": float(c["volume"]), "dt": c["date"]} for c in train]
-            try:
-                features = tsfresh_extract(candle_dicts, window=60, column="close")
-                if features:
-                    # Map last features to sim dates (simplified: use last window's features)
-                    n_rows = len(next(iter(features.values())))
-                    if n_rows > 0:
-                        last_feats = {k: v[-1] for k, v in features.items() if v}
-                        # Use same features for all sim dates (they won't change much day-to-day)
-                        tk_tsf = {}
-                        for c in candles:
-                            if SIM_START <= c["date"] <= SIM_END:
-                                tk_tsf[c["date"]] = last_feats
-                        if tk_tsf:
-                            tsfresh_features[tk] = tk_tsf
-                            tsfresh_count += 1
-            except Exception as e:
-                pass  # TSFRESH can be noisy
+        print("\nComputing TSFRESH features...")
+        import pandas as pd
+        import numpy as np
+        from tsfresh import extract_features as tsf_extract
+        from tsfresh.feature_extraction import MinimalFCParameters, EfficientFCParameters
 
-        print(f"  TSFRESH features: {tsfresh_count} tickers, {len(next(iter(next(iter(tsfresh_features.values())).values()), {})) if tsfresh_features else 0} features each")
+        tsfresh_count = 0
+        top_tickers = sorted(ml_models.keys(), key=lambda t: len(stocks.get(t, [])), reverse=True)[:50]
+        window = 60
+
+        for tk in top_tickers:
+            candles_list = stocks.get(tk, [])
+            all_closes = [float(c["close"]) for c in candles_list]
+            date_list = [c["date"] for c in candles_list]
+
+            if len(all_closes) < window + 30:
+                continue
+
+            try:
+                # Build per-date features using rolling windows
+                tk_tsf = {}
+                # Find sim date indices
+                sim_indices = [(i, d) for i, d in enumerate(date_list) if SIM_START <= d <= SIM_END and i >= window]
+
+                if not sim_indices:
+                    continue
+
+                # Build combined df for all sim windows
+                dfs = []
+                idx_to_date = {}
+                for idx, dt in sim_indices:
+                    segment = all_closes[idx - window:idx]
+                    df_seg = pd.DataFrame({"id": idx, "time": range(window), "close": segment})
+                    dfs.append(df_seg)
+                    idx_to_date[idx] = dt
+
+                combined = pd.concat(dfs, ignore_index=True)
+                feats = tsf_extract(
+                    combined, column_id="id", column_sort="time",
+                    default_fc_parameters=EfficientFCParameters(),  # ~200 features (fast subset of 794)
+                    disable_progressbar=True, n_jobs=1,
+                )
+                feats = feats.replace([np.inf, -np.inf], np.nan).dropna(axis=1, how="any")
+
+                if feats.empty:
+                    continue
+
+                # Map back to dates
+                for idx in feats.index:
+                    dt = idx_to_date.get(idx)
+                    if dt:
+                        row_dict = feats.loc[idx].to_dict()
+                        tk_tsf[dt] = row_dict
+
+                if tk_tsf:
+                    tsfresh_features[tk] = tk_tsf
+                    tsfresh_count += 1
+
+            except Exception:
+                pass
+
+        n_feats = len(next(iter(next(iter(tsfresh_features.values())).values()), {})) if tsfresh_features else 0
+        print(f"  TSFRESH features: {tsfresh_count} tickers, {n_feats} features each")
     else:
         print("\n  TSFRESH: not available (install tsfresh)")
 
