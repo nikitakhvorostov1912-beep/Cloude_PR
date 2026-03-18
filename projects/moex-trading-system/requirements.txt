@@ -50,6 +50,9 @@ chronos-forecasting>=2.0
 # Fast backtesting
 vectorbt>=0.26.0
 
+# Мониторинг (Prometheus)
+prometheus-client>=0.20.0
+
 # Логирование
 structlog>=24.0.0
 

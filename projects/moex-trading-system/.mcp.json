@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "moex": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "prikotov/moex-mcp-server:latest", "bin/server"],
+      "disabled": true,
+      "_comment": "MOEX ISS MCP Server (prikotov). Enable when Docker is running."
+    }
+  }
+}
