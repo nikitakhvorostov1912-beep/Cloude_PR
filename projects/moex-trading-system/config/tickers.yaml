@@ -1,0 +1,232 @@
+# Полный universe MOEX — 30 акций + 3 фьючерса
+# Бот ежедневно ранжирует и отбирает Top-N по composite score
+
+watchlist:
+  # === TIER 1: Голубые фишки (ADV > 1B руб) ===
+  - ticker: SBER
+    sector: banks
+    lot_size: 1
+    name: "Сбербанк"
+    tier: 1
+  - ticker: GAZP
+    sector: oil_gas
+    lot_size: 10
+    name: "Газпром"
+    tier: 1
+  - ticker: LKOH
+    sector: oil_gas
+    lot_size: 1
+    name: "Лукойл"
+    tier: 1
+  - ticker: GMKN
+    sector: metals
+    lot_size: 1
+    name: "Норникель"
+    tier: 1
+  - ticker: ROSN
+    sector: oil_gas
+    lot_size: 1
+    name: "Роснефть"
+    tier: 1
+  - ticker: NVTK
+    sector: oil_gas
+    lot_size: 1
+    name: "Новатэк"
+    tier: 1
+  - ticker: VTBR
+    sector: banks
+    lot_size: 10000
+    name: "ВТБ"
+    tier: 1
+
+  # === TIER 2: Крупные (ADV > 300M руб) ===
+  - ticker: YDEX
+    sector: it
+    lot_size: 1
+    name: "Яндекс"
+    tier: 2
+  - ticker: TCSG
+    sector: banks
+    lot_size: 1
+    name: "Т-Банк"
+    tier: 2
+  - ticker: MGNT
+    sector: retail
+    lot_size: 1
+    name: "Магнит"
+    tier: 2
+  - ticker: MTSS
+    sector: telecom
+    lot_size: 1
+    name: "МТС"
+    tier: 2
+  - ticker: PLZL
+    sector: metals
+    lot_size: 1
+    name: "Полюс Золото"
+    tier: 2
+  - ticker: TATN
+    sector: oil_gas
+    lot_size: 1
+    name: "Татнефть"
+    tier: 2
+  - ticker: SNGS
+    sector: oil_gas
+    lot_size: 100
+    name: "Сургутнефтегаз"
+    tier: 2
+  - ticker: PHOR
+    sector: chemicals
+    lot_size: 1
+    name: "ФосАгро"
+    tier: 2
+  - ticker: CHMF
+    sector: metals
+    lot_size: 1
+    name: "Северсталь"
+    tier: 2
+  - ticker: NLMK
+    sector: metals
+    lot_size: 1
+    name: "НЛМК"
+    tier: 2
+  - ticker: MAGN
+    sector: metals
+    lot_size: 1
+    name: "ММК"
+    tier: 2
+  - ticker: PIKK
+    sector: real_estate
+    lot_size: 1
+    name: "ПИК"
+    tier: 2
+  - ticker: MOEX
+    sector: banks
+    lot_size: 1
+    name: "Мосбиржа"
+    tier: 2
+  - ticker: ALRS
+    sector: metals
+    lot_size: 10
+    name: "АЛРОСА"
+    tier: 2
+  - ticker: OZON
+    sector: it
+    lot_size: 1
+    name: "Ozon"
+    tier: 2
+  - ticker: AFLT
+    sector: transport
+    lot_size: 10
+    name: "Аэрофлот"
+    tier: 2
+  - ticker: IRAO
+    sector: energy
+    lot_size: 100
+    name: "Интер РАО"
+    tier: 2
+  - ticker: RUAL
+    sector: metals
+    lot_size: 10
+    name: "Русал"
+    tier: 2
+  - ticker: TRNFP
+    sector: oil_gas
+    lot_size: 1
+    name: "Транснефть-п"
+    tier: 2
+  - ticker: FLOT
+    sector: transport
+    lot_size: 1
+    name: "Совкомфлот"
+    tier: 2
+
+# Карта секторов
+sectors:
+  oil_gas:
+    tickers: [GAZP, LKOH, NVTK, ROSN, SNGS, TATN, TRNFP]
+    name: "Нефть и газ"
+    macro_driver: brent
+  banks:
+    tickers: [SBER, VTBR, TCSG, MOEX]
+    name: "Финансы и банки"
+    macro_driver: key_rate
+  it:
+    tickers: [YDEX, OZON]
+    name: "Информационные технологии"
+    macro_driver: domestic
+  metals:
+    tickers: [GMKN, ALRS, PLZL, NLMK, CHMF, MAGN, RUAL]
+    name: "Металлы и добыча"
+    macro_driver: usd_rub
+  retail:
+    tickers: [MGNT]
+    name: "Потребительский сектор"
+    macro_driver: domestic
+  telecom:
+    tickers: [MTSS]
+    name: "Телекоммуникации"
+    macro_driver: domestic
+  chemicals:
+    tickers: [PHOR]
+    name: "Химия и удобрения"
+    macro_driver: usd_rub
+  real_estate:
+    tickers: [PIKK]
+    name: "Недвижимость"
+    macro_driver: key_rate
+  transport:
+    tickers: [AFLT, FLOT]
+    name: "Транспорт"
+    macro_driver: domestic
+  energy:
+    tickers: [IRAO]
+    name: "Электроэнергетика"
+    macro_driver: domestic
+
+# Фьючерсы FORTS
+futures:
+  - ticker: SiH6
+    underlying: USDRUB
+    type: futures
+    lot_size: 1
+    tick_size: 1
+    margin_pct: 0.12
+    contract_size: 1000
+  - ticker: BRJ6
+    underlying: BRENT
+    type: futures
+    lot_size: 1
+    tick_size: 0.01
+    margin_pct: 0.15
+    contract_size: 10
+  - ticker: SRH6
+    underlying: SBER
+    type: futures
+    lot_size: 1
+    tick_size: 1
+    margin_pct: 0.20
+    contract_size: 100
+
+# Dynamic Selection параметры
+selection:
+  max_positions: 7           # макс. одновременных позиций
+  min_composite_score: 60    # порог для входа
+  rebalance_frequency: daily # как часто пересчитывать
+  weights:
+    ml_score: 0.40
+    momentum: 0.25
+    macro_alignment: 0.20
+    relative_strength: 0.15
+  regime_overrides:
+    uptrend:
+      max_positions: 7
+      min_score: 55
+    range:
+      max_positions: 4
+      min_score: 60
+    downtrend:
+      max_positions: 2
+      min_score: 70
+    crisis:
+      max_positions: 0
