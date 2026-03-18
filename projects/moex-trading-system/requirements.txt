@@ -34,6 +34,16 @@ pyyaml>=6.0.0
 # Аналитика бэктестов
 quantstats>=0.0.81
 
+# ML Ensemble
+lightgbm>=4.0.0
+xgboost>=2.0.0
+catboost>=1.2.0
+shap>=0.45.0
+scikit-learn>=1.4.0
+
+# Feature Engineering
+tsfresh>=0.21.0
+
 # Логирование
 structlog>=24.0.0
 
