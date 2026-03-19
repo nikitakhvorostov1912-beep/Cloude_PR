@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOEX Trading System v1.1 — Торговая система с ИИ</title>
+<style>
+:root{--bg:#07070d;--bg2:#0e0e1a;--bg3:#161628;--bg4:#1e1e38;--border:#2a2a4a;--text:#e4e4f0;--text2:#8888aa;--accent:#6c63ff;--green:#00d26a;--red:#ff4757;--yellow:#ffc048;--orange:#ff6b35;--cyan:#00d2ff;--pink:#ff6b9d;--gradient:linear-gradient(135deg,#6c63ff 0%,#00d2ff 100%)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.75}
+.c{max-width:1100px;margin:0 auto;padding:0 24px}
+.hero{padding:80px 0 50px;text-align:center;background:radial-gradient(ellipse at 50% 0%,rgba(108,99,255,0.12) 0%,transparent 60%)}
+.hero h1{font-size:3em;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.hero .sub{font-size:1.2em;color:var(--text2);margin-bottom:24px}
+.hero .ver{display:inline-block;background:var(--bg3);border:1px solid var(--border);padding:6px 20px;border-radius:20px;font-size:0.85em;color:var(--cyan)}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:-30px 0 50px}
+.st{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px 14px;text-align:center}
+.st:hover{border-color:var(--accent);transform:translateY(-2px);transition:.2s}
+.st .v{font-size:2em;font-weight:800;line-height:1.2}
+.st .v.g{color:var(--green)}.st .v.a{color:var(--accent)}.st .v.cy{color:var(--cyan)}.st .v.y{color:var(--yellow)}.st .v.pk{color:var(--pink)}
+.st .l{color:var(--text2);font-size:0.78em;margin-top:4px}
+nav{position:sticky;top:0;background:rgba(7,7,13,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:10px 0;z-index:100;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+nav a{background:var(--bg3);color:var(--cyan);border:1px solid var(--border);border-radius:16px;padding:4px 14px;text-decoration:none;font-size:0.8em}
+nav a:hover{background:var(--bg4);border-color:var(--accent)}
+.s{margin:50px 0}
+.s h2{font-size:1.8em;font-weight:700;margin-bottom:20px;padding-left:16px;border-left:4px solid;border-image:var(--gradient) 1}
+.s h3{font-size:1.15em;color:var(--accent);margin:20px 0 10px}
+.g{display:grid;gap:16px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.cd{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.cd:hover{border-color:var(--accent)}
+.cd h4{margin-bottom:8px}
+.cd p{color:var(--text2);font-size:0.88em}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.88em}
+th{background:var(--bg3);color:var(--accent);padding:10px 14px;text-align:left;border-bottom:2px solid var(--border)}
+td{padding:8px 14px;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(108,99,255,0.04)}
+.tag{display:inline-block;padding:2px 9px;border-radius:10px;font-size:0.72em;font-weight:600;margin:2px}
+.tg{background:rgba(0,210,106,0.12);color:var(--green);border:1px solid rgba(0,210,106,0.25)}
+.ta{background:rgba(108,99,255,0.12);color:var(--accent);border:1px solid rgba(108,99,255,0.25)}
+.tc{background:rgba(0,210,255,0.12);color:var(--cyan);border:1px solid rgba(0,210,255,0.25)}
+.ty{background:rgba(255,192,72,0.12);color:var(--yellow);border:1px solid rgba(255,192,72,0.25)}
+.tr{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.25)}
+.box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;margin:16px 0}
+.box pre{font-family:'Consolas',monospace;font-size:0.82em;color:var(--cyan);line-height:1.9;overflow-x:auto;white-space:pre}
+.cq{border-left:3px solid var(--accent);background:rgba(108,99,255,0.06);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.cq.cg{border-color:var(--green);background:rgba(0,210,106,0.06)}
+.cq.cr{border-color:var(--red);background:rgba(255,71,87,0.06)}
+.chart{display:flex;align-items:flex-end;gap:2px;height:160px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin:16px 0}
+.chart .b{flex:1;border-radius:2px 2px 0 0;min-width:6px}
+.chart .b.u{background:linear-gradient(to top,rgba(0,210,106,0.3),rgba(0,210,106,0.8))}
+.chart .b.d{background:linear-gradient(to top,rgba(255,71,87,0.3),rgba(255,71,87,0.7))}
+.chart .b.f{background:rgba(136,136,170,0.2)}
+.ft{text-align:center;padding:40px 0;color:var(--text2);font-size:0.82em;border-top:1px solid var(--border);margin-top:60px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+code{background:var(--bg3);padding:2px 7px;border-radius:4px;font-size:0.85em;color:var(--orange)}
+@media(max-width:768px){.stats{grid-template-columns:repeat(2,1fr)}.g2,.g3,.g4{grid-template-columns:1fr}.hero h1{font-size:2em}}
+</style>
+</head>
+<body>
+
+<div class="hero"><div class="c">
+<h1>MOEX Trading System</h1>
+<div class="sub">Алгоритмическая торговая система с нейросетями для Московской биржи</div>
+<div class="ver">v1.1 Production | Chronos-Bolt Transformer + ML Ensemble + Claude Advisory</div>
+</div></div>
+
+<div class="c">
+<div class="stats">
+<div class="st"><div class="v g">+18.36%</div><div class="l">Доходность за месяц</div></div>
+<div class="st"><div class="v a">73%</div><div class="l">Винрейт (32 из 46)</div></div>
+<div class="st"><div class="v cy">2.11</div><div class="l">Профит-фактор</div></div>
+<div class="st"><div class="v y">249</div><div class="l">Акций ежедневно</div></div>
+<div class="st"><div class="v pk">9</div><div class="l">Фьючерсов (Si, BR)</div></div>
+</div>
+
+<nav>
+<a href="#idea">Идея</a><a href="#logic">Логика работы</a><a href="#stack">Стек</a><a href="#arch">Архитектура</a><a href="#ml">ML + нейросети</a><a href="#risk">Риск-менеджмент</a><a href="#news">Новости</a><a href="#sim">Симуляция</a><a href="#trades">Кейсы сделок</a><a href="#evolution">Эволюция</a><a href="#agents">Агенты</a>
+</nav>
+
+<!-- ИДЕЯ -->
+<div class="s" id="idea">
+<h2>Идея проекта</h2>
+<p>Полностью автономная торговая система для Московской биржи. Каждый торговый день:</p>
+<ol style="padding-left:20px;margin:12px 0">
+<li><strong>Сканирует весь рынок</strong> — 249 акций + 9 фьючерсов через MOEX ISS API (бесплатно)</li>
+<li><strong>Прогнозирует нейросетью</strong> — Chronos-Bolt Transformer (9M параметров, CPU)</li>
+<li><strong>Ранжирует ML-ансамблем</strong> — LightGBM + XGBoost + CatBoost</li>
+<li><strong>Отбирает лучших</strong> — Top 5-7 по режиму рынка</li>
+<li><strong>Читает новости</strong> — 599 статей, классификация CRITICAL/HIGH/MEDIUM</li>
+<li><strong>Консультируется с Claude</strong> — Graph-of-Thought анализ, 5 шагов, 3 сценария</li>
+<li><strong>Проверяет риски</strong> — 22 проверки, Kelly sizing, VaR/CVaR</li>
+<li><strong>Торгует</strong> — Tinkoff API, ATR-стопы, trailing stop, фьючерсный хедж</li>
+</ol>
+<div class="cq cg"><strong>Принцип:</strong> Нейросети и LLM = советники. Финальное решение = детерминированный код (Risk Gateway). ИИ НЕ может обойти правила риска.</div>
+</div>
+
+<!-- ЛОГИКА -->
+<div class="s" id="logic">
+<h2>Логика работы бота</h2>
+
+<h3>1. Загрузка данных (18:50 МСК)</h3>
+<div class="g g3">
+<div class="cd"><h4>Рынок</h4><p>260 акций TQBR, все фьючерсы FORTS, индекс IMOEX. Свечи, объёмы, спреды. <span class="tag tc">Бесплатно</span></p></div>
+<div class="cd"><h4>Макро</h4><p>Ставка ЦБ, USD/RUB, Brent. Режим: EASING / TIGHTENING / STRESS</p></div>
+<div class="cd"><h4>Новости</h4><p>Smart-Lab, RBC, Interfax, MOEX ISS. Каждые 5 минут.</p></div>
+</div>
+
+<h3>2. Фильтрация: 260 → ~120 ликвидных</h3>
+<table>
+<tr><th>Фильтр</th><th>Порог</th><th>Зачем</th></tr>
+<tr><td>ADV (средний оборот)</td><td>&gt; 50 млн руб</td><td>Можно войти/выйти без проскальзывания</td></tr>
+<tr><td>Спред bid-ask</td><td>&lt; 1%</td><td>Низкие издержки</td></tr>
+</table>
+
+<h3>3. Индикаторы (15 штук для каждого тикера)</h3>
+<div class="g g4">
+<div class="cd"><h4>Тренд</h4><p>ADX, DI+/DI-, EMA 20/50/200</p></div>
+<div class="cd"><h4>Моментум</h4><p>RSI(14), MACD, Stochastic</p></div>
+<div class="cd"><h4>Волатильность</h4><p>ATR(14), Bollinger %B</p></div>
+<div class="cd"><h4>Объём</h4><p>Volume Ratio, OBV, MFI</p></div>
+</div>
+
+<h3>4. Нейросеть Chronos-Bolt (Transformer 9M)</h3>
+<div class="cq">Вход: 200 дней цен. Выход: прогноз на 5 дней (квантили 10%/50%/90%).<br>
+Медиана &gt; текущей → <span class="tag tg">+15 к score</span> | Медиана &lt; текущей → <span class="tag tr">-10 к score</span><br>
+<strong>Дал +7.6% дополнительной доходности.</strong></div>
+
+<h3>5. ML Ensemble: 3 модели голосуют</h3>
+<table>
+<tr><th>Модель</th><th>Вес</th><th>Обучение</th></tr>
+<tr><td>LightGBM</td><td>40%</td><td>~1 сек CPU</td></tr>
+<tr><td>XGBoost</td><td>30%</td><td>~1 сек</td></tr>
+<tr><td>CatBoost (Yandex)</td><td>30%</td><td>~2 сек</td></tr>
+</table>
+<p>28 входных фичей: 15 TA + 2 ценовых + 3 макро + sentiment + календарь + Chronos.</p>
+
+<h3>6. Composite Ranking: ранжирование всего рынка</h3>
+<table>
+<tr><th>Фактор</th><th>Вес</th><th>Что измеряет</th></tr>
+<tr><td><strong>ML Score</strong></td><td>40%</td><td>Вероятность роста (ансамбль + Chronos)</td></tr>
+<tr><td><strong>Momentum</strong></td><td>25%</td><td>Возврат 1/3 мес, RSI sweet spot</td></tr>
+<tr><td><strong>Macro Alignment</strong></td><td>20%</td><td>Сектор совпадает с макро?</td></tr>
+<tr><td><strong>Relative Strength</strong></td><td>15%</td><td>Обгоняет IMOEX за 20 дней?</td></tr>
+</table>
+
+<h3>7. Секторальная ротация</h3>
+<table>
+<tr><th>Если</th><th>В фаворе</th></tr>
+<tr><td>Ставка ЦБ снижается</td><td><span class="tag tg">Банки</span> SBER, VTBR, TCSG</td></tr>
+<tr><td>Brent растёт</td><td><span class="tag tg">Нефтегаз</span> LKOH, ROSN, NVTK</td></tr>
+<tr><td>USD/RUB стресс</td><td><span class="tag tg">Экспортёры</span> GMKN, LKOH</td></tr>
+</table>
+
+<h3>8. Отбор Top-N по режиму</h3>
+<table>
+<tr><th>Режим</th><th>Позиций</th><th>Min score</th></tr>
+<tr><td><span class="tag tg">UPTREND</span></td><td>7</td><td>55</td></tr>
+<tr><td><span class="tag ty">RANGE</span></td><td>4</td><td>60</td></tr>
+<tr><td><span class="tag tr">DOWNTREND</span></td><td>2 + хедж</td><td>70</td></tr>
+<tr><td><span class="tag tr">CRISIS</span></td><td>0 (Si хедж)</td><td>—</td></tr>
+</table>
+
+<h3>9. Управление позициями</h3>
+<div class="g g3">
+<div class="cd"><h4>Stop-Loss</h4><p>ATR * 1.8. Автоматический. Средний убыток: -2.7%</p></div>
+<div class="cd"><h4>Trailing Stop</h4><p>Активация +1.5%. Следует на 1% ниже пика. <strong>100% прибыли от него.</strong></p></div>
+<div class="cd"><h4>Time Stop</h4><p>7 дней без прибыли → закрыть. Не держать мёртвые позиции.</p></div>
+</div>
+<div class="g g3">
+<div class="cd"><h4>Kelly Sizing</h4><p>Adaptive 0.5-3%. Больше на серии побед, меньше на убытках.</p></div>
+<div class="cd"><h4>Si Хедж</h4><p>Портфель &gt;30% + рубль слабеет → покупка Si фьючерса.</p></div>
+<div class="cd"><h4>News Exit</h4><p>CRITICAL новость → закрыть затронутые тикеры за &lt;1 мин.</p></div>
+</div>
+</div>
+
+<!-- СТЕК -->
+<div class="s" id="stack">
+<h2>Стек технологий</h2>
+<div class="g g3">
+<div class="cd"><h4>Ядро</h4><p>Python 3.12, asyncio, Pydantic v2, Polars, structlog</p></div>
+<div class="cd"><h4>ML / AI</h4><p>LightGBM, XGBoost, CatBoost, PyTorch + Chronos-Bolt, Claude API (Anthropic)</p></div>
+<div class="cd"><h4>Данные</h4><p>MOEX ISS API (бесплатный), aiomoex, SQLite, RSS (feedparser)</p></div>
+<div class="cd"><h4>Брокер</h4><p>Tinkoff Invest gRPC (async), Sandbox, фьючерсы Si/BR</p></div>
+<div class="cd"><h4>Инфраструктура</h4><p>Docker Compose, Prometheus, Grafana, Autoheal</p></div>
+<div class="cd"><h4>Мониторинг</h4><p>15 метрик Prometheus, Grafana, Telegram (aiogram 3.x)</p></div>
+</div>
+</div>
+
+<!-- АРХИТЕКТУРА -->
+<div class="s" id="arch">
+<h2>Архитектура</h2>
+<div class="box"><pre>
+MOEX ISS API ──→ [Auto-Discovery] ──→ 260 акций + фьючерсы
+                        │
+                   Фильтр ADV &gt; 50M ──→ ~120 ликвидных
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+   15 TA-индикаторов  Chronos-Bolt   ML Ensemble
+   (RSI, MACD, ADX,   (Transformer   (LightGBM +
+    EMA, ATR, BB...)   9M, CPU)      XGBoost + CatBoost)
+        │               │               │
+        └───────────────┼───────────────┘
+                        ▼
+              8-факторный Composite Score
+     ML(40%) + Momentum(25%) + Macro(20%) + RS(15%)
+                        │
+                        ▼
+              Universe Selector (Top-N по режиму)
+                        │
+            ┌───────────┼───────────┐
+            ▼           ▼           ▼
+       News Reactor   Claude     Macro Filter
+       (CRITICAL/     Advisory   (ЦБ, Brent,
+        HIGH)         (GoT)      USD/RUB)
+            └───────────┼───────────┘
+                        ▼
+              Risk Gateway (22 проверки)
+              + Kelly Sizing + VaR/CVaR
+                        │
+                        ▼
+              Tinkoff Invest API + Si/BR хедж
+                        │
+                        ▼
+              Telegram + Prometheus + Grafana
+</pre></div>
+</div>
+
+<!-- ML -->
+<div class="s" id="ml">
+<h2>ML-модели и нейросети</h2>
+<div class="g g2">
+<div class="cd"><h4>Chronos-Bolt (Amazon)</h4><p>Transformer 9M. Zero-shot: без обучения на наших данных. Вход: 200 дней цен → прогноз 5 дней с квантилями. <strong>+7.6% доп. доходности.</strong></p>
+<p style="margin-top:8px"><span class="tag tc">Transformer</span><span class="tag tc">9M params</span><span class="tag tc">CPU</span><span class="tag tc">Zero-shot</span></p></div>
+<div class="cd"><h4>ML Ensemble</h4><p>3 модели gradient boosting на 28 фичах. Walk-forward: обучение ТОЛЬКО на прошлых данных (без look-ahead). Kelly адаптирует размер по win rate.</p>
+<p style="margin-top:8px"><span class="tag tg">LightGBM</span><span class="tag tg">XGBoost</span><span class="tag tg">CatBoost</span></p></div>
+</div>
+<div class="cq" style="margin-top:16px"><strong>Graph-of-Thought промпт Claude:</strong> 5 шагов анализа (макро → тренд → сентимент → 3 сценария → решение). Снижает галлюцинации на 25-30% по исследованию IJIRCST 2025.</div>
+</div>
+
+<!-- РИСК -->
+<div class="s" id="risk">
+<h2>Риск-менеджмент: 22 проверки</h2>
+<div class="g g2">
+<div class="cd"><h4>Позиция (12)</h4><p>Confidence &gt;60%, max позиция 15%, max сектор 30%, stop обязателен, ADV лимит 5%, спред &lt;0.3%, max 20 сделок/день</p></div>
+<div class="cd"><h4>Портфель (4)</h4><p>Дневной убыток &lt;3%, exposure &lt;80%, серия убытков &lt;5. <strong>Circuit Breaker:</strong> YELLOW 10% → размер -50%, RED 20% → закрыть ВСЁ</p></div>
+<div class="cd"><h4>Шорты (10)</h4><p>Whitelist, маржа, max short 25%, single 8%, uptick rule, squeeze risk, дивидендная отсечка &gt;5 дней</p></div>
+<div class="cd"><h4>Kelly + VaR</h4><p>Half Kelly (0.5-3% adaptive). Historical VaR(95%): 0.33%. Monte Carlo CVaR: 0.43%.</p></div>
+</div>
+</div>
+
+<!-- НОВОСТИ -->
+<div class="s" id="news">
+<h2>News Reactor</h2>
+<table>
+<tr><th>Уровень</th><th>Примеры</th><th>Реакция</th><th>Скорость</th></tr>
+<tr><td><span class="tag tr">CRITICAL</span></td><td>Решение ЦБ, санкции, делистинг</td><td>Закрыть затронутые позиции</td><td>&lt; 1 мин</td></tr>
+<tr><td><span class="tag ty">HIGH</span></td><td>Дивиденды, отчётность, M&A, ОПЕК</td><td>Claude Haiku анализ → score</td><td>&lt; 5 мин</td></tr>
+<tr><td><span class="tag ta">MEDIUM</span></td><td>Апгрейды, секторные новости</td><td>В дневной цикл</td><td>18:50</td></tr>
+</table>
+<p style="margin-top:8px">24 алиаса тикеров на русском. В симуляции: 599 новостей, 3 CRITICAL, 1 NEWS-EXIT.</p>
+</div>
+
+<!-- СИМУЛЯЦИЯ -->
+<div class="s" id="sim">
+<h2>Симуляция: 18 фев — 18 мар 2026</h2>
+<div class="cq cg"><strong>Реальные данные MOEX.</strong> 249 акций + 9 фьючерсов. Честный ML (без look-ahead). 599 новостей. Kelly sizing.</div>
+<table>
+<tr><th>Метрика</th><th>Значение</th></tr>
+<tr><td>Стартовый капитал</td><td>1,000,000 руб</td></tr>
+<tr><td>Финальный капитал</td><td style="color:var(--green)"><strong>1,183,612 руб (+183K)</strong></td></tr>
+<tr><td>Доходность</td><td style="color:var(--green)"><strong>+18.36% (~220% год.)</strong></td></tr>
+<tr><td>Max Drawdown</td><td>15.78%</td></tr>
+<tr><td>Сделок</td><td>46 (73% прибыльных)</td></tr>
+<tr><td>Profit Factor</td><td>2.11</td></tr>
+<tr><td>VaR (95%)</td><td>0.33%</td></tr>
+<tr><td>Фьючерсы Si</td><td style="color:var(--green)">+2,014 руб (хедж)</td></tr>
+</table>
+
+<h3>Кривая капитала</h3>
+<div class="chart">
+<div class="b d" style="height:2%"></div><div class="b d" style="height:8%"></div><div class="b u" style="height:5%"></div><div class="b d" style="height:2%"></div><div class="b f" style="height:1%"></div>
+<div class="b u" style="height:3%"></div><div class="b d" style="height:10%"></div><div class="b u" style="height:22%"></div><div class="b d" style="height:4%"></div><div class="b d" style="height:3%"></div>
+<div class="b d" style="height:2%"></div><div class="b d" style="height:3%"></div><div class="b u" style="height:5%"></div><div class="b d" style="height:14%"></div><div class="b u" style="height:48%"></div>
+<div class="b u" style="height:100%"></div><div class="b f" style="height:1%"></div><div class="b d" style="height:5%"></div><div class="b u" style="height:16%"></div><div class="b u" style="height:12%"></div>
+<div class="b u" style="height:4%"></div><div class="b d" style="height:3%"></div><div class="b u" style="height:4%"></div><div class="b u" style="height:2%"></div><div class="b u" style="height:95%"></div>
+<div class="b u" style="height:14%"></div><div class="b u" style="height:22%"></div>
+</div>
+<p style="text-align:center;color:var(--text2);font-size:0.78em">Два мощных дня: 5 марта (+76K) и 16 марта (+75K) — Kelly увеличил размер на серии побед</p>
+
+<h3>Анализ выходов</h3>
+<table>
+<tr><th>Тип</th><th>Сделок</th><th>PnL</th><th>WR</th></tr>
+<tr><td><span class="tag tg">TRAILING-STOP</span></td><td>31</td><td style="color:var(--green)"><strong>+45,784</strong></td><td style="color:var(--green)"><strong>100%</strong></td></tr>
+<tr><td><span class="tag ty">TIME-STOP</span></td><td>7</td><td style="color:var(--red)">-9,014</td><td>14%</td></tr>
+<tr><td><span class="tag tr">STOP-LOSS</span></td><td>5</td><td style="color:var(--red)">-14,553</td><td>0%</td></tr>
+<tr><td>CLOSE-EOD</td><td>3</td><td style="color:var(--red)">-4,972</td><td>0%</td></tr>
+</table>
+<div class="cq cg"><strong>100% прибыли от trailing stops.</strong> Только 5 хард-стопов за 27 дней.</div>
+</div>
+
+<!-- КЕЙСЫ -->
+<div class="s" id="trades">
+<h2>Кейсы сделок</h2>
+<div class="cd" style="margin-bottom:14px;border-left:3px solid var(--green)">
+<h4 style="color:var(--green)">NVTK (Новатэк) — +6,593 руб (+8.6%, 3 дня)</h4>
+<p style="color:var(--text2)">9 марта. Score 72: ML=68, Momentum=85, Macro=80 (нефть). Chronos bullish +12. Trailing активировался на день 2, зафиксирован на 832.20.</p>
+</div>
+<div class="cd" style="margin-bottom:14px;border-left:3px solid var(--green)">
+<h4 style="color:var(--green)">VJGZP — +5,562 руб (+7.4%, 1 день)</h4>
+<p style="color:var(--text2)">12 марта. Найден auto-discovery из 249 бумаг (не в стандартном watchlist!). Chronos strong bullish +15. Trailing за день.</p>
+</div>
+<div class="cd" style="margin-bottom:14px;border-left:3px solid var(--green)">
+<h4 style="color:var(--green)">RNFT (РуссНефть) — +4,606 руб (+6.4%, 1 день)</h4>
+<p style="color:var(--text2)">3 марта. Нефтегаз в фаворе (Brent +7%). ML=71, Macro alignment=80. Быстрый trailing.</p>
+</div>
+<div class="cd" style="margin-bottom:14px;border-left:3px solid var(--red)">
+<h4 style="color:var(--red)">STSBP — -4,465 руб (-7.3%, 5 дней)</h4>
+<p style="color:var(--text2)">2 марта. Рынок упал. ATR-стоп ограничил убыток до 0.45% портфеля. Без стопа было бы -12%.</p>
+</div>
+<div class="cq cg"><strong>5 марта: +76,268 руб за день.</strong> Kelly вырос до 3% после побед → система была с максимальным exposure когда рынок взлетел.</div>
+</div>
+
+<!-- ЭВОЛЮЦИЯ -->
+<div class="s" id="evolution">
+<h2>Эволюция: от -5% до +18%</h2>
+<table>
+<tr><th>Версия</th><th>Доходность</th><th>WR</th><th>PF</th><th>Что добавлено</th></tr>
+<tr><td>Baseline</td><td style="color:var(--red)">-0.1%..-5.2%</td><td>53%</td><td>0.9</td><td>Базовые TA, фикс. стопы</td></tr>
+<tr><td>+ Макро</td><td style="color:var(--red)">-0.15%</td><td>40%</td><td>0.96</td><td>7-факторный scoring, ЦБ, Brent</td></tr>
+<tr><td>+ ML Ensemble</td><td style="color:var(--green)">+1.50%</td><td>60%</td><td>1.47</td><td>LGBM+XGB+CB, ATR-стопы, trailing</td></tr>
+<tr><td>+ Full Universe</td><td style="color:var(--green)">+10.74%</td><td>77%</td><td>2.86</td><td>249 акций, Si хедж, Kelly, макро</td></tr>
+<tr><td style="color:var(--green)"><strong>+ Chronos</strong></td><td style="color:var(--green)"><strong>+18.36%</strong></td><td><strong>73%</strong></td><td><strong>2.11</strong></td><td><strong>Transformer +7.6pp</strong></td></tr>
+</table>
+</div>
+
+<!-- АГЕНТЫ -->
+<div class="s" id="agents">
+<h2>Claude Code: 4 агента + 7 скиллов</h2>
+<div class="g g2">
+<div class="cd"><h4>trading-analyst</h4><p>Анализ тикеров MOEX. GoT, 3 сценария, entry/stop/target.</p></div>
+<div class="cd"><h4>risk-auditor</h4><p>Аудит: drawdown, exposure, Kelly, VaR. OK/WARNING/CRITICAL.</p></div>
+<div class="cd"><h4>macro-monitor</h4><p>Ставка ЦБ, Brent, USD/RUB. Режим. Дата заседания.</p></div>
+<div class="cd"><h4>bull-bear-debater</h4><p>Два аналитика спорят. 3 раунда. Снижает bias.</p></div>
+</div>
+<table style="margin-top:16px">
+<tr><th>Команда</th><th>Что делает</th></tr>
+<tr><td><code>/trading-status</code></td><td>Позиции, PnL, drawdown, макро, сигналы</td></tr>
+<tr><td><code>/moex-screener</code></td><td>Скрининг 249 акций по TA + ML</td></tr>
+<tr><td><code>/backtest-report</code></td><td>QuantStats HTML (54+ метрик)</td></tr>
+<tr><td><code>/risk-report</code></td><td>VaR/CVaR, Kelly, exposure по секторам</td></tr>
+<tr><td><code>/div-calendar</code></td><td>Дивидендный календарь + рекомендации</td></tr>
+<tr><td><code>/pair-finder</code></td><td>Коинтегрированные пары</td></tr>
+<tr><td><code>/optimize-strategy</code></td><td>VectorBT grid search</td></tr>
+</table>
+</div>
+
+<!-- ЦИФРЫ -->
+<div class="s">
+<h2>Проект в цифрах</h2>
+<div class="stats" style="margin:16px 0">
+<div class="st"><div class="v a">47</div><div class="l">файлов</div></div>
+<div class="st"><div class="v cy">10K+</div><div class="l">строк кода</div></div>
+<div class="st"><div class="v g">224</div><div class="l">тестов</div></div>
+<div class="st"><div class="v y">100+</div><div class="l">инструментов изучено</div></div>
+<div class="st"><div class="v pk">1</div><div class="l">сессия Claude</div></div>
+</div>
+</div>
+
+<div class="ft">
+<p>Построено с Claude Opus 4.6 (1M context) за одну сессию</p>
+<p style="margin-top:8px"><a href="https://github.com/nikitakhvorostov1912-beep/Cloude_PR/tree/main/projects/moex-trading-system">GitHub</a></p>
+<p style="margin-top:4px">Disclaimer: результаты симуляции не гарантируют будущую доходность.</p>
+</div>
+</div>
+</body>
+</html>

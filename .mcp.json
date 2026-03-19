@@ -7,6 +7,24 @@
     "playwright": {
       "command": "npx",
       "args": ["@playwright/mcp@latest"]
+    },
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Dynamic and reflective problem-solving through thought sequences."
+    },
+    "memory": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Knowledge graph-based persistent memory system."
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Web content fetching and conversion."
     }
   }
 }

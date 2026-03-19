@@ -103,6 +103,37 @@
 - **Бонус:** скилл `1c-queries` скопирован в `.claude/skills/` (запросы к базе 1С через HTTP-сервис)
 - **Статус:** ✅ Установлен (требует Docker Desktop + XML-выгрузку конфигурации для индексации)
 
+### 17. mcp-bsl-platform-context v0.3.2 — Обновление синтакс-помощника 1С
+- **Репо:** https://github.com/alkoleft/mcp-bsl-platform-context
+- **Что:** MCP-сервер для проверки синтаксиса 1С (search, info, getMember, getMembers, getConstructors)
+- **Текущая версия:** v0.3.0 (сконфигурирован в bsl-context через Java)
+- **Новое в v0.3.2:** улучшенный поиск, дополнительные методы платформы
+- **Обновление:** скачать новый JAR с https://github.com/alkoleft/mcp-bsl-platform-context/releases/latest, заменить путь в `.claude/settings.json` → bsl-context
+- **Приоритет:** 🟡 Средний (обновить при следующей 1С-сессии)
+- **Статус:** ⏳ Ожидает (нужно скачать JAR)
+
+### 18. EDT-MCP — MCP-сервер для работы с EDT (1C:Enterprise Development Tools)
+- **Репо:** https://github.com/nikonov-alex/edt-mcp (или аналог)
+- **Что:** MCP-сервер для интеграции с EDT 2025.2+ — компиляция, валидация, анализ кода прямо из Claude Code
+- **Требования:** EDT 2025.2+, Java 17+
+- **Зачем:** Более точная валидация чем через скрипты — EDT знает всё о конфигурации
+- **Приоритет:** 🔵 Низкий (требует EDT 2025.2+ установленный)
+- **Статус:** ⏳ На заметке (условно — когда будет EDT)
+
+### 19. AndreevED/1c-ai-feature-dev-workflow — Методология AI-разработки 1С
+- **Репо:** https://github.com/AndreevED/1c-ai-feature-dev-workflow
+- **Что:** Методология и промпты для AI-assisted разработки 1С — практический опыт с примерами
+- **Зачем:** Обновить скилл `1c-feature-dev` на основе реального опыта сообщества
+- **Приоритет:** 🟡 Средний (прочитать и взять лучшие практики)
+- **Статус:** ⏳ На заметке
+
+### 20. Arman-Kudaibergenov/1c-ai-development-kit — Набор AI-инструментов 1С
+- **Репо:** https://github.com/Arman-Kudaibergenov/1c-ai-development-kit
+- **Что:** Полный набор: промпты, агенты, правила для AI-разработки 1С
+- **Зачем:** Дополнить текущую 1С-экосистему новыми паттернами
+- **Приоритет:** 🟡 Средний (изучить после AndreevED)
+- **Статус:** ⏳ На заметке
+
 ### ~~5. Awesome Claude Code Subagents~~ ✅ Проанализированы
 - **Репо:** https://github.com/VoltAgent/awesome-claude-code-subagents
 - **Что:** 103 агента в 10 категориях
@@ -138,6 +169,14 @@
 - [x] Claude Monitor v3.1.0 (claude-monitor / ccm)
 - [x] Awesome Subagents — 6 лучших из 103 (performance-engineer, api-designer, docker-expert, mcp-developer, devops-engineer, prompt-engineer)
 - [x] Memory Management скилл (3-уровневая иерархия)
+- [x] PreCompact хук (резервная копия STATE.md перед компрессией контекста)
+- [x] pr-review-toolkit плагин (6 агентов ревью + /review-pr команда)
+- [x] isolation:worktree для bug-hunter и rapid-prototyper
+- [x] MCP серверы: sequential-thinking, memory, fetch (`.mcp.json`)
+- [x] parallel-executor агент (Fan-Out/Fan-In, MapReduce, Multi-Perspective, Speculative)
+- [x] contextual-rag скилл (5 паттернов RAG, LanceDB, GraphRAG)
+- [x] cost-optimization скилл (маршрутизация Haiku/Sonnet/Opus, Prompt Caching, Batch API)
+- [x] 5 агентов из rohitg00/awesome-claude-code-toolkit: mlops-engineer, vector-database-engineer, documentation-engineer, kubernetes-specialist, terraform-engineer
 
 ---
 
@@ -160,4 +199,4 @@
 
 ---
 
-*Последнее обновление: 2026-03-09*
+*Последнее обновление: 2026-03-16*
