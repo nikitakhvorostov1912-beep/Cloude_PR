@@ -249,9 +249,162 @@
 
 ---
 
+## 3. kernc/backtesting.py
+
+**URL:** https://github.com/kernc/backtesting.py
+**Дата анализа:** 2026-03-21
+
+### Вердикт
+
+```
+╔══════════════════════════════════════════════════════════╗
+║  РЕПОЗИТОРИЙ: kernc/backtesting.py                       ║
+║  URL: github.com/kernc/backtesting.py                    ║
+╠══════════════════════════════════════════════════════════╣
+║                                                          ║
+║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
+║                                                          ║
+║  Общая ценность:       ⭐⭐⭐        3/5                ║
+║  Качество кода:        ⭐⭐⭐⭐⭐    5/5                ║
+║  Применимость к MOEX:  ⭐⭐          2/5                ║
+║  Risk management:      ⭐⭐          2/5                ║
+║  Стратегии:            ⭐            0/5 (фреймворк)    ║
+║                                                          ║
+║  ТОП-3 ЧТО ВЗЯТЬ (как ИДЕИ — AGPL!):                  ║
+║  1. Alpha+Beta → src/backtest/metrics.py — CAPM метрики ║
+║  2. SQN+Kelly → src/backtest/metrics.py — качество      ║
+║  3. crossover/barssince → src/indicators/utils.py       ║
+║                                                          ║
+║  ТОП-3 РИСКА:                                            ║
+║  1. AGPL v3 — нельзя копировать код                     ║
+║  2. Нет slippage/лотности/MOEX-специфики                ║
+║  3. Grid search optimizer уступает Optuna                ║
+║                                                          ║
+║  СЛЕДУЮЩИЙ ШАГ: Дописать Alpha/Beta/SQN/Kelly в        ║
+║  существующий metrics.py (2 часа, с нуля)               ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+### Карта ценности
+
+| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
+|---|-----------|---------|----------|--------|-------------|
+| 1 | Alpha + Beta (CAPM) | `_stats.py:156-165` | ⭐⭐⭐⭐ | Низкое | Jensen Alpha, Beta через cov matrix |
+| 2 | SQN | `_stats.py:181` | ⭐⭐⭐⭐ | Низкое | System Quality Number |
+| 3 | Kelly Criterion | `_stats.py:182` | ⭐⭐⭐⭐ | Низкое | Optimal position fraction |
+| 4 | Geometric mean | `_stats.py:30-34` | ⭐⭐⭐ | Низкое | Correct compound return |
+| 5 | crossover/barssince | `lib.py:73-115` | ⭐⭐⭐ | Низкое | Strategy utilities |
+| 6 | resample_apply | `lib.py:207+` | ⭐⭐⭐ | Среднее | Multi-timeframe |
+
+### Планы интеграции (AGPL — писать с нуля)
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+КОМПОНЕНТ: Metrics Expansion (Alpha, Beta, SQN, Kelly)
+ПРИОРИТЕТ: 🔴 ВЫСОКИЙ
+ОЦЕНКА ВРЕМЕНИ: 2 часа
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ИСТОЧНИК: Идея из _stats.py (НЕ копируем — AGPL!)
+КУДА: src/backtest/metrics.py (дополнить TradeMetrics)
+ЧТО НАПИСАТЬ С НУЛЯ:
+- alpha_beta(equity_returns, benchmark_returns) → (alpha, beta)
+- sqn(pnls) → sqrt(N) * mean(PnL) / std(PnL)
+- kelly_criterion(win_rate, avg_win_loss_ratio) → optimal fraction
+- geometric_mean(returns) → exp(mean(log(1+r))) - 1
+- exposure_time(entry_bars, exit_bars, total_bars) → float
+- buy_and_hold_return(close_prices) → float
+ТЕСТЫ: Unit с known values
+ЗАВИСИМОСТИ: нет
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+КОМПОНЕНТ: Strategy Utilities (crossover, barssince)
+ПРИОРИТЕТ: 🟡 СРЕДНИЙ
+ОЦЕНКА ВРЕМЕНИ: 1 час
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ИСТОЧНИК: Идея из lib.py (НЕ копируем — AGPL!)
+КУДА: src/indicators/utils.py
+ЧТО НАПИСАТЬ С НУЛЯ:
+- crossover(series1, series2) → bool
+- barssince(condition) → int
+- quantile_rank(series) → float
+ТЕСТЫ: Unit
+ЗАВИСИМОСТИ: нет
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+---
+
+## 4. StockSharp/StockSharp
+
+**URL:** https://github.com/StockSharp/StockSharp
+**Дата анализа:** 2026-03-21
+
+### Вердикт
+
+```
+╔══════════════════════════════════════════════════════════╗
+║  РЕПОЗИТОРИЙ: StockSharp/StockSharp                      ║
+║  URL: github.com/StockSharp/StockSharp                   ║
+╠══════════════════════════════════════════════════════════╣
+║                                                          ║
+║  ВЕРДИКТ: ПРОПУСТИТЬ                                    ║
+║                                                          ║
+║  Общая ценность:       ⭐⭐          2/5                ║
+║  Качество кода:        ⭐⭐⭐⭐      4/5                ║
+║  Применимость к MOEX:  ⭐⭐⭐⭐      4/5 (Tinkoff, рус) ║
+║  Risk management:      ⭐⭐⭐        3/5                ║
+║  Стратегии:            ⭐⭐          2/5 (quoting only)  ║
+║                                                          ║
+║  ПРИЧИНА ПРОПУСКА:                                       ║
+║  C# (.NET) — полностью другой стек. 1809 .cs файлов,   ║
+║  21 .py файл (аналитика). Портировать нереально.        ║
+║  Идеи хорошие, но всё нужно писать с нуля на Python.    ║
+║                                                          ║
+║  ПОЛЕЗНЫЕ ИДЕИ (для вдохновения):                       ║
+║  1. CommissionRule pattern — 13 правил комиссий          ║
+║     (по обороту, по кол-ву, по тикеру, по типу)        ║
+║  2. ProtectiveController — SL/TP с trailing и timeout   ║
+║  3. QuotingProcessor — 9 стратегий котирования           ║
+║     (BestByPrice, BestByVolume, TWAP, VWAP, Level)     ║
+║  4. GeneticOptimizer — генетический алгоритм + fitness  ║
+║  5. MatchingEngine — эмулятор биржи с OrderBook         ║
+║  6. 190 индикаторов на C#                               ║
+║                                                          ║
+║  СЛЕДУЮЩИЙ ШАГ: Нет. Стек не совместим.                 ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+### Краткий анализ
+
+- **Стек:** C# .NET, WPF/Avalonia/MAUI, 1809 .cs файлов
+- **Лицензия:** Apache 2.0 (можно использовать)
+- **Активность:** Коммит 20 марта 2026 — живой проект
+- **MOEX:** Есть коннектор Tinkoff, знакомы с MOEX (логотипы)
+- **Архитектура:** Отличная — модульная, паттерны Strategy/Rule/Adapter
+- **Стратегии котирования:** BestByPrice, BestByVolume, LastTrade, Level, Limit, Market, TheorPrice, Volatility — 9 типов. Это уникально для нашего проекта.
+- **Комиссии:** 13 правил (по обороту, по кол-ву ордеров, по кол-ву сделок, по цене сделки, по типу инструмента, по board code) — хорошая архитектура ICommissionRule
+- **MatchingEngine:** Полная эмуляция биржи с OrderBook, MarginController, StopOrderManager
+- **Но:** Всё на C#, портирование слишком трудозатратно
+
+### Карта ценности
+
+| # | Компонент | Ценность | Проблема |
+|---|-----------|----------|----------|
+| 1 | QuotingProcessor (9 типов) | ⭐⭐⭐ | C# — надо писать с нуля |
+| 2 | CommissionRule (13 правил) | ⭐⭐⭐ | C# — наш cost_model проще |
+| 3 | MatchingEngine | ⭐⭐⭐ | C# — огромный объём |
+| 4 | ProtectiveController | ⭐⭐⭐ | C# — trailing+timeout идея |
+| 5 | GeneticOptimizer | ⭐⭐ | У нас Optuna лучше |
+| 6 | 190 индикаторов | ⭐⭐ | C#, у нас есть jesse (175) |
+
+---
+
 ## Сводная таблица
 
 | # | Репо | Вердикт | Ценность | Код | MOEX | Лучший компонент | Приоритет |
 |---|------|---------|----------|-----|------|------------------|-----------|
 | 1 | ghostfolio | ВДОХНОВИТЬСЯ | 3/5 | 5/5 | 2/5 | X-Ray Rules → src/risk/rules/ | 🟡 |
 | 2 | jesse-ai/jesse | ИНТЕГРИРОВАТЬ | 4/5 | 4/5 | 3/5 | metrics.py → src/backtest/metrics.py | 🔴 |
+| 3 | backtesting.py | ВДОХНОВИТЬСЯ | 3/5 | 5/5 | 2/5 | Alpha/Beta/SQN/Kelly → metrics.py | 🔴 |
+| 4 | StockSharp | ПРОПУСТИТЬ | 2/5 | 4/5 | 4/5 | — (C# стек) | — |
