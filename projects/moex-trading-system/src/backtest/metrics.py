@@ -483,6 +483,120 @@ def ulcer_performance_index(
 
 
 # ---------------------------------------------------------------------------
+# Probabilistic Sharpe Ratio (PSR)
+# ---------------------------------------------------------------------------
+
+
+def probabilistic_sharpe_ratio(
+    returns: np.ndarray | pd.Series,
+    sr_benchmark: float = 0.0,
+    periods: int = MOEX_TRADING_DAYS,
+) -> float:
+    """Probabilistic Sharpe Ratio — anti-overfitting metric.
+
+    From Bailey & de Prado (2012). Answers: "What is the probability
+    that the observed Sharpe Ratio is greater than sr_benchmark,
+    given the non-normality of returns?"
+
+    Formula:
+        PSR = Phi( sqrt(T-1) * (SR - SR*) /
+              sqrt(1 - gamma3*SR + (gamma4-1)/4 * SR^2) )
+
+    Where gamma3 = skewness, gamma4 = excess kurtosis.
+
+    PSR < 0.95 → Sharpe is statistically insignificant (likely overfitting).
+    PSR > 0.95 → Sharpe is significant at 95% confidence.
+
+    Args:
+        returns: Array of returns.
+        sr_benchmark: Benchmark Sharpe to beat (default 0).
+        periods: Annualization factor.
+
+    Returns:
+        PSR value in [0, 1].
+    """
+    arr = np.asarray(returns, dtype=np.float64)
+    arr = arr[~np.isnan(arr)]
+    t = len(arr)
+    if t < 3:
+        return 0.0
+
+    mean_r = float(arr.mean())
+    std_r = float(arr.std(ddof=1))
+    if std_r < 1e-12:
+        return 1.0 if mean_r > 0 else 0.0
+
+    # PSR uses the NON-annualized (observed) Sharpe ratio
+    sr_observed = mean_r / std_r
+
+    # Skewness and excess kurtosis of returns
+    gamma3 = float(scipy_stats.skew(arr, bias=False))
+    gamma4 = float(scipy_stats.kurtosis(arr, fisher=True, bias=False))
+    if math.isnan(gamma3):
+        gamma3 = 0.0
+    if math.isnan(gamma4):
+        gamma4 = 0.0
+
+    # Scale benchmark to per-period (non-annualized)
+    sr_bench_per_period = sr_benchmark / math.sqrt(periods) if periods > 0 else sr_benchmark
+
+    # PSR denominator: accounts for non-normality
+    denom_sq = (
+        1.0
+        - gamma3 * sr_observed
+        + (gamma4 - 1) / 4.0 * sr_observed ** 2
+    )
+    if denom_sq <= 0:
+        return 0.5
+
+    numerator = math.sqrt(t - 1) * (sr_observed - sr_bench_per_period)
+    denominator = math.sqrt(denom_sq)
+
+    z = numerator / denominator
+    return float(np.clip(scipy_stats.norm.cdf(z), 0.0, 1.0))
+
+
+# ---------------------------------------------------------------------------
+# Volume Share Slippage Model
+# ---------------------------------------------------------------------------
+
+
+def volume_share_slippage(
+    order_quantity: float,
+    bar_volume: float,
+    price: float,
+    price_impact: float = 0.1,
+    volume_limit: float = 0.025,
+) -> float:
+    """Quadratic volume-share slippage model.
+
+    From QuantConnect LEAN VolumeShareSlippageModel (Apache 2.0 formula).
+
+    Slippage increases quadratically with the fraction of bar volume
+    consumed by the order. This is more realistic than linear models:
+    large orders disproportionately move the market.
+
+    Formula: slippage_pct = (min(qty/volume, volume_limit))^2 * price_impact
+             slippage_rub = slippage_pct * price
+
+    Args:
+        order_quantity: Shares in the order (absolute).
+        bar_volume: Total volume of the bar.
+        price: Current price.
+        price_impact: Scaling factor (default 0.1 = 10%).
+        volume_limit: Max volume fraction (default 0.025 = 2.5%).
+
+    Returns:
+        Slippage amount in price units (add to buy, subtract from sell).
+    """
+    if bar_volume <= 0 or price <= 0:
+        return 0.0
+    volume_fraction = min(abs(order_quantity) / bar_volume, volume_limit)
+    slippage_pct = volume_fraction ** 2 * price_impact
+    return slippage_pct * price
+
+
+# ---------------------------------------------------------------------------
 # Welford Online Algorithm — streaming mean/variance
 # ---------------------------------------------------------------------------
 
