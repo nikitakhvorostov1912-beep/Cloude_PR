@@ -483,6 +483,177 @@ def ulcer_performance_index(
 
 
 # ---------------------------------------------------------------------------
+# Welford Online Algorithm — streaming mean/variance
+# ---------------------------------------------------------------------------
+
+
+class WelfordAccumulator:
+    """Welford's online algorithm for streaming mean and variance.
+
+    Computes running mean, sample variance, and population variance
+    in a single pass with O(1) memory per update. No buffering of
+    historical values — ideal for real-time metric computation.
+
+    Inspired by barter-rs statistic/algorithm.rs (MIT License).
+    Written from scratch in Python.
+
+    Usage:
+        acc = WelfordAccumulator()
+        for value in stream:
+            acc.update(value)
+        print(acc.mean, acc.sample_variance, acc.std_dev)
+    """
+
+    __slots__ = ("_count", "_mean", "_m2", "_min", "_max")
+
+    def __init__(self) -> None:
+        self._count: int = 0
+        self._mean: float = 0.0
+        self._m2: float = 0.0
+        self._min: float = float("inf")
+        self._max: float = float("-inf")
+
+    def update(self, value: float) -> None:
+        """Incorporate a new observation."""
+        self._count += 1
+        delta = value - self._mean
+        self._mean += delta / self._count
+        delta2 = value - self._mean
+        self._m2 += delta * delta2
+        if value < self._min:
+            self._min = value
+        if value > self._max:
+            self._max = value
+
+    @property
+    def count(self) -> int:
+        return self._count
+
+    @property
+    def mean(self) -> float:
+        return self._mean if self._count > 0 else 0.0
+
+    @property
+    def sample_variance(self) -> float:
+        """Unbiased sample variance (Bessel's correction: n-1)."""
+        if self._count < 2:
+            return 0.0
+        return self._m2 / (self._count - 1)
+
+    @property
+    def population_variance(self) -> float:
+        """Population variance (divides by n)."""
+        if self._count < 1:
+            return 0.0
+        return self._m2 / self._count
+
+    @property
+    def std_dev(self) -> float:
+        """Sample standard deviation."""
+        return math.sqrt(self.sample_variance)
+
+    @property
+    def min_value(self) -> float:
+        return self._min if self._count > 0 else 0.0
+
+    @property
+    def max_value(self) -> float:
+        return self._max if self._count > 0 else 0.0
+
+
+class StreamingMetrics:
+    """Streaming computation of key trading metrics using Welford.
+
+    Updates incrementally with each new return observation.
+    No need to store or re-scan the full history.
+
+    Computes:
+    - Sharpe ratio (annualized)
+    - Sortino ratio (annualized, using downside deviation)
+    - Running mean, variance, std_dev
+    - Max drawdown (running)
+    """
+
+    __slots__ = (
+        "_returns", "_downside", "_periods",
+        "_equity_peak", "_max_dd", "_risk_free_daily",
+    )
+
+    def __init__(
+        self,
+        periods: int = MOEX_TRADING_DAYS,
+        risk_free_rate: float = CBR_KEY_RATE,
+    ) -> None:
+        self._returns = WelfordAccumulator()
+        self._downside = WelfordAccumulator()
+        self._periods = periods
+        self._risk_free_daily = risk_free_rate / periods
+        self._equity_peak: float = 0.0
+        self._max_dd: float = 0.0
+
+    def update(self, daily_return: float, equity: float = 0.0) -> None:
+        """Process one daily return observation.
+
+        Args:
+            daily_return: The daily return (e.g. 0.01 = +1%).
+            equity: Current equity value (for drawdown tracking).
+        """
+        excess = daily_return - self._risk_free_daily
+        self._returns.update(excess)
+        if excess < 0:
+            self._downside.update(excess)
+
+        if equity > 0:
+            if equity > self._equity_peak:
+                self._equity_peak = equity
+            if self._equity_peak > 0:
+                dd = (self._equity_peak - equity) / self._equity_peak
+                if dd > self._max_dd:
+                    self._max_dd = dd
+
+    @property
+    def count(self) -> int:
+        return self._returns.count
+
+    @property
+    def sharpe_ratio(self) -> float:
+        """Annualized Sharpe ratio from streaming data."""
+        if self._returns.count < 2 or self._returns.std_dev == 0:
+            return 0.0
+        return float(
+            self._returns.mean
+            / self._returns.std_dev
+            * math.sqrt(self._periods)
+        )
+
+    @property
+    def sortino_ratio(self) -> float:
+        """Annualized Sortino ratio from streaming data."""
+        if self._returns.count < 2 or self._downside.count < 1:
+            return 0.0
+        downside_std = math.sqrt(self._downside.population_variance)
+        if downside_std == 0:
+            return 0.0
+        return float(
+            self._returns.mean / downside_std * math.sqrt(self._periods)
+        )
+
+    @property
+    def max_drawdown(self) -> float:
+        """Running max drawdown (0 to 1)."""
+        return self._max_dd
+
+    @property
+    def mean_return(self) -> float:
+        return self._returns.mean
+
+    @property
+    def volatility(self) -> float:
+        """Annualized volatility."""
+        return self._returns.std_dev * math.sqrt(self._periods)
+
+
+# ---------------------------------------------------------------------------
 # Return-level metrics
 # ---------------------------------------------------------------------------
 

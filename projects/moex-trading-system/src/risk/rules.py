@@ -16,8 +16,9 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
-from typing import Any, Sequence
+from typing import Any, Generic, Sequence, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,9 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Core types
 # ---------------------------------------------------------------------------
+
+T = TypeVar("T")
+
 
 class RuleVerdict(str, Enum):
     PASS = "PASS"
@@ -41,6 +45,44 @@ class RuleResult:
     value: float = 0.0       # the measured value (e.g., 0.65 for 65% concentration)
     threshold: float = 0.0   # the threshold that was exceeded
     details: dict[str, Any] = field(default_factory=dict)
+
+
+# ---------------------------------------------------------------------------
+# RiskApproved / RiskRefused wrappers
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class RiskApproved(Generic[T]):
+    """Type-level marker: order has passed risk checks.
+
+    Inspired by barter-rs RiskApproved<T> (MIT License).
+    Prevents sending unchecked orders to execution layer.
+
+    Usage:
+        approved = risk_engine.check_order(order)
+        execution.send(approved)  # only accepts RiskApproved[Order]
+    """
+
+    order: T
+    approved_by: str = "RulesEngine"
+    timestamp: datetime = field(default_factory=datetime.now)
+
+
+@dataclass(frozen=True)
+class RiskRefused(Generic[T]):
+    """Type-level marker: order was rejected by risk checks.
+
+    Attributes:
+        order: The rejected order.
+        reason: Human-readable rejection reason.
+        rule_name: Name of the rule that triggered refusal.
+    """
+
+    order: T
+    reason: str = ""
+    rule_name: str = ""
+    timestamp: datetime = field(default_factory=datetime.now)
 
 
 @dataclass
@@ -260,7 +302,7 @@ class RulesEngine:
     """
 
     def __init__(self, rules: list[BaseRule] | None = None):
-        self.rules = rules or self.default_rules()
+        self.rules = self.default_rules() if rules is None else rules
 
     @staticmethod
     def default_rules() -> list[BaseRule]:
@@ -297,6 +339,59 @@ class RulesEngine:
     def has_failures(self, results: list[RuleResult]) -> bool:
         """Check if any rule failed."""
         return any(r.verdict == RuleVerdict.FAIL for r in results)
+
+    def check_order(
+        self,
+        order: T,
+        portfolio: PortfolioSnapshot,
+    ) -> RiskApproved[T] | RiskRefused[T]:
+        """Check an order against all rules.
+
+        Returns RiskApproved if all rules pass, RiskRefused otherwise.
+        Execution layer should only accept RiskApproved orders.
+        """
+        results = self.evaluate(portfolio)
+        for r in results:
+            if r.verdict == RuleVerdict.FAIL:
+                return RiskRefused(
+                    order=order,
+                    reason=r.message,
+                    rule_name=r.rule_name,
+                )
+        return RiskApproved(order=order, approved_by="RulesEngine")
+
+    def check_orders(
+        self,
+        orders: Sequence[T],
+        portfolio: PortfolioSnapshot,
+    ) -> tuple[list[RiskApproved[T]], list[RiskRefused[T]]]:
+        """Check multiple orders. Returns (approved, refused) tuple."""
+        approved: list[RiskApproved[T]] = []
+        refused: list[RiskRefused[T]] = []
+        results = self.evaluate(portfolio)
+        has_fail = self.has_failures(results)
+
+        if has_fail:
+            fail_msg = next(
+                r.message for r in results
+                if r.verdict == RuleVerdict.FAIL
+            )
+            fail_rule = next(
+                r.rule_name for r in results
+                if r.verdict == RuleVerdict.FAIL
+            )
+            for order in orders:
+                refused.append(RiskRefused(
+                    order=order,
+                    reason=fail_msg,
+                    rule_name=fail_rule,
+                ))
+        else:
+            for order in orders:
+                approved.append(
+                    RiskApproved(order=order, approved_by="RulesEngine")
+                )
+        return approved, refused
 
     @staticmethod
     def format_report(results: list[RuleResult]) -> str:
