@@ -8,6 +8,9 @@ Indicators:
 - SchaffTrendCycle: 3-layer stochastic MACD (faster, less lag)
 - AugenPriceSpike: normalized price spike in sigma units
 - RogersSatchellVolatility: drift-adjusted volatility estimator
+- ZigZag: pivot point detection state machine
+- KlingerVolumeOscillator: volume-force trend confirmation
+- RelativeVigorIndex: close-open / high-low momentum quality
 
 Usage:
     from src.indicators.advanced import (
@@ -374,3 +377,243 @@ def rogers_satchell_volatility(
     # sqrt, handling negative values (rare but possible with noisy data)
     result = np.where(rs_mean > 0, np.sqrt(rs_mean), 0.0)
     return result
+
+
+# ---------------------------------------------------------------------------
+# ZigZag — pivot point detection
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ZigZagResult:
+    """ZigZag output.
+
+    Attributes:
+        pivots: Array with non-zero values at pivot points (price at pivot).
+        pivot_types: +1 at peak, -1 at trough, 0 elsewhere.
+        last_pivot_price: Most recent pivot price.
+        last_pivot_type: +1 (peak) or -1 (trough).
+    """
+
+    pivots: np.ndarray
+    pivot_types: np.ndarray
+    last_pivot_price: float
+    last_pivot_type: int
+
+
+def zigzag(
+    high: np.ndarray,
+    low: np.ndarray,
+    close: np.ndarray,
+    sensitivity: float = 0.05,
+    min_trend_bars: int = 3,
+) -> ZigZagResult:
+    """ZigZag indicator — pivot point detection state machine.
+
+    Identifies significant swing highs and lows by filtering out
+    moves smaller than sensitivity %. Useful for S/R detection,
+    wave pattern recognition, and trend structure analysis.
+
+    Algorithm:
+        If last pivot was a Low:
+            New High pivot if H >= lastLow * (1+sensitivity) AND bars >= min_trend
+        If last pivot was a High:
+            New Low pivot if L <= lastHigh * (1-sensitivity)
+
+    Args:
+        high, low, close: OHLC arrays.
+        sensitivity: Minimum move to qualify as pivot (0.05 = 5%).
+        min_trend_bars: Minimum bars between pivots.
+    """
+    high = np.asarray(high, dtype=np.float64)
+    low = np.asarray(low, dtype=np.float64)
+    close = np.asarray(close, dtype=np.float64)
+    n = len(high)
+
+    pivots = np.zeros(n)
+    pivot_types = np.zeros(n, dtype=int)
+
+    if n < 2:
+        return ZigZagResult(pivots, pivot_types, 0.0, 0)
+
+    # Initialize: first bar is a pivot (direction TBD)
+    last_pivot_price = close[0]
+    last_pivot_idx = 0
+    last_pivot_was_high = True  # start looking for low
+
+    for i in range(1, n):
+        bars_since = i - last_pivot_idx
+
+        if last_pivot_was_high:
+            # Looking for a low pivot
+            if low[i] <= last_pivot_price * (1 - sensitivity):
+                pivots[i] = low[i]
+                pivot_types[i] = -1
+                last_pivot_price = low[i]
+                last_pivot_idx = i
+                last_pivot_was_high = False
+            elif high[i] > last_pivot_price:
+                # Update the existing high pivot
+                pivots[last_pivot_idx] = 0
+                pivot_types[last_pivot_idx] = 0
+                pivots[i] = high[i]
+                pivot_types[i] = 1
+                last_pivot_price = high[i]
+                last_pivot_idx = i
+        else:
+            # Looking for a high pivot
+            if (
+                high[i] >= last_pivot_price * (1 + sensitivity)
+                and bars_since >= min_trend_bars
+            ):
+                pivots[i] = high[i]
+                pivot_types[i] = 1
+                last_pivot_price = high[i]
+                last_pivot_idx = i
+                last_pivot_was_high = True
+            elif low[i] < last_pivot_price:
+                # Update the existing low pivot
+                pivots[last_pivot_idx] = 0
+                pivot_types[last_pivot_idx] = 0
+                pivots[i] = low[i]
+                pivot_types[i] = -1
+                last_pivot_price = low[i]
+                last_pivot_idx = i
+
+    last_type = 1 if last_pivot_was_high else -1
+    return ZigZagResult(pivots, pivot_types, last_pivot_price, last_type)
+
+
+# ---------------------------------------------------------------------------
+# KlingerVolumeOscillator
+# ---------------------------------------------------------------------------
+
+
+def klinger_volume_oscillator(
+    high: np.ndarray,
+    low: np.ndarray,
+    close: np.ndarray,
+    volume: np.ndarray,
+    fast_period: int = 34,
+    slow_period: int = 55,
+    signal_period: int = 13,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Klinger Volume Oscillator — volume-force trend confirmation.
+
+    Measures the difference between buying and selling pressure
+    based on volume and price movement.
+
+    Volume Force formula:
+        trend = sign(TP_t - TP_{t-1}) where TP = H + L + C
+        DM = H - L (daily movement)
+        CM = CM_{t-1} + DM if trend unchanged, else DM_{t-1} + DM
+        VF = Volume * |2*DM/CM - 1| * trend * 100
+        KVO = EMA(VF, fast) - EMA(VF, slow)
+        Signal = EMA(KVO, signal_period)
+
+    Args:
+        high, low, close, volume: OHLCV arrays.
+        fast_period: Fast EMA period (default 34).
+        slow_period: Slow EMA period (default 55).
+        signal_period: Signal line EMA (default 13).
+
+    Returns:
+        Tuple of (kvo, signal) arrays.
+    """
+    high = np.asarray(high, dtype=np.float64)
+    low = np.asarray(low, dtype=np.float64)
+    close = np.asarray(close, dtype=np.float64)
+    volume = np.asarray(volume, dtype=np.float64)
+    n = len(high)
+
+    tp = high + low + close
+    dm = high - low
+
+    # Trend direction
+    trend = np.zeros(n)
+    for i in range(1, n):
+        trend[i] = 1.0 if tp[i] > tp[i - 1] else -1.0
+
+    # Cumulative Movement
+    cm = np.zeros(n)
+    cm[0] = dm[0]
+    for i in range(1, n):
+        if trend[i] == trend[i - 1]:
+            cm[i] = cm[i - 1] + dm[i]
+        else:
+            cm[i] = dm[i - 1] + dm[i]
+
+    # Volume Force
+    vf = np.zeros(n)
+    for i in range(n):
+        if cm[i] != 0:
+            vf[i] = volume[i] * abs(2.0 * dm[i] / cm[i] - 1.0) * trend[i] * 100
+        else:
+            vf[i] = 0.0
+
+    # KVO = EMA(VF, fast) - EMA(VF, slow)
+    kvo = _ema(vf, fast_period) - _ema(vf, slow_period)
+    signal = _ema(kvo, signal_period)
+
+    return kvo, signal
+
+
+# ---------------------------------------------------------------------------
+# RelativeVigorIndex
+# ---------------------------------------------------------------------------
+
+
+def relative_vigor_index(
+    open_: np.ndarray,
+    high: np.ndarray,
+    low: np.ndarray,
+    close: np.ndarray,
+    period: int = 10,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Relative Vigor Index — close-open / high-low momentum quality.
+
+    Measures the conviction behind price moves: in a bull market,
+    closes tend to be near highs (positive vigor).
+
+    Uses triangular weighting of last 4 bars:
+        NUM  = (a + 2b + 2c + d) / 6  where a..d = (C-O) of last 4 bars
+        DENOM = (e + 2f + 2g + h) / 6 where e..h = (H-L) of last 4 bars
+        RVI = SMA(NUM, period) / SMA(DENOM, period)
+        Signal = (RVI + 2*RVI[1] + 2*RVI[2] + RVI[3]) / 6
+
+    Args:
+        open_, high, low, close: OHLC arrays.
+        period: SMA period (default 10).
+
+    Returns:
+        Tuple of (rvi, signal) arrays.
+    """
+    open_ = np.asarray(open_, dtype=np.float64)
+    high = np.asarray(high, dtype=np.float64)
+    low = np.asarray(low, dtype=np.float64)
+    close = np.asarray(close, dtype=np.float64)
+    n = len(high)
+
+    co = close - open_  # close-open
+    hl = high - low      # high-low
+
+    # Triangular weighted numerator and denominator
+    num = np.zeros(n)
+    den = np.zeros(n)
+    for i in range(3, n):
+        num[i] = (co[i] + 2 * co[i - 1] + 2 * co[i - 2] + co[i - 3]) / 6.0
+        den[i] = (hl[i] + 2 * hl[i - 1] + 2 * hl[i - 2] + hl[i - 3]) / 6.0
+
+    # RVI = SMA(num) / SMA(den)
+    num_sma = _sma(num, period)
+    den_sma = _sma(den, period)
+
+    safe_den = np.where(den_sma != 0, den_sma, 1.0)
+    rvi = np.where(den_sma != 0, num_sma / safe_den, 0.0)
+
+    # Signal = triangular weighted RVI
+    signal = np.zeros(n)
+    for i in range(3, n):
+        signal[i] = (rvi[i] + 2 * rvi[i - 1] + 2 * rvi[i - 2] + rvi[i - 3]) / 6.0
+
+    return rvi, signal
