@@ -6,17 +6,23 @@ Adapted from jesse-ai/jesse (MIT License) with MOEX-specific adjustments:
 - Smart Sharpe/Sortino with autocorrelation penalty
 - Standalone: no jesse dependencies
 
+Additional metrics inspired by pybroker concepts (written from scratch):
+- BCa Bootstrap Confidence Intervals (bias-corrected accelerated)
+- MAE/MFE Trade Quality (max adverse/favorable excursion)
+- Equity R², Relative Entropy, Ulcer Performance Index
+
 Original: https://github.com/jesse-ai/jesse/blob/master/jesse/services/metrics.py
 License: MIT (c) 2020 Jesse.Trade
 """
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from typing import Sequence
+from dataclasses import dataclass
+from typing import Callable, NamedTuple, Sequence
 
 import numpy as np
 import pandas as pd
+from scipy import stats as scipy_stats
 
 
 # ---------------------------------------------------------------------------
@@ -28,6 +34,452 @@ MOEX_TRADING_DAYS = 252
 
 CBR_KEY_RATE = 0.19
 """Central Bank of Russia key rate (annual), used as default risk-free rate."""
+
+_DEFAULT_N_BOOT = 10_000
+"""Default number of bootstrap resamples."""
+
+_DEFAULT_BOOT_SAMPLE_SIZE = 1_000
+"""Default sample size per bootstrap resample."""
+
+
+# ---------------------------------------------------------------------------
+# BCa Bootstrap Confidence Intervals
+# ---------------------------------------------------------------------------
+
+
+class BootstrapCI(NamedTuple):
+    """Confidence interval from BCa bootstrap.
+
+    Attributes:
+        low: Lower bound of the interval.
+        high: Upper bound of the interval.
+        level: Confidence level (e.g. 0.95).
+        point_estimate: Point estimate of the statistic.
+    """
+
+    low: float
+    high: float
+    level: float
+    point_estimate: float
+
+
+@dataclass(frozen=True)
+class BootstrapResult:
+    """Full bootstrap result with multiple confidence levels.
+
+    Attributes:
+        ci_90: 90% confidence interval.
+        ci_95: 95% confidence interval.
+        ci_975: 97.5% confidence interval.
+        point_estimate: Point estimate of the statistic.
+        n_samples: Number of bootstrap resamples used.
+    """
+
+    ci_90: BootstrapCI
+    ci_95: BootstrapCI
+    ci_975: BootstrapCI
+    point_estimate: float
+    n_samples: int
+
+
+def _jackknife_acceleration(data: np.ndarray, stat_fn: Callable) -> float:
+    """Compute jackknife acceleration factor for BCa.
+
+    Leave-one-out jackknife estimates how the statistic is influenced
+    by each data point — skewed influence = biased bootstrap distribution.
+    """
+    n = len(data)
+    if n < 3:
+        return 0.0
+    jk_values = np.empty(n)
+    for i in range(n):
+        subset = np.concatenate([data[:i], data[i + 1:]])
+        jk_values[i] = stat_fn(subset)
+    jk_mean = jk_values.mean()
+    diffs = jk_mean - jk_values
+    numer = (diffs ** 3).sum()
+    denom = (diffs ** 2).sum()
+    if denom == 0:
+        return 0.0
+    return float(numer / (6.0 * denom ** 1.5))
+
+
+def bca_bootstrap(
+    data: np.ndarray,
+    stat_fn: Callable[[np.ndarray], float],
+    n_boot: int = _DEFAULT_N_BOOT,
+    sample_size: int | None = None,
+    rng: np.random.Generator | None = None,
+) -> BootstrapResult:
+    """Bias-corrected and accelerated (BCa) bootstrap confidence intervals.
+
+    BCa corrects two problems with naive percentile bootstrap:
+    1. Bias: the bootstrap distribution median != the point estimate
+    2. Skewness: the bootstrap distribution is asymmetric
+
+    Args:
+        data: 1D array of observations.
+        stat_fn: Function mapping array → scalar statistic.
+        n_boot: Number of bootstrap resamples.
+        sample_size: Size of each resample (default: len(data)).
+        rng: NumPy random generator for reproducibility.
+
+    Returns:
+        BootstrapResult with 90%, 95%, 97.5% confidence intervals.
+    """
+    data = np.asarray(data, dtype=np.float64)
+    n = len(data)
+    if n == 0:
+        empty_ci = BootstrapCI(0.0, 0.0, 0.0, 0.0)
+        return BootstrapResult(empty_ci, empty_ci, empty_ci, 0.0, 0)
+
+    if rng is None:
+        rng = np.random.default_rng()
+
+    if sample_size is None:
+        sample_size = n
+
+    sample_size = min(sample_size, n)
+    point_est = float(stat_fn(data))
+
+    # Generate bootstrap distribution
+    boot_stats = np.empty(n_boot)
+    for i in range(n_boot):
+        idx = rng.integers(0, n, size=sample_size)
+        boot_stats[i] = stat_fn(data[idx])
+
+    boot_stats.sort()
+
+    # Bias correction: z0 = Φ⁻¹(proportion of bootstrap < point estimate)
+    prop_below = np.mean(boot_stats < point_est)
+    prop_below = np.clip(prop_below, 1e-10, 1 - 1e-10)
+    z0 = float(scipy_stats.norm.ppf(prop_below))
+
+    # Acceleration via jackknife
+    a = _jackknife_acceleration(data, stat_fn)
+
+    def _bca_quantile(alpha: float) -> float:
+        """Compute BCa-adjusted quantile."""
+        z_alpha = float(scipy_stats.norm.ppf(alpha))
+        numerator = z0 + z_alpha
+        denominator = 1.0 - a * numerator
+        if abs(denominator) < 1e-10:
+            denominator = 1e-10
+        adjusted_z = z0 + numerator / denominator
+        adjusted_p = float(scipy_stats.norm.cdf(adjusted_z))
+        adjusted_p = np.clip(adjusted_p, 0.0, 1.0)
+        idx = int(adjusted_p * (n_boot - 1))
+        idx = np.clip(idx, 0, n_boot - 1)
+        return float(boot_stats[idx])
+
+    ci_90 = BootstrapCI(_bca_quantile(0.05), _bca_quantile(0.95), 0.90, point_est)
+    ci_95 = BootstrapCI(_bca_quantile(0.025), _bca_quantile(0.975), 0.95, point_est)
+    ci_975 = BootstrapCI(_bca_quantile(0.0125), _bca_quantile(0.9875), 0.975, point_est)
+
+    return BootstrapResult(
+        ci_90=ci_90, ci_95=ci_95, ci_975=ci_975,
+        point_estimate=point_est, n_samples=n_boot,
+    )
+
+
+def bootstrap_metrics(
+    daily_returns: pd.Series | np.ndarray,
+    n_boot: int = _DEFAULT_N_BOOT,
+    periods: int = MOEX_TRADING_DAYS,
+    rng: np.random.Generator | None = None,
+) -> dict[str, BootstrapResult]:
+    """Bootstrap CI for key performance metrics.
+
+    Computes BCa bootstrap for Sharpe, Sortino, Profit Factor, Max DD.
+
+    Args:
+        daily_returns: Series of daily returns.
+        n_boot: Number of bootstrap resamples.
+        periods: Trading days per year.
+        rng: Random generator.
+
+    Returns:
+        Dict mapping metric name → BootstrapResult.
+    """
+    arr = np.asarray(daily_returns, dtype=np.float64)
+    arr = arr[~np.isnan(arr)]
+    if len(arr) < 2:
+        empty_ci = BootstrapCI(0.0, 0.0, 0.0, 0.0)
+        empty_br = BootstrapResult(empty_ci, empty_ci, empty_ci, 0.0, 0)
+        return {
+            "sharpe": empty_br, "sortino": empty_br,
+            "profit_factor": empty_br, "max_drawdown": empty_br,
+        }
+
+    def _sharpe(x: np.ndarray) -> float:
+        if len(x) < 2 or x.std(ddof=1) == 0:
+            return 0.0
+        return float(x.mean() / x.std(ddof=1) * np.sqrt(periods))
+
+    def _sortino(x: np.ndarray) -> float:
+        if len(x) < 2:
+            return 0.0
+        downside = x[x < 0]
+        if len(downside) == 0 or downside.std(ddof=1) == 0:
+            return 0.0
+        return float(x.mean() / downside.std(ddof=1) * np.sqrt(periods))
+
+    def _profit_factor(x: np.ndarray) -> float:
+        gains = x[x > 0].sum()
+        losses_abs = abs(x[x < 0].sum())
+        if losses_abs == 0:
+            return float("inf") if gains > 0 else 0.0
+        return float(gains / losses_abs)
+
+    def _max_dd(x: np.ndarray) -> float:
+        if len(x) == 0:
+            return 0.0
+        cumulative = np.cumprod(1 + x)
+        running_max = np.maximum.accumulate(cumulative)
+        drawdown = (cumulative - running_max) / running_max
+        return float(drawdown.min())
+
+    return {
+        "sharpe": bca_bootstrap(arr, _sharpe, n_boot=n_boot, rng=rng),
+        "sortino": bca_bootstrap(arr, _sortino, n_boot=n_boot, rng=rng),
+        "profit_factor": bca_bootstrap(arr, _profit_factor, n_boot=n_boot, rng=rng),
+        "max_drawdown": bca_bootstrap(arr, _max_dd, n_boot=n_boot, rng=rng),
+    }
+
+
+# ---------------------------------------------------------------------------
+# MAE / MFE (Max Adverse / Favorable Excursion)
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class TradeExcursion:
+    """MAE/MFE for a single trade.
+
+    Attributes:
+        mae: Max adverse excursion (worst drawdown from entry, always >= 0).
+        mfe: Max favorable excursion (best paper profit from entry, always >= 0).
+        mae_pct: MAE as percentage of entry price.
+        mfe_pct: MFE as percentage of entry price.
+    """
+
+    mae: float
+    mfe: float
+    mae_pct: float
+    mfe_pct: float
+
+
+@dataclass(frozen=True)
+class MAEMFESummary:
+    """Aggregate MAE/MFE statistics across trades.
+
+    Attributes:
+        avg_mae: Average MAE across trades.
+        avg_mfe: Average MFE across trades.
+        avg_mae_pct: Average MAE %.
+        avg_mfe_pct: Average MFE %.
+        mfe_mae_ratio: Ratio of avg MFE to avg MAE (>2 = good entries).
+        edge_ratio: (avg_mfe - avg_mae) / avg_mae — positive = entries have edge.
+        trades: Per-trade excursion details.
+    """
+
+    avg_mae: float
+    avg_mfe: float
+    avg_mae_pct: float
+    avg_mfe_pct: float
+    mfe_mae_ratio: float
+    edge_ratio: float
+    trades: tuple[TradeExcursion, ...]
+
+
+def compute_mae_mfe(
+    trades: list[dict],
+    price_history: pd.DataFrame | None = None,
+) -> MAEMFESummary:
+    """Compute MAE/MFE for each trade.
+
+    Each trade dict must have:
+        - entry_price: float
+        - direction: "long" or "short"
+        - high_prices: list[float] — high prices during the trade
+        - low_prices: list[float] — low prices during the trade
+
+    If price_history is provided and trades have entry_bar/exit_bar,
+    the high/low prices are extracted automatically.
+
+    Args:
+        trades: List of trade dicts.
+        price_history: Optional DataFrame with 'high', 'low' columns.
+
+    Returns:
+        MAEMFESummary with per-trade and aggregate excursions.
+    """
+    if not trades:
+        return MAEMFESummary(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ())
+
+    excursions: list[TradeExcursion] = []
+
+    for trade in trades:
+        entry_price = float(trade.get("entry_price", 0.0))
+        direction = trade.get("direction", "long")
+
+        if entry_price <= 0:
+            excursions.append(TradeExcursion(0.0, 0.0, 0.0, 0.0))
+            continue
+
+        # Get high/low arrays for the trade duration
+        if price_history is not None and "entry_bar" in trade and "exit_bar" in trade:
+            start = int(trade["entry_bar"])
+            end = int(trade["exit_bar"]) + 1
+            highs = price_history["high"].iloc[start:end].values.astype(float)
+            lows = price_history["low"].iloc[start:end].values.astype(float)
+        else:
+            highs = np.array(trade.get("high_prices", [entry_price]), dtype=float)
+            lows = np.array(trade.get("low_prices", [entry_price]), dtype=float)
+
+        if len(highs) == 0 or len(lows) == 0:
+            excursions.append(TradeExcursion(0.0, 0.0, 0.0, 0.0))
+            continue
+
+        if direction == "long":
+            # Long: MAE = entry - min(low), MFE = max(high) - entry
+            mae = max(entry_price - float(lows.min()), 0.0)
+            mfe = max(float(highs.max()) - entry_price, 0.0)
+        else:
+            # Short: MAE = max(high) - entry, MFE = entry - min(low)
+            mae = max(float(highs.max()) - entry_price, 0.0)
+            mfe = max(entry_price - float(lows.min()), 0.0)
+
+        mae_pct = (mae / entry_price) * 100
+        mfe_pct = (mfe / entry_price) * 100
+        excursions.append(TradeExcursion(mae, mfe, mae_pct, mfe_pct))
+
+    if not excursions:
+        return MAEMFESummary(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ())
+
+    avg_mae = float(np.mean([e.mae for e in excursions]))
+    avg_mfe = float(np.mean([e.mfe for e in excursions]))
+    avg_mae_pct = float(np.mean([e.mae_pct for e in excursions]))
+    avg_mfe_pct = float(np.mean([e.mfe_pct for e in excursions]))
+    if avg_mae > 0:
+        mfe_mae_ratio = avg_mfe / avg_mae
+    elif avg_mfe > 0:
+        mfe_mae_ratio = float("inf")
+    else:
+        mfe_mae_ratio = 0.0
+    edge_ratio = (avg_mfe - avg_mae) / avg_mae if avg_mae > 0 else 0.0
+
+    return MAEMFESummary(
+        avg_mae=avg_mae,
+        avg_mfe=avg_mfe,
+        avg_mae_pct=avg_mae_pct,
+        avg_mfe_pct=avg_mfe_pct,
+        mfe_mae_ratio=mfe_mae_ratio,
+        edge_ratio=edge_ratio,
+        trades=tuple(excursions),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Equity R², Relative Entropy, Ulcer Performance Index
+# ---------------------------------------------------------------------------
+
+
+def equity_r_squared(equity_curve: Sequence[float] | np.ndarray) -> float:
+    """R² of linear regression on equity curve.
+
+    1.0 = perfectly linear equity growth (ideal).
+    0.0 = no trend.
+    Negative = equity curve worse than flat line.
+
+    Useful for screening: strategies with R² > 0.9 have consistent growth.
+    """
+    equity = np.asarray(equity_curve, dtype=np.float64)
+    n = len(equity)
+    if n < 3:
+        return 0.0
+    x = np.arange(n, dtype=np.float64)
+    ss_tot = np.sum((equity - equity.mean()) ** 2)
+    if ss_tot == 0:
+        return 0.0
+    # Linear regression: y = a + b*x
+    x_mean = x.mean()
+    b = np.sum((x - x_mean) * (equity - equity.mean())) / np.sum((x - x_mean) ** 2)
+    a = equity.mean() - b * x_mean
+    fitted = a + b * x
+    ss_res = np.sum((equity - fitted) ** 2)
+    return float(1.0 - ss_res / ss_tot)
+
+
+def relative_entropy(returns: np.ndarray | pd.Series, n_bins: int = 20) -> float:
+    """Normalized Shannon entropy of return distribution.
+
+    Range [0, 1]: 0 = all returns in one bin (concentrated), 1 = uniform.
+    High entropy = diverse, unpredictable returns.
+    Low entropy = clustered, predictable returns.
+
+    Args:
+        returns: Array of returns.
+        n_bins: Number of histogram bins.
+    """
+    arr = np.asarray(returns, dtype=np.float64)
+    arr = arr[~np.isnan(arr)]
+    if len(arr) < 2 or n_bins < 2:
+        return 0.0
+    counts, _ = np.histogram(arr, bins=n_bins)
+    total = counts.sum()
+    if total == 0:
+        return 0.0
+    probs = counts / total
+    probs = probs[probs > 0]
+    entropy = -np.sum(probs * np.log(probs))
+    max_entropy = np.log(n_bins)
+    if max_entropy == 0:
+        return 0.0
+    return float(entropy / max_entropy)
+
+
+def ulcer_performance_index(
+    equity_curve: Sequence[float] | np.ndarray,
+    periods: int = MOEX_TRADING_DAYS,
+) -> float:
+    """Ulcer Performance Index — risk-adjusted return using Ulcer Index.
+
+    UPI = annualized_return / ulcer_index
+
+    Better than Sharpe for strategies with rare deep drawdowns because
+    Ulcer Index penalizes duration AND depth of drawdowns, not just
+    return volatility.
+
+    Args:
+        equity_curve: Daily portfolio equity values.
+        periods: Trading days per year.
+
+    Returns:
+        UPI value. Higher is better.
+    """
+    equity = np.asarray(equity_curve, dtype=np.float64)
+    n = len(equity)
+    if n < 3 or equity[0] <= 0:
+        return 0.0
+
+    # Annualized return
+    total_return = equity[-1] / equity[0]
+    if total_return <= 0:
+        return 0.0
+    years = n / periods
+    if years <= 0:
+        return 0.0
+    ann_return = total_return ** (1.0 / years) - 1.0
+
+    # Ulcer Index
+    running_max = np.maximum.accumulate(equity)
+    pct_drawdown = ((equity - running_max) / running_max) * 100
+    ulcer = float(np.sqrt(np.mean(pct_drawdown ** 2)))
+
+    if ulcer == 0:
+        return float("inf") if ann_return > 0 else 0.0
+    return float(ann_return / (ulcer / 100))
 
 
 # ---------------------------------------------------------------------------
@@ -436,6 +888,18 @@ class TradeMetrics:
     win_rate_longs: float = 0.0
     win_rate_shorts: float = 0.0
 
+    # MAE/MFE (trade quality)
+    avg_mae: float = 0.0           # avg max adverse excursion (RUB)
+    avg_mfe: float = 0.0           # avg max favorable excursion (RUB)
+    avg_mae_pct: float = 0.0       # avg MAE as % of entry
+    avg_mfe_pct: float = 0.0       # avg MFE as % of entry
+    mfe_mae_ratio: float = 0.0     # MFE/MAE ratio (>2 = good entries)
+
+    # Equity quality
+    equity_r2: float = 0.0         # R² of equity curve (1.0 = perfect)
+    return_entropy: float = 0.0    # normalized Shannon entropy of returns
+    ulcer_perf_index: float = 0.0  # UPI = ann_return / ulcer_index
+
 
 def calculate_trade_metrics(
     trades: list[dict],
@@ -572,6 +1036,25 @@ def calculate_trade_metrics(
     # Buy & Hold return (first balance → last balance without trading)
     m.buy_and_hold_return = m.total_return * 100  # same as total_return in pct
 
+    # Equity quality metrics
+    equity_arr = np.array(daily_balance, dtype=float)
+    m.equity_r2 = equity_r_squared(equity_arr)
+    m.return_entropy = relative_entropy(daily_ret.values)
+    m.ulcer_perf_index = ulcer_performance_index(equity_arr, periods=periods)
+
+    # MAE/MFE (if trades provide entry_price and high/low prices)
+    has_excursion_data = any(
+        "entry_price" in t and ("high_prices" in t or "entry_bar" in t)
+        for t in trades
+    )
+    if has_excursion_data:
+        mae_mfe = compute_mae_mfe(trades)
+        m.avg_mae = mae_mfe.avg_mae
+        m.avg_mfe = mae_mfe.avg_mfe
+        m.avg_mae_pct = mae_mfe.avg_mae_pct
+        m.avg_mfe_pct = mae_mfe.avg_mfe_pct
+        m.mfe_mae_ratio = mae_mfe.mfe_mae_ratio
+
     return m
 
 
@@ -641,6 +1124,27 @@ def format_metrics(m: TradeMetrics) -> str:
             "-" * 64,
             f"  Longs              : {m.longs_count} ({m.win_rate_longs:.0%} win)",
             f"  Shorts             : {m.shorts_count} ({m.win_rate_shorts:.0%} win)",
+        ]
+
+    # Equity quality
+    lines += [
+        "-" * 64,
+        "  EQUITY QUALITY",
+        "-" * 64,
+        f"  Equity R²          : {m.equity_r2:>.4f}",
+        f"  Return Entropy     : {m.return_entropy:>.4f}",
+        f"  Ulcer Perf. Index  : {m.ulcer_perf_index:>.3f}",
+    ]
+
+    # MAE/MFE (if available)
+    if m.avg_mae > 0 or m.avg_mfe > 0:
+        lines += [
+            "-" * 64,
+            "  TRADE QUALITY (MAE/MFE)",
+            "-" * 64,
+            f"  Avg MAE            : {m.avg_mae:>,.0f} RUB ({m.avg_mae_pct:>.2f}%)",
+            f"  Avg MFE            : {m.avg_mfe:>,.0f} RUB ({m.avg_mfe_pct:>.2f}%)",
+            f"  MFE/MAE Ratio      : {m.mfe_mae_ratio:>.3f}",
         ]
 
     lines.append("=" * 64)
