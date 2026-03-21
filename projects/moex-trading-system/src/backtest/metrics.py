@@ -249,6 +249,97 @@ def cagr(
 
 
 # ---------------------------------------------------------------------------
+# CAPM & system quality metrics (inspired by backtesting.py — written from scratch)
+# ---------------------------------------------------------------------------
+
+
+def alpha_beta(
+    equity_returns: pd.Series,
+    benchmark_returns: pd.Series,
+    risk_free_rate: float = 0.0,
+) -> tuple[float, float]:
+    """Jensen Alpha and Beta from CAPM model.
+
+    Alpha = R_portfolio - Rf - Beta * (R_market - Rf)
+    Beta = Cov(R_p, R_m) / Var(R_m)
+
+    Args:
+        equity_returns: Daily portfolio returns.
+        benchmark_returns: Daily benchmark (e.g. IMOEX) returns.
+        risk_free_rate: Annual risk-free rate.
+
+    Returns:
+        (alpha, beta) tuple. Alpha is total (not annualized).
+    """
+    if len(equity_returns) < 2 or len(benchmark_returns) < 2:
+        return 0.0, 0.0
+
+    # Align lengths
+    n = min(len(equity_returns), len(benchmark_returns))
+    eq = equity_returns.values[-n:]
+    bm = benchmark_returns.values[-n:]
+
+    # Convert to log returns for proper CAPM
+    eq_log = np.log1p(eq)
+    bm_log = np.log1p(bm)
+
+    if len(eq_log) < 2:
+        return 0.0, 0.0
+
+    cov_matrix = np.cov(eq_log, bm_log)
+    var_market = cov_matrix[1, 1]
+    beta = float(cov_matrix[0, 1] / var_market) if var_market > 0 else 0.0
+
+    total_eq_return = float(np.expm1(eq_log.sum()))
+    total_bm_return = float(np.expm1(bm_log.sum()))
+
+    alpha = total_eq_return - risk_free_rate - beta * (total_bm_return - risk_free_rate)
+    return float(alpha), float(beta)
+
+
+def sqn(pnls: np.ndarray) -> float:
+    """System Quality Number — measures trading system quality.
+
+    SQN = sqrt(N) * mean(PnL) / std(PnL)
+    Interpretation: < 1.6 poor, 1.6-2.0 below avg, 2.0-2.5 avg,
+                    2.5-3.0 good, 3.0-5.0 excellent, 5.0-7.0 superb, > 7.0 holy grail
+    """
+    if len(pnls) < 2:
+        return 0.0
+    std = float(np.std(pnls, ddof=1))
+    if std == 0:
+        return 0.0
+    return float(np.sqrt(len(pnls)) * np.mean(pnls) / std)
+
+
+def kelly_criterion(win_rate: float, avg_win_loss_ratio: float) -> float:
+    """Kelly Criterion — optimal fraction of capital to risk per trade.
+
+    Kelly = W - (1-W) / R
+    where W = win rate, R = avg_win / avg_loss
+
+    Returns value in [0, 1]. Negative means don't trade.
+    """
+    if avg_win_loss_ratio <= 0:
+        return 0.0
+    k = win_rate - (1 - win_rate) / avg_win_loss_ratio
+    return max(0.0, float(k))
+
+
+def geometric_mean(returns: np.ndarray) -> float:
+    """Geometric mean of returns — correct compounding measure.
+
+    More accurate than arithmetic mean for multiplicative returns.
+    """
+    if len(returns) == 0:
+        return 0.0
+    returns_plus_one = returns + 1.0
+    if np.any(returns_plus_one <= 0):
+        return 0.0
+    return float(np.exp(np.log(returns_plus_one).mean()) - 1)
+
+
+# ---------------------------------------------------------------------------
 # Trade-level metrics
 # ---------------------------------------------------------------------------
 
@@ -298,6 +389,19 @@ class TradeMetrics:
     # Risk
     cvar_95: float = 0.0
 
+    # CAPM
+    alpha: float = 0.0          # Jensen Alpha (excess return over CAPM)
+    beta: float = 0.0           # market sensitivity
+
+    # System quality
+    sqn: float = 0.0            # System Quality Number
+    kelly_criterion: float = 0.0  # optimal position fraction
+    geometric_mean_return: float = 0.0  # per-trade geometric mean
+
+    # Exposure
+    exposure_time_pct: float = 0.0   # % of bars with open position
+    buy_and_hold_return: float = 0.0  # passive B&H return for comparison
+
     # Trade stats
     total_trades: int = 0
     total_winning: int = 0
@@ -340,6 +444,7 @@ def calculate_trade_metrics(
     risk_free_rate: float = CBR_KEY_RATE,
     periods: int = MOEX_TRADING_DAYS,
     start_date: str | None = None,
+    benchmark_balance: list[float] | None = None,
 ) -> TradeMetrics:
     """Calculate comprehensive metrics from trade list and daily balance.
 
@@ -351,6 +456,7 @@ def calculate_trade_metrics(
         risk_free_rate: Annual risk-free rate (default: CBR key rate 19%).
         periods: Trading days per year (default: 252 for MOEX).
         start_date: ISO date string for index (e.g. "2024-01-10").
+        benchmark_balance: Optional daily benchmark equity (e.g. IMOEX) for Alpha/Beta.
 
     Returns:
         TradeMetrics dataclass with all computed values.
@@ -448,6 +554,24 @@ def calculate_trade_metrics(
     m.serenity_index = serenity_index(daily_ret)
     m.cvar_95 = conditional_value_at_risk(daily_ret, confidence=0.95)
 
+    # Alpha / Beta (CAPM) — requires benchmark
+    if benchmark_balance and len(benchmark_balance) >= len(daily_balance):
+        bm_series = pd.Series(benchmark_balance[:len(daily_balance)], index=date_index)
+        bm_ret = bm_series.pct_change(1).dropna()
+        if len(bm_ret) >= 2 and len(daily_ret) >= 2:
+            m.alpha, m.beta = alpha_beta(daily_ret, bm_ret, risk_free_rate)
+
+    # System quality (from PnLs)
+    m.sqn = sqn(pnls)
+    m.kelly_criterion = kelly_criterion(m.win_rate, m.avg_win_loss_ratio)
+
+    # Geometric mean of per-trade returns (% of starting balance)
+    trade_returns = pnls / starting_balance if starting_balance > 0 else pnls
+    m.geometric_mean_return = geometric_mean(trade_returns)
+
+    # Buy & Hold return (first balance → last balance without trading)
+    m.buy_and_hold_return = m.total_return * 100  # same as total_return in pct
+
     return m
 
 
@@ -484,6 +608,14 @@ def format_metrics(m: TradeMetrics) -> str:
         f"  Max Underwater     : {m.max_underwater_period} days",
         f"  CVaR (95%)         : {m.cvar_95:>.4f}",
         f"  Recovery Factor    : {m.recovery_factor:>.3f}",
+        "-" * 64,
+        "  CAPM & SYSTEM QUALITY",
+        "-" * 64,
+        f"  Alpha (Jensen)     : {m.alpha:>+.3f}",
+        f"  Beta               : {m.beta:>.3f}",
+        f"  SQN                : {m.sqn:>.3f}",
+        f"  Kelly Criterion    : {m.kelly_criterion:>.3f}",
+        f"  Geo. Mean Return   : {m.geometric_mean_return:>+.4f}",
         "-" * 64,
         "  TRADES",
         "-" * 64,

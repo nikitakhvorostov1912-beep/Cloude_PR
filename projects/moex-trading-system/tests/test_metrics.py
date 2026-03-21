@@ -14,18 +14,22 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src.backtest.metrics import (
     TradeMetrics,
+    alpha_beta,
     autocorr_penalty,
     cagr,
     calculate_trade_metrics,
     calmar_ratio,
     conditional_value_at_risk,
     format_metrics,
+    geometric_mean,
+    kelly_criterion,
     max_drawdown,
     max_underwater_period,
     omega_ratio,
     serenity_index,
     sharpe_ratio,
     sortino_ratio,
+    sqn,
 )
 
 
@@ -222,6 +226,94 @@ class TestAutocorrPenalty:
 
 
 # ---------------------------------------------------------------------------
+# CAPM & system quality tests
+# ---------------------------------------------------------------------------
+
+
+class TestAlphaBeta:
+    def test_identical_returns(self):
+        """Portfolio = benchmark → alpha=0, beta=1."""
+        idx = pd.date_range("2024-01-02", periods=100, freq="B")
+        ret = pd.Series(np.random.normal(0.001, 0.02, 100), index=idx)
+        a, b = alpha_beta(ret, ret)
+        assert abs(b - 1.0) < 0.01
+        assert abs(a) < 0.05
+
+    def test_uncorrelated(self):
+        """Independent returns → beta ≈ 0."""
+        np.random.seed(42)
+        idx = pd.date_range("2024-01-02", periods=200, freq="B")
+        eq = pd.Series(np.random.normal(0.001, 0.02, 200), index=idx)
+        bm = pd.Series(np.random.normal(0.0005, 0.015, 200), index=idx)
+        _, b = alpha_beta(eq, bm)
+        assert abs(b) < 0.5  # should be close to 0
+
+    def test_short_series(self):
+        idx = pd.date_range("2024-01-02", periods=1, freq="B")
+        ret = pd.Series([0.01], index=idx)
+        a, b = alpha_beta(ret, ret)
+        assert a == 0.0 and b == 0.0
+
+
+class TestSQN:
+    def test_positive_system(self):
+        pnls = np.array([100, 200, -50, 150, 300, -100, 200, 50])
+        s = sqn(pnls)
+        assert s > 0  # net positive system
+
+    def test_negative_system(self):
+        pnls = np.array([-100, -200, 50, -150])
+        s = sqn(pnls)
+        assert s < 0
+
+    def test_empty(self):
+        assert sqn(np.array([])) == 0.0
+
+    def test_constant_wins(self):
+        pnls = np.array([100.0, 100.0, 100.0])
+        # std=0 → sqn=0 (division by zero guard)
+        assert sqn(pnls) == 0.0
+
+
+class TestKellyCriterion:
+    def test_good_system(self):
+        # 60% win rate, 2:1 win/loss ratio → Kelly = 0.6 - 0.4/2 = 0.4
+        k = kelly_criterion(0.6, 2.0)
+        assert abs(k - 0.4) < 0.01
+
+    def test_breakeven(self):
+        # 50% win, 1:1 ratio → Kelly = 0.5 - 0.5/1 = 0.0
+        k = kelly_criterion(0.5, 1.0)
+        assert abs(k) < 0.01
+
+    def test_bad_system(self):
+        # 30% win, 1:1 ratio → Kelly negative → clamped to 0
+        k = kelly_criterion(0.3, 1.0)
+        assert k == 0.0
+
+    def test_zero_ratio(self):
+        assert kelly_criterion(0.6, 0.0) == 0.0
+
+
+class TestGeometricMean:
+    def test_positive_returns(self):
+        returns = np.array([0.10, 0.05, -0.03, 0.08])
+        gm = geometric_mean(returns)
+        assert 0.04 < gm < 0.06  # should be around 5%
+
+    def test_all_zero(self):
+        assert geometric_mean(np.array([0.0, 0.0])) == 0.0
+
+    def test_empty(self):
+        assert geometric_mean(np.array([])) == 0.0
+
+    def test_contains_minus_100(self):
+        """-100% return → total loss → geometric mean = 0."""
+        returns = np.array([0.10, -1.0, 0.05])
+        assert geometric_mean(returns) == 0.0
+
+
+# ---------------------------------------------------------------------------
 # Trade-level metrics tests
 # ---------------------------------------------------------------------------
 
@@ -302,3 +394,8 @@ class TestFormatMetrics:
         assert "Serenity" in report
         assert "CVaR" in report
         assert "Smart Sharpe" in report
+        assert "SQN" in report
+        assert "Kelly" in report
+        assert "Alpha" in report
+        assert "Beta" in report
+        assert "Geo. Mean" in report
