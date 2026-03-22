@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/* ===== Aether Glass Design System ===== */
+
+@theme {
+  /* Background */
+  --color-bg: #F0F4FF;
+  --color-bg-alt: #E8EEFF;
+
+  /* Surfaces */
+  --color-surface: rgba(255, 255, 255, 0.6);
+  --color-surface-hover: rgba(255, 255, 255, 0.75);
+  --color-surface-active: rgba(255, 255, 255, 0.85);
+
+  /* Primary — Indigo */
+  --color-primary: #6C5CE7;
+  --color-primary-light: #A29BFE;
+  --color-primary-dark: #5A4BD1;
+
+  /* Secondary — Teal */
+  --color-secondary: #00CEC9;
+  --color-secondary-light: #55EFC4;
+
+  /* Semantic */
+  --color-success: #00B894;
+  --color-warning: #FDCB6E;
+  --color-error: #E17055;
+
+  /* Text */
+  --color-text: #2D3436;
+  --color-text-secondary: #636E72;
+  --color-text-muted: #B2BEC3;
+
+  /* Glass */
+  --color-glass-border: rgba(255, 255, 255, 0.3);
+  --color-glass-shadow: rgba(108, 92, 231, 0.08);
+
+  /* Sidebar */
+  --color-sidebar: rgba(255, 255, 255, 0.4);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+/* ===== Base ===== */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: linear-gradient(135deg, var(--color-bg), var(--color-bg-alt));
+}
+
+/* ===== Glass Utilities ===== */
+
+.glass {
+  background: var(--color-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px var(--color-glass-shadow);
+}
+
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px var(--color-glass-shadow);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 40px rgba(108, 92, 231, 0.12);
+}
+
+/* ===== Scrollbar ===== */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(108, 92, 231, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 92, 231, 0.35);
+}
+
+/* ===== Selection ===== */
+
+::selection {
+  background: rgba(108, 92, 231, 0.2);
+  color: var(--color-text);
+}
+
+/* ===== Animated Blobs ===== */
+
+@keyframes blob-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -50px) scale(1.1); }
+  50% { transform: translate(-20px, 20px) scale(0.9); }
+  75% { transform: translate(50px, 30px) scale(1.05); }
+}
+
+@keyframes blob-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-40px, 30px) scale(1.15); }
+  66% { transform: translate(20px, -40px) scale(0.95); }
+}
+
+@keyframes blob-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(40px, 20px) scale(0.9); }
+  40% { transform: translate(-30px, -30px) scale(1.1); }
+  60% { transform: translate(10px, 40px) scale(1.05); }
+  80% { transform: translate(-20px, -10px) scale(0.95); }
+}
+
+/* ===== Transitions ===== */
+
+.transition-glass {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(108, 92, 231, 0.15);
+}

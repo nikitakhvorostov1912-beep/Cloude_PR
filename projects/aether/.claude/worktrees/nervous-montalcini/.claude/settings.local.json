@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ffmpeg -version)",
+      "Bash(ffprobe -v error -show_entries format=duration -of csv=p=0 \"/c/Users/nikit/Downloads/Видеовстреча 2026-01-30_101444.webm\")",
+      "Bash(node scripts/run_pipeline.mjs)"
+    ]
+  }
+}

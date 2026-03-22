@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(node -e \":*)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=6144\" npx vitest run)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=6144\" npx vitest run --coverage)"
+    ]
+  }
+}
