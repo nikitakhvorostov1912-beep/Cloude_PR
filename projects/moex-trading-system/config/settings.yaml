@@ -1,0 +1,117 @@
+project:
+  name: "moex-trading-bot"
+  version: "0.2.0"
+
+moex:
+  iss_url: "https://iss.moex.com/iss"
+  max_requests_per_sec: 50
+  boards:
+    equities: "TQBR"
+    futures: "RFUD"
+    options: "ROPD"
+    fx: "CETS"
+  sessions:
+    main_start: "10:00"
+    main_end: "18:40"
+    evening_start: "19:05"
+    evening_end: "23:50"
+    clearing_1_start: "14:00"
+    clearing_1_end: "14:05"
+    clearing_2_start: "18:45"
+    clearing_2_end: "19:00"
+    auction_open_start: "09:50"
+    auction_open_end: "10:00"
+    auction_close_start: "18:40"
+    auction_close_end: "18:50"
+
+costs:
+  equity:
+    commission_pct: 0.0001
+    slippage_ticks: 2
+    settlement: "T+1"
+  futures:
+    commission_rub: 2.0
+    slippage_ticks: 1
+    settlement: "T+0"
+  options:
+    commission_rub: 2.0
+    slippage_ticks: 3
+    settlement: "T+0"
+  fx:
+    commission_pct: 0.00003
+    slippage_ticks: 1
+    settlement: "T+1"
+
+risk:
+  max_position_pct: 0.20
+  max_daily_drawdown_pct: 0.05
+  max_total_drawdown_pct: 0.15
+  max_correlated_exposure_pct: 0.40
+  circuit_breaker_daily_dd: 0.05
+  circuit_breaker_total_dd: 0.15
+
+instruments:
+  equities:
+    SBER: {lot: 10, step: 0.01, sector: "banks"}
+    GAZP: {lot: 10, step: 0.01, sector: "oil_gas"}
+    LKOH: {lot: 1, step: 0.5, sector: "oil_gas"}
+    VTBR: {lot: 10000, step: 0.000005, sector: "banks"}
+    GMKN: {lot: 1, step: 1.0, sector: "metals"}
+    ROSN: {lot: 1, step: 0.05, sector: "oil_gas"}
+    YNDX: {lot: 1, step: 0.1, sector: "tech"}
+    MGNT: {lot: 1, step: 0.5, sector: "retail"}
+    NVTK: {lot: 1, step: 0.1, sector: "oil_gas"}
+    PLZL: {lot: 1, step: 1.0, sector: "metals"}
+    MOEX: {lot: 10, step: 0.01, sector: "finance"}
+    TCSG: {lot: 1, step: 0.2, sector: "banks"}
+    ALRS: {lot: 10, step: 0.01, sector: "metals"}
+    SNGS: {lot: 100, step: 0.005, sector: "oil_gas"}
+    TATN: {lot: 1, step: 0.1, sector: "oil_gas"}
+  futures:
+    Si: {step: 1.0, go_pct: 0.15, base: "USD/RUB"}
+    RTS: {step: 10.0, go_pct: 0.20, base: "RTS Index"}
+    BR: {step: 0.01, go_pct: 0.15, base: "Brent"}
+    GOLD: {step: 0.1, go_pct: 0.15, base: "Gold"}
+    NG: {step: 0.001, go_pct: 0.15, base: "Natural Gas"}
+
+backtest:
+  default_capital: 1_000_000
+  trading_days_per_year: 252
+  benchmark: "IMOEX"
+  min_sharpe_threshold: 1.0
+  max_drawdown_threshold: 0.20
+  min_trades_for_validity: 30
+  walk_forward:
+    n_windows: 5
+    train_ratio: 0.70
+    gap_bars: 1
+    retrain_every_n_bars: 60
+
+ml:
+  models: ["catboost", "lightgbm", "xgboost"]
+  ensemble_method: "stacking"
+  feature_selection:
+    method: "mutual_info"
+    top_k: 50
+  label:
+    method: "triple_barrier"
+    take_profit_atr: 2.0
+    stop_loss_atr: 1.5
+    max_holding_bars: 20
+
+telegram:
+  bot_token_env: "TELEGRAM_BOT_TOKEN"
+  chat_id_env: "TELEGRAM_CHAT_ID"
+  alerts:
+    - signal_generated
+    - order_filled
+    - stop_triggered
+    - circuit_breaker_activated
+    - daily_pnl_report
+
+broker:
+  default: "tinkoff"
+  tinkoff:
+    token_env: "TINKOFF_TOKEN"
+    sandbox: true
+    account_id_env: "TINKOFF_ACCOUNT_ID"
