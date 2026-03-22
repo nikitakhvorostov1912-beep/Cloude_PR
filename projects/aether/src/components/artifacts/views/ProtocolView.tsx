@@ -2,6 +2,7 @@
  * Рендер протокола встречи.
  */
 
+import { memo } from 'react';
 import { Section, ItemCard, Timestamp, PriorityBadge, Quote, safeArray, safeStr } from './shared';
 
 interface ProtocolViewProps {
@@ -9,7 +10,7 @@ interface ProtocolViewProps {
   onTimestampClick?: (seconds: number) => void;
 }
 
-export function ProtocolView({ data, onTimestampClick }: ProtocolViewProps) {
+export const ProtocolView = memo(function ProtocolView({ data, onTimestampClick }: ProtocolViewProps) {
   const participants = safeArray<Record<string, unknown>>(data.participants);
   const agenda = safeArray<Record<string, unknown>>(data.agenda);
   const decisions = safeArray<Record<string, unknown>>(data.decisions);
@@ -146,4 +147,4 @@ export function ProtocolView({ data, onTimestampClick }: ProtocolViewProps) {
       )}
     </div>
   );
-}
+});

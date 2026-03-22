@@ -587,7 +587,77 @@ const DOC_TYPE_LABELS: Record<ArtifactType, string> = {
   glossary: 'Глоссарий проекта',
   questions: 'Открытые вопросы',
   transcript: 'Стенограмма встречи',
+  development: 'Требование на разработку',
+  summary: 'Сводка встречи',
+  aggregated: 'Сводный отчёт',
+  custom: 'Кастомный артефакт',
 };
+
+function generateDevelopmentContent(data: Record<string, unknown>): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
+  const tasks = safeArray<Record<string, unknown>>(data.tasks);
+
+  if (tasks.length > 0) {
+    paragraphs.push(heading('Задачи на разработку', HeadingLevel.HEADING_2));
+    tasks.forEach((task) => {
+      paragraphs.push(new Paragraph({
+        children: [
+          text(safeStr(task.id), { bold: true, color: COLORS.textMuted }),
+          text(`  ${safeStr(task.title)}`, { bold: true }),
+          priorityRun(safeStr(task.priority, 'medium')),
+        ],
+        spacing: { before: 100 },
+      }));
+      if (task.description) {
+        paragraphs.push(new Paragraph({
+          children: [text(safeStr(task.description), { color: COLORS.textSecondary })],
+          indent: { left: 360 },
+        }));
+      }
+      if (task.type) {
+        paragraphs.push(new Paragraph({
+          children: [text(`Тип: ${safeStr(task.type)}`, { color: COLORS.textMuted, size: FONT_SMALL.size })],
+          indent: { left: 360 },
+        }));
+      }
+      const criteria = safeArray<string>(task.acceptance_criteria);
+      if (criteria.length > 0) {
+        paragraphs.push(new Paragraph({
+          children: [text('Критерии приёмки:', { bold: true, size: FONT_SMALL.size })],
+          indent: { left: 360 },
+          spacing: { before: 40 },
+        }));
+        criteria.forEach((c) => {
+          paragraphs.push(new Paragraph({
+            children: [text(`✓ ${c}`, { color: COLORS.success, size: FONT_SMALL.size })],
+            indent: { left: 720 },
+          }));
+        });
+      }
+      const deps = safeArray<string>(task.dependencies);
+      if (deps.length > 0) {
+        paragraphs.push(new Paragraph({
+          children: [text(`Зависимости: ${deps.join(', ')}`, { color: COLORS.textMuted, size: FONT_SMALL.size })],
+          indent: { left: 360 },
+        }));
+      }
+      if (task.estimate) {
+        paragraphs.push(new Paragraph({
+          children: [text(`Оценка: ${safeStr(task.estimate)}`, { color: COLORS.secondary, size: FONT_SMALL.size })],
+          indent: { left: 360 },
+        }));
+      }
+    });
+    paragraphs.push(separator());
+  }
+
+  // Fallback: если нет tasks, пробуем formatted_transcript (обратная совместимость)
+  if (tasks.length === 0) {
+    return generateTranscriptContent(data);
+  }
+
+  return paragraphs;
+}
 
 const contentGenerators: Record<ArtifactType, (data: Record<string, unknown>) => Paragraph[]> = {
   protocol: generateProtocolContent,
@@ -596,7 +666,28 @@ const contentGenerators: Record<ArtifactType, (data: Record<string, unknown>) =>
   glossary: generateGlossaryContent,
   questions: generateQuestionsContent,
   transcript: generateTranscriptContent,
+  development: generateDevelopmentContent,
+  summary: generateCustomContent,
+  aggregated: generateCustomContent,
+  custom: generateCustomContent,
 };
+
+function generateCustomContent(data: Record<string, unknown>): Paragraph[] {
+  const title = String(data._customTitle || 'Кастомный артефакт');
+  const rawText = String(data.raw_text || data.result || JSON.stringify(data, null, 2));
+  return [
+    new Paragraph({
+      children: [new TextRun({ text: title, bold: true, size: 28, font: FONT.name })],
+      spacing: { after: 200 },
+    }),
+    ...rawText.split('\n').map((line) =>
+      new Paragraph({
+        children: [new TextRun({ text: line, size: 22, font: FONT.name })],
+        spacing: { after: 80 },
+      }),
+    ),
+  ];
+}
 
 function generateDocx(
   artifact: Artifact,
@@ -607,7 +698,9 @@ function generateDocx(
   const date = new Date(artifact.createdAt).toLocaleDateString('ru-RU');
 
   const headerParagraphs = createHeader(docTypeLabel, projectName, meetingTitle, date);
-  const contentParagraphs = contentGenerators[artifact.type](artifact.data);
+  const contentParagraphs = artifact.data
+    ? contentGenerators[artifact.type](artifact.data)
+    : [new Paragraph({ children: [text('Данные артефакта отсутствуют', { italic: true, color: COLORS.textMuted })] })];
 
   return new Document({
     styles: {
@@ -691,6 +784,10 @@ const ARTIFACT_FILE_NAMES: Record<ArtifactType, string> = {
   glossary: 'глоссарий',
   questions: 'вопросы',
   transcript: 'стенограмма',
+  development: 'на_разработку',
+  summary: 'сводка',
+  aggregated: 'сводный_отчёт',
+  custom: 'кастомный',
 };
 
 function buildFileName(projectName: string, type: ArtifactType, createdAt: string): string {

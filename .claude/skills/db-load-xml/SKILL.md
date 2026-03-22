@@ -58,6 +58,7 @@ powershell.exe -NoProfile -File .claude/skills/db-load-xml/scripts/db-load-xml.p
 | `-Extension <имя>` | нет | Загрузить в расширение |
 | `-AllExtensions` | нет | Загрузить все расширения |
 | `-Format <формат>` | нет | `Hierarchical` (по умолч.) / `Plain` |
+| `-UpdateDB` | нет | После загрузки сразу обновить конфигурацию БД (`/UpdateDBCfg`) |
 
 > `*` — нужен либо `-InfoBasePath`, либо пара `-InfoBaseServer` + `-InfoBaseRef`
 
@@ -89,7 +90,7 @@ Documents/Заказ/Forms/ФормаДокумента.xml
 ## После выполнения
 
 1. Прочитай лог и покажи результат
-2. **Предложи выполнить `/db-update`** — для применения изменений к БД
+2. Если `-UpdateDB` не был указан — **предложи выполнить `/db-update`** для применения изменений к БД
 
 ## Примеры
 
@@ -102,4 +103,7 @@ powershell.exe -NoProfile -File .claude/skills/db-load-xml/scripts/db-load-xml.p
 
 # Загрузка расширения
 powershell.exe -NoProfile -File .claude/skills/db-load-xml/scripts/db-load-xml.ps1 -InfoBasePath "C:\Bases\MyDB" -UserName "Admin" -ConfigDir "C:\WS\ext_src" -Mode Full -Extension "МоёРасширение"
+
+# Загрузка + обновление БД в одном запуске
+powershell.exe -NoProfile -File .claude/skills/db-load-xml/scripts/db-load-xml.ps1 -InfoBasePath "C:\Bases\MyDB" -UserName "Admin" -ConfigDir "C:\WS\cfsrc" -Mode Full -UpdateDB
 ```

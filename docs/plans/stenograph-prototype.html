@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Стенограф — Прототип UI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #0d1224;
+  --bg-card: rgba(15, 20, 40, 0.6);
+  --bg-card-hover: rgba(20, 28, 55, 0.7);
+  --bg-input: rgba(10, 14, 26, 0.8);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(0, 212, 170, 0.3);
+  --accent: #00d4aa;
+  --accent-bright: #00ffcc;
+  --accent-dim: rgba(0, 212, 170, 0.15);
+  --accent-glow: 0 0 30px rgba(0, 212, 170, 0.2);
+  --accent-glow-strong: 0 0 40px rgba(0, 212, 170, 0.35);
+  --text-primary: #e8e8e8;
+  --text-secondary: #8892a4;
+  --text-muted: #5a6478;
+  --danger: #ff4757;
+  --success: #2ed573;
+  --warning: #ffa502;
+  --purple: #7c5cff;
+  --pink: #ff6b9d;
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --blur: blur(20px);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; }
+body {
+  font-family: var(--font-main);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed; top: -250px; right: -250px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(0,212,170,0.07), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; bottom: -250px; left: -250px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(124,92,255,0.05), transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════ */
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+  min-height: 100vh;
+}
+.screen {
+  animation: screenIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════ */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 24px 0; margin-bottom: 8px;
+}
+.header-left { display: flex; align-items: center; gap: 14px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  filter: drop-shadow(0 0 8px rgba(0,212,170,0.4));
+  animation: logoPulse 4s ease-in-out infinite;
+}
+.logo-text {
+  font-size: 22px; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+.header-right { display: flex; align-items: center; gap: 16px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: var(--radius-md);
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  backdrop-filter: var(--blur); color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: var(--transition); font-size: 18px;
+}
+.icon-btn:hover {
+  border-color: var(--border-hover); color: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none; color: var(--text-secondary);
+  cursor: pointer; font-size: 14px; font-family: var(--font-main);
+  transition: var(--transition); padding: 4px 0;
+}
+.back-btn:hover { color: var(--accent); }
+.back-btn svg { width: 18px; height: 18px; }
+
+/* ═══════════════════════════════════════════
+   SEARCH BAR
+   ═══════════════════════════════════════════ */
+.search-bar {
+  position: relative; margin-bottom: 32px;
+}
+.search-bar input {
+  width: 100%; padding: 14px 20px 14px 48px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg); color: var(--text-primary);
+  font-size: 15px; font-family: var(--font-main);
+  backdrop-filter: var(--blur); outline: none;
+  transition: var(--transition);
+}
+.search-bar input::placeholder { color: var(--text-muted); }
+.search-bar input:focus {
+  border-color: var(--border-hover);
+  box-shadow: var(--accent-glow);
+}
+.search-bar .search-icon {
+  position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 16px;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION HEADERS
+   ═══════════════════════════════════════════ */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.section-title {
+  font-size: 13px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 500; font-family: var(--font-main);
+  cursor: pointer; transition: var(--transition); border: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #00c49a);
+  color: #0a0e1a; font-weight: 600;
+}
+.btn-primary:hover {
+  box-shadow: var(--accent-glow-strong);
+  transform: translateY(-1px);
+}
+.btn-ghost {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  color: var(--text-primary); backdrop-filter: var(--blur);
+}
+.btn-ghost:hover {
+  border-color: var(--border-hover); color: var(--accent);
+}
+.btn-sm { padding: 7px 14px; font-size: 13px; border-radius: var(--radius-sm); }
+.btn-icon { padding: 8px; }
+
+/* ═══════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════ */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  backdrop-filter: var(--blur);
+  transition: all var(--transition);
+  position: relative; overflow: hidden;
+}
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-hover);
+  box-shadow: var(--accent-glow);
+  background: var(--bg-card-hover);
+}
+.glass-card .card-accent {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* ═══════════════════════════════════════════
+   PROJECT CARDS (Dashboard)
+   ═══════════════════════════════════════════ */
+.projects-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px; margin-bottom: 40px;
+}
+.project-card { padding: 24px; cursor: pointer; }
+.project-card .card-accent { height: 3px; }
+.project-card .project-phase {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; margin-bottom: 14px;
+}
+.project-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.project-card .project-desc { color: var(--text-secondary); font-size: 13px; margin-bottom: 16px; }
+.project-card .project-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-muted);
+}
+.project-card .meeting-count {
+  display: flex; align-items: center; gap: 6px;
+}
+.project-card .meeting-dots {
+  display: flex; gap: 3px;
+}
+.project-card .meeting-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+}
+.new-project-card {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  padding: 40px; cursor: pointer;
+  border: 2px dashed rgba(0, 212, 170, 0.2);
+  background: transparent;
+}
+.new-project-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.new-project-card .plus-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent-dim); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 24px; color: var(--accent);
+  transition: var(--spring);
+}
+.new-project-card:hover .plus-icon { transform: scale(1.1) rotate(90deg); }
+
+/* ═══════════════════════════════════════════
+   ACTIVITY FEED (Dashboard)
+   ═══════════════════════════════════════════ */
+.activity-list { display: flex; flex-direction: column; gap: 2px; }
+.activity-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: var(--radius-md);
+  transition: var(--transition); cursor: pointer;
+}
+.activity-item:hover { background: rgba(255,255,255,0.03); }
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.activity-text { flex: 1; font-size: 14px; }
+.activity-text span { color: var(--text-secondary); }
+.activity-time { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+
+/* ═══════════════════════════════════════════
+   PROJECT PAGE
+   ═══════════════════════════════════════════ */
+.project-layout {
+  display: grid; grid-template-columns: 260px 1fr; gap: 28px;
+  min-height: calc(100vh - 120px);
+}
+.project-sidebar {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.sidebar-section-title {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--text-muted);
+  padding: 8px 14px; margin-top: 12px;
+}
+.meeting-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-md);
+  cursor: pointer; transition: var(--transition);
+  position: relative;
+}
+.meeting-item::before {
+  content: ''; position: absolute; left: 22px; top: 36px;
+  width: 2px; height: calc(100% - 12px);
+  background: var(--border-subtle);
+}
+.meeting-item:last-of-type::before { display: none; }
+.meeting-item:hover { background: rgba(255,255,255,0.04); }
+.meeting-item.active {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  padding-left: 11px;
+}
+.meeting-dot-indicator {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 2px solid var(--text-muted); flex-shrink: 0;
+  margin-top: 4px; position: relative; z-index: 1;
+  background: var(--bg-primary);
+}
+.meeting-item.active .meeting-dot-indicator {
+  border-color: var(--accent); background: var(--accent);
+  box-shadow: 0 0 8px rgba(0,212,170,0.5);
+}
+.meeting-info h4 { font-size: 13px; font-weight: 600; line-height: 1.4; }
+.meeting-info .meeting-meta {
+  font-size: 11px; color: var(--text-muted);
+  display: flex; gap: 8px; margin-top: 2px;
+}
+.meeting-type-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 10px; font-weight: 600; background: var(--accent-dim);
+  color: var(--accent); margin-top: 4px;
+}
+.upload-btn-area {
+  margin-top: auto; padding: 16px 14px;
+}
+.upload-trigger {
+  width: 100%; padding: 14px; border-radius: var(--radius-md);
+  border: 2px dashed rgba(0,212,170,0.25); background: transparent;
+  color: var(--accent); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: var(--transition);
+  font-family: var(--font-main);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.upload-trigger:hover {
+  border-color: var(--accent); background: var(--accent-dim);
+  box-shadow: var(--accent-glow);
+}
+.cumulative-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  cursor: pointer; font-size: 13px; transition: var(--transition);
+}
+.cumulative-item:hover { background: rgba(255,255,255,0.04); color: var(--accent); }
+
+/* ═══════════════════════════════════════════
+   ARTIFACT CARDS
+   ═══════════════════════════════════════════ */
+.project-content { padding-top: 4px; }
+.content-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 24px;
+}
+.content-header h2 { font-size: 22px; font-weight: 700; }
+.content-header .content-meta { color: var(--text-secondary); font-size: 13px; margin-top: 4px; }
+.artifacts-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 28px;
+}
+.artifact-card {
+  padding: 22px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.artifact-card .artifact-icon { font-size: 28px; margin-bottom: 2px; }
+.artifact-card h4 { font-size: 15px; font-weight: 600; }
+.artifact-card .artifact-stat { font-size: 13px; color: var(--text-secondary); }
+.changes-block {
+  padding: 18px 22px; border-radius: var(--radius-md);
+  background: rgba(255, 165, 2, 0.08);
+  border: 1px solid rgba(255, 165, 2, 0.15);
+  font-size: 13px; line-height: 1.6;
+}
+.changes-block .changes-title {
+  font-weight: 600; color: var(--warning); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   PIPELINE
+   ═══════════════════════════════════════════ */
+.pipeline-screen { padding-top: 8px; }
+.pipeline-file-info {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px; color: var(--text-secondary); font-size: 14px;
+}
+.waveform-container {
+  height: 80px; margin-bottom: 24px;
+  border-radius: var(--radius-md); overflow: hidden;
+  background: rgba(0,0,0,0.3);
+}
+.waveform-container canvas { width: 100%; height: 100%; }
+.progress-section { margin-bottom: 28px; }
+.progress-bar-bg {
+  height: 8px; background: rgba(255,255,255,0.06);
+  border-radius: 4px; overflow: hidden; position: relative;
+}
+.progress-bar-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+  transition: width 0.4s ease; position: relative;
+}
+.progress-bar-fill::after {
+  content: ''; position: absolute; right: 0; top: -4px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent-bright);
+  box-shadow: 0 0 16px rgba(0,255,204,0.5);
+  animation: glowPulse 2s ease-in-out infinite;
+}
+.progress-meta {
+  display: flex; justify-content: space-between;
+  margin-top: 10px; font-size: 13px; color: var(--text-secondary);
+}
+.progress-pct { font-weight: 700; color: var(--accent); font-family: var(--font-mono); }
+.stages-card {
+  padding: 24px; margin-bottom: 24px;
+}
+.stage-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 10px 0; font-size: 14px;
+  opacity: 0.4; transition: opacity 0.3s;
+}
+.stage-item.active { opacity: 1; }
+.stage-item.done { opacity: 0.8; }
+.stage-icon {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; flex-shrink: 0; margin-top: 1px;
+}
+.stage-icon.waiting { border: 2px solid var(--text-muted); color: var(--text-muted); }
+.stage-icon.running {
+  border: 2px solid var(--accent); color: var(--accent);
+  animation: spinPulse 1.5s ease-in-out infinite;
+}
+.stage-icon.done { background: var(--success); color: #fff; border: none; }
+.stage-name { flex: 1; }
+.stage-time { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+.stage-sub {
+  padding-left: 38px; font-size: 13px; color: var(--text-muted);
+  margin: 2px 0 6px;
+}
+.stage-sub span { margin-right: 10px; }
+.preview-card { padding: 22px; }
+.preview-title { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px; }
+.preview-text {
+  font-size: 14px; line-height: 1.8; color: var(--text-secondary);
+  font-style: italic; min-height: 60px;
+}
+.preview-text .cursor-blink {
+  display: inline-block; width: 2px; height: 16px;
+  background: var(--accent); vertical-align: text-bottom;
+  animation: blink 0.8s step-end infinite;
+}
+.pipeline-done-overlay {
+  text-align: center; padding: 48px 0;
+  animation: fadeIn 0.5s ease;
+}
+.pipeline-done-overlay .done-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-bright));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin: 0 auto 20px;
+  box-shadow: 0 0 40px rgba(0,212,170,0.3);
+  animation: popIn 0.5s var(--spring);
+}
+.pipeline-done-overlay h2 { font-size: 24px; margin-bottom: 8px; }
+.pipeline-done-overlay p { color: var(--text-secondary); margin-bottom: 28px; }
+.cost-estimate {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: var(--radius-md);
+  background: rgba(0,212,170,0.08); color: var(--accent);
+  font-size: 13px; font-family: var(--font-mono); margin-top: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   EDITOR
+   ═══════════════════════════════════════════ */
+.editor-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px;
+}
+.editor-header h2 { font-size: 22px; font-weight: 700; }
+.editor-actions { display: flex; gap: 10px; }
+.editor-card { padding: 32px 36px; margin-bottom: 24px; }
+.editor-card h3 {
+  font-size: 16px; font-weight: 700; margin: 28px 0 14px;
+  color: var(--accent); border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 8px;
+}
+.editor-card h3:first-child { margin-top: 0; }
+.editor-card ul { padding-left: 20px; margin: 8px 0; }
+.editor-card li { margin: 6px 0; line-height: 1.6; }
+.editor-card .participants-list { list-style: none; padding: 0; }
+.editor-card .participants-list li {
+  padding: 8px 0; border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: 10px;
+}
+.participant-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: #fff;
+}
+.timestamp {
+  display: inline-block; padding: 2px 8px; border-radius: 6px;
+  background: rgba(0,212,170,0.1); color: var(--accent);
+  font-family: var(--font-mono); font-size: 12px;
+  cursor: pointer; transition: var(--transition);
+  margin-left: 8px;
+}
+.timestamp:hover {
+  background: rgba(0,212,170,0.25);
+  box-shadow: 0 0 10px rgba(0,212,170,0.3);
+}
+.decision-item {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.decision-check { color: var(--success); font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.decision-content { flex: 1; }
+.decision-content .assignee {
+  font-size: 12px; color: var(--text-muted); margin-top: 4px;
+}
+.ai-input-area {
+  padding: 20px 22px; margin-top: 8px;
+  border: 1px solid rgba(0,212,170,0.15);
+  border-radius: var(--radius-md);
+  background: rgba(0,212,170,0.03);
+}
+.ai-input-area .ai-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--accent);
+  margin-bottom: 12px;
+}
+.ai-input-row { display: flex; gap: 10px; }
+.ai-input-row textarea {
+  flex: 1; padding: 12px 16px; border-radius: var(--radius-md);
+  background: var(--bg-input); border: 1px solid var(--border-subtle);
+  color: var(--text-primary); font-size: 14px; font-family: var(--font-main);
+  resize: none; outline: none; min-height: 48px;
+  transition: var(--transition);
+}
+.ai-input-row textarea:focus { border-color: var(--border-hover); }
+.ai-input-row textarea::placeholder { color: var(--text-muted); }
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+   ═══════════════════════════════════════════ */
+.settings-grid { display: flex; flex-direction: column; gap: 20px; max-width: 640px; }
+.settings-section { padding: 24px; }
+.settings-section h3 {
+  font-size: 15px; font-weight: 700; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row label { font-size: 14px; color: var(--text-secondary); }
+.settings-row input[type="text"], .settings-row select {
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  background: var(--bg-input); border: 1px solid var(--border-subtle);
+  color: var(--text-primary); font-family: var(--font-mono);
+  font-size: 13px; outline: none; width: 280px;
+  transition: var(--transition);
+}
+.settings-row input:focus, .settings-row select:focus { border-color: var(--border-hover); }
+.settings-row select { font-family: var(--font-main); cursor: pointer; }
+.settings-row select option { background: var(--bg-primary); }
+.checkbox-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0;
+}
+.checkbox-row input[type="checkbox"] {
+  appearance: none; width: 18px; height: 18px;
+  border: 2px solid var(--text-muted); border-radius: 4px;
+  cursor: pointer; position: relative; transition: var(--transition);
+}
+.checkbox-row input[type="checkbox"]:checked {
+  background: var(--accent); border-color: var(--accent);
+}
+.checkbox-row input[type="checkbox"]:checked::after {
+  content: '✓'; position: absolute; top: -1px; left: 2px;
+  color: #0a0e1a; font-size: 12px; font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH OVERLAY
+   ═══════════════════════════════════════════ */
+.search-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: flex; justify-content: center; padding-top: 80px;
+  animation: fadeIn 0.2s ease;
+}
+.search-modal {
+  width: 640px; max-height: 500px;
+  background: var(--bg-secondary); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  animation: slideDown 0.3s var(--spring);
+}
+.search-modal input {
+  width: 100%; padding: 18px 24px 18px 52px;
+  background: transparent; border: none; border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary); font-size: 17px; font-family: var(--font-main);
+  outline: none;
+}
+.search-modal input::placeholder { color: var(--text-muted); }
+.search-results { padding: 12px; max-height: 400px; overflow-y: auto; }
+.search-result-item {
+  padding: 14px 16px; border-radius: var(--radius-md);
+  cursor: pointer; transition: var(--transition);
+}
+.search-result-item:hover { background: rgba(255,255,255,0.04); }
+.search-result-item .result-project { font-size: 12px; color: var(--accent); margin-bottom: 4px; }
+.search-result-item .result-text { font-size: 14px; line-height: 1.5; }
+.search-result-item .result-text mark {
+  background: rgba(0,212,170,0.2); color: var(--accent-bright);
+  padding: 1px 4px; border-radius: 3px;
+}
+.search-result-item .result-time { font-size: 11px; font-family: var(--font-mono); color: var(--text-muted); margin-top: 4px; }
+
+/* ═══════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.modal-content {
+  width: 480px; background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); padding: 32px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  animation: popIn 0.3s var(--spring);
+}
+.modal-content h3 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
+.modal-content .form-group { margin-bottom: 18px; }
+.modal-content .form-group label {
+  display: block; font-size: 13px; color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.modal-content .form-group input {
+  width: 100%; padding: 12px 16px; border-radius: var(--radius-md);
+  background: var(--bg-input); border: 1px solid var(--border-subtle);
+  color: var(--text-primary); font-size: 14px; font-family: var(--font-main);
+  outline: none; transition: var(--transition);
+}
+.modal-content .form-group input:focus { border-color: var(--border-hover); }
+.modal-content .form-group input::placeholder { color: var(--text-muted); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px; }
+
+/* ═══════════════════════════════════════════
+   UPLOAD MODAL
+   ═══════════════════════════════════════════ */
+.drop-zone {
+  border: 2px dashed rgba(0,212,170,0.3); border-radius: var(--radius-lg);
+  padding: 48px; text-align: center; margin: 20px 0;
+  transition: var(--transition); cursor: pointer;
+  animation: borderPulse 2s ease-in-out infinite;
+}
+.drop-zone:hover {
+  border-color: var(--accent); background: var(--accent-dim);
+}
+.drop-zone .drop-icon {
+  font-size: 48px; margin-bottom: 16px; opacity: 0.6;
+}
+.drop-zone .drop-text { font-size: 15px; color: var(--text-secondary); }
+.drop-zone .drop-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+.meeting-type-selector {
+  display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap;
+}
+.type-chip {
+  padding: 8px 16px; border-radius: 20px; font-size: 13px;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  cursor: pointer; transition: var(--transition); color: var(--text-secondary);
+}
+.type-chip.active {
+  background: var(--accent-dim); border-color: var(--accent);
+  color: var(--accent); font-weight: 500;
+}
+.type-chip:hover { border-color: var(--border-hover); }
+
+/* ═══════════════════════════════════════════
+   PROTO BADGE
+   ═══════════════════════════════════════════ */
+.proto-badge {
+  position: fixed; bottom: 16px; right: 16px; z-index: 200;
+  padding: 6px 14px; border-radius: 20px;
+  background: rgba(124,92,255,0.15); border: 1px solid rgba(124,92,255,0.3);
+  font-size: 11px; font-weight: 600; color: var(--purple);
+  backdrop-filter: var(--blur);
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes screenIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes logoPulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(0,212,170,0.4)); }
+  50% { filter: drop-shadow(0 0 14px rgba(0,212,170,0.6)); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(0,255,204,0.4); }
+  50% { box-shadow: 0 0 24px rgba(0,255,204,0.7); }
+}
+@keyframes spinPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; } 50% { opacity: 0; }
+}
+@keyframes borderPulse {
+  0%, 100% { border-color: rgba(0,212,170,0.2); }
+  50% { border-color: rgba(0,212,170,0.5); }
+}
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.stagger-item {
+  opacity: 0; animation: staggerIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="proto-badge">ПРОТОТИП</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════ */
+const state = {
+  screen: 'dashboard',
+  projectId: 0,
+  meetingId: 0,
+  artifactType: null,
+  searchOpen: false,
+  showNewProject: false,
+  showUpload: false,
+  pipelineDone: false,
+  pipelineProgress: 0,
+  pipelineStage: -1,
+  selectedMeetingType: 'обследование',
+};
+
+/* ═══════════════════════════════════════════
+   MOCK DATA
+   ═══════════════════════════════════════════ */
+const projects = [
+  { name: 'Альфа-Логистик', desc: 'Автоматизация складского учёта и маршрутизации', phase: 'Обследование', color: '#00d4aa', meetingCount: 12, lastUpdate: '2 часа назад' },
+  { name: 'Бета-Финанс', desc: 'Бюджетирование и казначейство', phase: 'Разработка', color: '#7c5cff', meetingCount: 5, lastUpdate: '3 дня назад' },
+  { name: 'Гамма-Ритейл', desc: 'Розничная торговля и лояльность', phase: 'Демонстрация', color: '#ff6b9d', meetingCount: 3, lastUpdate: 'неделю назад' },
+];
+
+const allMeetings = [
+  [
+    { title: 'Обследование склада', date: '14 марта', duration: '1ч 42мин', type: 'обследование' },
+    { title: 'Демо биллинга', date: '12 марта', duration: '58мин', type: 'демонстрация' },
+    { title: 'Сбор требований', date: '10 марта', duration: '2ч 15мин', type: 'обследование' },
+    { title: 'Kickoff проекта', date: '5 марта', duration: '47мин', type: 'рабочая' },
+  ],
+  [
+    { title: 'Ревью архитектуры', date: '11 марта', duration: '1ч 10мин', type: 'рабочая' },
+    { title: 'Приёмка этапа 2', date: '7 марта', duration: '35мин', type: 'приёмка' },
+  ],
+  [
+    { title: 'Демо POS-системы', date: '8 марта', duration: '1ч 20мин', type: 'демонстрация' },
+  ],
+];
+
+const artifactTypes = [
+  { key: 'protocol', icon: '📋', title: 'Протокол встречи', stat: '12 решений' },
+  { key: 'requirements', icon: '📐', title: 'ТЗ / Требования', stat: '8 FR, 3 NFR' },
+  { key: 'transcript', icon: '📝', title: 'Стенограмма', stat: '42 страницы' },
+  { key: 'risks', icon: '⚠️', title: 'Карта рисков', stat: '5 рисков' },
+  { key: 'glossary', icon: '📖', title: 'Глоссарий', stat: '23 термина' },
+  { key: 'questions', icon: '❓', title: 'Открытые вопросы', stat: '7 вопросов' },
+];
+
+const activityFeed = [
+  { project: 'Альфа-Логистик', meeting: 'Обследование склада', time: '2ч назад', color: '#00d4aa' },
+  { project: 'Бета-Финанс', meeting: 'Приёмка этапа 2', time: 'вчера', color: '#7c5cff' },
+  { project: 'Гамма-Ритейл', meeting: 'Демо POS-системы', time: '3 дня назад', color: '#ff6b9d' },
+];
+
+const pipelineStages = [
+  { name: 'Загрузка файла', time: '00:03' },
+  { name: 'Извлечение аудио', time: '00:12' },
+  { name: 'Разбивка на чанки (4 × 25 мин)', time: '00:02' },
+  { name: 'Транскрипция', time: '~04:00', subs: ['Чанк 1/4', 'Чанк 2/4', 'Чанк 3/4', 'Чанк 4/4'] },
+  { name: 'Разделение спикеров', time: '00:15' },
+  { name: 'Извлечение артефактов (6 промптов)', time: '00:42' },
+  { name: 'Контекст проекта', time: '00:08' },
+];
+
+const searchResults = [
+  { project: 'Альфа-Логистик', meeting: 'Обследование склада', text: '...нужна <mark>интеграция</mark> с Kafka для передачи данных о приёмке в реальном времени...', time: '23:14' },
+  { project: 'Альфа-Логистик', meeting: 'Сбор требований', text: '...Kafka очередь — приоритет P2, после основного функционала <mark>интеграции</mark>...', time: '1:05:22' },
+  { project: 'Бета-Финанс', meeting: 'Ревью архитектуры', text: '...шина данных через <mark>интеграцию</mark> REST API, не Kafka...', time: '34:11' },
+];
+
+/* ═══════════════════════════════════════════
+   SVG ICONS
+   ═══════════════════════════════════════════ */
+const ICONS = {
+  logo: `<svg viewBox="0 0 36 36" fill="none" class="logo-icon"><rect x="12" y="3" width="12" height="16" rx="6" fill="#00d4aa"/><path d="M7 17c0 6.3 4.5 11 11 11s11-4.7 11-11" stroke="#00d4aa" stroke-width="2.5" fill="none" stroke-linecap="round"/><line x1="18" y1="28" x2="18" y2="32" stroke="#00d4aa" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="32" x2="24" y2="32" stroke="#00d4aa" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  back: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 4l-6 6 6 6"/></svg>`,
+  search: '🔍',
+  settings: '⚙',
+  download: '⬇',
+  ai: '🤖',
+  upload: '📂',
+  plus: '+',
+};
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
+function navigate(screen, params = {}) {
+  Object.assign(state, params, { screen });
+  state.searchOpen = false;
+  state.showNewProject = false;
+  state.showUpload = false;
+  render();
+  if (screen === 'pipeline' && !state.pipelineDone) {
+    startPipeline();
+  }
+}
+
+/* ═══════════════════════════════════════════
+   RENDER
+   ═══════════════════════════════════════════ */
+function render() {
+  // Clean up overlays from previous render
+  document.querySelectorAll('.modal-overlay, .search-overlay').forEach(el => el.remove());
+
+  const app = document.getElementById('app');
+  let html = '';
+  switch (state.screen) {
+    case 'dashboard': html = renderDashboard(); break;
+    case 'project': html = renderProject(); break;
+    case 'pipeline': html = renderPipeline(); break;
+    case 'editor': html = renderEditor(); break;
+    case 'settings': html = renderSettings(); break;
+  }
+  app.innerHTML = html;
+  if (state.searchOpen) renderSearchOverlay();
+  if (state.showNewProject) renderNewProjectModal();
+  if (state.showUpload) renderUploadModal();
+  if (state.screen === 'pipeline' && !state.pipelineDone) {
+    initWaveform();
+  }
+  applyStagger();
+}
+
+function applyStagger() {
+  document.querySelectorAll('.stagger-item').forEach((el, i) => {
+    el.style.animationDelay = `${i * 80}ms`;
+  });
+}
+
+/* ═══════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════ */
+function renderHeader(backTo = null, title = null, rightHtml = '') {
+  const left = backTo
+    ? `<button class="back-btn" onclick="navigate('${backTo}')">${ICONS.back} ${title || 'Назад'}</button>`
+    : `<div class="header-left">${ICONS.logo}<span class="logo-text">Стенограф</span></div>`;
+  return `<div class="header">${left}<div class="header-right">${rightHtml}<button class="icon-btn" onclick="state.searchOpen=true;render()" title="Поиск">${ICONS.search}</button><button class="icon-btn" onclick="navigate('settings')" title="Настройки">${ICONS.settings}</button></div></div>`;
+}
+
+/* ═══════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════ */
+function renderDashboard() {
+  const projectCards = projects.map((p, i) => `
+    <div class="glass-card project-card stagger-item" onclick="navigate('project', {projectId:${i}, meetingId:0})" style="cursor:pointer">
+      <div class="card-accent" style="background:${p.color}"></div>
+      <div class="project-phase" style="background:${p.color}20;color:${p.color}">${p.phase}</div>
+      <h3>${p.name}</h3>
+      <div class="project-desc">${p.desc}</div>
+      <div class="project-meta">
+        <div class="meeting-count">
+          <div class="meeting-dots">${Array(Math.min(p.meetingCount, 10)).fill(0).map(() => `<div class="meeting-dot" style="background:${p.color}"></div>`).join('')}</div>
+          ${p.meetingCount} встреч
+        </div>
+        <span>${p.lastUpdate}</span>
+      </div>
+    </div>
+  `).join('');
+
+  const activityItems = activityFeed.map(a => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div class="activity-text"><strong>${a.project}</strong> <span>— ${a.meeting}</span></div>
+      <div class="activity-time">${a.time}</div>
+    </div>
+  `).join('');
+
+  return `<div class="screen">
+    ${renderHeader()}
+    <div class="search-bar">
+      <span class="search-icon">${ICONS.search}</span>
+      <input type="text" placeholder="Поиск по всем встречам..." onfocus="state.searchOpen=true;render()">
+    </div>
+    <div class="section-header">
+      <span class="section-title">Проекты</span>
+    </div>
+    <div class="projects-grid">
+      ${projectCards}
+      <div class="glass-card new-project-card stagger-item" onclick="state.showNewProject=true;render()">
+        <div class="plus-icon">${ICONS.plus}</div>
+        <span style="color:var(--text-secondary);font-size:14px">Новый проект</span>
+      </div>
+    </div>
+    <div class="section-header"><span class="section-title">Последняя активность</span></div>
+    <div class="activity-list">${activityItems}</div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PROJECT PAGE
+   ═══════════════════════════════════════════ */
+function renderProject() {
+  const p = projects[state.projectId];
+  const meetings = allMeetings[state.projectId] || [];
+  const m = meetings[state.meetingId];
+
+  const meetingItems = meetings.map((mt, i) => `
+    <div class="meeting-item ${i === state.meetingId ? 'active' : ''}" onclick="state.meetingId=${i};render()">
+      <div class="meeting-dot-indicator"></div>
+      <div class="meeting-info">
+        <h4>${mt.title}</h4>
+        <div class="meeting-meta"><span>${mt.date}</span><span>${mt.duration}</span></div>
+        <div class="meeting-type-badge">${mt.type}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const artifactCards = artifactTypes.map((a, i) => `
+    <div class="glass-card artifact-card stagger-item" onclick="navigate('editor', {artifactType:'${a.key}'})">
+      <div class="artifact-icon">${a.icon}</div>
+      <h4>${a.title}</h4>
+      <div class="artifact-stat">${a.stat}</div>
+    </div>
+  `).join('');
+
+  return `<div class="screen">
+    ${renderHeader('dashboard', 'Dashboard', `<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()"><span>${ICONS.download}</span> Экспорт</button>`)}
+    <h2 style="font-size:24px;font-weight:800;margin-bottom:24px">${p.name}</h2>
+    <div class="project-layout">
+      <div class="project-sidebar">
+        <div class="sidebar-section-title">Встречи</div>
+        ${meetingItems}
+        <div class="sidebar-section-title" style="margin-top:24px">Кумулятивные</div>
+        <div class="cumulative-item">📋 Общее ТЗ</div>
+        <div class="cumulative-item">📖 Глоссарий проекта</div>
+        <div class="cumulative-item">⚠️ Все риски</div>
+        <div class="upload-btn-area">
+          <button class="upload-trigger" onclick="state.showUpload=true;render()">
+            <span>+</span> Загрузить запись
+          </button>
+        </div>
+      </div>
+      <div class="project-content">
+        ${m ? `
+          <div class="content-header">
+            <div>
+              <h2>${m.title}</h2>
+              <div class="content-meta">${m.date} · ${m.duration} · ${m.type}</div>
+            </div>
+          </div>
+          <div class="artifacts-grid">${artifactCards}</div>
+          ${state.meetingId > 0 ? '' : `
+            <div class="changes-block">
+              <div class="changes-title">💡 Изменения с прошлой встречи</div>
+              Решение по маршрутизации изменено (встреча 10 марта → 14 марта).<br>
+              Добавлено 4 новых термина в глоссарий.<br>
+              Риск «Нехватка интеграций» повышен до Высокого.
+            </div>
+          `}
+        ` : '<p style="color:var(--text-muted)">Выберите встречу из списка слева</p>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   PIPELINE
+   ═══════════════════════════════════════════ */
+function renderPipeline() {
+  if (state.pipelineDone) return renderPipelineDone();
+
+  const stageItems = pipelineStages.map((s, i) => {
+    let cls = '', iconCls = '', iconContent = '';
+    if (i < state.pipelineStage) { cls = 'done'; iconCls = 'done'; iconContent = '✓'; }
+    else if (i === state.pipelineStage) { cls = 'active'; iconCls = 'running'; iconContent = '◌'; }
+    else { iconCls = 'waiting'; iconContent = '·'; }
+
+    let subHtml = '';
+    if (s.subs && i === state.pipelineStage) {
+      const subDone = Math.min(Math.floor(state.pipelineProgress / 15), s.subs.length);
+      subHtml = `<div class="stage-sub">${s.subs.map((sub, j) =>
+        `<span>${j < subDone ? '✅' : j === subDone ? '🔄' : '⏳'} ${sub}</span>`
+      ).join('')}</div>`;
+    } else if (s.subs && i < state.pipelineStage) {
+      subHtml = `<div class="stage-sub">${s.subs.map(sub => `<span>✅ ${sub}</span>`).join('')}</div>`;
+    }
+
+    return `<div class="stage-item ${cls}">
+      <div class="stage-icon ${iconCls}">${iconContent}</div>
+      <div class="stage-name">${s.name}${subHtml}</div>
+      <div class="stage-time">${i <= state.pipelineStage ? s.time : ''}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="screen pipeline-screen">
+    ${renderHeader('project', 'Проект')}
+    <div class="pipeline-file-info">
+      <span>🎙</span>
+      <span>meeting_2026-03-14.mp3 · Обследование склада · 1ч 42мин</span>
+    </div>
+    <div class="waveform-container"><canvas id="waveCanvas"></canvas></div>
+    <div class="progress-section">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width:${state.pipelineProgress}%"></div>
+      </div>
+      <div class="progress-meta">
+        <span>Этап ${Math.min(state.pipelineStage + 1, pipelineStages.length)} из ${pipelineStages.length}</span>
+        <span class="progress-pct">${state.pipelineProgress}%</span>
+      </div>
+    </div>
+    <div class="glass-card stages-card">${stageItems}</div>
+    <div class="glass-card preview-card">
+      <div class="preview-title">Предварительный текст</div>
+      <div class="preview-text" id="previewText">
+        ${state.pipelineStage >= 3
+          ? '«...и тогда нам нужно чтобы заявка автоматически попадала на склад после утверждения руководителем, а водитель получал уведомление на мобильное устройство...»'
+          : state.pipelineStage >= 1
+            ? 'Ожидание транскрипции...'
+            : 'Подготовка файла...'
+        }<span class="cursor-blink"></span>
+      </div>
+    </div>
+    <div class="cost-estimate">💰 Ориентировочная стоимость: ~$0.75</div>
+  </div>`;
+}
+
+function renderPipelineDone() {
+  return `<div class="screen pipeline-screen">
+    ${renderHeader('project', 'Проект')}
+    <div class="pipeline-done-overlay">
+      <div class="done-icon">✓</div>
+      <h2>Обработка завершена!</h2>
+      <p>Извлечено 6 артефактов из записи «Обследование склада»</p>
+      <div class="artifacts-grid" style="max-width:600px;margin:0 auto 24px">
+        ${artifactTypes.map((a, i) => `
+          <div class="glass-card artifact-card stagger-item" style="text-align:center;padding:18px" onclick="navigate('editor', {artifactType:'${a.key}'})">
+            <div class="artifact-icon">${a.icon}</div>
+            <h4 style="font-size:13px">${a.title}</h4>
+          </div>
+        `).join('')}
+      </div>
+      <button class="btn btn-primary" onclick="state.pipelineDone=false;state.pipelineStage=-1;state.pipelineProgress=0;navigate('project')">
+        Смотреть результаты
+      </button>
+      <div class="cost-estimate" style="margin-top:16px">💰 Потрачено: $0.73</div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   EDITOR
+   ═══════════════════════════════════════════ */
+function renderEditor() {
+  const aType = artifactTypes.find(a => a.key === state.artifactType) || artifactTypes[0];
+  const colors = ['#00d4aa','#7c5cff','#ff6b9d','#ffa502'];
+
+  return `<div class="screen">
+    ${renderHeader('project', 'Встреча', `
+      <button class="btn btn-ghost btn-sm">${ICONS.download} DOCX</button>
+      <button class="btn btn-primary btn-sm">${ICONS.ai} Перегенерация</button>
+    `)}
+    <div class="editor-header">
+      <h2>${aType.icon} ${aType.title}</h2>
+    </div>
+    <div class="glass-card editor-card">
+      <h3>Участники</h3>
+      <ul class="participants-list">
+        ${[
+          ['Иванов И.И.', 'заказчик, начальник склада'],
+          ['Петрова А.С.', 'аналитик'],
+          ['Сидоров К.В.', 'разработчик'],
+          ['Козлова М.Д.', 'руководитель проекта'],
+        ].map(([name, role], i) => `
+          <li>
+            <div class="participant-avatar" style="background:${colors[i]}">${name[0]}</div>
+            <div><strong>${name}</strong><div style="font-size:12px;color:var(--text-muted)">${role}</div></div>
+          </li>
+        `).join('')}
+      </ul>
+
+      <h3>Повестка</h3>
+      <ul>
+        <li>Текущий процесс приёмки товара на склад</li>
+        <li>Проблемы с маршрутизацией транспорта</li>
+        <li>Требования к автоматизации уведомлений</li>
+      </ul>
+
+      <h3>Решения</h3>
+      ${[
+        ['Внедрить автоматическую маршрутизацию заявок', 'Сидоров К.В.', '28.03.2026', '23:14'],
+        ['Добавить push-уведомления для водителей', 'Петрова А.С.', '01.04.2026', '34:52'],
+        ['Интегрировать весовое оборудование через API', 'Сидоров К.В.', '15.04.2026', '45:07'],
+        ['Провести обучение складских сотрудников', 'Козлова М.Д.', '20.04.2026', '1:12:33'],
+      ].map(([text, who, deadline, time]) => `
+        <div class="decision-item">
+          <div class="decision-check">✅</div>
+          <div class="decision-content">
+            <div>${text} <span class="timestamp" title="Перейти к ${time}">${time}</span></div>
+            <div class="assignee">Ответственный: ${who} · Срок: ${deadline}</div>
+          </div>
+        </div>
+      `).join('')}
+
+      <h3>Ключевые высказывания</h3>
+      <ul>
+        <li>«Нам критично получать данные о приёмке в реальном времени» <span class="timestamp">15:42</span></li>
+        <li>«Текущая система не справляется с пиковыми нагрузками в сезон» <span class="timestamp">28:19</span></li>
+        <li>«Водители жалуются на отсутствие информации о времени разгрузки» <span class="timestamp">52:05</span></li>
+      </ul>
+
+      <h3>Следующие шаги</h3>
+      <ul>
+        <li>Подготовить ТЗ на модуль маршрутизации — до 20.03</li>
+        <li>Запросить API-документацию у поставщика весов — до 18.03</li>
+        <li>Назначить следующую встречу: демо прототипа — 28.03</li>
+      </ul>
+    </div>
+
+    <div class="ai-input-area">
+      <div class="ai-label">${ICONS.ai} Уточнение для AI</div>
+      <div class="ai-input-row">
+        <textarea placeholder="Перепиши раздел Решения более формально, добавь детали из 45-й минуты..."></textarea>
+        <button class="btn btn-primary btn-sm">Отправить</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+   ═══════════════════════════════════════════ */
+function renderSettings() {
+  return `<div class="screen">
+    ${renderHeader('dashboard', 'Dashboard')}
+    <h2 style="font-size:22px;font-weight:700;margin-bottom:24px">${ICONS.settings} Настройки</h2>
+    <div class="settings-grid">
+      <div class="glass-card settings-section">
+        <h3>🔑 API ключи</h3>
+        <div class="settings-row">
+          <label>Claude API Key</label>
+          <input type="text" value="sk-ant-••••••••••••••••" readonly>
+        </div>
+        <div class="settings-row">
+          <label>OpenAI API Key</label>
+          <input type="text" value="sk-••••••••••••••••••••" readonly>
+        </div>
+      </div>
+      <div class="glass-card settings-section">
+        <h3>🧠 Модели</h3>
+        <div class="settings-row">
+          <label>Транскрипция</label>
+          <select><option>whisper-1</option></select>
+        </div>
+        <div class="settings-row">
+          <label>Извлечение</label>
+          <select><option>claude-sonnet-4-6</option><option>claude-opus-4-6</option><option>claude-haiku-4-5</option></select>
+        </div>
+      </div>
+      <div class="glass-card settings-section">
+        <h3>📋 Шаблоны артефактов</h3>
+        ${artifactTypes.map(a => `
+          <div class="checkbox-row">
+            <input type="checkbox" checked>
+            <label style="font-size:14px">${a.icon} ${a.title}</label>
+          </div>
+        `).join('')}
+      </div>
+      <div class="glass-card settings-section">
+        <h3>💾 Хранение</h3>
+        <div class="settings-row">
+          <label>Папка данных</label>
+          <input type="text" value="D:\\Stenograph\\data" readonly>
+        </div>
+        <div class="settings-row">
+          <label>Размер</label>
+          <span style="font-family:var(--font-mono);color:var(--text-secondary)">2.3 GB (47 записей)</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   SEARCH OVERLAY
+   ═══════════════════════════════════════════ */
+function renderSearchOverlay() {
+  const overlay = document.createElement('div');
+  overlay.className = 'search-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) { state.searchOpen = false; render(); }};
+  overlay.innerHTML = `
+    <div class="search-modal">
+      <div style="position:relative">
+        <span style="position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text-muted)">${ICONS.search}</span>
+        <input type="text" placeholder="Поиск по всем встречам и артефактам..." autofocus value="интеграция">
+      </div>
+      <div class="search-results">
+        <div style="padding:8px 16px;font-size:12px;color:var(--text-muted)">Найдено ${searchResults.length} результата в 2 проектах</div>
+        ${searchResults.map(r => `
+          <div class="search-result-item">
+            <div class="result-project">${r.project} → ${r.meeting}</div>
+            <div class="result-text">${r.text}</div>
+            <div class="result-time">${r.time}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('input').focus();
+}
+
+/* ═══════════════════════════════════════════
+   NEW PROJECT MODAL
+   ═══════════════════════════════════════════ */
+function renderNewProjectModal() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) { state.showNewProject = false; render(); }};
+  overlay.innerHTML = `
+    <div class="modal-content">
+      <h3>Новый проект</h3>
+      <div class="form-group">
+        <label>Название проекта</label>
+        <input type="text" placeholder="Например: Дельта-Строй">
+      </div>
+      <div class="form-group">
+        <label>Описание</label>
+        <input type="text" placeholder="Краткое описание проекта...">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="state.showNewProject=false;render()">Отмена</button>
+        <button class="btn btn-primary" onclick="state.showNewProject=false;render()">Создать</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('input').focus();
+}
+
+/* ═══════════════════════════════════════════
+   UPLOAD MODAL
+   ═══════════════════════════════════════════ */
+function renderUploadModal() {
+  const types = ['обследование', 'рабочая', 'демонстрация', 'приёмка'];
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) { state.showUpload = false; render(); }};
+  overlay.innerHTML = `
+    <div class="modal-content" style="width:540px">
+      <h3>Загрузить запись</h3>
+      <div class="drop-zone" onclick="this.querySelector('.drop-text').textContent='meeting_2026-03-14.mp3';this.querySelector('.drop-icon').textContent='✅'">
+        <div class="drop-icon">📂</div>
+        <div class="drop-text">Перетащите файл сюда или нажмите для выбора</div>
+        <div class="drop-hint">MP3, WAV, MP4, MKV · или вставьте ссылку YouTube / Google Drive</div>
+      </div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Тип встречи:</div>
+      <div class="meeting-type-selector">
+        ${types.map(t => `<div class="type-chip ${t === state.selectedMeetingType ? 'active' : ''}" onclick="document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('active'));this.classList.add('active')">${t}</div>`).join('')}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="state.showUpload=false;render()">Отмена</button>
+        <button class="btn btn-primary" onclick="state.showUpload=false;state.pipelineDone=false;state.pipelineStage=-1;state.pipelineProgress=0;navigate('pipeline')">Обработать</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+/* ═══════════════════════════════════════════
+   PIPELINE ANIMATION
+   ═══════════════════════════════════════════ */
+let pipelineTimer = null;
+
+function startPipeline() {
+  if (pipelineTimer) clearInterval(pipelineTimer);
+  state.pipelineStage = 0;
+  state.pipelineProgress = 0;
+  state.pipelineDone = false;
+
+  const totalStages = pipelineStages.length;
+  const progressPerStage = 100 / totalStages;
+  let elapsed = 0;
+
+  pipelineTimer = setInterval(() => {
+    elapsed += 100;
+    const targetPct = Math.min((state.pipelineStage + 1) * progressPerStage, 100);
+    state.pipelineProgress = Math.min(state.pipelineProgress + 1.2, targetPct);
+
+    // Advance stages at intervals
+    const stageDelays = [800, 1800, 2200, 5500, 7000, 8500, 9200];
+    for (let i = 0; i < stageDelays.length; i++) {
+      if (elapsed >= stageDelays[i] && state.pipelineStage < i + 1) {
+        state.pipelineStage = i + 1;
+      }
+    }
+
+    // Update DOM without full re-render
+    const fill = document.querySelector('.progress-bar-fill');
+    const pct = document.querySelector('.progress-pct');
+    if (fill) fill.style.width = Math.round(state.pipelineProgress) + '%';
+    if (pct) pct.textContent = Math.round(state.pipelineProgress) + '%';
+
+    // Update stage icons
+    document.querySelectorAll('.stage-item').forEach((el, i) => {
+      el.className = 'stage-item';
+      const icon = el.querySelector('.stage-icon');
+      if (i < state.pipelineStage) { el.classList.add('done'); icon.className = 'stage-icon done'; icon.textContent = '✓'; }
+      else if (i === state.pipelineStage) { el.classList.add('active'); icon.className = 'stage-icon running'; icon.textContent = '◌'; }
+      else { icon.className = 'stage-icon waiting'; }
+    });
+
+    // Complete
+    if (elapsed >= 10000) {
+      clearInterval(pipelineTimer);
+      pipelineTimer = null;
+      state.pipelineDone = true;
+      state.pipelineProgress = 100;
+      render();
+    }
+  }, 100);
+}
+
+/* ═══════════════════════════════════════════
+   WAVEFORM
+   ═══════════════════════════════════════════ */
+let waveformAnim = null;
+
+function initWaveform() {
+  const canvas = document.getElementById('waveCanvas');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  if (waveformAnim) cancelAnimationFrame(waveformAnim);
+
+  function draw() {
+    const w = rect.width, h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const barCount = 100;
+    const totalBarW = w / barCount;
+    const barW = totalBarW * 0.65;
+    const gap = totalBarW * 0.35;
+    const t = Date.now() * 0.002;
+    const progress = state.pipelineProgress / 100;
+
+    for (let i = 0; i < barCount; i++) {
+      const x = i * totalBarW + gap / 2;
+      const ni = i / barCount;
+
+      // Pseudo-random deterministic heights
+      const h1 = Math.sin(i * 0.4 + 1.2) * 0.35;
+      const h2 = Math.sin(i * 0.9 + 3.7) * 0.25;
+      const h3 = Math.cos(i * 0.6 + t * (0.5 + ni * 0.3)) * 0.2;
+      const barH = Math.abs(h1 + h2 + h3) * h * 0.75 + h * 0.05;
+
+      const y = (h - barH) / 2;
+
+      if (ni <= progress) {
+        const grad = ctx.createLinearGradient(x, y, x, y + barH);
+        grad.addColorStop(0, '#00ffcc');
+        grad.addColorStop(0.5, '#00d4aa');
+        grad.addColorStop(1, '#00a88a');
+        ctx.fillStyle = grad;
+        ctx.globalAlpha = 0.9;
+      } else {
+        ctx.fillStyle = '#00d4aa';
+        ctx.globalAlpha = 0.12;
+      }
+
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, barH, 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    waveformAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ═══════════════════════════════════════════
+   KEYBOARD
+   ═══════════════════════════════════════════ */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (state.searchOpen) { state.searchOpen = false; render(); }
+    else if (state.showNewProject) { state.showNewProject = false; render(); }
+    else if (state.showUpload) { state.showUpload = false; render(); }
+    else if (state.screen === 'editor') navigate('project');
+    else if (state.screen === 'pipeline') navigate('project');
+    else if (state.screen === 'settings') navigate('dashboard');
+    else if (state.screen === 'project') navigate('dashboard');
+  }
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>

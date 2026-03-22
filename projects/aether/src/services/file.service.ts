@@ -13,6 +13,8 @@ export interface FileInfo {
   durationSeconds: number;
   objectUrl: string;
   file: File;
+  /** Нативный путь на диске (Tauri drag-drop / dialog). Для больших файлов — обязателен. */
+  nativePath?: string;
 }
 
 function getExtension(filename: string): string {
@@ -37,21 +39,38 @@ export function isSupported(filename: string): boolean {
 }
 
 export function getAudioDuration(file: File): Promise<number> {
-  return new Promise((resolve, reject) => {
+  const TIMEOUT_MS = 5000;
+
+  return new Promise((resolve) => {
     const url = URL.createObjectURL(file);
-    const media = file.type.startsWith('video/')
+
+    // Определяем тип по расширению (file.type может быть пустым в WebView2)
+    const ext = getExtension(file.name);
+    const isVideo = SUPPORTED_VIDEO.includes(ext) || file.type.startsWith('video/');
+    const media = isVideo
       ? document.createElement('video')
       : document.createElement('audio');
 
+    let settled = false;
+    const finish = (duration: number) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      URL.revokeObjectURL(url);
+      media.removeAttribute('src');
+      media.load();
+      resolve(duration);
+    };
+
+    // Таймаут — в WebView2 метаданные могут не загрузиться
+    const timer = setTimeout(() => finish(0), TIMEOUT_MS);
+
     media.preload = 'metadata';
     media.onloadedmetadata = () => {
-      URL.revokeObjectURL(url);
-      resolve(Math.round(media.duration));
+      const d = Number.isFinite(media.duration) ? Math.round(media.duration) : 0;
+      finish(d);
     };
-    media.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Не удалось прочитать метаданные файла'));
-    };
+    media.onerror = () => finish(0); // Не ломаем flow — длительность определится через Whisper
     media.src = url;
   });
 }
@@ -78,10 +97,30 @@ export async function processFile(file: File): Promise<FileInfo> {
   };
 }
 
+/**
+ * Создаёт FileInfo из нативного пути (Tauri drag-drop / dialog).
+ * Не загружает файл в память — только метаданные.
+ */
+export function fileInfoFromPath(path: string): FileInfo {
+  const name = path.replace(/\\/g, '/').split('/').pop() ?? 'unknown';
+  const ext = getExtension(name);
+  return {
+    name,
+    extension: ext,
+    type: getFileType(ext),
+    sizeBytes: 0, // Размер неизвестен без чтения — не критично
+    sizeFormatted: '—',
+    durationSeconds: 0,
+    objectUrl: '',
+    file: new File([], name), // Пустой placeholder — не используется для path-based
+    nativePath: path,
+  };
+}
+
 export function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
+  const s = Math.floor(seconds % 60);
 
   if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   return `${m}:${s.toString().padStart(2, '0')}`;

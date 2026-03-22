@@ -2,6 +2,7 @@
  * Рендер артефакта «Карта рисков».
  */
 
+import { memo } from 'react';
 import { Section, ItemCard, Timestamp, PriorityBadge, StatusBadge, Quote, safeArray, safeStr } from './shared';
 
 interface RisksViewProps {
@@ -9,7 +10,7 @@ interface RisksViewProps {
   onTimestampClick?: (seconds: number) => void;
 }
 
-export function RisksView({ data, onTimestampClick }: RisksViewProps) {
+export const RisksView = memo(function RisksView({ data, onTimestampClick }: RisksViewProps) {
   const risks = safeArray<Record<string, unknown>>(data.risks);
   const uncertainties = safeArray<Record<string, unknown>>(data.uncertainties);
   const contradictions = safeArray<Record<string, unknown>>(data.contradictions);
@@ -156,4 +157,4 @@ export function RisksView({ data, onTimestampClick }: RisksViewProps) {
       )}
     </div>
   );
-}
+});

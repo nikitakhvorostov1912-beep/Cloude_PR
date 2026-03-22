@@ -6,10 +6,11 @@ import { GlassCard, GlassButton, GlassInput } from '@/components/glass';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useShallow } from 'zustand/react/shallow';
 import { useSound } from '@/hooks/useSound';
+import { KEY_PATTERNS } from '@/lib/constants';
 
 const STEPS = [
   { title: 'Добро пожаловать в Aether', subtitle: 'Превращайте записи встреч в структурированные документы' },
-  { title: 'Настройте API-ключи', subtitle: 'Подключите OpenAI и Claude для обработки' },
+  { title: 'Бесплатный старт', subtitle: 'Groq — бесплатная транскрипция и генерация артефактов' },
   { title: 'Всё готово!', subtitle: 'Создайте первый проект и загрузите запись' },
 ];
 
@@ -17,23 +18,36 @@ export function OnboardingPage() {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
   const { play } = useSound();
-  const { apiKeys, setApiKey, setOnboardingCompleted } = useSettingsStore(
-    useShallow((s) => ({ apiKeys: s.apiKeys, setApiKey: s.setApiKey, setOnboardingCompleted: s.setOnboardingCompleted }))
+  const { apiKeys, setApiKey, setOnboardingCompleted, setLLMProvider, setSTTProvider } = useSettingsStore(
+    useShallow((s) => ({
+      apiKeys: s.apiKeys, setApiKey: s.setApiKey, setOnboardingCompleted: s.setOnboardingCompleted,
+      setLLMProvider: s.setLLMProvider, setSTTProvider: s.setSTTProvider,
+    }))
   );
-  const [openaiKey, setOpenaiKey] = useState(apiKeys.openaiKey);
-  const [claudeKey, setClaudeKey] = useState(apiKeys.claudeKey);
-  const [verifyingOpenai, setVerifyingOpenai] = useState(false);
-  const [verifyingClaude, setVerifyingClaude] = useState(false);
-  const [openaiValid, setOpenaiValid] = useState<boolean | null>(null);
-  const [claudeValid, setClaudeValid] = useState<boolean | null>(null);
 
-  const canProceedStep1 = openaiKey.length > 10 || claudeKey.length > 10;
+  // Free-first: Groq + DeepSeek
+  const [groqKey, setGroqKey] = useState(apiKeys.groqKey);
+  const [deepseekKey, setDeepseekKey] = useState(apiKeys.deepseekKey);
 
-  const handleNext = () => {
+  const isGroqValid = KEY_PATTERNS.groq.test(groqKey);
+  const isDeepseekValid = KEY_PATTERNS.deepseek.test(deepseekKey);
+
+  // Минимум для старта: Groq ключ (покрывает и STT, и LLM)
+  const canProceedStep1 = isGroqValid;
+
+  const handleNext = async () => {
     play('navigate');
     if (step === 1) {
-      if (openaiKey) setApiKey('openaiKey', openaiKey);
-      if (claudeKey) setApiKey('claudeKey', claudeKey);
+      // Сохраняем бесплатные ключи
+      if (groqKey) await setApiKey('groqKey', groqKey);
+      if (deepseekKey) await setApiKey('deepseekKey', deepseekKey);
+      // Устанавливаем бесплатные провайдеры
+      setSTTProvider('groq');
+      if (isDeepseekValid) {
+        setLLMProvider('deepseek');
+      } else {
+        setLLMProvider('groq');
+      }
     }
     if (step < STEPS.length - 1) {
       setStep(step + 1);
@@ -49,47 +63,6 @@ export function OnboardingPage() {
     play('success');
     setOnboardingCompleted(true);
     navigate('/');
-  };
-
-  const verifyOpenai = async () => {
-    setVerifyingOpenai(true);
-    try {
-      const res = await fetch('https://api.openai.com/v1/models', {
-        headers: { Authorization: `Bearer ${openaiKey}` },
-      });
-      setOpenaiValid(res.ok);
-      play(res.ok ? 'success' : 'error');
-    } catch {
-      setOpenaiValid(false);
-      play('error');
-    }
-    setVerifyingOpenai(false);
-  };
-
-  const verifyClaude = async () => {
-    setVerifyingClaude(true);
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'x-api-key': claudeKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1,
-          messages: [{ role: 'user', content: 'hi' }],
-        }),
-      });
-      // 200 или 400 (invalid request) оба означают что ключ рабочий
-      setClaudeValid(res.status !== 401 && res.status !== 403);
-      play(res.status !== 401 && res.status !== 403 ? 'success' : 'error');
-    } catch {
-      setClaudeValid(false);
-      play('error');
-    }
-    setVerifyingClaude(false);
   };
 
   return (
@@ -167,7 +140,7 @@ export function OnboardingPage() {
                 </div>
               )}
 
-              {/* Step 1: API Keys */}
+              {/* Step 1: Free APIs — Groq + DeepSeek */}
               {step === 1 && (
                 <div className="flex flex-col gap-5 text-left">
                   <div className="text-center mb-2">
@@ -176,67 +149,46 @@ export function OnboardingPage() {
                   </div>
 
                   <GlassCard variant="subtle" padding="md">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-text">OpenAI API Key</span>
-                      {openaiValid === true && <span className="text-xs text-success font-medium">Подключён</span>}
-                      {openaiValid === false && <span className="text-xs text-error font-medium">Ошибка</span>}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-text">Groq API Key</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400">
+                        Бесплатно
+                      </span>
                     </div>
-                    <div className="flex gap-2">
-                      <GlassInput
-                        type="password"
-                        placeholder="sk-..."
-                        value={openaiKey}
-                        onChange={(e) => {
-                          setOpenaiKey(e.target.value);
-                          setOpenaiValid(null);
-                        }}
-                        className="flex-1"
-                      />
-                      <GlassButton
-                        variant="secondary"
-                        size="sm"
-                        loading={verifyingOpenai}
-                        disabled={openaiKey.length < 10}
-                        onClick={verifyOpenai}
-                      >
-                        Проверить
-                      </GlassButton>
-                    </div>
-                    <p className="text-xs text-text-muted mt-2">Для Whisper (транскрипция) и GPT-4</p>
+                    <GlassInput
+                      type="password"
+                      placeholder="gsk_..."
+                      value={groqKey}
+                      onChange={(e) => setGroqKey(e.target.value)}
+                    />
+                    <p className="text-xs text-text-muted mt-2">
+                      Whisper (транскрипция) + Qwen3-32B (генерация). 8ч аудио/день, 500K токенов/день.
+                    </p>
+                    {groqKey && !isGroqValid && (
+                      <p className="text-xs text-warning mt-1">Ключ должен начинаться с gsk_</p>
+                    )}
                   </GlassCard>
 
                   <GlassCard variant="subtle" padding="md">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-text">Claude API Key</span>
-                      {claudeValid === true && <span className="text-xs text-success font-medium">Подключён</span>}
-                      {claudeValid === false && <span className="text-xs text-error font-medium">Ошибка</span>}
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-text">DeepSeek API Key</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+                        ~Бесплатно
+                      </span>
                     </div>
-                    <div className="flex gap-2">
-                      <GlassInput
-                        type="password"
-                        placeholder="sk-ant-..."
-                        value={claudeKey}
-                        onChange={(e) => {
-                          setClaudeKey(e.target.value);
-                          setClaudeValid(null);
-                        }}
-                        className="flex-1"
-                      />
-                      <GlassButton
-                        variant="secondary"
-                        size="sm"
-                        loading={verifyingClaude}
-                        disabled={claudeKey.length < 10}
-                        onClick={verifyClaude}
-                      >
-                        Проверить
-                      </GlassButton>
-                    </div>
-                    <p className="text-xs text-text-muted mt-2">Для генерации артефактов</p>
+                    <GlassInput
+                      type="password"
+                      placeholder="sk-..."
+                      value={deepseekKey}
+                      onChange={(e) => setDeepseekKey(e.target.value)}
+                    />
+                    <p className="text-xs text-text-muted mt-2">
+                      Опционально. Лучшее качество для русского текста. 5M бонусных токенов при регистрации.
+                    </p>
                   </GlassCard>
 
                   <p className="text-xs text-text-muted text-center">
-                    Достаточно подключить хотя бы один. Второй можно добавить позже.
+                    Достаточно только Groq для начала работы. Другие провайдеры — в настройках.
                   </p>
                 </div>
               )}
@@ -270,7 +222,10 @@ export function OnboardingPage() {
                     </GlassButton>
                   )}
                 </div>
-                <div>
+                <div className="flex items-center gap-3">
+                  {step === 1 && !canProceedStep1 && (
+                    <p className="text-xs text-warning">Введите Groq API-ключ</p>
+                  )}
                   {step < STEPS.length - 1 ? (
                     <GlassButton
                       onClick={handleNext}

@@ -2,6 +2,7 @@
  * Рендер артефакта «Стенограмма».
  */
 
+import { memo } from 'react';
 import { Section, Timestamp, safeArray, safeStr, safeNum } from './shared';
 
 interface TranscriptViewProps {
@@ -9,7 +10,7 @@ interface TranscriptViewProps {
   onTimestampClick?: (seconds: number) => void;
 }
 
-export function TranscriptView({ data, onTimestampClick }: TranscriptViewProps) {
+export const TranscriptView = memo(function TranscriptView({ data, onTimestampClick }: TranscriptViewProps) {
   const entries = safeArray<Record<string, unknown>>(data.formatted_transcript);
   const chapters = safeArray<Record<string, unknown>>(data.chapters);
   const stats = data.statistics as Record<string, unknown> | undefined;
@@ -136,4 +137,4 @@ export function TranscriptView({ data, onTimestampClick }: TranscriptViewProps) 
       )}
     </div>
   );
-}
+});

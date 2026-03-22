@@ -1,81 +1,39 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "allow": [
-      "Bash(.venv/Scripts/python.exe -c \"from app.config import get_config; print\\(''Config OK:'', get_config\\(\\).app.title\\)\")",
-      "Bash(.venv/Scripts/python.exe -c \"from main import create_app; print\\(''App OK''\\)\")",
-      "Bash(C:/tools/nodejs/node-v22.14.0-win-x64/npm.cmd run build)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "Bash(mkdir *)",
+      "Bash(ls *)",
       "Bash(git status -u)",
-      "Bash(cmd.exe /c \"npx @smithery/cli@latest skill add smithery-ai/cli --agent claude-code\")",
-      "Bash(start \"\" \"D:/Cloude_PR/projects/survey-automation/backend/data/visual/index.html\")",
-      "Bash(start \"\" \"https://chromewebstore.google.com/detail/claude-in-chrome/oikgofnpkceophcmojldkjfbappfgklf\")",
-      "Bash(python -m http.server 8765)",
-      "Bash(start chrome \"https://chromewebstore.google.com/detail/claude-in-chrome/oikgofnpkceophcmojldkjfbappfgklf\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/index.html)",
-      "mcp__Claude_Preview__preview_start",
+      "Bash(gh repo:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build)",
+      "Bash(npm run tauri build)",
+      "Bash(npm list:*)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx vite build)",
+      "Bash(pip install:*)",
       "Bash(python -c \":*)",
-      "WebFetch(domain:www.emerge.haus)",
-      "WebFetch(domain:www.braydoncoyer.dev)",
-      "Bash(python -c \"import asyncio; import edge_tts; voices = asyncio.run\\(edge_tts.list_voices\\(\\)\\); ru = [v for v in voices if ''ru-RU'' in v[''ShortName'']]; [print\\(v[''ShortName''], v[''Gender'']\\) for v in ru]\")",
-      "Bash(python scripts/generate-voices.py --engine edge)",
-      "Bash(for f in marina_v2_bright.wav marina_v2_max.wav alena_v2_alive.wav)",
-      "Bash(do echo \"=== $f ===\")",
-      "Bash(ffmpeg -i \"$f\" -af \"volumedetect\" -f null -)",
-      "Bash(done)",
-      "WebFetch(domain:developer.chrome.com)",
+      "Bash(py -3 -c \":*)",
+      "mcp__Claude_Preview__preview_start",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(wc -l \"C:\\\\CLOUDE_PR\\\\projects\\\\1c-uso\\\\knowledge\"/*.md)",
-      "Skill(ralph-loop)",
-      "Skill(ralph-loop:*)",
-      "Bash(where python)",
-      "Bash(where node)",
-      "Bash(where npm)",
-      "Bash(powershell -Command \"Get-Command python | Select-Object -ExpandProperty Source\")",
-      "Bash(powershell -Command \"Get-Command python3,py,python311,python312 -ErrorAction SilentlyContinue | Select Name,Source\")",
-      "Bash(powershell -Command \"py C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz.py 2>&1\")",
-      "Bash(powershell -Command \"Test-Path ''C:\\\\CLOUDE_PR\\\\projects\\\\ТЗ_Перенос_данных_УТ.docx''\")",
-      "Bash(powershell -Command \"Remove-Item ''C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz.py''\")",
-      "Bash(powershell -Command \"py C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz_excel.py 2>&1; Remove-Item C:\\\\CLOUDE_PR\\\\projects\\\\gen_tz_excel.py; Remove-Item C:\\\\CLOUDE_PR\\\\projects\\\\hdr.txt\")",
-      "Bash(pandoc \"C:\\\\Users\\\\Khvorostov\\\\AppData\\\\Local\\\\Temp\\\\Лист_требований_Зиповская_ул_\\(2\\).docx\" -t plain --wrap=none)",
-      "Bash(pandoc \"C:\\\\Users\\\\Khvorostov\\\\AppData\\\\Local\\\\Temp\\\\Лист_требований_Зиповская_ул_8.docx\" -t plain --wrap=none)",
-      "Bash(py -3 -c \"import docx; print\\(''ok''\\)\")",
-      "Bash(py -3 -c \":*)",
-      "Bash(gh repo:*)",
       "WebFetch(domain:api.github.com)",
-      "Bash(npm install:*)",
-      "Bash(cmd.exe /c \"where npm\")",
-      "Bash(cmd.exe /c \"npm --version\")",
-      "Bash(dir \"C:\\\\Users\\\\Khvorostov\\\\Desktop\\\\Масло продукт\" /s /b)",
-      "Bash(/c/Users/Khvorostov/.local/bin/claude.exe update:*)",
-      "Bash(/c/Users/Khvorostov/.local/bin/claude.exe --version)",
-      "Bash(cmd /c \"where npm\")",
-      "Bash(cmd /c \"where node\")",
-      "Bash(npm view @anthropic-ai/claude-code version)"
+      "WebFetch(domain:developer.chrome.com)",
+      "Bash(gh api:*)",
+      "Bash(git clone:*)"
     ]
   },
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if the edited file is a Python file (.py). If yes, remind to run ruff/mypy. If it's a TypeScript/TSX file (.ts/.tsx), remind to check types with tsc. Respond: {\"decision\": \"approve\", \"systemMessage\": \"Auto-lint: проверь линтером после редактирования.\"}",
-            "timeout": 5
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "A new file was created. Check: does a similar file already exist in the project? If this might be a duplicate, warn. Respond: {\"decision\": \"approve\", \"systemMessage\": \"Проверь: нет ли дубля этого файла в проекте.\"}",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "startup|clear",
@@ -93,52 +51,6 @@
           {
             "type": "command",
             "command": "bash D:/Cloude_PR/.claude/hooks-handlers/session-resume.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/plugins/ralph-wiggum/hooks/stop-hook.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if Claude is about to stop prematurely. Evaluate:\n\n1. Did the user ask for code changes? If yes - was code actually written/edited?\n2. Did the user ask to run tests? If yes - were tests actually executed?\n3. Did the user ask for multiple things? If yes - were ALL of them addressed?\n4. Is there a TodoWrite list with pending items? If yes - those should be completed first.\n5. Did Claude promise to do something and hasn't done it yet?\n\nIf ALL tasks are genuinely complete, respond: {\"decision\": \"approve\"}\n\nIf something is incomplete, respond:\n{\"decision\": \"block\", \"reason\": \"Incomplete\", \"systemMessage\": \"Ты не завершил все задачи. Проверь: [конкретно что не сделано]. Заверши ВСЁ перед остановкой.\"}",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'if [ -f \".planning/erp-migration/STATE.md\" ]; then cp \".planning/erp-migration/STATE.md\" \".planning/erp-migration/STATE.backup.md\"; fi; echo \"{\\\"continue\\\": true}\"'",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [],
-    "SubagentStop": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Verify subagent task completion. Check:\n1. Did the subagent produce a concrete result (not just analysis)?\n2. If the subagent was asked to fix something - was it actually fixed?\n3. Is the output in the expected format?\n\nIf complete: {\"decision\": \"approve\"}\nIf incomplete: {\"decision\": \"block\", \"reason\": \"Subagent didn't finish\", \"systemMessage\": \"Субагент не завершил задачу. Продолжай работу.\"}",
             "timeout": 10
           }
         ]

@@ -58,6 +58,7 @@ powershell.exe -NoProfile -File .claude/skills/db-load-git/scripts/db-load-git.p
 | `-AllExtensions` | нет | Загрузить все расширения |
 | `-Format <формат>` | нет | `Hierarchical` (по умолч.) / `Plain` |
 | `-DryRun` | нет | Только показать что будет загружено (без загрузки) |
+| `-UpdateDB` | нет | После загрузки сразу обновить конфигурацию БД (`/UpdateDBCfg`) |
 
 > `*` — нужен либо `-InfoBasePath`, либо пара `-InfoBaseServer` + `-InfoBaseRef`
 
@@ -88,7 +89,7 @@ powershell.exe -NoProfile -File .claude/skills/db-load-git/scripts/db-load-git.p
 ## После выполнения
 
 1. Показать список загруженных файлов
-2. **Предложить `/db-update`** — для применения изменений к БД
+2. Если `-UpdateDB` не был указан — **предложить `/db-update`** для применения изменений к БД
 
 ## Примеры
 
@@ -107,4 +108,7 @@ powershell.exe -NoProfile -File .claude/skills/db-load-git/scripts/db-load-git.p
 
 # Только посмотреть (DryRun)
 powershell.exe -NoProfile -File .claude/skills/db-load-git/scripts/db-load-git.ps1 -InfoBasePath "C:\Bases\MyDB" -ConfigDir "C:\WS\cfsrc" -DryRun
+
+# Загрузка + обновление БД в одном запуске
+powershell.exe -NoProfile -File .claude/skills/db-load-git/scripts/db-load-git.ps1 -InfoBasePath "C:\Bases\MyDB" -UserName "Admin" -ConfigDir "C:\WS\cfsrc" -Source All -UpdateDB
 ```

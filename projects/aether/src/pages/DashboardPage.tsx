@@ -1,95 +1,70 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { AnimatedPage } from '@/components/shared/AnimatedPage';
-import { GlassCard, GlassButton, GlassInput, GlassModal } from '@/components/glass';
-import { EmptyState } from '@/components/shared/EmptyState';
+import { GlassCard, GlassButton } from '@/components/glass';
 import { DragDropZone } from '@/components/upload/DragDropZone';
-import { FileCard } from '@/components/upload/FileCard';
+import { NewProjectModal } from '@/components/shared/NewProjectModal';
+import { SelectProjectModal } from '@/components/shared/SelectProjectModal';
 import { useProjectsStore } from '@/stores/projects.store';
+import { useArtifactsStore } from '@/stores/artifacts.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useShallow } from 'zustand/react/shallow';
 import { useSound } from '@/hooks/useSound';
+import { ARTIFACT_ICONS } from '@/types/artifact.types';
 import type { FileInfo } from '@/services/file.service';
 
 export function DashboardPage() {
-  const { projects, addProject, addMeeting } = useProjectsStore(
-    useShallow((s) => ({ projects: s.projects, addProject: s.addProject, addMeeting: s.addMeeting }))
+  const { projects, meetings } = useProjectsStore(
+    useShallow((s) => ({ projects: s.projects, meetings: s.meetings }))
   );
+  const { setActiveProject, setActiveMeeting } = useProjectsStore(
+    useShallow((s) => ({ setActiveProject: s.setActiveProject, setActiveMeeting: s.setActiveMeeting }))
+  );
+  const artifacts = useArtifactsStore((s) => s.artifacts);
   const addToast = useUIStore((s) => s.addToast);
   const navigate = useNavigate();
   const { play } = useSound();
 
   const [showNewProject, setShowNewProject] = useState(false);
-  const [projectName, setProjectName] = useState('');
-  const [projectDesc, setProjectDesc] = useState('');
-  const [uploadedFile, setUploadedFile] = useState<FileInfo | null>(null);
+  const [showSelectProject, setShowSelectProject] = useState(false);
+  const [initialFile, setInitialFile] = useState<FileInfo | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<FileInfo[]>([]);
+  /** Сырые File объекты для SelectProjectModal */
+  const [pendingRawFiles, setPendingRawFiles] = useState<File[]>([]);
 
-  const handleCreateProject = () => {
-    if (!projectName.trim()) return;
+  // Последние 5 встреч из всех проектов
+  const recentMeetings = useMemo(() =>
+    [...meetings]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5),
+    [meetings]
+  );
 
-    play('success');
-    const id = crypto.randomUUID();
-    const now = new Date().toISOString();
-    addProject({
-      id,
-      name: projectName.trim(),
-      description: projectDesc.trim(),
-      folder: '',
-      createdAt: now,
-      updatedAt: now,
-    });
+  const handleFilesProcessed = (files: FileInfo[]) => {
+    if (files.length === 0) return;
 
-    if (uploadedFile) {
-      addMeeting({
-        id: crypto.randomUUID(),
-        projectId: id,
-        title: uploadedFile.name.replace(/\.[^.]+$/, ''),
-        filePath: uploadedFile.objectUrl,
-        audioPath: uploadedFile.objectUrl,
-        durationSeconds: uploadedFile.durationSeconds,
-        fileSizeBytes: uploadedFile.sizeBytes,
-        qualityScore: 0,
-        status: 'uploaded',
-        errorMessage: null,
-        createdAt: now,
-        processedAt: null,
-      });
+    // Если есть проекты — показать выбор проекта
+    if (projects.length > 0) {
+      const rawFiles = files.map((f) => f.file).filter(Boolean) as File[];
+      if (rawFiles.length > 0) {
+        setPendingRawFiles(rawFiles);
+        setShowSelectProject(true);
+        return;
+      }
     }
 
-    setShowNewProject(false);
-    setProjectName('');
-    setProjectDesc('');
-    setUploadedFile(null);
-    navigate(`/projects/${id}`);
+    // Нет проектов — создать новый (как раньше)
+    setPendingFiles(files);
+    setInitialFile(files[0]);
+    setShowNewProject(true);
   };
 
-  const handleFileProcessed = (file: FileInfo) => {
-    setUploadedFile(file);
-
-    if (projects.length === 0) {
-      setProjectName(file.name.replace(/\.[^.]+$/, ''));
-      setShowNewProject(true);
-    } else {
-      const project = projects[0];
-      const now = new Date().toISOString();
-      addMeeting({
-        id: crypto.randomUUID(),
-        projectId: project.id,
-        title: file.name.replace(/\.[^.]+$/, ''),
-        filePath: file.objectUrl,
-        audioPath: file.objectUrl,
-        durationSeconds: file.durationSeconds,
-        fileSizeBytes: file.sizeBytes,
-        qualityScore: 0,
-        status: 'uploaded',
-        errorMessage: null,
-        createdAt: now,
-        processedAt: null,
-      });
-      addToast('success', `Файл добавлен в проект "${project.name}"`);
-      navigate(`/projects/${project.id}`);
-    }
+  const handleProjectSelected = (projectId: string, meetingId: string) => {
+    play('navigate');
+    setActiveProject(projectId);
+    setActiveMeeting(meetingId);
+    navigate(`/projects/${projectId}`);
   };
 
   const handleFileError = (message: string) => {
@@ -103,13 +78,10 @@ export function DashboardPage() {
           <div>
             <h1 className="text-2xl font-bold text-text">Главная</h1>
             <p className="text-sm text-text-secondary mt-1">
-              Загрузите запись встречи или выберите проект
+              Загрузите запись встречи или продолжите работу
             </p>
           </div>
-          <GlassButton onClick={() => {
-            play('click');
-            setShowNewProject(true);
-          }}>
+          <GlassButton onClick={() => { play('click'); setShowNewProject(true); }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
@@ -120,108 +92,133 @@ export function DashboardPage() {
         {/* DnD Zone */}
         <div className="mb-8">
           <DragDropZone
-            onFileProcessed={handleFileProcessed}
+            onFilesProcessed={handleFilesProcessed}
             onError={handleFileError}
           />
         </div>
 
-        {/* Projects */}
-        {projects.length === 0 ? (
-          <EmptyState
-            title="Нет проектов"
-            description="Создайте первый проект для организации записей встреч"
-            actionLabel="Создать проект"
-            onAction={() => {
-              play('click');
-              setShowNewProject(true);
-            }}
-            icon={
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                <rect x="4" y="4" width="24" height="24" rx="4" stroke="currentColor" strokeWidth="2" />
-                <path d="M16 10V22M10 16H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-            }
-          />
-        ) : (
+        {/* Недавняя активность */}
+        {recentMeetings.length > 0 && (
           <div>
-            <h2 className="text-lg font-semibold text-text mb-4">Проекты</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {projects.map((project, i) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <GlassCard
-                    hoverable
-                    padding="md"
-                    onClick={() => {
-                      play('navigate');
-                      navigate(`/projects/${project.id}`);
-                    }}
+            <h2 className="text-lg font-semibold text-text mb-4">Недавняя активность</h2>
+            <div className="flex flex-col gap-2">
+              {recentMeetings.map((meeting, i) => {
+                const project = projects.find((p) => p.id === meeting.projectId);
+                const meetingArtifacts = artifacts.filter((a) => a.meetingId === meeting.id);
+                const artifactTypes = [...new Set(meetingArtifacts.map((a) => a.type))];
+
+                return (
+                  <motion.div
+                    key={meeting.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    <h3 className="font-semibold text-text mb-1">{project.name}</h3>
-                    {project.description && (
-                      <p className="text-xs text-text-secondary mb-2 line-clamp-2">{project.description}</p>
-                    )}
-                    <p className="text-xs text-text-muted">
-                      {new Date(project.createdAt).toLocaleDateString('ru-RU')}
-                    </p>
-                  </GlassCard>
-                </motion.div>
-              ))}
+                    <GlassCard
+                      variant="subtle"
+                      padding="sm"
+                      hoverable
+                      className="cursor-pointer"
+                      onClick={() => {
+                        play('navigate');
+                        if (meeting.status === 'completed') {
+                          navigate(`/viewer?meetingId=${meeting.id}`);
+                        } else {
+                          navigate(`/projects/${meeting.projectId}`);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          {/* Status dot */}
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                            meeting.status === 'completed' ? 'bg-success' :
+                            meeting.status === 'processing' ? 'bg-primary' :
+                            meeting.status === 'error' ? 'bg-error' : 'bg-secondary'
+                          }`} />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-text truncate">
+                              {meeting.title || 'Без названия'}
+                            </p>
+                            <div className="flex items-center gap-2 text-xs text-text-muted">
+                              {project && <span>{project.name}</span>}
+                              <span>·</span>
+                              <span>{new Date(meeting.createdAt).toLocaleDateString('ru-RU')}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                          {/* Artifact badges */}
+                          {artifactTypes.length > 0 && (
+                            <div className="flex gap-0.5">
+                              {artifactTypes.map((type) => (
+                                <span key={type} className="text-xs">{ARTIFACT_ICONS[type]}</span>
+                              ))}
+                            </div>
+                          )}
+                          {/* Action button */}
+                          {meeting.status === 'completed' ? (
+                            <span className="text-xs text-primary font-medium">Артефакты</span>
+                          ) : meeting.status === 'uploaded' ? (
+                            <GlassButton
+                              variant="primary"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                play('start');
+                                setActiveProject(meeting.projectId);
+                                setActiveMeeting(meeting.id);
+                                navigate('/pipeline');
+                              }}
+                            >
+                              Обработать
+                            </GlassButton>
+                          ) : meeting.status === 'error' ? (
+                            <span className="text-xs text-error">Ошибка</span>
+                          ) : (
+                            <span className="text-xs text-primary">Обработка...</span>
+                          )}
+                        </div>
+                      </div>
+                    </GlassCard>
+                  </motion.div>
+                );
+              })}
             </div>
+          </div>
+        )}
+
+        {/* Quick links when no meetings */}
+        {recentMeetings.length === 0 && projects.length > 0 && (
+          <div className="text-center">
+            <p className="text-sm text-text-muted mb-3">
+              Нет записей встреч.{' '}
+              <button
+                className="text-primary hover:underline"
+                onClick={() => navigate('/projects')}
+              >
+                Перейти к проектам
+              </button>
+            </p>
           </div>
         )}
       </div>
 
-      {/* New Project Modal */}
-      <GlassModal
+      {/* Модалка выбора проекта (при наличии проектов) */}
+      <SelectProjectModal
+        open={showSelectProject}
+        files={pendingRawFiles}
+        onSelect={handleProjectSelected}
+        onClose={() => { setShowSelectProject(false); setPendingRawFiles([]); }}
+      />
+
+      {/* Модалка создания нового проекта (нет проектов или кнопка "Новый") */}
+      <NewProjectModal
         open={showNewProject}
-        onClose={() => {
-          setShowNewProject(false);
-          setUploadedFile(null);
-        }}
-        title="Новый проект"
-        footer={
-          <>
-            <GlassButton variant="ghost" onClick={() => {
-              setShowNewProject(false);
-              setUploadedFile(null);
-            }}>
-              Отмена
-            </GlassButton>
-            <GlassButton
-              disabled={!projectName.trim()}
-              onClick={handleCreateProject}
-            >
-              Создать
-            </GlassButton>
-          </>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <GlassInput
-            label="Название проекта"
-            placeholder="Например: Обследование бухгалтерии"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-          />
-          <GlassInput
-            label="Описание (необязательно)"
-            placeholder="Краткое описание проекта"
-            value={projectDesc}
-            onChange={(e) => setProjectDesc(e.target.value)}
-          />
-          {uploadedFile && (
-            <div>
-              <p className="text-xs font-medium text-text-secondary mb-2">Загруженный файл</p>
-              <FileCard file={uploadedFile} onRemove={() => setUploadedFile(null)} />
-            </div>
-          )}
-        </div>
-      </GlassModal>
+        onClose={() => { setShowNewProject(false); setInitialFile(null); setPendingFiles([]); }}
+        initialFile={initialFile}
+        initialFiles={pendingFiles}
+      />
     </AnimatedPage>
   );
 }

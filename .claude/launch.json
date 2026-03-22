@@ -50,6 +50,34 @@
       "runtimeArgs": ["D:\\Cloude_PR\\ai-ecosystem-1c\\dashboard\\node_modules\\next\\dist\\bin\\next", "dev", "--port", "3002"],
       "port": 3002,
       "cwd": "D:\\Cloude_PR\\ai-ecosystem-1c\\dashboard"
+    },
+    {
+      "name": "stenograph-prototype",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8091", "--directory", "D:\\Cloude_PR\\projects\\stenograph\\docs"],
+      "port": 8091,
+      "cwd": "D:\\Cloude_PR\\projects\\stenograph\\docs"
+    },
+    {
+      "name": "stenograph",
+      "runtimeExecutable": "C:\\tools\\nodejs\\node-v22.14.0-win-x64\\node.exe",
+      "runtimeArgs": ["D:\\Cloude_PR\\projects\\stenograph\\node_modules\\vite\\bin\\vite.js", "--port", "1420", "--host"],
+      "port": 1420,
+      "cwd": "D:\\Cloude_PR\\projects\\stenograph"
+    },
+    {
+      "name": "stenograph-tauri",
+      "runtimeExecutable": "C:\\Windows\\System32\\cmd.exe",
+      "runtimeArgs": ["/c", "set PATH=%PATH%;C:\\Users\\nikit\\.cargo\\bin && npm run tauri dev"],
+      "port": 1420,
+      "cwd": "D:\\Cloude_PR\\projects\\stenograph"
+    },
+    {
+      "name": "aether",
+      "runtimeExecutable": "C:\\tools\\nodejs\\node-v22.14.0-win-x64\\node.exe",
+      "runtimeArgs": ["D:\\Cloude_PR\\projects\\aether\\node_modules\\vite\\bin\\vite.js", "--port", "1421", "--host"],
+      "port": 1421,
+      "cwd": "D:\\Cloude_PR\\projects\\aether"
     }
   ]
 }

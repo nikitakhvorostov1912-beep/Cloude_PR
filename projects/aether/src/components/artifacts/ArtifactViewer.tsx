@@ -10,6 +10,7 @@ import { RisksView } from './views/RisksView';
 import { GlossaryView } from './views/GlossaryView';
 import { QuestionsView } from './views/QuestionsView';
 import { TranscriptView } from './views/TranscriptView';
+import { DevelopmentView } from './views/DevelopmentView';
 import { RawTextView } from './views/RawTextView';
 
 interface ArtifactViewerProps {
@@ -85,8 +86,23 @@ export function ArtifactViewer({
       return <GlossaryView {...viewProps} />;
     case 'questions':
       return <QuestionsView {...viewProps} />;
+    case 'development':
+      return <DevelopmentView {...viewProps} />;
     case 'transcript':
       return <TranscriptView {...viewProps} />;
+    case 'custom': {
+      const customData = data as Record<string, unknown>;
+      const title = (customData?._customTitle as string) || 'Кастомный артефакт';
+      const customText = (customData?.raw_text as string)
+        || (customData?.result as string)
+        || JSON.stringify(data, null, 2);
+      return (
+        <div className="glass rounded-2xl p-6 space-y-4">
+          <h3 className="text-lg font-bold text-text">{title}</h3>
+          <div className="prose prose-sm max-w-none text-text-secondary whitespace-pre-wrap">{customText}</div>
+        </div>
+      );
+    }
     default:
       return <RawTextView text={JSON.stringify(data, null, 2)} />;
   }

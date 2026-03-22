@@ -1,4 +1,4 @@
-﻿# db-load-git v1.0 — Load Git changes into 1C database
+﻿# db-load-git v1.2 — Load Git changes into 1C database
 # Source: https://github.com/Nikolay-Shirokov/cc-1c-skills
 <#
 .SYNOPSIS
@@ -98,7 +98,10 @@ param(
     [string]$Format = "Hierarchical",
 
     [Parameter(Mandatory=$false)]
-    [switch]$DryRun
+    [switch]$DryRun,
+
+    [Parameter(Mandatory=$false)]
+    [switch]$UpdateDB
 )
 
 $OutputEncoding = [System.Text.Encoding]::UTF8
@@ -165,33 +168,34 @@ try {
 
 # --- Get changed files from Git ---
 $changedFiles = @()
-$configDirNormalized = $ConfigDir.TrimEnd('\', '/').Replace('\', '/')
+$ConfigDir = (Resolve-Path $ConfigDir).Path.TrimEnd('\')
+$configDirNormalized = $ConfigDir.Replace('\', '/')
 
 Push-Location $ConfigDir
 try {
     switch ($Source) {
         "Staged" {
             Write-Host "Getting staged changes..."
-            $raw = git diff --cached --name-only 2>&1
+            $raw = git diff --cached --name-only --relative 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
         }
         "Unstaged" {
             Write-Host "Getting unstaged changes..."
-            $raw = git diff --name-only 2>&1
+            $raw = git diff --name-only --relative 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
             $raw = git ls-files --others --exclude-standard 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
         }
         "Commit" {
             Write-Host "Getting changes from $CommitRange..."
-            $raw = git diff --name-only $CommitRange 2>&1
+            $raw = git diff --name-only --relative $CommitRange 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
         }
         "All" {
             Write-Host "Getting all uncommitted changes..."
-            $raw = git diff --cached --name-only 2>&1
+            $raw = git diff --cached --name-only --relative 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
-            $raw = git diff --name-only 2>&1
+            $raw = git diff --name-only --relative 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
             $raw = git ls-files --others --exclude-standard 2>&1
             if ($LASTEXITCODE -eq 0) { $changedFiles += $raw }
@@ -201,7 +205,7 @@ try {
     Pop-Location
 }
 
-$changedFiles = $changedFiles | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique
+$changedFiles = $changedFiles | Where-Object { $_ -is [string] -and -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique
 
 if ($changedFiles.Count -eq 0) {
     Write-Host "No changes found"
@@ -311,6 +315,11 @@ try {
         $arguments += "-Extension", "`"$Extension`""
     } elseif ($AllExtensions) {
         $arguments += "-AllExtensions"
+    }
+
+    # --- UpdateDB ---
+    if ($UpdateDB) {
+        $arguments += "/UpdateDBCfg"
     }
 
     # --- Output ---

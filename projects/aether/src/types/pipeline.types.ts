@@ -7,14 +7,30 @@ export type PipelineStage =
 
 export type StageStatus = 'pending' | 'active' | 'completed' | 'error';
 
+/** Статус обработки отдельного файла */
+export interface FileProcessingStatus {
+  fileId: string;
+  fileName: string;
+  order: number;
+  status: StageStatus;
+  progress: number;
+  error: string | null;
+  sizeBytes: number;
+}
+
 export interface PipelineState {
   meetingId: string | null;
+  projectId: string | null;
   currentStage: PipelineStage;
   stages: Record<PipelineStage, StageStatus>;
   progress: number;
   streamingText: string;
   error: string | null;
   estimatedCostUsd: number | null;
+  /** Прогресс по каждому файлу (ключ — fileId) */
+  fileStatuses: Record<string, FileProcessingStatus>;
+  totalFiles: number;
+  completedFiles: number;
 }
 
 export const STAGE_LABELS: Record<PipelineStage, string> = {

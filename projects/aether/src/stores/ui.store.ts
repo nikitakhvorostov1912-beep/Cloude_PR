@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { UI } from '@/lib/constants';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
 
@@ -35,7 +36,7 @@ export const useUIStore = create<UIState>()((set) => ({
     set((s) => ({ toasts: [...s.toasts, { id, type, title, description }] }));
     setTimeout(() => {
       set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }));
-    }, 4000);
+    }, UI.toastTimeout);
   },
   removeToast: (id) => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
   setLoading: (loading) => set({ isLoading: loading }),

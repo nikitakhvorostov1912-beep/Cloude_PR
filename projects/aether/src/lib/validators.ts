@@ -140,6 +140,8 @@ export function isEmptyArtifact(type: ArtifactType, data: Record<string, unknown
       return isEmptyArray(data.open_questions) && isEmptyArray(data.deferred_topics);
     case 'transcript':
       return isEmptyArray(data.formatted_transcript);
+    case 'development':
+      return isEmptyArray(data.tasks);
     default:
       return false;
   }
@@ -186,4 +188,8 @@ const REQUIRED_FIELDS: Record<ArtifactType, string[]> = {
   glossary: ['terms'],
   questions: ['open_questions'],
   transcript: ['formatted_transcript', 'chapters'],
+  development: ['metadata', 'tasks'],
+  summary: ['key_topics', 'conclusion'],
+  aggregated: ['timeline', 'task_progress'],
+  custom: [],
 };

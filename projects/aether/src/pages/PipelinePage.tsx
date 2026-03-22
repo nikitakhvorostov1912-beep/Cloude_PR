@@ -3,11 +3,13 @@
  * Upload → Extract → Transcribe → Generate → Complete
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { AnimatedPage } from '@/components/shared/AnimatedPage';
 import { GlassCard } from '@/components/glass';
+import { DragDropZone } from '@/components/upload/DragDropZone';
+import type { FileInfo } from '@/services/file.service';
 import { PipelineStages } from '@/components/pipeline/PipelineStages';
 import { StreamingText } from '@/components/pipeline/StreamingText';
 import { ArtifactProgress, type ArtifactStatus } from '@/components/pipeline/ArtifactProgress';
@@ -16,10 +18,13 @@ import { useSettingsStore } from '@/stores/settings.store';
 import { useProjectsStore } from '@/stores/projects.store';
 import { useArtifactsStore } from '@/stores/artifacts.store';
 import { useShallow } from 'zustand/react/shallow';
-import { runPipeline, type PipelineConfig } from '@/services/pipeline.service';
+import { runPipeline, type PipelineConfig, type PipelineInputFile, type PipelineOptions } from '@/services/pipeline.service';
 import { formatCost, estimateCostBeforeProcessing } from '@/lib/cost-estimator';
 import type { ArtifactType } from '@/types/artifact.types';
+import { ARTIFACT_ICONS, ARTIFACT_LABELS, ARTIFACT_DESCRIPTIONS } from '@/types/artifact.types';
 import type { PipelineStage } from '@/types/pipeline.types';
+import { getAudioFile, storeAudioFile } from '@/services/file-storage.service';
+import { PROVIDER_NAMES, DEFAULT_STT_MODELS, DEFAULT_LLM_MODELS } from '@/lib/constants';
 
 interface ArtifactProgressState {
   type: ArtifactType;
@@ -45,24 +50,37 @@ export function PipelinePage() {
   // Settings
   const apiKeys = useSettingsStore((s) => s.apiKeys);
   const llmProvider = useSettingsStore((s) => s.llmProvider);
+  const llmModel = useSettingsStore((s) => s.llmModel);
+  const sttProvider = useSettingsStore((s) => s.sttProvider);
+  const routingMode = useSettingsStore((s) => s.routingMode);
 
   // Pipeline actions
   const startPipeline = usePipelineStore((s) => s.startPipeline);
   const setStage = usePipelineStore((s) => s.setStage);
+  const completePipeline = usePipelineStore((s) => s.completePipeline);
   const setProgress = usePipelineStore((s) => s.setProgress);
   const appendStreamingText = usePipelineStore((s) => s.appendStreamingText);
   const setError = usePipelineStore((s) => s.setError);
   const setEstimatedCost = usePipelineStore((s) => s.setEstimatedCost);
+  const updateFileStatus = usePipelineStore((s) => s.updateFileStatus);
   const resetPipeline = usePipelineStore((s) => s.resetPipeline);
 
   // Project store
   const activeProjectId = useProjectsStore((s) => s.activeProjectId);
+  const activeMeetingId = useProjectsStore((s) => s.activeMeetingId);
+  const setActiveMeeting = useProjectsStore((s) => s.setActiveMeeting);
+  const setActiveProject = useProjectsStore((s) => s.setActiveProject);
   const allProjects = useProjectsStore((s) => s.projects);
+  const allMeetings = useProjectsStore((s) => s.meetings);
+  const addProject = useProjectsStore((s) => s.addProject);
   const addMeeting = useProjectsStore((s) => s.addMeeting);
   const updateMeeting = useProjectsStore((s) => s.updateMeeting);
+  const getProjectMeetings = useProjectsStore((s) => s.getProjectMeetings);
+  const meetingIdRef = useRef<string | null>(null);
 
   // Artifacts store
   const addArtifact = useArtifactsStore((s) => s.addArtifact);
+  const getArtifactsByMeeting = useArtifactsStore((s) => s.getArtifactsByMeeting);
   const selectedTemplate = useArtifactsStore((s) => s.selectedTemplate);
   const templates = useArtifactsStore((s) => s.templates);
 
@@ -71,44 +89,157 @@ export function PipelinePage() {
   const [qualityWarnings, setQualityWarnings] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [costEstimate, setCostEstimate] = useState<string | null>(null);
-  const abortRef = useRef(false);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<FileInfo[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const activeProject = allProjects.find((p) => p.id === activeProjectId);
+  const autoStartedRef = useRef(false);
+
+  // Автозапуск: если пришли со страницы проекта с activeMeetingId
+  useEffect(() => {
+    if (!activeMeetingId || isRunning || meetingId || autoStartedRef.current) return;
+    autoStartedRef.current = true;
+
+    const meeting = allMeetings.find((m) => m.id === activeMeetingId);
+    const meetingIdForLookup = activeMeetingId;
+    if (!meeting) return;
+
+    const startWithFile = (file: File) => {
+      setActiveMeeting(null); // Сбрасываем только после успешного получения файла (P1-C)
+      handleStartPipeline([{ file, name: file.name, knownDuration: meeting.durationSeconds }]);
+    };
+
+    // 1. Пробуем IndexedDB (переживает перезапуск)
+    getAudioFile(meetingIdForLookup)
+      .then((file) => {
+        if (file) {
+          startWithFile(file);
+          return;
+        }
+        // 2. Fallback: blob URL (работает только в текущей сессии)
+        if (!meeting.audioPath) {
+          setActiveMeeting(null);
+          setFileError('Файл не найден. Загрузите запись заново.');
+          return;
+        }
+        return fetch(meeting.audioPath)
+          .then((r) => {
+            if (!r.ok) throw new Error('Blob URL expired');
+            return r.blob();
+          })
+          .then((blob) => {
+            const fileName = meeting.filePath || meeting.title || 'recording';
+            startWithFile(new File([blob], fileName, { type: blob.type || 'audio/mpeg' }));
+          });
+      })
+      .catch((err) => {
+        console.warn('[Pipeline] File load failed:', err);
+        setActiveMeeting(null);
+        const detail = err instanceof Error ? err.message : '';
+        setFileError(
+          detail.includes('Blob URL') || detail.includes('expired')
+            ? 'Файл доступен только в рамках одной сессии. Загрузите запись заново.'
+            : 'Файл из предыдущей сессии недоступен. Загрузите запись заново.'
+        );
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- handleStartPipeline intentionally excluded to prevent re-triggers
+  }, [activeMeetingId, allMeetings]);
 
   // Получаем типы артефактов из выбранного шаблона
   const getSelectedArtifactTypes = useCallback((): ArtifactType[] => {
     const template = templates.find((t) => t.id === selectedTemplate);
-    return template?.artifactTypes || ['protocol', 'requirements', 'risks', 'glossary', 'questions', 'transcript'];
+    return template?.artifactTypes || ['protocol', 'requirements', 'risks', 'glossary', 'questions', 'transcript', 'development'];
   }, [templates, selectedTemplate]);
 
-  // Запуск пайплайна
-  const handleStartPipeline = useCallback(async (file: File) => {
+  // Запуск пайплайна (multi-file)
+  const handleStartPipeline = useCallback(async (files: Array<{ file: File; name: string; knownDuration?: number; nativePath?: string }>) => {
     if (isRunning) return;
 
-    // Проверка API-ключей
-    if (!apiKeys.openaiKey) {
-      setError('Не указан API-ключ OpenAI. Перейдите в настройки.');
+    // Проверка API-ключей для STT
+    const sttKeyMap: Record<string, keyof typeof apiKeys> = {
+      groq: 'groqKey', openai: 'openaiKey', gemini: 'geminiKey',
+    };
+    const sttKeyField = sttKeyMap[sttProvider];
+    if (!sttKeyField) {
+      setError(`Неизвестный STT-провайдер: ${sttProvider}. Перейдите в настройки.`);
+      return;
+    }
+    if (!apiKeys[sttKeyField]) {
+      setError(`Не указан API-ключ ${PROVIDER_NAMES[sttProvider]} (транскрипция). Перейдите в настройки.`);
       return;
     }
 
-    const llmKey = llmProvider === 'claude' ? apiKeys.claudeKey : apiKeys.openaiKey;
-    if (!llmKey) {
-      setError(`Не указан API-ключ ${llmProvider === 'claude' ? 'Claude' : 'OpenAI'}. Перейдите в настройки.`);
-      return;
+    // Проверка API-ключей для LLM
+    const llmKeyMap: Record<string, keyof typeof apiKeys> = {
+      claude: 'claudeKey', openai: 'openaiKey', gemini: 'geminiKey', groq: 'groqKey',
+      deepseek: 'deepseekKey', mimo: 'mimoKey', cerebras: 'cerebrasKey',
+      mistral: 'mistralKey', openrouter: 'openrouterKey',
+    };
+
+    if (routingMode === 'auto') {
+      // В auto-routing достаточно хотя бы одного LLM-ключа
+      const hasAnyLLMKey = Object.values(llmKeyMap).some((field) => apiKeys[field]);
+      if (!hasAnyLLMKey) {
+        setError('Не указан ни один API-ключ для генерации. Перейдите в настройки.');
+        return;
+      }
+    } else {
+      const llmKeyField = llmKeyMap[llmProvider];
+      if (!llmKeyField) {
+        setError(`Неизвестный LLM-провайдер: ${llmProvider}. Перейдите в настройки.`);
+        return;
+      }
+      if (!apiKeys[llmKeyField]) {
+        setError(`Не указан API-ключ ${PROVIDER_NAMES[llmProvider]} (генерация). Перейдите в настройки.`);
+        return;
+      }
     }
 
     const artifactTypes = getSelectedArtifactTypes();
-    const newMeetingId = `meeting-${Date.now()}`;
+    const newMeetingId = `meeting-${crypto.randomUUID()}`;
+
+    // Формируем PipelineInputFile[] из массива файлов
+    const pipelineFiles: PipelineInputFile[] = files.map((f, i) => ({
+      file: f.file,
+      fileId: `file-${crypto.randomUUID()}`,
+      order: i,
+      label: f.name,
+      nativePath: f.nativePath,
+    }));
+
+    const totalSize = files.reduce((sum, f) => sum + f.file.size, 0);
+    const firstFile = files[0];
+
+    // Гарантируем наличие проекта (P1-A: не допускаем orphaned meetings с projectId='default')
+    let projectId = activeProjectId;
+    if (!projectId) {
+      const fallbackId = crypto.randomUUID();
+      const now = new Date().toISOString();
+      addProject({
+        id: fallbackId,
+        name: 'Без проекта',
+        description: '',
+        folder: '',
+        meetingIds: [],
+        createdAt: now,
+        updatedAt: now,
+      });
+      setActiveProject(fallbackId);
+      projectId = fallbackId;
+    }
 
     // Создаём встречу
     addMeeting({
       id: newMeetingId,
-      projectId: activeProjectId || 'default',
-      title: file.name.replace(/\.[^.]+$/, ''),
-      filePath: file.name,
+      projectId,
+      title: files.length === 1
+        ? firstFile.name.replace(/\.[^.]+$/, '')
+        : `${files.length} записей (${firstFile.name.replace(/\.[^.]+$/, '')}...)`,
+      filePath: firstFile.nativePath || firstFile.name,
       audioPath: '',
-      durationSeconds: 0,
-      fileSizeBytes: file.size,
+      durationSeconds: firstFile.knownDuration || 0,
+      fileSizeBytes: totalSize,
       qualityScore: 0,
       status: 'processing',
       errorMessage: null,
@@ -116,10 +247,24 @@ export function PipelinePage() {
       processedAt: null,
     });
 
-    // Инициализация пайплайна
+    // Сохраняем первый файл в IndexedDB для возможности переслушивания
+    storeAudioFile(newMeetingId, firstFile.file).catch(() => {
+      // Некритичная ошибка — файл не сохранён, но пайплайн продолжает работу
+    });
+
+    // Сохраняем meetingId для cleanup при abort (P2-B)
+    meetingIdRef.current = newMeetingId;
+
+    // Инициализация пайплайна с файлами
     setIsRunning(true);
-    abortRef.current = false;
-    startPipeline(newMeetingId);
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+    startPipeline(newMeetingId, projectId, pipelineFiles.map((f) => ({
+      fileId: f.fileId,
+      fileName: f.label,
+      order: f.order,
+      sizeBytes: f.file.size,
+    })));
 
     setArtifactStatuses(
       artifactTypes.map((type) => ({ type, status: 'pending' as ArtifactStatus })),
@@ -129,6 +274,36 @@ export function PipelinePage() {
     const preEstimate = estimateCostBeforeProcessing(0, artifactTypes.length, llmProvider);
     setCostEstimate(formatCost(preEstimate));
 
+    // Кумулятивный контекст: собираем артефакты из предыдущих встреч проекта
+    let previousArtifacts: Record<string, string> | undefined;
+    const projectMeetings = getProjectMeetings(projectId);
+    const completedMeetings = projectMeetings
+      .filter((m) => m.status === 'completed')
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    if (completedMeetings.length > 0) {
+      const cumulativeTypes: ArtifactType[] = ['requirements', 'risks', 'glossary', 'questions'];
+      const collected: Record<string, string> = {};
+
+      for (const type of cumulativeTypes) {
+        const allData: Record<string, unknown>[] = [];
+        for (const meeting of completedMeetings) {
+          const meetingArtifacts = getArtifactsByMeeting(meeting.id);
+          const artifact = meetingArtifacts.find((a) => a.type === type);
+          if (artifact?.data) {
+            allData.push(artifact.data);
+          }
+        }
+        if (allData.length > 0) {
+          collected[type] = JSON.stringify(allData, null, 2);
+        }
+      }
+
+      if (Object.keys(collected).length > 0) {
+        previousArtifacts = collected;
+      }
+    }
+
     const config: PipelineConfig = {
       meetingId: newMeetingId,
       projectName: activeProject?.name || 'Проект',
@@ -136,11 +311,16 @@ export function PipelinePage() {
       meetingType: 'обследование',
       artifactTypes,
       provider: llmProvider,
+      llmModel: llmModel || undefined,
+      sttProvider,
       apiKeys,
+      previousArtifacts,
+      routingMode,
     };
 
     try {
-      const result = await runPipeline(file, config, {
+      const pipelineOptions: PipelineOptions = { signal: abortController.signal };
+      const result = await runPipeline(pipelineFiles, config, {
         onStageChange: (stage: PipelineStage) => {
           setStage(stage);
         },
@@ -160,24 +340,33 @@ export function PipelinePage() {
         onQualityWarnings: (warnings: string[]) => {
           setQualityWarnings(warnings);
         },
+        onFileProgress: (fileId, fileProgress, status, fileError) => {
+          updateFileStatus(fileId, fileProgress, status, fileError);
+        },
         onArtifactComplete: (type: ArtifactType, data: Record<string, unknown> | null, isEmpty: boolean) => {
+          console.log('[Pipeline] onArtifactComplete:', { type, hasData: !!data, isEmpty, dataKeys: data ? Object.keys(data) : null });
+
           setArtifactStatuses((prev) =>
             prev.map((a) => (a.type === type ? { ...a, status: isEmpty ? 'empty' : 'completed' } : a)),
           );
 
           if (data && !isEmpty) {
-            addArtifact({
-              id: `artifact-${type}-${Date.now()}`,
+            const artifact = {
+              id: `artifact-${type}-${crypto.randomUUID()}`,
               meetingId: newMeetingId,
               type,
               version: 1,
               data,
-              llmProvider: type === 'transcript' ? 'openai' : llmProvider,
-              llmModel: type === 'transcript' ? 'whisper-1' : (llmProvider === 'claude' ? 'claude-sonnet-4-20250514' : 'gpt-4o'),
+              llmProvider: type === 'transcript' ? sttProvider : llmProvider,
+              llmModel: type === 'transcript' ? DEFAULT_STT_MODELS[sttProvider] : DEFAULT_LLM_MODELS[llmProvider],
               tokensUsed: 0,
               costUsd: 0,
               createdAt: new Date().toISOString(),
-            });
+            };
+            console.log('[Pipeline] addArtifact:', { id: artifact.id, type: artifact.type, meetingId: artifact.meetingId });
+            addArtifact(artifact);
+          } else {
+            console.warn('[Pipeline] SKIPPED addArtifact:', { type, data: data === null ? 'NULL' : 'exists', isEmpty });
           }
         },
         onArtifactError: (type: ArtifactType, errMsg: string) => {
@@ -185,7 +374,14 @@ export function PipelinePage() {
             prev.map((a) => (a.type === type ? { ...a, status: 'error', error: errMsg } : a)),
           );
         },
-      });
+      }, pipelineOptions);
+
+      // Финализация: переводим этап 'complete' из 'active' в 'completed'
+      // Проверяем что pipeline не был отменён через handleReset (race condition guard)
+      if (!meetingIdRef.current) return; // abort уже обработал cleanup
+      if (result.success) {
+        completePipeline();
+      }
 
       updateMeeting(newMeetingId, {
         status: result.success ? 'completed' : 'error',
@@ -201,20 +397,43 @@ export function PipelinePage() {
       setIsRunning(false);
     }
   }, [
-    isRunning, apiKeys, llmProvider, activeProjectId, activeProject, getSelectedArtifactTypes,
-    startPipeline, setStage, setProgress, appendStreamingText, setError, setEstimatedCost,
-    addMeeting, updateMeeting, addArtifact, selectedTemplate, templates,
+    isRunning, apiKeys, llmProvider, sttProvider, activeProjectId, activeProject, getSelectedArtifactTypes,
+    startPipeline, setStage, completePipeline, setProgress, appendStreamingText, setError, setEstimatedCost,
+    updateFileStatus, addProject, setActiveProject, addMeeting, updateMeeting, addArtifact, selectedTemplate, templates,
+    getProjectMeetings, getArtifactsByMeeting,
   ]);
+
+  // Обработка файлов из DragDropZone — только сохраняет в state
+  const handleFilesChanged = useCallback((infos: FileInfo[]) => {
+    setFileError(null);
+    setPendingFiles(infos);
+  }, []);
+
+  // Запуск обработки загруженных файлов
+  const handleStartFromPending = useCallback(() => {
+    if (pendingFiles.length === 0) return;
+    handleStartPipeline(pendingFiles.map((info) => ({ file: info.file, name: info.name, knownDuration: info.durationSeconds, nativePath: info.nativePath })));
+  }, [pendingFiles, handleStartPipeline]);
+
+  const handleFileError = useCallback((message: string) => {
+    setFileError(message);
+  }, []);
 
   // Сброс пайплайна
   const handleReset = useCallback(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    // P2-B: помечаем прерванную встречу как ошибку
+    if (meetingIdRef.current) {
+      updateMeeting(meetingIdRef.current, { status: 'error', errorMessage: 'Обработка прервана пользователем' });
+      meetingIdRef.current = null;
+    }
     resetPipeline();
     setArtifactStatuses([]);
     setQualityWarnings([]);
     setIsRunning(false);
     setCostEstimate(null);
-    abortRef.current = true;
-  }, [resetPipeline]);
+  }, [resetPipeline, updateMeeting]);
 
   // === Пустое состояние: выбор файла ===
   if (!meetingId && !isRunning) {
@@ -227,37 +446,69 @@ export function PipelinePage() {
           </p>
 
           {/* Зона загрузки */}
-          <GlassCard variant="default" padding="lg" className="text-center">
-            <div className="mb-4">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" className="mx-auto text-primary/40">
-                <path d="M14 30L24 20L34 30" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M24 20V40" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                <path d="M40 32C40 36.4183 36.4183 40 32 40H16C11.5817 40 8 36.4183 8 32V16C8 11.5817 11.5817 8 16 8H32C36.4183 8 40 11.5817 40 16" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              </svg>
-            </div>
-            <p className="text-sm text-text mb-1">Перетащите файл или нажмите для выбора</p>
-            <p className="text-xs text-text-muted mb-4">MP3, WAV, M4A, MP4, MKV, WEBM и другие</p>
+          <DragDropZone
+            onFilesProcessed={handleFilesChanged}
+            onError={handleFileError}
+          />
 
-            <label className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white cursor-pointer hover:bg-primary/90 transition-colors">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              <span className="text-sm font-medium">Выбрать файл</span>
-              <input
-                type="file"
-                className="hidden"
-                accept="audio/*,video/*,.mp3,.wav,.m4a,.ogg,.flac,.aac,.mp4,.mkv,.webm,.mov"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleStartPipeline(file);
-                }}
-              />
-            </label>
-          </GlassCard>
+          {/* Кнопка запуска */}
+          {pendingFiles.length > 0 && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={handleStartFromPending}
+              className="mt-4 w-full px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors"
+            >
+              Обработать {pendingFiles.length === 1
+                ? 'запись'
+                : `${pendingFiles.length} ${pendingFiles.length < 5 ? 'записи' : 'записей'}`
+              }
+            </motion.button>
+          )}
+
+          {/* Ошибка файла */}
+          {fileError && (
+            <GlassCard variant="subtle" padding="sm" className="mt-3 border-error/30">
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-error flex-shrink-0">
+                  <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M8 5V9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  <circle cx="8" cy="11.5" r="0.6" fill="currentColor" />
+                </svg>
+                <p className="text-xs text-error">{fileError}</p>
+              </div>
+            </GlassCard>
+          )}
+
+          {/* Ошибка пайплайна (ключи, конфигурация) */}
+          {error && (
+            <GlassCard variant="subtle" padding="sm" className="mt-3 border-error/30">
+              <div className="flex items-center gap-2">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-error flex-shrink-0">
+                  <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M8 5V9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  <circle cx="8" cy="11.5" r="0.6" fill="currentColor" />
+                </svg>
+                <p className="text-xs text-error">{error}</p>
+              </div>
+            </GlassCard>
+          )}
 
           {/* Информация о настройках */}
           <div className="flex gap-3 mt-4">
-            <GlassCard variant="subtle" padding="sm" className="flex-1">
+            {/* P2-G: Текущий проект */}
+            <div
+              className="flex-1 glass-card p-3 transition-all duration-200 hover:-translate-y-0.5"
+            >
+              <p className="text-xs text-text-muted mb-0.5">Проект</p>
+              <p className="text-sm font-medium text-text truncate">
+                {activeProject?.name || 'Не выбран'}
+              </p>
+            </div>
+
+            <div
+              className="flex-1 glass-card p-3 transition-all duration-200 hover:-translate-y-0.5"
+            >
               <p className="text-xs text-text-muted mb-0.5">Шаблон</p>
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-text">
@@ -270,15 +521,17 @@ export function PipelinePage() {
                   Изменить
                 </button>
               </div>
-            </GlassCard>
+            </div>
 
-            <GlassCard variant="subtle" padding="sm" className="flex-1">
+            <div
+              className="flex-1 glass-card p-3 transition-all duration-200 hover:-translate-y-0.5"
+            >
               <p className="text-xs text-text-muted mb-0.5">Провайдер</p>
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-text">
-                  {llmProvider === 'claude' ? 'Claude' : 'OpenAI'}
+                  {PROVIDER_NAMES[llmProvider] || llmProvider}
                 </p>
-                {!apiKeys.openaiKey && (
+                {(!apiKeys[({ claude: 'claudeKey', openai: 'openaiKey', gemini: 'geminiKey', groq: 'groqKey', deepseek: 'deepseekKey', mimo: 'mimoKey', cerebras: 'cerebrasKey', mistral: 'mistralKey', openrouter: 'openrouterKey' } as const)[llmProvider]] || !apiKeys[({ openai: 'openaiKey', groq: 'groqKey', gemini: 'geminiKey' } as const)[sttProvider]]) && (
                   <button
                     onClick={() => navigate('/settings')}
                     className="text-xs text-warning font-medium"
@@ -287,7 +540,31 @@ export function PipelinePage() {
                   </button>
                 )}
               </div>
-            </GlassCard>
+            </div>
+          </div>
+
+          {/* Артефакты выбранного шаблона */}
+          <div className="mt-4 glass-card p-4">
+            <p className="text-xs text-text-muted mb-2.5">
+              Будут сгенерированы ({getSelectedArtifactTypes().length})
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {getSelectedArtifactTypes().map((type) => (
+                <div
+                  key={type}
+                  className="flex items-start gap-2 px-3 py-2.5 glass-card transition-all duration-150 hover:-translate-y-px"
+                  title={ARTIFACT_DESCRIPTIONS[type].bestFor}
+                >
+                  <span className="text-sm flex-shrink-0 text-primary">{ARTIFACT_ICONS[type]}</span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-text">{ARTIFACT_LABELS[type]}</p>
+                    <p className="text-[11px] text-text-muted leading-snug mt-0.5">
+                      {ARTIFACT_DESCRIPTIONS[type].summary}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </AnimatedPage>
@@ -313,7 +590,7 @@ export function PipelinePage() {
               <motion.button
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                onClick={() => navigate(`/viewer/${meetingId}`)}
+                onClick={() => navigate(`/viewer?meetingId=${meetingId}`)}
                 className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 Просмотр артефактов
@@ -384,7 +661,13 @@ export function PipelinePage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-error mb-1">Ошибка обработки</p>
+                  <p className="text-sm font-medium text-error mb-1">
+                    {currentStage === 'upload' ? 'Ошибка загрузки файла'
+                      : currentStage === 'extract' ? 'Ошибка извлечения аудио'
+                      : currentStage === 'transcribe' ? 'Ошибка транскрипции'
+                      : currentStage === 'generate' ? 'Ошибка генерации артефактов'
+                      : 'Ошибка обработки'}
+                  </p>
                   <p className="text-xs text-text-secondary">{error}</p>
                   <button
                     onClick={handleReset}
@@ -423,7 +706,7 @@ export function PipelinePage() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => navigate(`/viewer/${meetingId}`)}
+                  onClick={() => navigate(`/viewer?meetingId=${meetingId}`)}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                   Открыть артефакты

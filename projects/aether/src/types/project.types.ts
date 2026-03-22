@@ -3,6 +3,8 @@ export interface Project {
   name: string;
   description: string;
   folder: string;
+  /** ID встреч, привязанных к проекту */
+  meetingIds: string[];
   createdAt: string;
   updatedAt: string;
 }

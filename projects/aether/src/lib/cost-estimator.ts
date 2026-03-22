@@ -3,19 +3,28 @@
  * Цены актуальны на март 2026.
  */
 
-import type { LLMProvider } from '@/types/api.types';
+import type { LLMProvider, STTProvider } from '@/types/api.types';
 import { estimateTokens } from './chunking';
 
-/** Цены Whisper API: $0.006 за минуту */
-const WHISPER_PRICE_PER_MINUTE = 0.006;
+/** Цены STT по провайдеру (за минуту) */
+const STT_PRICES: Record<STTProvider, number> = {
+  openai: 0.006,
+  groq: 0,
+  gemini: 0,
+};
 
-/** Цены Claude Sonnet 4: $3 / 1M input, $15 / 1M output */
-const CLAUDE_INPUT_PRICE_PER_TOKEN = 3.0 / 1_000_000;
-const CLAUDE_OUTPUT_PRICE_PER_TOKEN = 15.0 / 1_000_000;
-
-/** Цены GPT-4o: $2.50 / 1M input, $10 / 1M output */
-const GPT4O_INPUT_PRICE_PER_TOKEN = 2.50 / 1_000_000;
-const GPT4O_OUTPUT_PRICE_PER_TOKEN = 10.0 / 1_000_000;
+/** Цены LLM по провайдеру (за 1 токен) */
+const LLM_PRICES: Record<LLMProvider, { input: number; output: number }> = {
+  claude:   { input: 3.0 / 1_000_000,  output: 15.0 / 1_000_000 },
+  openai:   { input: 2.50 / 1_000_000, output: 10.0 / 1_000_000 },
+  gemini:   { input: 0, output: 0 },     // бесплатно (250 RPD)
+  groq:     { input: 0, output: 0 },     // бесплатно (500K TPD)
+  deepseek: { input: 0.14 / 1_000_000, output: 0.28 / 1_000_000 },
+  mimo:     { input: 0.09 / 1_000_000, output: 0.09 / 1_000_000 },
+  cerebras: { input: 0, output: 0 },       // бесплатно (1M TPD)
+  mistral:  { input: 0, output: 0 },       // бесплатно (33M TPD)
+  openrouter: { input: 0, output: 0 },     // бесплатно (29 моделей)
+};
 
 /** Средний размер ответа на один артефакт (токены) */
 const AVG_OUTPUT_TOKENS_PER_ARTIFACT = 3_000;
@@ -40,9 +49,9 @@ export interface CostBreakdown {
 /**
  * Оценка стоимости транскрипции через Whisper API.
  */
-export function estimateWhisperCost(durationSeconds: number): number {
+export function estimateWhisperCost(durationSeconds: number, sttProvider: STTProvider = 'groq'): number {
   const minutes = durationSeconds / 60;
-  return minutes * WHISPER_PRICE_PER_MINUTE;
+  return minutes * STT_PRICES[sttProvider];
 }
 
 /**
@@ -59,12 +68,11 @@ export function estimateLLMCost(
   const totalInputTokens = (transcriptTokens + SYSTEM_PROMPT_TOKENS) * artifactCount;
   const totalOutputTokens = AVG_OUTPUT_TOKENS_PER_ARTIFACT * artifactCount;
 
-  const inputPrice = provider === 'claude' ? CLAUDE_INPUT_PRICE_PER_TOKEN : GPT4O_INPUT_PRICE_PER_TOKEN;
-  const outputPrice = provider === 'claude' ? CLAUDE_OUTPUT_PRICE_PER_TOKEN : GPT4O_OUTPUT_PRICE_PER_TOKEN;
+  const prices = LLM_PRICES[provider] || LLM_PRICES.openai;
 
   return {
-    inputCost: totalInputTokens * inputPrice,
-    outputCost: totalOutputTokens * outputPrice,
+    inputCost: totalInputTokens * prices.input,
+    outputCost: totalOutputTokens * prices.output,
   };
 }
 
@@ -112,8 +120,9 @@ export function estimateCostBeforeProcessing(
   const estimatedChars = estimatedWords * 6; // ~6 символов на русское слово
   const estimatedTokens = estimatedChars / 2.5;
 
-  const inputPrice = provider === 'claude' ? CLAUDE_INPUT_PRICE_PER_TOKEN : GPT4O_INPUT_PRICE_PER_TOKEN;
-  const outputPrice = provider === 'claude' ? CLAUDE_OUTPUT_PRICE_PER_TOKEN : GPT4O_OUTPUT_PRICE_PER_TOKEN;
+  const prices = LLM_PRICES[provider] || LLM_PRICES.openai;
+  const inputPrice = prices.input;
+  const outputPrice = prices.output;
 
   const llmCost =
     (estimatedTokens + SYSTEM_PROMPT_TOKENS) * artifactCount * inputPrice +

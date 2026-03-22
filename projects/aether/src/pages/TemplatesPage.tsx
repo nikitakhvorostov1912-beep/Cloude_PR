@@ -10,11 +10,11 @@ import { GlassCard, GlassButton, GlassInput, GlassModal } from '@/components/gla
 import { useArtifactsStore } from '@/stores/artifacts.store';
 import { useShallow } from 'zustand/react/shallow';
 import type { ArtifactType, Template } from '@/types/artifact.types';
-import { ARTIFACT_LABELS, ARTIFACT_ICONS } from '@/types/artifact.types';
+import { ARTIFACT_LABELS, ARTIFACT_ICONS, ARTIFACT_DESCRIPTIONS } from '@/types/artifact.types';
 import { useSound } from '@/hooks/useSound';
 
 const ALL_TYPES: ArtifactType[] = [
-  'protocol', 'requirements', 'risks', 'glossary', 'questions', 'transcript',
+  'protocol', 'requirements', 'risks', 'glossary', 'questions', 'transcript', 'development',
 ];
 
 /** Модальное окно создания/редактирования шаблона */
@@ -64,7 +64,7 @@ function TemplateModal({
       });
     } else {
       addTemplate({
-        id: `custom-${Date.now()}`,
+        id: `custom-${crypto.randomUUID()}`,
         name: name.trim(),
         description: description.trim(),
         artifactTypes: types,
@@ -298,6 +298,7 @@ export function TemplatesPage() {
             <span
               key={type}
               className="text-[11px] px-2 py-0.5 rounded-md bg-white/50 text-text-secondary"
+              title={ARTIFACT_DESCRIPTIONS[type].summary}
             >
               {ARTIFACT_ICONS[type]} {ARTIFACT_LABELS[type]}
             </span>

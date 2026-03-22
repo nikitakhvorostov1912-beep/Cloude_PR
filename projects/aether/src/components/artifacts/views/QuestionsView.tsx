@@ -2,6 +2,7 @@
  * Рендер артефакта «Открытые вопросы».
  */
 
+import { memo } from 'react';
 import { Section, ItemCard, Timestamp, StatusBadge, safeArray, safeStr } from './shared';
 
 interface QuestionsViewProps {
@@ -15,7 +16,7 @@ const urgencyConfig: Record<string, { icon: string; label: string }> = {
   nice_to_have: { icon: '🟢', label: 'Желательный' },
 };
 
-export function QuestionsView({ data, onTimestampClick }: QuestionsViewProps) {
+export const QuestionsView = memo(function QuestionsView({ data, onTimestampClick }: QuestionsViewProps) {
   const openQuestions = safeArray<Record<string, unknown>>(data.open_questions);
   const deferredTopics = safeArray<Record<string, unknown>>(data.deferred_topics);
   const infoGaps = safeArray<Record<string, unknown>>(data.information_gaps);
@@ -135,4 +136,4 @@ export function QuestionsView({ data, onTimestampClick }: QuestionsViewProps) {
       )}
     </div>
   );
-}
+});

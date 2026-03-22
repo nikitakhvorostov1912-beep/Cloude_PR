@@ -43,7 +43,7 @@ powershell.exe -NoProfile -File .claude/skills/mxl-compile/scripts/mxl-compile.p
 
 ## JSON-схема DSL
 
-Полная спецификация формата: **`docs/1c-specs/mxl-dsl-spec.md`** (прочитать через Read tool перед написанием JSON).
+Полная спецификация формата: **`docs/mxl-dsl-spec.md`** (прочитать через Read tool перед написанием JSON).
 
 Краткая структура:
 

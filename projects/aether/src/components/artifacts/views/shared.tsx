@@ -39,6 +39,7 @@ export function Timestamp({
 /** Бейдж приоритета */
 export function PriorityBadge({ priority }: { priority: string }) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
+    critical: { bg: 'bg-error/10', text: 'text-error', label: 'КРИТИЧЕСКИЙ' },
     must: { bg: 'bg-error/10', text: 'text-error', label: 'MUST' },
     high: { bg: 'bg-error/10', text: 'text-error', label: 'Высокий' },
     should: { bg: 'bg-warning/10', text: 'text-warning', label: 'SHOULD' },

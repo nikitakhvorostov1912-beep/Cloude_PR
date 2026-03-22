@@ -2,6 +2,7 @@
  * Рендер артефакта «Требования».
  */
 
+import { memo } from 'react';
 import { Section, ItemCard, Timestamp, PriorityBadge, StatusBadge, safeArray, safeStr } from './shared';
 
 interface RequirementsViewProps {
@@ -9,7 +10,7 @@ interface RequirementsViewProps {
   onTimestampClick?: (seconds: number) => void;
 }
 
-export function RequirementsView({ data, onTimestampClick }: RequirementsViewProps) {
+export const RequirementsView = memo(function RequirementsView({ data, onTimestampClick }: RequirementsViewProps) {
   const funcReqs = safeArray<Record<string, unknown>>(data.functional_requirements);
   const nonFuncReqs = safeArray<Record<string, unknown>>(data.non_functional_requirements);
   const businessRules = safeArray<Record<string, unknown>>(data.business_rules);
@@ -161,4 +162,4 @@ export function RequirementsView({ data, onTimestampClick }: RequirementsViewPro
       )}
     </div>
   );
-}
+});

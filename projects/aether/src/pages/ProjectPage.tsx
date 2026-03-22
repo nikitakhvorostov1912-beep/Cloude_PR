@@ -7,11 +7,14 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { DragDropZone } from '@/components/upload/DragDropZone';
 import { WaveformPlayer } from '@/components/audio/WaveformPlayer';
 import { useProjectsStore } from '@/stores/projects.store';
+import { useArtifactsStore } from '@/stores/artifacts.store';
 import { useUIStore } from '@/stores/ui.store';
 import { useShallow } from 'zustand/react/shallow';
 import { useSound } from '@/hooks/useSound';
 import { formatDuration } from '@/services/file.service';
 import type { FileInfo } from '@/services/file.service';
+import { storeAudioFile } from '@/services/file-storage.service';
+import { ARTIFACT_ICONS } from '@/types/artifact.types';
 
 export function ProjectPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,14 +25,19 @@ export function ProjectPage() {
   const project = useProjectsStore((s) => s.projects.find((p) => p.id === id));
   const allMeetings = useProjectsStore((s) => s.meetings);
   const meetings = allMeetings.filter((m) => m.projectId === id);
-  const { addMeeting, updateProject, removeProject, removeMeeting } = useProjectsStore(
+  const { addMeeting, createMeeting, updateProject, removeProject, removeMeeting, setActiveProject, setActiveMeeting } = useProjectsStore(
     useShallow((s) => ({
       addMeeting: s.addMeeting,
+      createMeeting: s.createMeeting,
       updateProject: s.updateProject,
       removeProject: s.removeProject,
       removeMeeting: s.removeMeeting,
+      setActiveProject: s.setActiveProject,
+      setActiveMeeting: s.setActiveMeeting,
     }))
   );
+
+  const artifacts = useArtifactsStore((s) => s.artifacts);
 
   const [showEdit, setShowEdit] = useState(false);
   const [editName, setEditName] = useState('');
@@ -53,7 +61,7 @@ export function ProjectPage() {
   const handleEditOpen = () => {
     play('click');
     setEditName(project.name);
-    setEditDesc(project.description);
+    setEditDesc(project.description || '');
     setShowEdit(true);
   };
 
@@ -73,6 +81,21 @@ export function ProjectPage() {
   };
 
   const handleFileProcessed = (file: FileInfo) => {
+    // Если есть сырой File — используем createMeeting (автопривязка к проекту)
+    if (file.file) {
+      const meetingId = createMeeting(project.id, file.file);
+
+      // Сохраняем файл в IndexedDB для persistence между сессиями
+      storeAudioFile(meetingId, file.file).catch((err) => {
+        console.warn('[ProjectPage] IndexedDB store failed:', err);
+        addToast('warning', 'Файл доступен только в текущей сессии (хранилище недоступно)');
+      });
+
+      addToast('success', `Файл "${file.name}" загружен`);
+      return;
+    }
+
+    // Fallback: нативный путь без File объекта
     const now = new Date().toISOString();
     addMeeting({
       id: crypto.randomUUID(),
@@ -159,117 +182,139 @@ export function ProjectPage() {
             />
           ) : (
             <div className="flex flex-col gap-3">
-              {meetings.map((meeting, i) => (
-                <motion.div
-                  key={meeting.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <GlassCard
-                    hoverable
-                    padding="md"
-                    onClick={() => {
-                      play('click');
-                      setExpandedMeeting(expandedMeeting === meeting.id ? null : meeting.id);
-                    }}
+              {meetings.map((meeting, i) => {
+                const isCompleted = meeting.status === 'completed';
+                const meetingArtifacts = artifacts.filter((a) => a.meetingId === meeting.id);
+                const artifactTypes = [...new Set(meetingArtifacts.map((a) => a.type))];
+
+                return (
+                  <motion.div
+                    key={meeting.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-                          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                            <path d="M9 2V14M5 8V14M13 5V14M1 9V14M17 7V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="font-medium text-text">{meeting.title || 'Без названия'}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs text-text-muted">{formatDuration(meeting.durationSeconds)}</span>
-                            <span className="text-xs text-text-muted">·</span>
-                            <span className="text-xs text-text-muted">{formatSize(meeting.fileSizeBytes)}</span>
-                            <span className="text-xs text-text-muted">·</span>
-                            <span className="text-xs text-text-muted">
-                              {new Date(meeting.createdAt).toLocaleDateString('ru-RU')}
-                            </span>
+                    <GlassCard
+                      hoverable
+                      padding="md"
+                      onClick={() => {
+                        if (isCompleted) {
+                          play('navigate');
+                          navigate(`/viewer?meetingId=${meeting.id}`);
+                        } else {
+                          play('click');
+                          setExpandedMeeting(expandedMeeting === meeting.id ? null : meeting.id);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            isCompleted ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'
+                          }`}>
+                            {isCompleted ? (
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M4 9L7.5 12.5L14 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            ) : (
+                              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                <path d="M9 2V14M5 8V14M13 5V14M1 9V14M17 7V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                              </svg>
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium text-text">{meeting.title || 'Без названия'}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-text-muted">{formatDuration(meeting.durationSeconds)}</span>
+                              <span className="text-xs text-text-muted">·</span>
+                              <span className="text-xs text-text-muted">{formatSize(meeting.fileSizeBytes)}</span>
+                              <span className="text-xs text-text-muted">·</span>
+                              <span className="text-xs text-text-muted">
+                                {new Date(meeting.createdAt).toLocaleDateString('ru-RU')}
+                              </span>
+                            </div>
+                            {/* Artifact badges inline for completed */}
+                            {isCompleted && artifactTypes.length > 0 && (
+                              <div className="flex items-center gap-1 mt-1">
+                                {artifactTypes.map((type) => (
+                                  <span key={type} className="text-sm" title={type}>
+                                    {ARTIFACT_ICONS[type]}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-xs px-2 py-1 rounded-lg ${
-                            meeting.status === 'completed'
-                              ? 'bg-success/10 text-success'
-                              : meeting.status === 'processing'
-                              ? 'bg-primary/10 text-primary'
-                              : meeting.status === 'error'
-                              ? 'bg-error/10 text-error'
-                              : 'bg-secondary/10 text-secondary'
-                          }`}
-                        >
-                          {meeting.status === 'completed' ? 'Готово' :
-                           meeting.status === 'processing' ? 'Обработка...' :
-                           meeting.status === 'error' ? 'Ошибка' : 'Загружен'}
-                        </span>
-                        <GlassButton
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            play('click');
-                            removeMeeting(meeting.id);
-                            addToast('info', 'Запись удалена');
-                          }}
-                        >
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                            <path d="M2 2L10 10M2 10L10 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                          </svg>
-                        </GlassButton>
-                      </div>
-                    </div>
-
-                    {/* Expanded: Waveform + Actions */}
-                    {expandedMeeting === meeting.id && meeting.audioPath && (
-                      <motion.div
-                        className="mt-4 pt-4 border-t border-white/20"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                      >
-                        <WaveformPlayer audioUrl={meeting.audioPath} height={60} />
-                        <div className="flex gap-2 mt-3">
-                          <GlassButton
-                            variant="primary"
-                            size="sm"
-                            onClick={() => {
-                              play('start');
-                              navigate('/pipeline');
-                            }}
-                          >
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                              <path d="M3 1L13 7L3 13V1Z" fill="currentColor" />
-                            </svg>
-                            Обработать
-                          </GlassButton>
-                          {meeting.status === 'completed' && (
+                        <div className="flex items-center gap-2">
+                          {/* Inline action button */}
+                          {isCompleted ? (
                             <GlassButton
                               variant="secondary"
                               size="sm"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 play('navigate');
                                 navigate(`/viewer?meetingId=${meeting.id}`);
                               }}
                             >
-                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                <path d="M2 2H8L12 6V12H2V2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                                <path d="M5 7H9M5 9H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                              </svg>
-                              Артефакты
+                              Артефакты →
                             </GlassButton>
+                          ) : meeting.status === 'uploaded' ? (
+                            <GlassButton
+                              variant="primary"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                play('start');
+                                setActiveProject(project.id);
+                                setActiveMeeting(meeting.id);
+                                navigate('/pipeline');
+                              }}
+                            >
+                              Обработать
+                            </GlassButton>
+                          ) : (
+                            <span
+                              className={`text-xs px-2 py-1 rounded-lg ${
+                                meeting.status === 'processing'
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'bg-error/10 text-error'
+                              }`}
+                            >
+                              {meeting.status === 'processing' ? 'Обработка...' : 'Ошибка'}
+                            </span>
                           )}
+                          <GlassButton
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              play('click');
+                              removeMeeting(meeting.id);
+                              addToast('info', 'Запись удалена');
+                            }}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                              <path d="M2 2L10 10M2 10L10 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            </svg>
+                          </GlassButton>
                         </div>
-                      </motion.div>
-                    )}
-                  </GlassCard>
-                </motion.div>
-              ))}
+                      </div>
+
+                      {/* Expanded: Waveform (only for non-completed) */}
+                      {!isCompleted && expandedMeeting === meeting.id && meeting.audioPath && (
+                        <motion.div
+                          className="mt-4 pt-4 border-t border-white/20"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                        >
+                          <WaveformPlayer audioUrl={meeting.audioPath} height={60} />
+                        </motion.div>
+                      )}
+                    </GlassCard>
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </div>

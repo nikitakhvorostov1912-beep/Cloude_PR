@@ -1,4 +1,4 @@
-﻿# db-load-xml v1.0 — Load 1C configuration from XML files
+﻿# db-load-xml v1.1 — Load 1C configuration from XML files
 # Source: https://github.com/Nikolay-Shirokov/cc-1c-skills
 <#
 .SYNOPSIS
@@ -95,7 +95,10 @@ param(
 
     [Parameter(Mandatory=$false)]
     [ValidateSet("Hierarchical", "Plain")]
-    [string]$Format = "Hierarchical"
+    [string]$Format = "Hierarchical",
+
+    [Parameter(Mandatory=$false)]
+    [switch]$UpdateDB
 )
 
 $OutputEncoding = [System.Text.Encoding]::UTF8
@@ -193,6 +196,11 @@ try {
         $arguments += "-Extension", "`"$Extension`""
     } elseif ($AllExtensions) {
         $arguments += "-AllExtensions"
+    }
+
+    # --- UpdateDB ---
+    if ($UpdateDB) {
+        $arguments += "/UpdateDBCfg"
     }
 
     # --- Output ---

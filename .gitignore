@@ -54,6 +54,12 @@ logs/
 # Claude worktrees
 .claude/worktrees/
 
+# Agent Teams runtime (temporary data between agents)
+agent-runtime/shared/
+agent-runtime/messages/
+agent-runtime/state/
+agent-runtime/outputs/
+
 # Claude memory credentials (sensitive data)
 .claude/memory/categories/credentials.md
 

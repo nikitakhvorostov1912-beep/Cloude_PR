@@ -11,13 +11,13 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label className="text-sm font-medium text-text-secondary">
+          <label className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-muted)' }}>
               {icon}
             </span>
           )}
@@ -25,15 +25,25 @@ export const GlassInput = forwardRef<HTMLInputElement, GlassInputProps>(
             ref={ref}
             className={`
               w-full px-4 py-2.5 rounded-xl text-sm
-              bg-white/50 backdrop-blur-sm
-              border border-white/30
-              text-text placeholder:text-text-muted
-              focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50
+              backdrop-blur-sm
               transition-all duration-200
+              focus:outline-none focus:ring-2
               ${icon ? 'pl-10' : ''}
-              ${error ? 'border-error/50 focus:ring-error/30' : ''}
               ${className}
             `}
+            style={{
+              background: 'var(--bg-card-inner)',
+              border: error ? '1px solid rgba(220,38,38,0.5)' : '1px solid var(--glass-border-inner)',
+              color: 'var(--color-text)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'var(--accent)';
+              e.currentTarget.style.boxShadow = '0 0 0 3px var(--accent-ring)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = error ? 'rgba(220,38,38,0.5)' : 'var(--glass-border-inner)';
+              e.currentTarget.style.boxShadow = '';
+            }}
             {...props}
           />
         </div>

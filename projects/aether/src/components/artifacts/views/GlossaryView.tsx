@@ -2,6 +2,7 @@
  * Рендер артефакта «Глоссарий».
  */
 
+import { memo } from 'react';
 import { Section, Timestamp, safeArray, safeStr } from './shared';
 
 interface GlossaryViewProps {
@@ -9,7 +10,7 @@ interface GlossaryViewProps {
   onTimestampClick?: (seconds: number) => void;
 }
 
-export function GlossaryView({ data, onTimestampClick }: GlossaryViewProps) {
+export const GlossaryView = memo(function GlossaryView({ data, onTimestampClick }: GlossaryViewProps) {
   const terms = safeArray<Record<string, unknown>>(data.terms);
   const abbreviations = safeArray<Record<string, unknown>>(data.abbreviations);
   const entityMapping = safeArray<Record<string, unknown>>(data.entity_mapping);
@@ -121,4 +122,4 @@ export function GlossaryView({ data, onTimestampClick }: GlossaryViewProps) {
       )}
     </div>
   );
-}
+});

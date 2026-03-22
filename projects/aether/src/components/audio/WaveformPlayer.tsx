@@ -22,9 +22,19 @@ export function WaveformPlayer({ audioUrl, className = '', height = 80, onTimeUp
 
   // Decode audio and extract waveform data
   useEffect(() => {
+    // Guard: blob URLs die after page reload — skip if URL is stale
+    if (!audioUrl || (audioUrl.startsWith('blob:') && !audioUrl.includes(window.location.origin))) {
+      setIsLoading(false);
+      waveformDataRef.current = Array.from({ length: 200 }, () => 0.2 + Math.random() * 0.6);
+      drawWaveform(0);
+      return;
+    }
+
     const audio = new Audio();
     audio.preload = 'metadata';
     audioRef.current = audio;
+    let cancelled = false;
+    let decodeCtx: AudioContext | null = null;
 
     audio.addEventListener('loadedmetadata', () => {
       setDuration(audio.duration);
@@ -41,10 +51,18 @@ export function WaveformPlayer({ audioUrl, className = '', height = 80, onTimeUp
     fetch(audioUrl)
       .then((r) => r.arrayBuffer())
       .then((buffer) => {
-        const ctx = new AudioContext();
-        return ctx.decodeAudioData(buffer);
+        if (cancelled) return;
+        decodeCtx = new AudioContext();
+        return decodeCtx.decodeAudioData(buffer);
       })
       .then((audioBuffer) => {
+        if (cancelled || !audioBuffer) {
+          void decodeCtx?.close();
+          decodeCtx = null;
+          return;
+        }
+        void decodeCtx?.close();
+        decodeCtx = null;
         const rawData = audioBuffer.getChannelData(0);
         const samples = 200;
         const blockSize = Math.floor(rawData.length / samples);
@@ -61,20 +79,32 @@ export function WaveformPlayer({ audioUrl, className = '', height = 80, onTimeUp
         // Normalize
         const max = Math.max(...peaks);
         waveformDataRef.current = peaks.map((p) => p / max);
+        // Длительность может быть известна из AudioBuffer даже если loadedmetadata не сработал
+        if (audioBuffer.duration && !duration) {
+          setDuration(audioBuffer.duration);
+        }
+        setIsLoading(false);
         drawWaveform(0);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (cancelled) return;
+        console.warn('[WaveformPlayer] Audio decode failed:', err?.message ?? err);
+        void decodeCtx?.close();
+        decodeCtx = null;
         // Generate placeholder waveform
         waveformDataRef.current = Array.from({ length: 200 }, () =>
           0.2 + Math.random() * 0.6
         );
+        setIsLoading(false);
         drawWaveform(0);
       });
 
     return () => {
+      cancelled = true;
       audio.pause();
       audio.src = '';
       cancelAnimationFrame(animationRef.current);
+      void decodeCtx?.close();
     };
   }, [audioUrl]);
 
@@ -135,19 +165,26 @@ export function WaveformPlayer({ audioUrl, className = '', height = 80, onTimeUp
     return () => cancelAnimationFrame(animationRef.current);
   }, [isPlaying, drawWaveform, onTimeUpdate]);
 
-  const togglePlay = () => {
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Не дать клику всплыть до GlassCard (collapse)
     const audio = audioRef.current;
     if (!audio) return;
 
     if (isPlaying) {
       audio.pause();
+      setIsPlaying(false);
     } else {
-      audio.play();
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          console.warn('[WaveformPlayer] play() failed:', err.message);
+          setIsPlaying(false);
+        });
     }
-    setIsPlaying(!isPlaying);
   };
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    e.stopPropagation(); // Не дать клику всплыть до GlassCard (collapse)
     const canvas = canvasRef.current;
     const audio = audioRef.current;
     if (!canvas || !audio) return;

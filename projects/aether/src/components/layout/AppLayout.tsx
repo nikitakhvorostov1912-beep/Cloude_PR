@@ -8,7 +8,7 @@ export function AppLayout() {
     <div className="h-screen flex relative">
       <BackgroundBlobs />
       <Sidebar />
-      <main className="flex-1 overflow-y-auto relative z-[1] p-6">
+      <main className="flex-1 overflow-y-auto relative p-6">
         <Outlet />
       </main>
       <GlassToastContainer />

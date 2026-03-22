@@ -45,6 +45,46 @@ export default defineConfig(async () => ({
         changeOrigin: true,
         rewrite: (p: string) => p.replace(/^\/api\/anthropic/, ""),
       },
+      "/api/openai": {
+        target: "https://api.openai.com",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/openai/, ""),
+      },
+      "/api/groq": {
+        target: "https://api.groq.com/openai",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/groq/, ""),
+      },
+      "/api/gemini": {
+        target: "https://generativelanguage.googleapis.com/v1beta/openai",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/gemini/, ""),
+      },
+      "/api/deepseek": {
+        target: "https://api.deepseek.com",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/deepseek/, ""),
+      },
+      "/api/mimo": {
+        target: "https://api.xiaomimimo.com",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/mimo/, ""),
+      },
+      "/api/cerebras": {
+        target: "https://api.cerebras.ai",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/cerebras/, ""),
+      },
+      "/api/mistral": {
+        target: "https://api.mistral.ai",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/mistral/, ""),
+      },
+      "/api/openrouter": {
+        target: "https://openrouter.ai",
+        changeOrigin: true,
+        rewrite: (p: string) => p.replace(/^\/api\/openrouter/, ""),
+      },
     },
   },
 }));

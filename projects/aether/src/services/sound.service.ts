@@ -1,61 +1,53 @@
-import { Howl } from 'howler';
-
 type SoundName = 'click' | 'navigate' | 'upload' | 'start' | 'success' | 'error';
 
+type SoundConfig = { frequency: number; duration: number; type: OscillatorType };
+
+const SOUND_CONFIGS: Record<SoundName, SoundConfig> = {
+  click:    { frequency: 800, duration: 0.08, type: 'sine' },
+  navigate: { frequency: 600, duration: 0.15, type: 'sine' },
+  upload:   { frequency: 500, duration: 0.25, type: 'sine' },
+  start:    { frequency: 700, duration: 0.4,  type: 'sine' },
+  success:  { frequency: 900, duration: 0.5,  type: 'sine' },
+  error:    { frequency: 300, duration: 0.35, type: 'triangle' },
+};
+
 class SoundService {
-  private sounds: Map<SoundName, Howl> = new Map();
+  // Единый AudioContext на весь жизненный цикл приложения —
+  // избегаем лимита одновременных контекстов в WebView2 (Chrome ~6 штук).
+  private ctx: AudioContext | null = null;
   private enabled = true;
   private volume = 0.7;
 
   init() {
-    // Создаём синтетические звуки через Web Audio API — отдельные MP3 не нужны
-    // Используем data URI с простыми тонами
-    const soundConfigs: Record<SoundName, { frequency: number; duration: number; type: OscillatorType }> = {
-      click: { frequency: 800, duration: 0.08, type: 'sine' },
-      navigate: { frequency: 600, duration: 0.15, type: 'sine' },
-      upload: { frequency: 500, duration: 0.25, type: 'sine' },
-      start: { frequency: 700, duration: 0.4, type: 'sine' },
-      success: { frequency: 900, duration: 0.5, type: 'sine' },
-      error: { frequency: 300, duration: 0.35, type: 'triangle' },
-    };
-
-    for (const [name, config] of Object.entries(soundConfigs)) {
-      this.createSyntheticSound(name as SoundName, config);
-    }
+    // AudioContext создаётся лениво при первом play(), чтобы не нарушить
+    // политику браузеров "autoplay blocked until user gesture".
   }
 
-  private createSyntheticSound(
-    name: SoundName,
-    config: { frequency: number; duration: number; type: OscillatorType }
-  ) {
-    // Howler.js для управления, но звуки генерируем программно
-    // Создаём silent howl как placeholder — реальный звук через AudioContext
-    const howl = new Howl({
-      src: ['data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='],
-      volume: this.volume,
-    });
-    this.sounds.set(name, howl);
-
-    // Сохраняем конфиг для play
-    (howl as unknown as Record<string, unknown>)._synthConfig = config;
+  private getContext(): AudioContext | null {
+    try {
+      if (!this.ctx || this.ctx.state === 'closed') {
+        this.ctx = new AudioContext();
+      }
+      // Resume если был suspended (autoplay policy)
+      if (this.ctx.state === 'suspended') {
+        void this.ctx.resume();
+      }
+      return this.ctx;
+    } catch {
+      return null;
+    }
   }
 
   play(name: SoundName) {
     if (!this.enabled) return;
 
-    const howl = this.sounds.get(name);
-    if (!howl) return;
-
-    const config = (howl as unknown as Record<string, unknown>)._synthConfig as {
-      frequency: number;
-      duration: number;
-      type: OscillatorType;
-    } | undefined;
-
+    const config = SOUND_CONFIGS[name];
     if (!config) return;
 
+    const ctx = this.getContext();
+    if (!ctx) return;
+
     try {
-      const ctx = new AudioContext();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
@@ -63,8 +55,8 @@ class SoundService {
       osc.frequency.setValueAtTime(config.frequency, ctx.currentTime);
 
       if (name === 'success') {
-        osc.frequency.setValueAtTime(700, ctx.currentTime);
-        osc.frequency.setValueAtTime(900, ctx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(700,  ctx.currentTime);
+        osc.frequency.setValueAtTime(900,  ctx.currentTime + 0.15);
         osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.3);
       }
 
@@ -76,10 +68,8 @@ class SoundService {
 
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + config.duration);
-
-      osc.onended = () => ctx.close();
     } catch {
-      // AudioContext not available
+      // AudioContext недоступен или заблокирован
     }
   }
 
