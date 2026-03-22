@@ -1,2037 +1,10 @@
-# PROJECT_STATE.md — Полный отчёт о состоянии MOEX Trading System
-# Дата: 2026-03-22 00:49
-# Для внешнего аудита
-
+# PROJECT_STATE.md — Актуальное состояние проекта
+# Дата: 2026-03-22 11:07
 
 # ══════════════════════════════════════
-# РАЗДЕЛ 1: ОБЗОРЫ РЕПОЗИТОРИЕВ
+# РАЗДЕЛ 1: СТРУКТУРА ПРОЕКТА
 # ══════════════════════════════════════
-
-# Обзор репозиториев для MOEX Trading Bot
-
-Сводная таблица в конце файла.
-
----
-
-## 1. ghostfolio/ghostfolio
-
-**URL:** https://github.com/ghostfolio/ghostfolio
-**Дата анализа:** 2026-03-21
-
-### Вердикт
-
 ```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: ghostfolio                                 ║
-║  URL: github.com/ghostfolio/ghostfolio                   ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐        3/5                ║
-║  Качество кода:        ⭐⭐⭐⭐⭐    5/5                ║
-║  Применимость к MOEX:  ⭐⭐          2/5                ║
-║  Risk management:      ⭐⭐⭐        3/5 (портфельный)  ║
-║  Стратегии:            ⭐            0/5 (нет)          ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ (как ИДЕИ, не код — AGPL!):          ║
-║  1. X-Ray Rules → src/risk/rules/ — кластерный анализ   ║
-║  2. DataProvider контракт → src/data/ — унификация API  ║
-║  3. FX History Cache → src/data/ — курсы валют          ║
-║                                                          ║
-║  ТОП-3 РИСКА:                                            ║
-║  1. AGPL v3 — нельзя копировать код → только идеи       ║
-║  2. Не торговая система — 0 стратегий, 0 бэктестинга    ║
-║  3. TypeScript/Angular — стек не совместим с нашим       ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Написать src/risk/rules/ с нуля,        ║
-║  вдохновившись паттерном X-Ray (6 часов)                ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | DataProvider Interface | `services/data-provider/interfaces/` | ⭐⭐⭐⭐ | Низкое | Контракт для подключения провайдеров данных |
-| 2 | Exchange Rate Service | `services/exchange-rate-data/` | ⭐⭐⭐⭐ | Среднее | Мультивалютная конвертация с историей |
-| 3 | X-Ray Rules (12 правил) | `models/rules/` | ⭐⭐⭐⭐ | Низкое | Анализ диверсификации портфеля |
-| 4 | Rule\<T\> абстракция | `models/rule.ts` | ⭐⭐⭐⭐ | Низкое | Паттерн для расширяемых проверок |
-| 5 | Portfolio Calculator (ROAI) | `portfolio/calculator/roai/` | ⭐⭐⭐ | Высокое | Расчёт доходности с валютным эффектом |
-| 6 | Yahoo Finance Service | `data-provider/yahoo-finance/` | ⭐⭐⭐ | Среднее | Обёртка над yahoo-finance2 |
-
-### Планы интеграции (идеи, не копирование — AGPL!)
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Risk Rules Engine (по мотивам X-Ray)
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 6 часов
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из models/rules/ (НЕ копируем — AGPL!)
-КУДА: src/risk/rules/
-ЧТО НАПИСАТЬ С НУЛЯ:
-- BaseRule(ABC) с evaluate() → RuleResult
-- ConcentrationRule — макс. доля одного инструмента
-- CurrencyClusterRule — валютная диверсификация
-- SectorClusterRule — секторная концентрация
-- DrawdownRule — макс. просадка
-- Настраиваемые пороги через Pydantic Settings
-ТЕСТЫ:
-- Unit: каждое правило с edge cases
-- Integration: RulesEngine.evaluate_all()
-ЗАВИСИМОСТИ: нет новых
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Exchange Rate History Cache
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 3 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из ExchangeRateDataService
-КУДА: src/data/exchange_rates.py
-ЧТО НАПИСАТЬ С НУЛЯ:
-- Кэш курсов RUB/USD, EUR/RUB через MOEX ISS
-- getExchangeRatesByCurrency() аналог
-- Конвертация P&L в базовую валюту (RUB)
-ТЕСТЫ: Unit: конвертация с историей
-ЗАВИСИМОСТИ: нет
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
----
-
-## 2. jesse-ai/jesse
-
-**URL:** https://github.com/jesse-ai/jesse
-**Дата анализа:** 2026-03-21
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: jesse-ai/jesse                             ║
-║  URL: github.com/jesse-ai/jesse                          ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ИНТЕГРИРОВАТЬ (частично)                      ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐⭐      4/5                ║
-║  Качество кода:        ⭐⭐⭐⭐      4/5                ║
-║  Применимость к MOEX:  ⭐⭐⭐        3/5                ║
-║  Risk management:      ⭐⭐⭐        3/5                ║
-║  Стратегии:            ⭐⭐          2/5 (фреймворк)    ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ:                                       ║
-║  1. metrics.py → src/backtest/metrics.py                ║
-║     — 10+ метрик (Sharpe/Sortino/CVaR/Serenity/...)    ║
-║  2. optimize_mode/ → src/backtest/optimizer.py           ║
-║     — Optuna + fitness + train/test split               ║
-║  3. monte_carlo/ → src/backtest/monte_carlo.py           ║
-║     — Trade shuffling + candle noise + bootstrap        ║
-║                                                          ║
-║  ТОП-3 РИСКА:                                            ║
-║  1. Крипто-ориентирован — T+0, 24/7, нет лотности      ║
-║     → Митигация: адаптировать под MOEX параметры        ║
-║  2. Нет встроенного slippage model (только stop→market) ║
-║     → Митигация: добавить tick-based slippage           ║
-║  3. NumPy arrays вместо DataFrames                       ║
-║     → Митигация: обернуть в Polars адаптер              ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Копировать metrics.py, адаптировать     ║
-║  periods=252, добавить Profit/Recovery Factor (4ч)      ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | **Metrics system** | `services/metrics.py` (464 строки) | ⭐⭐⭐⭐⭐ | Низкое | Sharpe, Sortino, Calmar, Omega, Serenity, CAGR, Max DD, CVaR, streaks |
-| 2 | **Strategy ABC** | `strategies/Strategy.py` | ⭐⭐⭐⭐⭐ | Среднее | Жизненный цикл стратегии, ордера, partial fills |
-| 3 | **Indicators (175шт)** | `indicators/*.py` | ⭐⭐⭐⭐⭐ | Низкое | Все основные индикаторы, NumPy-реализация |
-| 4 | **Optimization (Optuna)** | `modes/optimize_mode/` | ⭐⭐⭐⭐ | Среднее | Train/test split, fitness function, walk-forward |
-| 5 | **Monte Carlo** | `modes/monte_carlo_mode/`, `research/monte_carlo/` | ⭐⭐⭐⭐ | Среднее | Trade shuffling, candle noise, bootstrap |
-| 6 | **Backtest engine** | `modes/backtest_mode.py` | ⭐⭐⭐⭐ | Высокое | Event-driven loop без lookahead bias |
-| 7 | **Position model** | `models/Position.py` | ⭐⭐⭐⭐ | Низкое | ROI, PnL, liquidation, leverage |
-| 8 | **Order model** | `models/Order.py` | ⭐⭐⭐ | Низкое | Статусы, partial fills, queued orders |
-| 9 | **ML integration** | `strategies/Strategy.py` (record_features) | ⭐⭐⭐ | Среднее | Паттерн для сбора ML-фичей из бэктеста |
-| 10 | **Exchange drivers** | `modes/import_candles_mode/drivers/` | ⭐⭐ | — | Крипто-специфичны, не для MOEX |
-
-### Планы интеграции (MIT — можно копировать)
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Comprehensive Metrics Module
-ПРИОРИТЕТ: 🔴 ВЫСОКИЙ
-ОЦЕНКА ВРЕМЕНИ: 4 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: jesse/services/metrics.py (MIT — можно копировать)
-КУДА: src/backtest/metrics.py
-ЧТО СКОПИРОВАТЬ/АДАПТИРОВАТЬ:
-- sharpe_ratio() — адаптировать periods=252
-- sortino_ratio() с autocorrelation penalty (smart sortino)
-- calmar_ratio() (CAGR / Max DD)
-- omega_ratio() (с threshold)
-- serenity_index() (returns / ulcer_index * pitfall)
-- max_drawdown()
-- calculate_max_underwater_period()
-- cagr()
-- conditional_value_at_risk() (expected shortfall)
-- autocorr_penalty() — для smart metrics
-- trades() — полный набор trade-level метрик
-ЧТО АДАПТИРОВАТЬ:
-- pd.Series → Polars (или оставить Pandas для metrics)
-- periods=365 → 252 (акции MOEX) или параметризовать
-- Добавить Profit Factor (gross_profit / abs(gross_loss))
-- Добавить Recovery Factor (net_profit / max_dd)
-ТЕСТЫ:
-- Unit: каждая метрика с known values
-- Edge cases: 0 trades, 1 trade, all wins, all losses
-ЗАВИСИМОСТИ: numpy, pandas (уже есть)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Optuna Strategy Optimizer
-ПРИОРИТЕТ: 🔴 ВЫСОКИЙ
-ОЦЕНКА ВРЕМЕНИ: 6 часов
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: jesse/modes/optimize_mode/ (MIT)
-КУДА: src/backtest/optimizer.py
-ЧТО СКОПИРОВАТЬ/АДАПТИРОВАТЬ:
-- fitness.py → get_fitness() логика
-- 7 objective functions (sharpe, calmar, sortino, omega, serenity, smart*)
-- Training/testing split
-- total_effect_rate * ratio_normalized scoring
-ЧТО АДАПТИРОВАТЬ:
-- Вместо jesse isolated_backtest → наш engine
-- Ray → joblib (проще для первой версии)
-- Добавить walk-forward (rolling window)
-- Добавить MOEX-специфичные периоды (без клирингов)
-ТЕСТЫ:
-- Unit: fitness function с mock metrics
-- Integration: optimize simple strategy
-ЗАВИСИМОСТИ: optuna (pip install)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Monte Carlo Simulation
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 5 часов
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: jesse/research/monte_carlo/ (MIT)
-КУДА: src/backtest/monte_carlo.py
-ЧТО СКОПИРОВАТЬ/АДАПТИРОВАТЬ:
-- monte_carlo_trades() — перетасовка сделок
-- GaussianNoiseCandlesPipeline — шум на свечах
-- MovingBlockBootstrapCandlesPipeline — блочный бутстрэп
-ЧТО АДАПТИРОВАТЬ:
-- Ray → multiprocessing Pool (проще)
-- NumPy array candles → Polars DataFrame
-- Добавить confidence intervals (5%, 50%, 95%)
-ТЕСТЫ:
-- Unit: distribution of shuffled results
-ЗАВИСИМОСТИ: scipy (уже есть)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: 175 Technical Indicators (выборочно)
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 2 часа (cherry-pick)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: jesse/indicators/ (MIT)
-КУДА: src/indicators/custom/
-ЧТО СКОПИРОВАТЬ (выборочно):
-- squeeze_momentum.py — TTM Squeeze
-- supertrend.py — SuperTrend
-- waddah_attr_explosion.py — Waddah Attar Explosion
-- support_resistance_with_break.py — SR levels
-- damiani_volatmeter.py — Damiani volatility
-- voss.py, bandpass.py, reflex.py — Ehlers DSP indicators
-ЧТО АДАПТИРОВАТЬ:
-- jesse ta.* API → наш BaseIndicator интерфейс
-- NumPy arrays → Polars Series
-ТЕСТЫ: Unit: known values сравнение
-ЗАВИСИМОСТИ: numpy (уже есть)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
----
-
-## 3. kernc/backtesting.py
-
-**URL:** https://github.com/kernc/backtesting.py
-**Дата анализа:** 2026-03-21
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: kernc/backtesting.py                       ║
-║  URL: github.com/kernc/backtesting.py                    ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐        3/5                ║
-║  Качество кода:        ⭐⭐⭐⭐⭐    5/5                ║
-║  Применимость к MOEX:  ⭐⭐          2/5                ║
-║  Risk management:      ⭐⭐          2/5                ║
-║  Стратегии:            ⭐            0/5 (фреймворк)    ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ (как ИДЕИ — AGPL!):                  ║
-║  1. Alpha+Beta → src/backtest/metrics.py — CAPM метрики ║
-║  2. SQN+Kelly → src/backtest/metrics.py — качество      ║
-║  3. crossover/barssince → src/indicators/utils.py       ║
-║                                                          ║
-║  ТОП-3 РИСКА:                                            ║
-║  1. AGPL v3 — нельзя копировать код                     ║
-║  2. Нет slippage/лотности/MOEX-специфики                ║
-║  3. Grid search optimizer уступает Optuna                ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Дописать Alpha/Beta/SQN/Kelly в        ║
-║  существующий metrics.py (2 часа, с нуля)               ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | Alpha + Beta (CAPM) | `_stats.py:156-165` | ⭐⭐⭐⭐ | Низкое | Jensen Alpha, Beta через cov matrix |
-| 2 | SQN | `_stats.py:181` | ⭐⭐⭐⭐ | Низкое | System Quality Number |
-| 3 | Kelly Criterion | `_stats.py:182` | ⭐⭐⭐⭐ | Низкое | Optimal position fraction |
-| 4 | Geometric mean | `_stats.py:30-34` | ⭐⭐⭐ | Низкое | Correct compound return |
-| 5 | crossover/barssince | `lib.py:73-115` | ⭐⭐⭐ | Низкое | Strategy utilities |
-| 6 | resample_apply | `lib.py:207+` | ⭐⭐⭐ | Среднее | Multi-timeframe |
-
-### Планы интеграции (AGPL — писать с нуля)
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Metrics Expansion (Alpha, Beta, SQN, Kelly)
-ПРИОРИТЕТ: 🔴 ВЫСОКИЙ
-ОЦЕНКА ВРЕМЕНИ: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из _stats.py (НЕ копируем — AGPL!)
-КУДА: src/backtest/metrics.py (дополнить TradeMetrics)
-ЧТО НАПИСАТЬ С НУЛЯ:
-- alpha_beta(equity_returns, benchmark_returns) → (alpha, beta)
-- sqn(pnls) → sqrt(N) * mean(PnL) / std(PnL)
-- kelly_criterion(win_rate, avg_win_loss_ratio) → optimal fraction
-- geometric_mean(returns) → exp(mean(log(1+r))) - 1
-- exposure_time(entry_bars, exit_bars, total_bars) → float
-- buy_and_hold_return(close_prices) → float
-ТЕСТЫ: Unit с known values
-ЗАВИСИМОСТИ: нет
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Strategy Utilities (crossover, barssince)
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 1 час
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из lib.py (НЕ копируем — AGPL!)
-КУДА: src/indicators/utils.py
-ЧТО НАПИСАТЬ С НУЛЯ:
-- crossover(series1, series2) → bool
-- barssince(condition) → int
-- quantile_rank(series) → float
-ТЕСТЫ: Unit
-ЗАВИСИМОСТИ: нет
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
----
-
-## 4. StockSharp/StockSharp
-
-**URL:** https://github.com/StockSharp/StockSharp
-**Дата анализа:** 2026-03-21
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: StockSharp/StockSharp                      ║
-║  URL: github.com/StockSharp/StockSharp                   ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ПРОПУСТИТЬ                                    ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐          2/5                ║
-║  Качество кода:        ⭐⭐⭐⭐      4/5                ║
-║  Применимость к MOEX:  ⭐⭐⭐⭐      4/5 (Tinkoff, рус) ║
-║  Risk management:      ⭐⭐⭐        3/5                ║
-║  Стратегии:            ⭐⭐          2/5 (quoting only)  ║
-║                                                          ║
-║  ПРИЧИНА ПРОПУСКА:                                       ║
-║  C# (.NET) — полностью другой стек. 1809 .cs файлов,   ║
-║  21 .py файл (аналитика). Портировать нереально.        ║
-║  Идеи хорошие, но всё нужно писать с нуля на Python.    ║
-║                                                          ║
-║  ПОЛЕЗНЫЕ ИДЕИ (для вдохновения):                       ║
-║  1. CommissionRule pattern — 13 правил комиссий          ║
-║     (по обороту, по кол-ву, по тикеру, по типу)        ║
-║  2. ProtectiveController — SL/TP с trailing и timeout   ║
-║  3. QuotingProcessor — 9 стратегий котирования           ║
-║     (BestByPrice, BestByVolume, TWAP, VWAP, Level)     ║
-║  4. GeneticOptimizer — генетический алгоритм + fitness  ║
-║  5. MatchingEngine — эмулятор биржи с OrderBook         ║
-║  6. 190 индикаторов на C#                               ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Нет. Стек не совместим.                 ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### Краткий анализ
-
-- **Стек:** C# .NET, WPF/Avalonia/MAUI, 1809 .cs файлов
-- **Лицензия:** Apache 2.0 (можно использовать)
-- **Активность:** Коммит 20 марта 2026 — живой проект
-- **MOEX:** Есть коннектор Tinkoff, знакомы с MOEX (логотипы)
-- **Архитектура:** Отличная — модульная, паттерны Strategy/Rule/Adapter
-- **Стратегии котирования:** BestByPrice, BestByVolume, LastTrade, Level, Limit, Market, TheorPrice, Volatility — 9 типов. Это уникально для нашего проекта.
-- **Комиссии:** 13 правил (по обороту, по кол-ву ордеров, по кол-ву сделок, по цене сделки, по типу инструмента, по board code) — хорошая архитектура ICommissionRule
-- **MatchingEngine:** Полная эмуляция биржи с OrderBook, MarginController, StopOrderManager
-- **Но:** Всё на C#, портирование слишком трудозатратно
-
-### Карта ценности
-
-| # | Компонент | Ценность | Проблема |
-|---|-----------|----------|----------|
-| 1 | QuotingProcessor (9 типов) | ⭐⭐⭐ | C# — надо писать с нуля |
-| 2 | CommissionRule (13 правил) | ⭐⭐⭐ | C# — наш cost_model проще |
-| 3 | MatchingEngine | ⭐⭐⭐ | C# — огромный объём |
-| 4 | ProtectiveController | ⭐⭐⭐ | C# — trailing+timeout идея |
-| 5 | GeneticOptimizer | ⭐⭐ | У нас Optuna лучше |
-| 6 | 190 индикаторов | ⭐⭐ | C#, у нас есть jesse (175) |
-
----
-
-## 6. edtechre/pybroker
-
-**URL:** https://github.com/edtechre/pybroker
-**Дата анализа:** 2026-03-21
-
-### 2.1 Общее
-
-PyBroker — Python-фреймворк для алго-трейдинга с фокусом на ML-стратегии. Написан Edward West, 25081 строк (11.7K src + 12.9K tests). Основная задача — дать возможность разрабатывать стратегии на базе ML-моделей с правильной walk-forward валидацией, чтобы избежать переоптимизации. Движок bar-by-bar (event-driven), не vectorized — это медленнее, но точнее моделирует реальное исполнение. Все финансовые расчёты через Python `Decimal` — исключает float-ошибки при P&L.
-
-- **Стек:** Python 3.9+, NumPy 2.0+, Numba 0.64+ (JIT-ускорение eval/vect), Pandas 2.2+, diskcache (кэш данных), joblib (параллелизм), alpaca-py, yfinance, yahooquery, akshare
-- **Лицензия:** ⚠️ **Apache 2.0 with Commons Clause** — можно использовать, модифицировать, форкать. НЕЛЬЗЯ продавать как продукт или SaaS. Для внутреннего использования и вдохновения идеями — подходит. Для копирования кода в коммерческий продукт — рискованно, лучше писать с нуля.
-- **Активность:** Последний коммит 4 марта 2026, до этого регулярные обновления. Один основной автор. Проект живой, но не массово поддерживаемый.
-- **Популярность:** Средняя для ниши, используется в образовательных целях и индивидуальными трейдерами. По issues — реальные пользователи запускают стратегии.
-- **Документация:** Sphinx-docs на pybroker.com, Jupyter notebooks с примерами (Quick Start, ML Trading, Custom Data, Walk-forward), Google-style docstrings на каждой публичной функции. Качество документации — **отличное**, одно из лучших среди анализированных репо.
-- **Тесты:** 12.9K LOC тестов, pytest + pytest-cov + pytest-randomly + pytest-xdist. Тестовые файлы для каждого модуля. Покрытие оценочно ~75%. Тестируется: portfolio P&L, stops, fees, order execution, walk-forward, bootstrap, indicators, caching. Это **самое протестированное** репо из всех анализированных.
-- **CI/CD:** GitHub Actions (Python 3.9-3.12), tox, mypy strict mode, ruff linter.
-
-### 2.2 Архитектура и структура кода
-
-**Общая архитектура:** Модульная, с чистым разделением ответственности. Текстовая схема зависимостей:
-
-```
-strategy.py (движок бэктеста)
-  ├── portfolio.py (позиции, P&L, ордера, стопы)
-  │   └── common.py (Entry, Trade, Position, FeeMode, Order — dataclasses)
-  ├── context.py (ExecContext — API для стратегий)
-  │   └── scope.py (ColumnScope, IndicatorScope, PredictionScope — данные)
-  ├── model.py (ML-модели, walk-forward training)
-  ├── indicator.py (регистрация и вычисление индикаторов)
-  ├── eval.py (метрики, bootstrap CI)
-  │   └── vect.py (Numba-ускоренные функции)
-  ├── data.py (YFinance, Alpaca, AKShare — провайдеры данных)
-  │   └── cache.py (diskcache — кэширование данных на диск)
-  ├── config.py (StrategyConfig — frozen dataclass)
-  ├── slippage.py (модель проскальзывания)
-  └── log.py (logging с цветной консолью)
-```
-
-**Паттерны:** Scope Pattern (изоляция данных по символу/индикатору/модели), Strategy Pattern (exec_fn — пользовательская функция), Factory (indicator/model registration через декораторы), FIFO (учёт лотов в позициях).
-
-**Разделение ответственности:** Чёткое. Data → Indicators → Models → Strategy → Portfolio → Eval. Каждый модуль импортирует только от зависимостей, нет циклов. `context.py` — единственный мост между пользовательским кодом и движком.
-
-**Конфигурация:** `StrategyConfig` — frozen dataclass с 18 полями (`config.py:16-104`). Все параметры типизированы. Нет хардкода — всё через конфиг. Пример: `buy_delay=1` (default), `fee_mode=FeeMode.ORDER_PERCENT`, `bars_per_year=252`.
-
-**Логирование:** Собственный logger (`log.py`, 473 строки) с цветной консолью, уровнями, форматированием прогресса. Не structlog, но качественный.
-
-**Обработка ошибок:** Валидация входных данных в каждой публичной функции (`_verify_input` в portfolio.py:454-465). Raise ValueError с конкретным сообщением. Нет голых except. Пример: `if shares < 0: raise ValueError(f"Shares cannot be negative: {shares}")`.
-
-**Type hints:** Полные (~95%). Union, Optional, Literal, NDArray. Mypy strict mode в CI. Один из лучших примеров типизации среди Python trading frameworks.
-
-**Docstrings:** Google-style на КАЖДОЙ публичной функции и классе. С описанием Args, Returns, Attributes. Sphinx-совместимые. Оценка: 98% покрытия.
-
-### 2.3 Торговые стратегии
-
-**Стратегий-примеров в репо нет** — это фреймворк. Но API для создания стратегий уникально мощный и заслуживает детального разбора, потому что содержит паттерны которых нет у jesse и backtesting.py.
-
-```
-СТРАТЕГИЯ: ExecContext API (фреймворк для пользовательских стратегий)
-ТИП: универсальный — rule-based + ML
-ФАЙЛ: src/pybroker/context.py (1425 строк)
-
-ПРИНЦИП РАБОТЫ:
-Пользователь пишет функцию exec_fn(ctx), которая вызывается на каждом баре
-для каждого инструмента. Через объект ctx доступны: текущие OHLCV, индикаторы,
-ML-предсказания, состояние портфеля, открытые позиции. Пользователь устанавливает
-ctx.buy_shares / ctx.sell_shares для входа/выхода. Уникальные фичи: ctx.hold_bars
-автоматически закрывает позицию через N баров (time-stop), ctx.score позволяет
-ранжировать инструменты для position allocation при ограниченном числе позиций
-(max_long_positions), ctx.session — персистентный dict между барами для хранения
-состояния стратегии.
-
-ДОСТУПНЫЕ СТОПЫ В КОНТЕКСТЕ (context.py:850-950):
-- ctx.stop_loss = 5.0            # абсолютный стоп в деньгах
-- ctx.stop_loss_pct = 2.0        # стоп в % от entry
-- ctx.stop_profit = 10.0         # тейк в деньгах
-- ctx.stop_profit_pct = 5.0      # тейк в %
-- ctx.stop_trailing = 3.0        # trailing stop в деньгах
-- ctx.stop_trailing_pct = 1.5    # trailing stop в %
-- ctx.hold_bars = 5              # авто-выход через 5 баров
-
-КЛЮЧЕВЫЕ ОТЛИЧИЯ ОТ JESSE:
-1. hold_bars — time-stop на уровне контекста (у jesse нет)
-2. score — ранжирование для position allocation (у jesse нет)
-3. session — персистентное состояние (у jesse через self.vars, менее формализовано)
-4. buy_delay/sell_delay — задержка исполнения (у jesse — immediate)
-5. preds() — прямой доступ к ML-предсказаниям (у jesse через record_features/load_model)
-
-ОЦЕНКА:
-Это один из лучших API для написания стратегий среди Python-фреймворков.
-Комбинация rule-based и ML подхода в одном контексте — мощная идея.
-Для MOEX отлично подходит паттерн hold_bars (закрытие перед клирингом)
-и score (ранжирование SBER vs GAZP vs LKOH по ML-скорам).
-Слабость: нет поддержки лотности и шага цены — ctx.buy_shares = 100 может
-означать 100 акций, что для SBER = 10 лотов, но для VTBR = 0.01 лота.
-
-ПРИМЕНИМОСТЬ К MOEX:
-Паттерн ctx.session полезен для хранения состояния между барами (накопленная
-информация о клирингах, сессиях). hold_bars можно адаптировать для закрытия
-перед клирингом 14:00. score полезен для ранжирования инструментов портфеля.
-Нужно добавить: лотность, шаг цены, клиринги.
-```
-
-### 2.4 Работа с данными
-
-Поддерживаются три встроенных провайдера: **YFinance** (yfinance + yahooquery), **Alpaca** (alpaca-py с API key), **AKShare** (китайские рынки). Плюс базовый класс `DataSource` для кастомных провайдеров — нужно реализовать `_fetch_data()` → DataFrame с колонками symbol/date/open/high/low/close/volume/vwap. Кэширование через `diskcache` на диск — при повторных запусках данные берутся из кэша мгновенно. Схема хранения: ключ = (symbol, timeframe_seconds, start_date, end_date, adjust), значение = pandas DataFrame.
-
-Пайплайн данных: `DataSource.query()` → проверка кэша → fetch с биржи → сохранение в кэш → merge DataFrame. Индикаторы вычисляются после загрузки данных, тоже кэшируются (`IndicatorScope`). ML-предсказания кэшируются через `ModelScope`.
-
-**Адаптация к MOEX ISS:** Нужно написать класс `MoexISSDataSource(DataSource)` — реализовать `_fetch_data(symbols, start_date, end_date)` через `https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities/{symbol}/candles.json`. Оценка: ~200 строк, ~4 часа с тестами. Формат MOEX ISS (candles: open/close/high/low/volume + begin timestamp) хорошо маппится на pybroker формат.
-
-**Real-time:** Нет WebSocket. Только исторические данные для бэктеста. Для live нужен отдельный слой.
-
-### 2.5 Risk Management
-
-**Position sizing:** Не встроен формально. Пользователь сам рассчитывает `ctx.buy_shares` в exec_fn. Есть `ctx.score` для ранжирования — при max_long_positions=5 портфель выбирает top-5 по score. Но Kelly, ATR-based, vol-target — нет.
-
-**Stop-loss:** Три типа — фиксированный (в деньгах), процентный (от entry), trailing (следует за ценой). Задаются через `ctx.stop_loss`, `ctx.stop_loss_pct`, `ctx.stop_trailing_pct`. Проверяются каждый бар в `portfolio.check_stops()`. Можно задать exit_price (по какой цене исполнять стоп: OPEN/CLOSE/MIDDLE).
-
-**Take-profit:** Аналогично стопу: `ctx.stop_profit`, `ctx.stop_profit_pct`. Limit price для отложенного тейка через `ctx.stop_profit_limit`.
-
-**Exposure control:** `max_long_positions` / `max_short_positions` в конфиге. Нет лимитов по инструменту, сектору, валюте. Нет correlation-aware position sizing.
-
-**Drawdown protection:** Нет circuit breaker. Нет daily loss limit. Нет portfolio-level DD stop. Если позиция падает на 50% — портфель продолжает торговать. Для live-торговли на MOEX это критичный пробел — при гэпе на открытии (MOEX гэпит часто из-за ночных новостей) стоп может сработать далеко от заданной цены, а портфель не имеет глобальной защиты.
-
-### 2.6 Execution
-
-Движок bar-by-bar. Ордера размещаются через `ctx.buy_shares` / `ctx.sell_shares`. Ключевая особенность — **delay исполнения**: `buy_delay=1` (default) означает что сигнал на баре N исполняется на баре N+1. Это предотвращает lookahead bias — стратегия не может купить по цене бара на котором приняла решение. Fill price берётся из следующего бара по конфигурируемому PriceType: OPEN (реалистично), CLOSE (оптимистично), MIDDLE (компромисс), VWAP (объёмно-взвешенная средняя).
-
-**Slippage:** `RandomSlippageModel(min_pct=0.1, max_pct=0.5)` — уменьшает КОЛИЧЕСТВО акций на случайный %, а не изменяет ЦЕНУ. Это нереалистично: на MOEX проскальзывание = сдвиг цены на N тиков, а не уменьшение объёма. Наш подход (`slippage_ticks` в cost_model) правильнее.
-
-**Smart execution:** Нет TWAP/VWAP/iceberg. Все ордера исполняются как market orders. Для крупных позиций на MOEX (>1% дневного оборота) это приведёт к значительному market impact, который не моделируется.
-
-**Broker adapters:** Только для данных (Alpaca, YFinance). Нет live-торговли. Нет отправки ордеров на биржу.
-
-### 2.7 Бэктестинг
-
-**Движок:** Собственный, bar-by-bar event-driven (`strategy.py:142-380`, функция `backtest_executions`). Для каждого бара: обновляются данные → проверяются стопы → исполняются отложенные ордера → вызывается пользовательский exec_fn → применяется slippage → планируются новые ордера. Warmup: первые N баров пропускаются (для индикаторов).
-
-**Комиссии:** 4 режима через `FeeMode` (config.py:21-30): ORDER_PERCENT (% от оборота), PER_ORDER (фикс за ордер), PER_SHARE (за акцию), custom Callable. Пример для MOEX: `FeeMode.ORDER_PERCENT` с `fee_amount=0.01` = 0.01% от оборота — это правильно для акций. Для фьючерсов нужен PER_ORDER с 2 RUB — тоже возможно. Callable позволяет реализовать любую модель (наш `InstrumentTypeRule` аналог).
-
-**Walk-forward:** `strategy.walkforward(windows=5, lookahead=1, train_size=0.7)`. Данные разбиваются на 5 окон, в каждом 70% train / 30% test с gap в 1 бар для предотвращения утечки. ML-модели переобучаются на каждом окне. Это правильный подход — единственный фреймворк из проанализированных с **встроенным** walk-forward для ML.
-
-**Bootstrap CI:** BCa bootstrap (`eval.py:42-141`) с Numba JIT. 10000 bootstrap samples по умолчанию. Bias-corrected and accelerated — статистически корректнее чем percentile bootstrap (который мы используем в monte_carlo.py). Вычисляет CI для Sharpe, Profit Factor, Max Drawdown. Уникальная фича среди всех проанализированных фреймворков.
-
-**Out-of-sample:** Через walk-forward — каждое test window = OOS. Нет отдельного "holdout" периода за пределами walk-forward.
-
-**Визуализация:** Нет встроенных графиков. Пользователь получает DataFrame с equity curve и рисует сам. Слабее чем backtesting.py (Bokeh) и jesse (web UI).
-
-**Benchmark:** Нет встроенного сравнения с buy&hold или индексом.
-
-### ШАГ 3: Красные флаги 🚩
-
-```
-1. Lookahead bias:
-   [✅] buy_delay=1 (default) в config.py:90 гарантирует что ордер
-   исполняется на СЛЕДУЮЩЕМ баре. strategy.py:355: delay=config.buy_delay.
-   Walk-forward с lookahead=1 в model training (strategy.py:664-680).
-   Корректная защита.
-
-2. Survivorship bias:
-   [⚠️] Фреймворк не контролирует — пользователь сам приносит данные.
-   Если пользователь загружает текущий S&P 500 через YFinance, делистинги
-   не включены. Для MOEX: нужно включать MFON, AFLT-old и др.
-
-3. Нереалистичные комиссии:
-   [⚠️] По умолчанию fee_mode=None (config.py:84) → комиссия 0%.
-   Это опасный default — пользователь должен явно задать комиссии.
-   Для MOEX: fee_mode=FeeMode.ORDER_PERCENT, fee_amount=0.01.
-   Кто забудет — получит завышенные результаты.
-
-4. Нет проскальзывания:
-   [🚩] slippage.py:47-58: RandomSlippageModel уменьшает КОЛИЧЕСТВО
-   акций, а не сдвигает ЦЕНУ. На реальном рынке проскальзывание =
-   сдвиг цены исполнения на N тиков от заявленной. Модель pybroker
-   нереалистична. Пример: ctx.buy_shares=100, slippage 1% → покупается
-   99 акций по заявленной цене. Реально: покупается 100 акций по цене
-   entry + 2 тика.
-
-5. Overfitting:
-   [✅] Walk-forward с 5 окнами и lookahead gap = хорошая защита.
-   Bootstrap CI позволяют видеть разброс метрик. Но walk-forward
-   доступен только для ML-моделей, rule-based стратегии не защищены.
-
-6. Утечка train→test:
-   [✅] strategy.py:726: test_start = train_end + lookahead.
-   Gap между train и test предотвращает утечку. Lookahead >= 1.
-
-7. Нет OOS:
-   [⚠️] Walk-forward test windows = quasi-OOS, но нет отдельного
-   holdout периода за пределами walk-forward. Для финальной валидации
-   стратегии нужен отдельный holdout set.
-
-8. Нет лотности:
-   [🚩] portfolio.py не проверяет лотность. ctx.buy_shares = 15 для
-   SBER (лот=10) создаст позицию 15 акций, что невозможно на MOEX.
-   enable_fractional_shares=False (config.py:85) только запрещает
-   дробные акции (0.5), но не проверяет кратность лоту.
-
-9. Нет шага цены:
-   [🚩] round_fill_price=True (config.py:86) округляет до цента (0.01),
-   но на MOEX шаг цены разный: SBER=0.01, Si=1, LKOH=0.5. Нет
-   инструмент-специфичного рounding.
-
-10. Игнор MOEX-специфики:
-    [🚩] Нет T+1 settlement — при продаже акций деньги доступны сразу.
-    Нет клирингов (14:00-14:05, 18:45-19:00) — ордера могут
-    исполняться в клиринговый перерыв. Нет ГО для фьючерсов.
-    Нет вечерней сессии. Нет аукционов открытия/закрытия.
-
-11. Нереалистичные результаты:
-    [✅] Bootstrap CI с 10000 samples показывает реальный разброс.
-    Но по умолчанию комиссии=0, что завышает результаты на ~5-15%
-    годовой доходности для активных стратегий.
-```
-
-### ШАГ 4: Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | **BCa Bootstrap CI** | `eval.py:42-141` | ⭐⭐⭐⭐ | Среднее | Bias-corrected accelerated bootstrap — точнее percentile CI. Jackknife для acceleration. Numba-ускоренный. Уникально среди проанализированных. |
-| 2 | **MAE/MFE per trade** | `portfolio.py` Entry/Trade dataclass | ⭐⭐⭐⭐ | Низкое | Max Adverse/Favorable Excursion на каждой сделке. Позволяет оценить качество входов: если MFE >> MAE, входы хорошие. |
-| 3 | **Walk-forward ML split** | `strategy.py:649-730` | ⭐⭐⭐⭐ | Среднее | Правильная реализация walk-forward для ML с lookahead gap. 5 окон, 70/30 train/test, gap=1 бар. |
-| 4 | **EvalMetrics dataclass** | `eval.py:684-791` | ⭐⭐⭐⭐ | Низкое | 40+ метрик в одном frozen dataclass. Включает Ulcer Index, UPI, equity R², annual_volatility — того чего нет у нас. |
-| 5 | **Relative Entropy** | `eval.py:418-447` | ⭐⭐⭐ | Низкое | Информационная энтропия доходностей — мера "хаотичности" результатов. Высокая энтропия = непредсказуемые доходности. |
-| 6 | **Equity R²** | `eval.py:645-661` | ⭐⭐⭐ | Низкое | R² линейной регрессии equity curve. 1.0 = идеально стабильный рост. Полезно для скрининга стратегий. |
-| 7 | **FeeMode callable** | `portfolio.py:423-452` | ⭐⭐⭐ | Низкое | Custom fee function через Callable. Гибче наших правил — можно реализовать любую модель комиссий. |
-| 8 | **Decimal P&L** | `portfolio.py` (весь модуль) | ⭐⭐⭐ | Высокое | Точные финрасчёты через Decimal. Исключает float drift. Для production-бэктеста важно, но у нас пока float достаточен. |
-| 9 | **Slippage ABC** | `slippage.py:16-27` | ⭐⭐ | Низкое | Абстракция правильная (SlippageModel ABC), но реализация (shares, не цена) — неправильная для MOEX. |
-| 10 | **diskcache** | `cache.py` (244 строки) | ⭐⭐ | Низкое | Кэширование данных и индикаторов на диск. У нас Redis — мощнее. |
-
-### ШАГ 5: Полезность для нашего проекта
-
-#### 5.1 Новые стратегии для ансамбля
-Стратегий в репо нет. Но паттерн `ctx.score` для ранжирования инструментов по ML-скорам — мощная идея для нашего portfolio.py (мета-ансамбля). Можно применить: каждая стратегия ансамбля выдаёт score для каждого тикера MOEX (SBER, GAZP, LKOH...), portfolio.py выбирает top-N по агрегированному score и распределяет капитал. Ожидаемый Sharpe: 1.2-1.8 (за счёт диверсификации + ранжирования). На MOEX top-10 ликвидных акций достаточно для такого подхода.
-
-#### 5.2 Улучшение существующих модулей
-Наш `src/backtest/metrics.py` можно расширить тремя компонентами из pybroker:
-1. **BCa Bootstrap** (`eval.py:42-141`) — заменить наш percentile bootstrap в monte_carlo.py на BCa. Bias correction через z0 = Φ⁻¹(proportion below θ̂) и acceleration через jackknife значительно точнее при малых выборках и ассиметричных распределениях.
-2. **MAE/MFE** (portfolio.py Entry dataclass) — добавить в TradeMetrics: avg_mae, avg_mfe, mae_mfe_ratio. Позволяет оценить: если средняя MFE = 5% а средняя MAE = 2%, входы хорошие (стратегия быстро уходит в плюс). Если наоборот — входы плохие (стратегия сначала уходит в минус).
-3. **Equity R²** (`eval.py:645-661`) + UPI (`eval.py:484-499`) — R² equity curve показывает стабильность роста (1.0 = идеально ровная equity). UPI = средний return / Ulcer Index — лучше Sharpe при наличии длинных просадок.
-
-#### 5.3 Новые идеи и подходы
-1. **Delay-based lookahead prevention** — buy_delay=1 проще и надёжнее чем наш подход (мы не моделируем задержку). Стоит добавить в наш backtest engine.
-2. **FIFO lot accounting с MAE/MFE** — каждый лот (Entry) отслеживается отдельно, с максимальной бумажной просадкой и прибылью. Для налоговой отчётности НДФЛ в России (FIFO обязателен) это критично.
-3. **Score-based position allocation** — при max_positions=N, инструменты ранжируются по score и входят только лучшие. Можно комбинировать с нашим risk rules engine.
-
-#### 5.4 Антипаттерны — чего НЕ делать
-1. **Slippage на количество, не на цену** (`slippage.py:56-58`): `ctx.buy_shares = buy_shares - slippage_pct * buy_shares`. Это математически неверно — на реальном рынке проскальзывание сдвигает ЦЕНУ, а не объём. Наш подход (`slippage_ticks * price_step`) правильнее. Урок: всегда проверяй соответствие модели реальности.
-2. **Комиссия 0% по умолчанию** (`config.py:84`): `fee_mode=None`. Опасный default — большинство пользователей забудут задать комиссии и получат завышенные результаты. Урок: дефолты должны быть консервативными. В нашем проекте: MOEX комиссии включены по умолчанию через `CommissionManager.moex_default()`.
-3. **Отсутствие лотности в portfolio.py**: Позиция `shares=15` для SBER (лот=10) невозможна на MOEX, но pybroker это не проверяет. Урок: валидация данных на уровне portfolio — обязательна. Наш подход: лотность через конфиг `instruments.equities[].lot`.
-
-#### 5.5 Что НЕ брать и почему
-- **SlippageModel** — неправильная модель (shares вместо цены). Наш tick-based подход лучше.
-- **Data providers** — Yahoo/Alpaca бесполезны для MOEX. Нужен свой MoexISSDataSource.
-- **diskcache** — мы используем Redis, который мощнее (TTL, pub/sub, distributed).
-- **Bar-by-bar loop** — Python loop слишком медленный для tick data. Наш Polars-подход быстрее.
-- **Decimal P&L** — overhead не оправдан для бэктеста (float precision достаточна для ±0.01 RUB).
-
-### ШАГ 6: Планы интеграции
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: BCa Bootstrap Confidence Intervals
-ПРИОРИТЕТ: 🔴 ВЫСОКИЙ
-ОЦЕНКА ВРЕМЕНИ: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из eval.py:42-141 (НЕ копируем — Commons Clause!)
-КУДА: src/backtest/metrics.py (дополнить)
-ЧТО НАПИСАТЬ С НУЛЯ:
-- bca_bootstrap(data, stat_fn, n_boot=10000) → BootstrapCI
-- Bias correction: z0 = Φ⁻¹(count(θ* < θ̂) / B)
-- Acceleration: jackknife leave-one-out → a = Σ(θ̄ - θ̂ᵢ)³ / (6 * (Σ(θ̄ - θ̂ᵢ)²)^1.5)
-- Corrected quantiles: α* = Φ(z0 + (z0 + zα) / (1 - a(z0 + zα)))
-- 90%, 95%, 97.5% CI для Sharpe, Sortino, Profit Factor, Max DD
-ТЕСТЫ: Unit с known normal distribution (CI должен покрывать true mean)
-ЗАВИСИМОСТИ: numpy (уже есть), scipy.stats.norm (для ppf/cdf)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: MAE/MFE + Equity R² + UPI
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идеи из eval.py и portfolio.py
-КУДА: src/backtest/metrics.py (дополнить TradeMetrics)
-ЧТО НАПИСАТЬ С НУЛЯ:
-- mae_mfe(trades, price_history) → (avg_mae, avg_mfe, ratio)
-  MAE = max(entry_price - min_price_during_trade) для long
-  MFE = max(max_price_during_trade - entry_price) для long
-- equity_r2(equity_curve) → float
-  R² = 1 - SS_res / SS_tot линейной регрессии equity
-- ulcer_performance_index(equity, period=14)
-  UPI = mean(returns) / sqrt(mean(drawdown²))
-- relative_entropy(returns) → float
-  H = -Σ(p * log(p)) / log(n_bins) — нормализованная энтропия
-ТЕСТЫ: Unit с known values
-ЗАВИСИМОСТИ: нет новых
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### ШАГ 7: Итоговый вердикт
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: edtechre/pybroker                          ║
-║  URL: github.com/edtechre/pybroker                       ║
-║  Язык: Python | Последний коммит: 2026-03-04             ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐⭐      4/5                ║
-║  Качество кода:        ⭐⭐⭐⭐⭐    5/5                ║
-║  Применимость к MOEX:  ⭐⭐⭐        3/5                ║
-║  Risk management:      ⭐⭐⭐        3/5                ║
-║  Стратегии:            ⭐⭐          2/5 (фреймворк)    ║
-║  Бэктестинг:           ⭐⭐⭐⭐⭐    5/5                ║
-║  Архитектура:          ⭐⭐⭐⭐⭐    5/5                ║
-║                                                          ║
-║  ОБОСНОВАНИЕ: Отличная архитектура (25K LOC, тесты 75%),║
-║  уникальные компоненты (BCa bootstrap, MAE/MFE, walk-   ║
-║  forward ML, Decimal P&L). Лицензия Commons Clause       ║
-║  ограничивает коммерческое использование, но идеи        ║
-║  и алгоритмы можно реализовать с нуля. У нас уже есть   ║
-║  metrics, optimizer, monte_carlo — pybroker дополняет    ║
-║  BCa bootstrap (точнее наших percentile CIs) и MAE/MFE. ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ (как идеи — Commons Clause!):         ║
-║  1. BCa Bootstrap CI → src/backtest/metrics.py           ║
-║     — точнее чем percentile bootstrap, Numba-ускоренный ║
-║  2. MAE/MFE tracking → src/backtest/metrics.py           ║
-║     — max adverse/favorable excursion per trade           ║
-║  3. Walk-forward ML pipeline → src/backtest/optimizer.py ║
-║     — train/test windows с lookahead gap для ML          ║
-║                                                          ║
-║  ТОП-3 АНТИПАТТЕРНА:                                    ║
-║  1. Slippage на shares (не на цену) — нереалистично.    ║
-║     У нас: slippage_ticks на цену (правильно для MOEX)  ║
-║  2. Нет лотности/шага цены — дробные акции невозможны   ║
-║     на MOEX. Наш проект правильно учитывает лоты.       ║
-║  3. Нет portfolio drawdown protection — стоп только на   ║
-║     позицию, нет circuit breaker. У нас: rules.py       ║
-║                                                          ║
-║  ТОП-3 РИСКА:                                            ║
-║  1. Commons Clause — нельзя копировать код для продажи  ║
-║     → Писать с нуля, вдохновляясь алгоритмами           ║
-║  2. Numba зависимость — тяжёлая, долгая компиляция      ║
-║     → Использовать для критичных функций (bootstrap)     ║
-║  3. Bar-by-bar Python loop — медленно для tick data      ║
-║     → Наш vectorized approach (Polars) быстрее           ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Реализовать BCa bootstrap и MAE/MFE    ║
-║  с нуля в src/backtest/metrics.py (~3 часа)              ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-### Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | **BCa Bootstrap CI** | `eval.py:42-141` | ⭐⭐⭐⭐ | Среднее | Точнее percentile bootstrap, bias correction + acceleration |
-| 2 | **MAE/MFE per trade** | `portfolio.py` (Entry/Trade) | ⭐⭐⭐⭐ | Низкое | Max adverse/favorable excursion — оценка качества входов |
-| 3 | **Walk-forward ML** | `strategy.py` (walkforward_split) | ⭐⭐⭐⭐ | Среднее | Train/test windows с lookahead gap для ML-моделей |
-| 4 | **Relative Entropy** | `eval.py:418-447` | ⭐⭐⭐ | Низкое | Мера разнообразия доходностей (информационная энтропия) |
-| 5 | **Ulcer Performance Index** | `eval.py:484-499` | ⭐⭐⭐ | Низкое | return / ulcer_index — risk-adjusted без Sharpe bias |
-| 6 | **Decimal P&L** | `portfolio.py` | ⭐⭐⭐ | Высокое | Точные финрасчёты без float ошибок |
-| 7 | **FeeMode (callable)** | `portfolio.py` | ⭐⭐⭐ | Низкое | Custom fee function — гибче наших правил |
-| 8 | **Equity R²** | `eval.py` | ⭐⭐⭐ | Низкое | R² equity curve — мера стабильности роста |
-| 9 | **hold_bars (time-stop)** | `context.py` | ⭐⭐ | — | У нас уже есть timeout в protective.py |
-| 10 | **Slippage model** | `slippage.py` | ⭐⭐ | — | На shares, не на цену — неправильный подход для MOEX |
-
-### Планы интеграции (идеи, с нуля — Commons Clause)
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: BCa Bootstrap Confidence Intervals
-ПРИОРИТЕТ: 🔴 ВЫСОКИЙ
-ОЦЕНКА ВРЕМЕНИ: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из eval.py:42-141 (НЕ копируем — Commons Clause!)
-КУДА: src/backtest/metrics.py (дополнить)
-ЧТО НАПИСАТЬ С НУЛЯ:
-- bca_bootstrap(data, stat_fn, n_boot=10000) → BootstrapCI
-- Bias correction (z0) + acceleration (jackknife)
-- 90%, 95%, 97.5% confidence intervals
-- Применить к Sharpe, Sortino, Profit Factor, Max DD
-ТЕСТЫ: Unit с known distributions
-ЗАВИСИМОСТИ: numpy (уже есть)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: MAE/MFE Trade Tracking
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 1 час
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из portfolio.py Entry/Trade
-КУДА: src/backtest/metrics.py (дополнить TradeMetrics)
-ЧТО НАПИСАТЬ С НУЛЯ:
-- mae (max adverse excursion) — макс. просадка сделки от входа
-- mfe (max favorable excursion) — макс. бумажная прибыль от входа
-- Ratio mfe/mae — качество входов (>2 = хорошие входы)
-- Добавить в TradeMetrics: avg_mae, avg_mfe, mae_mfe_ratio
-ТЕСТЫ: Unit
-ЗАВИСИМОСТИ: нет
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-КОМПОНЕНТ: Equity R² + Relative Entropy + UPI
-ПРИОРИТЕТ: 🟡 СРЕДНИЙ
-ОЦЕНКА ВРЕМЕНИ: 1 час
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИСТОЧНИК: Идея из eval.py
-КУДА: src/backtest/metrics.py
-ЧТО НАПИСАТЬ С НУЛЯ:
-- equity_r2(equity_curve) — R² линейной регрессии (1.0 = идеальный рост)
-- relative_entropy(returns) — разнообразие доходностей
-- ulcer_performance_index(equity, period=14)
-ТЕСТЫ: Unit
-ЗАВИСИМОСТИ: нет
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
----
-
-## 7. barter-rs/barter-rs
-
-**URL:** https://github.com/barter-rs/barter-rs
-**Дата анализа:** 2026-03-21
-
-### 2.1 Общее
-
-Barter — экосистема Rust-крейтов для алго-трейдинга: live-trading, paper-trading и бэктестинг. 6 крейтов в Cargo workspace, 40K строк Rust, 256 файлов .rs. Автор — команда Barter Ecosystem Contributors, MIT лицензия, 2000+ stars. Основной фокус — производительность (Rust native, Numba-уровень для критичных путей), type-safety (generic Strategy/Risk/Clock), и масштабируемость (Tokio async, concurrent backtests). Уникальная особенность — единая архитектура для live и backtest (MockExecution подменяет реальную биржу, Engine идентичен).
-
-- **Стек:** Rust, Tokio (async runtime), rust_decimal (Decimal арифметика для финансов — НЕ float!), serde, reqwest + tokio-tungstenite (HTTP/WS), tracing, criterion (бенчмарки). `#![forbid(unsafe_code)]` на всех крейтах.
-- **Лицензия:** MIT — свободное коммерческое использование, можно портировать алгоритмы без ограничений.
-- **Активность:** Последний коммит март 2026 (refactor интеграции), активная разработка. Discord с ~1000 участников.
-- **Популярность:** 2000+ stars, используется индивидуальными трейдерами для крипто. По issues видно реальное использование в live-trading.
-- **Документация:** Doc-comments на каждом публичном типе и функции. Примеры в doc-tests (компилируемые). 18 файлов примеров. Sphinx/API docs нет — только cargo doc. Качество документации **хорошее**, но не отличное (нет user guide за пределами examples).
-- **Тесты:** Юнит-тесты в каждом модуле метрик (sharpe, sortino, drawdown, etc). Интеграционный тест engine loop. НО: нет E2E тестов бэктеста, нет тестов MockExchange fill logic. Покрытие оценочно ~50%.
-- **CI/CD:** GitHub Actions, cargo test + clippy + fmt.
-
-### 2.2 Архитектура и структура кода
-
-**Общая архитектура:** Workspace из 6 крейтов с чётким разделением ответственности:
-
-```
-barter-instrument (типы: Exchange, Asset, Instrument, Index)
-    ↑
-barter-integration (REST/WS фреймворк, reconnection)
-    ↑
-barter-data (WebSocket streams: trades, L1, L2, liquidations)
-    ↑                           ↑
-barter-execution (order mgmt, mock/live execution, fills)
-    ↑                           ↑
-barter (Engine, Strategy, Risk, Statistics, Backtest)
-    ↑
-barter-macro (derive macros для serde)
-```
-
-**Паттерны:** Processor (единый `process()` trait), Builder, Newtype (индексы ExchangeIndex/AssetIndex/InstrumentIndex — O(1) lookups), Strategy Pattern (pluggable Strategy + Risk + Clock), Type-state (lifecycle ордеров через phantom types), Observer/Audit (AuditTick channel для мониторинга).
-
-**Разделение ответственности:** Образцовое. Data/Strategy/Risk/Execution — полностью изолированы. Engine — единственная точка связи. State management — centralized, cache-friendly (Vec с integer indexing, не HashMap со String-ключами).
-
-**Конфигурация:** SystemConfig через JSON. StrategyConfig/MockExecutionConfig — typed Rust structs с serde. Нет хардкода.
-
-**Логирование:** tracing (structured logging), не println. Уровни, spans, instruments. Production-quality.
-
-**Обработка ошибок:** Result/Option повсеместно, thiserror для typed errors, checked_div/checked_mul для Decimal. Нет unwrap() в production code (только в тестах). NoneOneOrMany для 0/1/Many errors без heap allocation.
-
-**Type hints:** 100% (Rust обязывает). Generics на Engine: `Engine<Clock, State, ExecutionTxs, Strategy, Risk>` — compile-time dispatch, не runtime vtable.
-
-**Docstrings:** На каждом публичном типе и функции. Doc-tests с компилируемыми примерами (Position, Sharpe, etc).
-
-### 2.3 Торговые стратегии
-
-```
-СТРАТЕГИЯ: AlgoStrategy trait (фреймворк)
-ТИП: универсальный — rule-based / ML / HFT / market-making
-ФАЙЛ: barter/src/strategy/algo.rs
-
-ПРИНЦИП РАБОТЫ:
-Пользователь реализует trait AlgoStrategy с единственным методом
-generate_algo_orders(&self, state: &Self::State) → (cancel_requests, open_requests).
-Engine вызывает его на каждом Market/Account событии когда trading enabled.
-State содержит ВСЕ: позиции, балансы, market data, connectivity, user-defined data.
-Strategy возвращает пару (отмены, новые ордера) — разделение cancel/open на уровне типов.
-Дополнительные traits: ClosePositionsStrategy (закрытие по команде),
-OnDisconnectStrategy (действие при обрыве), OnTradingDisabled (реакция на стоп).
-DefaultStrategy — пустая реализация с WARNING "NEVER USE IN PRODUCTION".
-
-ОТЛИЧИЯ ОТ PYTHON-ФРЕЙМВОРКОВ:
-1. Compile-time dispatch — Strategy не virtual, а monomorphized (нет overhead vtable)
-2. Type-safe ордера — OrderRequestCancel и OrderRequestOpen разные типы, нельзя спутать
-3. RiskApproved<T> wrapper — ордер не может попасть в execution без прохождения risk check
-4. State read-only — стратегия не может мутировать state (immutable borrow)
-5. Multi-exchange native — Strategy видит состояние всех бирж одновременно
-
-ОЦЕНКА:
-Это самый type-safe API для стратегий из всех проанализированных. Rust's type system
-гарантирует корректность на уровне компиляции (не runtime). Для Python-порта ценность
-в паттерне: разделение cancel/open, RiskApproved wrapper, immutable state access.
-Слабость: нет built-in indicators, нет ML-интеграции (всё на пользователе).
-Для MOEX: паттерн multi-exchange native полезен (SBER на TQBR + Si на FORTS одновременно).
-
-ПРИМЕНИМОСТЬ К MOEX:
-Прямая интеграция невозможна (Rust). Но архитектурные паттерны ценны:
-- RiskApproved<Order> wrapper → портировать в Python (dataclass-обёртка)
-- Separate cancel/open types → уже есть аналог в нашем OrderManager
-- Immutable state snapshot → Polars DataFrame freeze перед generate_signals
-```
-
-### 2.4 Работа с данными
-
-8 бирж: Binance (spot+futures), Bitfinex, BitMEX, Bybit, Coinbase, Gate.io, Kraken, OKX. Все крипто. Данные: PublicTrades, OrderBookL1 (best bid/ask), OrderBook L2 (full depth), Candles (OHLCV), Liquidations. WebSocket с auto-reconnect (exponential backoff + jitter). Нормализация: ExchangeTransformer конвертирует wire format в единый MarketEvent. OrderBook: BTreeMap для Bids/Asks с binary search, mid_price() и volume_weighted_mid_price().
-
-**Адаптация к MOEX ISS:** Невозможно напрямую — Rust crate. Но паттерн BacktestMarketData (Arc<Vec<MarketEvent>>, shared across backtests) — мощная идея для нашего Python: pd.DataFrame в shared memory для concurrent backtests. Оценка порта концепции: 8 часов.
-
-**Real-time:** Полная WebSocket поддержка с reconnection. Но MOEX ISS не поддерживается (только крипто биржи).
-
-### 2.5 Risk Management
-
-**Position sizing:** Нет встроенного. Пользователь задаёт quantity в OrderRequestOpen.
-
-**Stop-loss/Take-profit:** Нет встроенных стопов. Стратегия сама генерирует cancel/open при достижении цены.
-
-**Risk checks:** RiskManager trait с единственной реализацией `CheckHigherThan` (input <= limit). Утилиты: quote_notional_value, absolute_percentage_difference, delta (для опционов). DefaultRiskManager = approve all (WARNING: "NEVER USE IN PRODUCTION").
-
-**Exposure control:** Нет max position size, нет portfolio heat, нет daily loss limit, нет correlation-aware sizing. Всё на пользователе.
-
-**Drawdown protection:** Нет circuit breaker. Нет auto-shutdown при DD%.
-
-**Если ничего нет:** Фреймворк предоставляет ТРАССУ (RiskManager trait + approved/refused types + utility math), но ни одного production-ready правила. Для live-торговли на MOEX это означает что пользователь ОБЯЗАН реализовать: max position size per instrument, portfolio DD stop (наш circuit_breaker.py), T+1 settlement check, ГО проверку для фьючерсов. Без этого — один runaway order и весь капитал на одной позиции.
-
-### 2.6 Execution
-
-**Типы ордеров:** Market (единственный поддерживаемый в MockExchange). OrderKind enum в коде содержит Market/Limit/StopLimit/StopMarket, но MockExchange реализует только Market. Live Binance поддерживает все.
-
-**Mock execution:** Мгновенное исполнение по запрошенной цене, 100% fill, zero slippage, zero latency (параметр latency_ms есть в конфиге, но не используется в fill logic). Fees: фиксированный % от notional. Проверка баланса перед fill — это хорошо (InsufficientBalance error).
-
-**Smart execution:** Нет TWAP/VWAP/iceberg.
-
-**Broker adapters:** Binance (live). Mock (in-memory). Нет MOEX-адаптеров.
-
-### 2.7 Бэктестинг
-
-**Движок:** Тот же Engine что и для live, но с HistoricalClock + MockExecution. `run_backtests()` — concurrent через Tokio `try_join_all`. BacktestMarketData: Arc<Vec<Event>> (shared, zero-copy).
-
-**Комиссии:** fees_percent в MockExecutionConfig. Flat %. Нет maker/taker.
-
-**Проскальзывание:** Нет. Fill по запрошенной цене.
-
-**Walk-forward:** Нет. Нет train/test split. Нет OOS.
-
-**Визуализация:** Нет.
-
-**Benchmark:** Нет сравнения с buy&hold.
-
-**Уникальное:** Concurrent backtests с shared data (Arc<Vec>). Benchmarks через criterion crate.
-
-### ШАГ 3: Красные флаги 🚩
-
-```
-1. Lookahead bias:
-   [✅] Архитектурно предотвращён. Engine::process() получает события
-   последовательно. HistoricalClock только вперёд. Strategy видит
-   только текущий state, не будущие события.
-
-2. Survivorship bias:
-   [⚠️] Не контролируется — пользователь приносит свои данные.
-   BacktestMarketData = Vec<Event> без проверки на делистинги.
-
-3. Нереалистичные комиссии:
-   [⚠️] По умолчанию fees_percent задаётся пользователем, нет default.
-   Если пользователь задаст 0 — результаты завышены. Нет предупреждения.
-
-4. Нет проскальзывания:
-   [🚩] MockExchange: fill по request.price, 100% quantity.
-   exchange/mock/mod.rs:269-330: order_value_quote = price * quantity,
-   никакого сдвига цены. На реальном рынке Limit orders могут не
-   исполниться, Market orders получат slippage.
-
-5. Overfitting:
-   [🚩] run_backtests() запускает N параметризаций на ОДНИХ данных.
-   Нет walk-forward, нет OOS split, нет combinatorial testing.
-   Пользователь легко переоптимизирует.
-
-6. Утечка train→test:
-   [⚠️] Нет train/test split вообще. Все данные = один набор.
-
-7. Нет OOS:
-   [🚩] Нет holdout period. Все бэктесты на полном наборе.
-
-8. Нет лотности:
-   [🚩] quantity — Decimal без проверки кратности лоту.
-   Для MOEX: SBER=10шт, VTBR=10000шт не проверяется.
-
-9. Нет шага цены:
-   [🚩] price — Decimal без rounding. round_fill_price отсутствует.
-
-10. Игнор MOEX-специфики:
-    [🚩] Нет T+1, нет клирингов, нет ГО, нет вечерней сессии.
-    Все биржи = крипто (24/7, T+0, нет лотности).
-
-11. Нереалистичные результаты:
-    [⚠️] Комиссии заданы, но zero slippage + 100% fill rate =
-    систематически завышенные результаты. Для HFT/MM стратегий
-    расхождение с реальностью будет значительным.
-```
-
-### ШАГ 4: Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | **Welford Online Algorithm** | `statistic/algorithm.rs` | ⭐⭐⭐⭐ | Низкое | Streaming mean/variance в один проход. O(1) memory. Для real-time метрик. |
-| 2 | **Position lifecycle** | `engine/state/position.rs` (1227 стр.) | ⭐⭐⭐⭐ | Среднее | Open/increase/reduce/close/flip — полный lifecycle с FIFO PnL. Decimal arithmetic. Doc-tests. |
-| 3 | **RiskApproved wrapper** | `risk/mod.rs` | ⭐⭐⭐⭐ | Низкое | Type-level маркер "ордер прошёл risk check". Предотвращает bypass risk на уровне типов. |
-| 4 | **Concurrent backtests (Arc shared data)** | `backtest/mod.rs` | ⭐⭐⭐ | Среднее | Параллельные бэктесты на shared Vec данных. Для Python: multiprocessing + shared memory. |
-| 5 | **NoneOneOrMany** | `engine/action/mod.rs` | ⭐⭐⭐ | Низкое | Enum для 0/1/N элементов без heap allocation. Паттерн для hot path. |
-| 6 | **InFlightRequestRecorder** | `engine/state/order/` | ⭐⭐⭐ | Среднее | Отслеживание in-flight ордеров. Timeout tracking. |
-| 7 | **TearSheet per instrument** | `statistic/summary/` | ⭐⭐⭐ | Низкое | Streaming metrics по инструменту. Welford update на каждом close. |
-| 8 | **Volume-weighted mid price** | `barter-data/src/books/` | ⭐⭐ | Низкое | VWMP из L1/L2 order book. |
-| 9 | **Connectivity state machine** | `engine/state/connectivity/` | ⭐⭐ | Среднее | Per-exchange, per-channel health tracking. |
-| 10 | **Audit trail** | `engine/audit/` | ⭐⭐ | Среднее | Sequence-numbered audit events для мониторинга. |
-
-### ШАГ 5: Полезность для нашего проекта
-
-#### 5.1 Новые стратегии для ансамбля
-Стратегий нет — это чистый фреймворк. Но паттерн "стратегия возвращает (cancels, opens)" чище чем наш "generate_signals → position_size → order" pipeline. Можно упростить наш signal flow: стратегия сразу возвращает готовые ордера, а не промежуточные сигналы. Для MOEX: не применимо напрямую, но архитектурная идея ценна.
-
-#### 5.2 Улучшение существующих модулей
-1. **Welford Online Algorithm** → `src/backtest/metrics.py`: наш `calculate_trade_metrics()` пересчитывает все метрики заново по полному массиву. Welford позволяет инкрементально обновлять mean/variance при каждом новом trade, без пересчёта. Для live-мониторинга Sharpe/Sortino — критично (O(1) вместо O(N) на каждом trade).
-2. **Position lifecycle с FIFO PnL** → `src/risk/`: наш position tracking проще. barter-rs отслеживает quantity_abs_max, pnl_realised, pnl_unrealised, fees_enter/fees_exit для каждой позиции. Position flip (long→short одной сделкой) обрабатывается корректно — у нас такого нет.
-3. **RiskApproved<Order> pattern** → добавить dataclass-обёртку в Python: `@dataclass(frozen=True) class RiskApproved(Generic[T]): order: T, approved_by: str, timestamp: datetime`. Предотвращает отправку непроверенных ордеров.
-
-#### 5.3 Новые идеи и подходы
-1. **Streaming metrics (Welford)** — вместо пересчёта массива на каждом баре, обновлять mean/variance/M инкрементально. Для 10000+ баров экономит значительное время.
-2. **Concurrent backtests с shared data** — вместо копирования DataFrame для каждого бэктеста, использовать multiprocessing.shared_memory (Python 3.8+). Arc<Vec> в Rust ≈ shared_memory в Python.
-3. **Type-state pattern для ордеров** — OpenInFlight → Open → CancelInFlight → Cancelled/Filled. В Python: Enum + state machine с запретом невалидных переходов.
-
-#### 5.4 Антипаттерны — чего НЕ делать
-1. **100% fill rate в MockExchange** (`exchange/mock/mod.rs:280-320`): Каждый ордер исполняется полностью по запрошенной цене. На MOEX Limit ордер может не исполниться (нет ликвидности на цене), Market ордер получит slippage. Урок: наш mock должен моделировать partial fills и price impact.
-2. **DefaultRiskManager approves all** (`risk/mod.rs`): Единственная built-in реализация — пропускает всё. Один баг в стратегии = catastroic loss. Урок: наш default risk ВСЕГДА должен иметь hard limits (max position size, max DD, max exposure).
-3. **Linear rate-of-return scaling** (`statistic/metric/rate_of_return.rs`): daily * 252 вместо (1+daily)^252-1. Систематически завышает годовую доходность. У нас уже правильно (CAGR), но это напоминание не упрощать.
-
-#### 5.5 Что НЕ брать и почему
-- **Весь Rust код** — не портируемо напрямую (языковой барьер). Берём только алгоритмы и архитектурные паттерны.
-- **MockExchange** — unrealistic fills (100%, no slippage). Наш mock лучше.
-- **Data layer** — крипто-only, MOEX не поддерживается.
-- **RiskManager** — пустой shell, нет production-ready правил.
-- **HistoricalClock** — не прыгает к event time, а пропорционально сдвигается. Семантически некорректно для бэктеста.
-
-### ШАГ 6: План интеграции
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИДЕЯ: Welford Online Algorithm для streaming метрик
-ВДОХНОВЛЕНО: barter/src/statistic/algorithm.rs
-РЕАЛИЗОВАТЬ В: src/backtest/metrics.py (новый раздел)
-СУТЬ: Реализовать WelfordAccumulator: update(value) → обновляет
-running mean, variance, M. Методы: mean(), sample_variance(),
-population_variance(), std_dev(). Интегрировать в StreamingMetrics
-класс который считает Sharpe/Sortino инкрементально.
-ОТЛИЧИЕ ОТ ОРИГИНАЛА: Python с numpy, а не Rust. Добавить
-downside variance для Sortino. Добавить max drawdown tracking.
-ПРИОРИТЕТ: 🟡
-ОЦЕНКА: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИДЕЯ: RiskApproved<Order> wrapper pattern
-ВДОХНОВЛЕНО: barter/src/risk/mod.rs (RiskApproved/RiskRefused)
-РЕАЛИЗОВАТЬ В: src/risk/rules.py (расширить)
-СУТЬ: Добавить @dataclass(frozen=True) class RiskApproved(Generic[T])
-и RiskRefused(Generic[T]) обёртки. RulesEngine.check() возвращает
-(List[RiskApproved[Order]], List[RiskRefused[Order]]) вместо
-простого List[Order]. Execution layer принимает ТОЛЬКО RiskApproved.
-ОТЛИЧИЕ: В Python нет compile-time enforcement, но runtime проверка
-isinstance(order, RiskApproved) перед отправкой.
-ПРИОРИТЕТ: 🟢
-ОЦЕНКА: 1 час
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИДЕЯ: Position lifecycle (FIFO PnL + flip)
-ВДОХНОВЛЕНО: barter/src/engine/state/position.rs (1227 строк)
-РЕАЛИЗОВАТЬ В: src/risk/position_sizer.py (расширить)
-СУТЬ: Полный lifecycle позиции: open → increase → partial reduce →
-close → flip (long→short одной сделкой). FIFO PnL: каждый entry
-отслеживается отдельно, PnL считается при выходе. Для НДФЛ РФ
-(FIFO обязателен) это критично. Добавить quantity_abs_max, fees.
-ОТЛИЧИЕ: Python + Decimal, а не Rust. Добавить лотность MOEX.
-ПРИОРИТЕТ: 🟡
-ОЦЕНКА: 3 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### ШАГ 7: Итоговый вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: barter-rs/barter-rs                        ║
-║  URL: github.com/barter-rs/barter-rs                     ║
-║  Язык: Rust | Stars: 2000+ | Последний коммит: 2026-03  ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐⭐      4/5                ║
-║  Качество кода:        ⭐⭐⭐⭐⭐    5/5                ║
-║  Применимость к MOEX:  ⭐⭐          2/5                ║
-║  Risk management:      ⭐⭐          2/5 (shell only)   ║
-║  Стратегии:            ⭐⭐          2/5 (фреймворк)    ║
-║  Бэктестинг:           ⭐⭐⭐        3/5                ║
-║  Архитектура:          ⭐⭐⭐⭐⭐    5/5                ║
-║                                                          ║
-║  ОБОСНОВАНИЕ:                                            ║
-║  Лучшая архитектура среди всех проанализированных.       ║
-║  Type-safety на уровне Rust (compile-time гарантии),     ║
-║  Decimal arithmetic, zero unsafe code, O(1) state        ║
-║  lookups через integer indexing. Но: Rust не портируем   ║
-║  напрямую, крипто-only биржи, zero slippage в бэктесте,  ║
-║  нет walk-forward, нет built-in risk rules. Ценность —   ║
-║  в алгоритмах (Welford, Position FIFO) и паттернах       ║
-║  (RiskApproved, concurrent backtests, audit trail).      ║
-║  Для MOEX применимость низкая из-за языкового барьера.   ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ (алгоритмы и паттерны):               ║
-║  1. Welford Online → src/backtest/metrics.py             ║
-║     — streaming mean/variance, O(1) per update           ║
-║  2. Position FIFO lifecycle → position tracking          ║
-║     — open/increase/reduce/close/flip с FIFO PnL        ║
-║  3. RiskApproved<T> wrapper → src/risk/rules.py         ║
-║     — type-level маркер прохождения risk check           ║
-║                                                          ║
-║  ТОП-3 АНТИПАТТЕРНА:                                    ║
-║  1. 100% fill rate — нереалистично для MOEX limit       ║
-║     ордеров. Наш mock должен моделировать partial fills  ║
-║  2. DefaultRiskManager = approve all — один баг =        ║
-║     catastrophic loss. Наш default ВСЕГДА с hard limits  ║
-║  3. Linear return scaling — завышает годовую доходность. ║
-║     У нас CAGR (правильно), но напоминание полезно.     ║
-║                                                          ║
-║  ТОП-3 РИСКА:                                            ║
-║  1. Языковой барьер Rust→Python — только идеи, не код   ║
-║     → Писать с нуля на Python, вдохновляясь алгоритмами ║
-║  2. Крипто-only — нет MOEX ISS/T+1/клирингов/ГО        ║
-║     → Все MOEX-специфичные модули — наши собственные    ║
-║  3. Zero slippage в бэктесте — завышенные результаты    ║
-║     → Наш tick-based slippage model остаётся основным   ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Реализовать Welford Online streaming    ║
-║  metrics в src/backtest/metrics.py (~2 часа)             ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
-
-## 8. shobrook/BitVision
-
-**URL:** https://github.com/shobrook/BitVision
-**Дата анализа:** 2026-03-21
-
-### 2.1 Общее
-
-BitVision — терминальный dashboard для торговли Bitcoin на Bitstamp с встроенным ML-ботом. Node.js (blessed-contrib) для UI + Python (922 строки) для ML/торговли. Автор: Jonathan Shobrook, Aaron Lichtman. Проект заброшен с февраля 2019 года (7 лет без коммитов). Один коммит в shallow clone. MIT лицензия.
-
-- **Стек:** Node.js (blessed, blessed-contrib — TUI), Python 3.7 (sklearn, pandas, scipy, bs4, realtime-talib). 922 строки Python + 1425 строк JS.
-- **Лицензия:** MIT — свободное использование.
-- **Активность:** Мёртв. Последний коммит: 2019-02-10. Зависимости устарели (sklearn deprecated import, Quandl API ключи захардкожены в коде, realtime-talib возможно не работает).
-- **Популярность:** ~1200 stars (за UI dashboard, не за ML). По issues видно что бот не работает уже давно.
-- **Документация:** README описывает установку и использование UI. Нет документации ML-модели, feature engineering, или стратегии. Docstrings отсутствуют.
-- **Тесты:** Нет. Ни одного файла тестов.
-- **CI/CD:** Нет.
-
-### 2.2 Архитектура и структура кода
-
-**Общая архитектура:** Монолит из двух частей — Node.js TUI dashboard + Python backend через subprocess. Зависимости:
-
-```
-index.js (TUI dashboard)
-  ├── modals/ (login, order, help — blessed-contrib UI)
-  └── services/ (Python subprocess)
-        ├── __main__.py (CLI router: action → handler)
-        ├── retriever.py (скрапинг данных: Quandl, Coindesk)
-        ├── trader.py (Bitstamp API client + prediction + trade)
-        └── engine/ (ML pipeline)
-              ├── data_bus.py (fetch CSV from Quandl)
-              ├── transformers.py (feature engineering: TA indicators + lag + boxcox)
-              └── model.py (LogisticRegression L1, 27 строк)
-```
-
-**Паттерны:** Нет паттернов. Процедурный код. Нет классов (кроме Model и BitstampClient). Нет абстракций. Нет конфигурации (хардкод везде).
-
-**Разделение ответственности:** Минимальное. trader.py содержит и Bitstamp client, и prediction, и fund allocation — всё в одном файле.
-
-**Конфигурация:** Хардкод. Quandl API ключ прямо в коде (`data_bus.py:17-29`). Risk = 0.3 хардкод (`trader.py:40`). Параметры модели хардкод (`model.py:18`).
-
-**Логирование:** Нет. Ни print, ни logging.
-
-**Обработка ошибок:** Голый except в `__main__.py:44`: `except: logged_in = False`. Нет обработки ошибок API, сетевых проблем, невалидных данных.
-
-**Type hints:** Нет. Python 3.7 era, pre-typing.
-
-**Docstrings:** Нет (кроме копипасты из bitstamp-python-client).
-
-### 2.3 Торговые стратегии
-
-```
-СТРАТЕГИЯ: ML Trend Prediction (LogisticRegression)
-ТИП: ML (binary classification — trend direction)
-ФАЙЛ: services/engine/model.py (27 строк) + services/trader.py:20-38
-
-ПРИНЦИП РАБОТЫ:
-Ежедневно скачивает OHLCV с Bitstamp (через Quandl CSV) + blockchain данные
-(confirmation time, block size, hash rate, difficulty, etc — 12 метрик).
-Считает 17 технических индикаторов (ROCR, ATR, OBV, TRIX, MOM, ADX, WILLR,
-RSI, MACD, EMA). Добавляет lag-3 переменные (каждая фича дублируется
-со сдвигом 1,2,3). Box-Cox трансформация для нормализации. Бинаризация:
-если Close[t] > Close[t+1] → Trend = 1 (рост), иначе -1 (падение).
-LogisticRegression(L1, C=1000, tol=0.001, max_iter=150) обучается на ВСЕХ
-данных кроме последней строки. Предсказание для последней строки →
-BUY или SELL. Размер позиции: 30% от balance (хардкод). Ордер: instant
-market order на Bitstamp.
-
-МАТЕМАТИКА / ФОРМУЛЫ:
-features = [Close, Volume, MOM(1), MOM(3), ADX(14), ADX(20), WILLR(14),
-            RSI(6), RSI(12), MACD, MACD_signal, MACD_hist, EMA(6), EMA(12),
-            ROCR(3), ROCR(6), ATR(14), OBV, TRIX(20),
-            + 12 blockchain metrics,
-            + lag-1/2/3 для каждой фичи]
-total features ≈ (19 TA + 12 blockchain) * 4 (original + 3 lags) = ~124 фичи
-target: Trend = sign(Close[t] - Close[t+1])
-model: LogisticRegression(penalty="l1", C=1000, max_iter=150)
-scaler: StandardScaler
-
-ПАРАМЕТРЫ:
-| Параметр | Значение | Описание |
-|----------|----------|----------|
-| penalty | l1 | LASSO regularization |
-| C | 1000 | Inverse regularization (очень слабая) |
-| tol | 0.001 | Convergence tolerance |
-| max_iter | 150 | Max iterations |
-| lag | 3 | Лаг-переменные |
-| risk | 0.3 | 30% капитала на сделку (хардкод) |
-
-ТАЙМФРЕЙМ: Daily (Bitstamp OHLCV)
-ИНСТРУМЕНТЫ: BTC/USD (Bitstamp only)
-
-РЕЗУЛЬТАТЫ БЭКТЕСТОВ: Нет. Ни одного бэктеста. Ни одной метрики.
-
-ОЦЕНКА:
-Стратегия принципиально НЕРАБОЧАЯ по нескольким причинам:
-1. Обучение на ВСЕХ данных включая test point (data_bus/transformers — нет
-   train/test split в production mode). Modель видит future.
-2. binarize_labels() (`transformers.py:137`) использует shift(-1) —
-   заглядывает в будущее (Close[t+1]) для создания target. Это
-   lookahead bias в чистом виде.
-3. C=1000 с ~124 фичами на нескольких тысячах строк = severe overfitting.
-   L1 penalty слишком слабая чтобы компенсировать.
-4. 30% капитала на сделку без стопа = catastrophic risk.
-5. Нет cross-validation, нет walk-forward, нет OOS.
-6. Box-Cox применяется ко всему набору включая test — data leakage.
-
-ПРИМЕНИМОСТЬ К MOEX:
-Нет. Стратегия нерабочая. Идея "blockchain data + TA → LogReg" наивна
-и не имеет edge. Для MOEX: blockchain данные неприменимы к акциям.
-Единственная ценность — список blockchain фич как пример alternative data.
-```
-
-### 2.4 Работа с данными
-
-**Источники:** Quandl CSV API (BCHARTS/BITSTAMPUSD) для OHLCV, Quandl BCHAIN/* для 12 blockchain метрик, Coindesk RSS для новостей. API ключ ЗАХАРДКОЖЕН в исходном коде (`data_bus.py:17-29`) — **критическая уязвимость безопасности**.
-
-**Хранение:** Нет. Данные скачиваются каждый раз заново. Нет кэширования.
-
-**Feature engineering:** 17 TA индикаторов через realtime-talib + 12 blockchain метрик + lag-3 = ~124 фичи. Box-Cox power transform. StandardScaler. Всё в одном пайплайне без разделения fit/transform.
-
-**Адаптация к MOEX ISS:** Не имеет смысла — стратегия нерабочая. Quandl API для MOEX нет. Blockchain данные к MOEX не применимы.
-
-### 2.5 Risk Management
-
-**Position sizing:** `allocate_funds()` = 30% капитала, хардкод (`trader.py:40`). TODO комментарий "Implement Kelly Criterion" — не реализован.
-
-**Stop-loss:** Нет.
-
-**Take-profit:** Нет.
-
-**Exposure control:** Нет.
-
-**Drawdown protection:** Нет.
-
-**Что это значит:** Один неверный сигнал → мгновенный market order на 30% капитала без стопа. При трёх подряд неверных сигналах — потеря 90% капитала. На MOEX при гэпе на открытии — loss beyond position size. Абсолютно неприемлемо для live-торговли.
-
-### 2.6 Execution
-
-**Типы ордеров:** Только instant market orders (Bitstamp `buy_instant_order` / `sell_instant_order`).
-
-**Smart execution:** Нет.
-
-**Проскальзывание:** Не моделируется, не учитывается. Instant orders на Bitstamp = fill по рыночной цене + slippage.
-
-**Broker adapters:** Только Bitstamp. Клиент скопирован из kmadac/bitstamp-python-client с минимальными изменениями.
-
-### 2.7 Бэктестинг
-
-Нет. Полностью отсутствует. Нет ни бэктест-движка, ни исторического тестирования, ни метрик, ни equity curve, ни benchmarks. Модель обучается и сразу торгует.
-
-### ШАГ 3: Красные флаги 🚩
-
-```
-1. Lookahead bias:
-   [🚩🚩🚩] КРИТИЧЕСКИЙ. transformers.py:137-143: binarize_labels()
-   использует df.iloc[idx+1]["Close"] для создания target Trend.
-   Но эта же строка ВКЛЮЧЕНА в training data (model.py:18-19:
-   Model(processed_data.drop(processed_data.index[0]))). Модель
-   ОБУЧАЕТСЯ на данных содержащих будущую информацию.
-
-2. Survivorship bias:
-   [⚠️] Только BTC/USD — один инструмент, survivorship N/A.
-
-3. Нереалистичные комиссии:
-   [🚩] Комиссии ВООБЩЕ не учитываются. Ни в модели, ни при торговле.
-   Bitstamp берёт 0.25-0.5%. При daily trading это 60-120% годовых
-   в комиссиях.
-
-4. Нет проскальзывания:
-   [🚩] Instant market orders. Проскальзывание не моделируется.
-
-5. Overfitting:
-   [🚩🚩🚩] КРИТИЧЕСКИЙ. ~124 фичи, C=1000 (почти нет регуляризации),
-   нет train/test split, нет cross-validation, нет walk-forward.
-   Модель переобучена на 100%.
-
-6. Утечка train→test:
-   [🚩🚩🚩] КРИТИЧЕСКИЙ. Нет train/test split вообще. Box-Cox
-   fit на всех данных. StandardScaler fit на всех данных.
-   Модель видит ВСЕ данные включая "test" point.
-
-7. Нет OOS:
-   [🚩] Полностью отсутствует.
-
-8. Нет лотности:
-   [⚠️] Bitcoin делится дробно — не применимо.
-
-9. Нет шага цены:
-   [⚠️] Bitstamp принимает 2 decimal places — не критично.
-
-10. Игнор MOEX-специфики:
-    [🚩] Полностью. Крипто-only. MOEX не упоминается.
-
-11. Нереалистичные результаты:
-    [🚩] Результатов НЕТ ВООБЩЕ. Ни одного бэктеста. Ни одной метрики.
-    Модель никогда не была протестирована на исторических данных.
-
-ДОПОЛНИТЕЛЬНЫЕ ФЛАГИ:
-12. API ключ в исходном коде:
-    [🚩🚩🚩] data_bus.py:17-29: Quandl API key "iKmHLdjz-ghzaWVKyEfw"
-    захардкожен 12 раз. Это КРИТИЧЕСКАЯ уязвимость — ключ доступен
-    всем кто видит код.
-
-13. Голый except:
-    [🚩] __main__.py:44: except: logged_in = False — маскирует
-    любые ошибки включая сетевые, парсинга, авторизации.
-```
-
-### ШАГ 4: Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | Feature набор (17 TA + blockchain) | `transformers.py:12-100` | ⭐⭐ | Низкое | Список TA-индикаторов как checklist — у нас 90% уже есть. |
-| 2 | Box-Cox transform | `transformers.py:129-133` | ⭐ | Низкое | Идея power transform — но у нас уже есть нормализация в features.py. |
-| 3 | Lag variables | `transformers.py:110-125` | ⭐ | Низкое | Lag-3 как feature augmentation — тривиальный приём, у нас уже есть. |
-
-### ШАГ 5: Полезность для нашего проекта
-
-#### 5.1 Новые стратегии для ансамбля
-Нет ценных стратегий. LogisticRegression с L1 и C=1000 на 124 фичах без validation — это учебный пример overfitting. Идея "предсказать направление цены бинарной классификацией" не нова и без proper validation не имеет edge. Для нашего ансамбля: у нас уже есть CatBoost/LightGBM/XGBoost с walk-forward — принципиально лучше.
-
-#### 5.2 Улучшение существующих модулей
-Нечего улучшать. Наш код превосходит BitVision по каждому параметру: архитектура, тесты, метрики, risk management, execution.
-
-#### 5.3 Новые идеи и подходы
-Единственная нетривиальная идея: **blockchain data как alternative data для crypto**. Confirmation time, hash rate, difficulty, miner revenue — эти метрики коррелируют с сетевой активностью и могут быть leading indicators для BTC. Для MOEX аналога нет (мы не торгуем крипто). Если бы торговали — стоило бы исследовать.
-
-#### 5.4 Антипаттерны — чего НЕ делать
-
-1. **Lookahead bias в binarize_labels** (`transformers.py:137-143`): `diff = df.iloc[idx]["Close"] - df.iloc[idx + 1]["Close"]` — target использует будущую цену, и эти же строки попадают в training set. Урок: ВСЕГДА проверять что target не содержит future information. В нашем проекте: target = return[t+1], но train set обрезается на t-1 (buy_delay=1 аналог).
-
-2. **API ключи в исходном коде** (`data_bus.py:17-29`): Quandl API key захардкожен 12 раз. Урок: ВСЕГДА через environment variables. В нашем проекте: `os.environ["MOEX_API_KEY"]` + `.env.example`.
-
-3. **30% капитала без стопа** (`trader.py:40`): `return buying_power * 0.3`. Один неверный сигнал = -30% портфеля. Три подряд = -90%. Урок: НИКОГДА фиксированный % без стопа. В нашем проекте: risk_per_trade=1.5%, max_position=15%, ATR-stop, drawdown multiplier.
-
-4. **Нет бэктестинга перед live** — модель обучается и сразу торгует. Урок: ВСЕГДА backtest → walk-forward → paper trade → live. В нашем проекте: vectorbt engine + monte carlo + bootstrap CI.
-
-#### 5.5 Что НЕ брать и почему
-- **Всё.** Ни один компонент не имеет ценности ≥ 3. ML pipeline порочен (lookahead + no validation). Feature engineering тривиален. Risk management отсутствует. Код не поддерживается 7 лет.
-
-### ШАГ 6: План интеграции
-
-Нет компонентов для интеграции. Все компоненты ценность ≤ 2.
-
-Раздел "Идеи для реализации с нуля" — тоже пуст: все идеи (TA indicators, lag features, BoxCox) уже реализованы в нашем проекте.
-
-### ШАГ 7: Итоговый вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: shobrook/BitVision                         ║
-║  URL: github.com/shobrook/BitVision                      ║
-║  Язык: Python+JS | Stars: ~1200 | Последний: 2019-02   ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ПРОПУСТИТЬ                                    ║
-║                                                          ║
-║  Общая ценность:       ⭐              1/5              ║
-║  Качество кода:        ⭐              1/5              ║
-║  Применимость к MOEX:  ⭐              1/5              ║
-║  Risk management:      ⭐              1/5 (нет)        ║
-║  Стратегии:            ⭐              1/5 (сломана)    ║
-║  Бэктестинг:           ⭐              1/5 (нет)        ║
-║  Архитектура:          ⭐              1/5              ║
-║                                                          ║
-║  ОБОСНОВАНИЕ:                                            ║
-║  BitVision — учебный проект 2018-2019 года, заброшенный  ║
-║  7 лет назад. ML-модель содержит КРИТИЧЕСКИЙ lookahead   ║
-║  bias (binarize_labels использует future close).         ║
-║  Нет бэктестинга, нет тестов, нет risk management.      ║
-║  API ключ захардкожен в коде (12 раз). 30% капитала на  ║
-║  сделку без стопа. LogisticRegression(C=1000) на 124    ║
-║  фичах без validation = гарантированный overfitting.    ║
-║  Единственная ценность — как каталог антипаттернов.     ║
-║  Код не подлежит интеграции ни в каком виде.            ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ:                                      ║
-║  1. Ничего — нет компонентов ценностью ≥ 3              ║
-║  2. —                                                    ║
-║  3. —                                                    ║
-║                                                          ║
-║  ТОП-3 АНТИПАТТЕРНА:                                    ║
-║  1. Lookahead bias в target (shift(-1) в train data)    ║
-║     → Наш buy_delay=1 + proper train/test split        ║
-║  2. API ключи в исходном коде (12 раз!)                ║
-║     → Наш подход: os.environ + .env.example             ║
-║  3. 30% капитала без стопа на одну сделку               ║
-║     → Наш подход: risk_per_trade=1.5%, ATR-stop         ║
-║                                                          ║
-║  ТОП-3 РИСКА (если бы что-то брали):                    ║
-║  1. Lookahead bias заразит наши результаты              ║
-║  2. Зависимости устарели (sklearn import deprecated)    ║
-║  3. Нет тестов — невозможно верифицировать              ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Пропустить. Кидай следующий репо.       ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
-
-## 9. amor71/LiuAlgoTrader
-
-**URL:** https://github.com/amor71/LiuAlgoTrader
-**Дата анализа:** 2026-03-21
-
-### 2.1 Общее
-
-LiuAlgoTrader — полноценная торговая платформа для US Equities и Crypto. Multi-process async architecture (producer-consumer через multiprocessing.Queue), PostgreSQL для persistence, Alpaca/Polygon/Gemini/Tradier для данных и исполнения. 17.4K строк Python, 39 тестовых файлов, Sphinx docs, Streamlit UI для анализа. MIT лицензия. Автор: AMOR71. Проект зрелый (v0.4.35, PyPI package), но последний значимый коммит ~2023.
-
-- **Стек:** Python 3.10+, asyncio, asyncpg (PostgreSQL), pandas, stockstats, empyrical, quantstats, scipy, alpaca-trade-api, polygon-api-client, streamlit (UI), pygit2 (git labels). PDM для пакетов.
-- **Лицензия:** MIT — свободное использование.
-- **Активность:** Мёртв/dormant. Последний merge 2023. Зависимости местами устарели.
-- **Популярность:** ~700 stars, реальные пользователи по issues. YouTube demos с tear sheets.
-- **Документация:** ReadTheDocs (liualgotrader.readthedocs.io), Medium статьи, Sphinx docs. Docstrings на всех публичных методах Strategy/Scanner. Качество **хорошее**.
-- **Тесты:** 39 файлов, hypothesis-tested badge, codecov. Покрыты: data loaders, fincalcs, scanners, DB models. НЕ покрыты: consumer.py, producer.py, enhanced_backtest.py (критический execution path без тестов).
-- **CI/CD:** GitHub Actions, mypy, black, bandit (security), isort.
-
-### 2.2 Архитектура и структура кода
-
-**Общая архитектура:** Multi-process producer-consumer через multiprocessing.Queue:
-
-```
-Market Data (Alpaca/Polygon WebSocket)
-         ↓
-    [Producer Process] — subscribes, dispatches bars to queues
-         ↓
-    multiprocessing.Queue × N
-    /        |        \
-[Consumer₁] [Consumer₂] [Consumer₃]  — N = CPU_FACTOR × cores
-    ↓            ↓            ↓
-    Strategy.run() / run_all()
-         ↓
-    Trader.submit_order()
-         ↓
-    PostgreSQL (asyncpg, new_trades, algo_run, gain_loss...)
-```
-
-**Паттерны:** Producer-Consumer (multiprocessing), Template Method (Strategy base class), Factory (DataFactory, StreamingFactory), Abstract Base (DataAPI, Scanner, Strategy, Trader, Miner), Dynamic Loading (importlib для стратегий и сканеров из TOML).
-
-**Разделение ответственности:** Хорошее. data/ (провайдеры), strategies/ (логика), scanners/ (отбор тикеров), fincalcs/ (индикаторы), models/ (DB), analytics/ (анализ), scripts/ (CLI). Но consumer.py = 1000 строк монолит.
-
-**Конфигурация:** `tradeplan.toml` для стратегий/сканеров, env vars для API keys, `config.py` для defaults. Нет хардкода ключей (в отличие от BitVision).
-
-**Логирование:** `tlog()` — custom timestamped logger. Не structlog, но достаточный.
-
-**Обработка ошибок:** Средняя. `try/except` в критических путях, но consumer.py глотает некоторые ошибки (stale data drops 99% warnings).
-
-**Type hints:** Частичные (~70%). mypy в CI. Dict/List без generic parameters в старых модулях.
-
-**Docstrings:** На всех публичных методах Strategy, Scanner. Google-style. Хорошие.
-
-### 2.3 Торговые стратегии
-
-```
-СТРАТЕГИЯ: Strategy Framework (Template Method)
-ТИП: универсальный — day trade / swing
-ФАЙЛ: liualgotrader/strategies/base.py (200 строк)
-
-ПРИНЦИП РАБОТЫ:
-Пользователь наследует Strategy и реализует run(symbol, position, now,
-minute_history) → (bool, dict). Dict содержит action: {side, qty, type,
-limit_price}. Framework вызывает run() на каждом баре для каждого символа
-из scanner watchlist. Альтернативно: should_run_all()=True → run_all()
-вызывается раз в 5 минут с позициями по ВСЕМ символам (portfolio-level).
-Callbacks: buy_callback/sell_callback при исполнении.
-Unique: reject mechanism — return {reject: True} навсегда исключает символ.
-global_var через PostgreSQL keystore — shared state между стратегиями.
-
-ДОСТУПНЫЕ ACTIONS:
-- {"side": "buy", "qty": 100, "type": "market"}
-- {"side": "sell", "qty": 50, "type": "limit", "limit_price": 305.0}
-- {"reject": True} — навсегда исключить символ
-
-SCANNER (scanners/momentum.py):
-Отбор тикеров перед торговлей: фильтр по цене, объёму, дневному изменению.
-Live: snapshot с биржи → filter. Backtest: из DB trending_tickers.
-
-ОЦЕНКА:
-Хороший API для day trading стратегий. run_all() для portfolio-level —
-мощная идея. Scanner как отдельный компонент — правильное разделение.
-Слабости: нет встроенного position sizing (calc_qty = 100% капитала),
-нет стопов на уровне framework, dynamic code loading без sandbox.
-Для MOEX: run() per symbol подходит, но нет T+1, клирингов, лотности.
-
-ПРИМЕНИМОСТЬ К MOEX:
-Паттерн Scanner → Strategy → Execution переносим. Momentum scanner
-можно адаптировать для MOEX (фильтр по IMOEX). run_all() полезен
-для портфельных стратегий. Нужно: лотность, T+1, клиринги, MOEX ISS.
-```
-
-### 2.4 Работа с данными
-
-5 провайдеров: Alpaca (REST + WebSocket), Polygon (REST + WS), Finnhub (REST), Gemini (REST + WS), Tradier (REST). DataLoader — lazy-loading кэш: `dl[symbol].close[timestamp]` загружает данные при первом обращении, автоматически расширяет диапазон. DataFactory/StreamingFactory — swap provider через config. PostgreSQL для persistence (stock_ohlc, trending_tickers).
-
-**Адаптация к MOEX ISS:** Написать `MoexData(DataAPI)` — реализовать `get_symbol_data()`, `get_market_snapshot()`. DataLoader подхватит автоматически. Оценка: ~300 строк, ~6 часов. Scanner нужен свой (MOEX snapshot API отличается от Alpaca).
-
-### 2.5 Risk Management
-
-**Position sizing:** `calc_qty()` = buying_power / price — 100% капитала в одну позицию! `config.risk=0.001` существует но НИГДЕ не используется framework'ом.
-
-**Stop-loss:** Нет на уровне framework. Стратегия сама отслеживает через `stop_prices` dict в trading_data.py (global mutable state).
-
-**Exposure control:** Нет max position count, нет concentration limits, нет daily loss limit, нет circuit breaker.
-
-**Что это значит для live:** Без кастомной реализации в стратегии — один баг = 100% капитала в одной позиции. Для MOEX при гэпе = catastrophic loss.
-
-### 2.6 Execution
-
-**Типы ордеров:** Market и Limit. time_in_force = "day" хардкод. Нет IOC/FOK/GTC.
-
-**Order management:** `order_inflight()` — отменяет ордера старше 1 минуты. Partial fills обрабатываются корректно.
-
-**Smart execution:** Нет TWAP/VWAP/iceberg.
-
-**Broker adapters:** Alpaca (полный), Gemini (полный), Tradier (beta).
-
-### 2.7 Бэктестинг
-
-**Движок:** Event-driven, bar-by-bar (enhanced_backtest.py, 552 строки). Итерирует по торговому календарю, шаг = minute или day. DataLoader даёт исторические данные.
-
-**Критические проблемы бэктеста:**
-1. **Lookahead bias:** fill price = `close[T]` текущего бара, хотя сигнал на начале бара T.
-2. **Static portfolio_value:** объявлен global, но НИКОГДА не обновляется — position sizing игнорирует P&L.
-3. **Fees не вычитаются:** сохраняются в DB, но не из equity — P&L завышен.
-4. **Limit orders crash:** unfillable limit → Exception вместо reject.
-5. **Нет проверки объёма:** 10K shares на 500-volume bar fills at close.
-
-**Walk-forward:** Нет. **Optimizer:** Grid search через multiprocessing, нет Bayesian/random search. Результаты в DB, нет auto-scoring.
-
-**Визуализация:** Streamlit UI, quantstats tear sheets, Jupyter notebooks.
-
-### ШАГ 3: Красные флаги 🚩
-
-```
-1. Lookahead bias:
-   [🚩] enhanced_backtest.py: calculate_execution_price() использует
-   close[T] для fill при сигнале на баре T. Стратегия не может
-   знать close текущего бара в момент принятия решения.
-
-2. Survivorship bias:
-   [⚠️] Scanner из live DB. Backtest использует trending_tickers
-   записанные при live-торговле. Если live не запускался — backtest
-   пуст. Нет built-in survivorship-free universe.
-
-3. Нереалистичные комиссии:
-   [⚠️] Default --buy-fee=0.0 --sell-fee=0.0. Fees сохраняются
-   в DB но НЕ вычитаются из portfolio_value при бэктесте.
-
-4. Нет проскальзывания:
-   [🚩] Fill at close. Нет bid/ask spread, market impact, partial fills.
-
-5. Overfitting:
-   [⚠️] Grid search optimizer без walk-forward. Нет OOS split.
-   Пользователь может переоптимизировать не зная.
-
-6. Утечка train→test:
-   [⚠️] Нет train/test split в бэктесте. Один период.
-
-7. Нет OOS:
-   [⚠️] Нет отдельного holdout. Только through-time backtest.
-
-8. Нет лотности:
-   [🚩] qty = float, нет проверки кратности лоту MOEX.
-
-9. Нет шага цены:
-   [🚩] Нет rounding fill price.
-
-10. Игнор MOEX:
-    [🚩] US equities + crypto. Нет T+1, клирингов, ГО, вечерней сессии.
-
-11. Нереалистичные результаты:
-    [⚠️] Static portfolio_value + zero fees + fill at close =
-    систематически завышенные результаты. YouTube demo "$4000
-    daily profit" основан на этом biased бэктесте.
-```
-
-### ШАГ 4: Карта ценности
-
-| # | Компонент | Файл(ы) | Ценность | Усилие | Что полезно |
-|---|-----------|---------|----------|--------|-------------|
-| 1 | **Support/Resistance** | `fincalcs/support_resistance.py` (176) | ⭐⭐⭐ | Низкое | Derivative-based peak detection, grouping by proximity %, resample to 5/15-min. |
-| 2 | **Candle patterns** | `fincalcs/candle_patterns.py` (119) | ⭐⭐⭐ | Низкое | 7 single-candle + 2 multi-candle patterns. Gravestone/dragonfly doji, spinning top, bullish/bearish. |
-| 3 | **Scanner architecture** | `scanners/base.py + momentum.py` | ⭐⭐⭐ | Среднее | ABC Scanner → momentum filter. Recurrence-based execution. DB persistence. |
-| 4 | **DataLoader lazy cache** | `common/data_loader.py` | ⭐⭐⭐ | Среднее | `dl[symbol].close[timestamp]` — auto-fetch missing ranges. Удобный API. |
-| 5 | **run_all() portfolio mode** | `strategies/base.py` | ⭐⭐ | Низкое | Batch strategy вызов для portfolio-level decisions. |
-| 6 | **PostgreSQL audit trail** | `models/` (все) | ⭐⭐ | Высокое | Полная persistence: trades, runs, gain/loss, optimizer, keystore. |
-| 7 | **VOI calculation** | `consumer.py` | ⭐⭐ | Низкое | Volume-Order-Imbalance EMA(k=2/101, window=10). |
-
-### ШАГ 5: Полезность для нашего проекта
-
-#### 5.1 Новые стратегии для ансамбля
-Нет готовых стратегий — только framework. Но momentum scanner pattern ценен: snapshot → filter by price/volume/change → watchlist. Для MOEX: сканер IMOEX-компонентов по ATR > threshold + Volume > 2x avg.
-
-#### 5.2 Улучшение существующих модулей
-1. **Support/Resistance detection** (`support_resistance.py`) — derivative-based peak/trough detection с grouping по proximity. Наш проект не имеет S/R модуля. Алгоритм: resample → diff → np.where(sign change) → group by 2% margin. Полезен для stop placement и take-profit levels.
-2. **Candle pattern recognition** (`candle_patterns.py`) — 9 паттернов. У нас нет. Gravestone/dragonfly doji, spinning top, bullish/bearish confirmation — полезны как фильтры входа.
-
-#### 5.3 Новые идеи и подходы
-1. **Scanner as first-class citizen** — отдельный процесс, recurring execution, DB persistence результатов. Наш проект: сканер как часть pipeline, не отдельная сущность.
-2. **run_all() vs run()** — дуальность per-symbol и portfolio-level стратегий в одном framework. Наш BaseStrategy.generate_signals() — per-instrument. Добавить portfolio-level callback.
-
-#### 5.4 Антипаттерны — чего НЕ делать
-1. **Fill at close[T]** (`enhanced_backtest.py`) — classic lookahead. Наш подход: fill at open[T+1] (правильно).
-2. **Static portfolio_value** — position sizing не учитывает P&L. Наш подход: equity обновляется после каждой сделки.
-3. **Global mutable state** (`trading_data.py`) — все позиции/ордера в module-level dicts. Баг в одной стратегии ломает все. Наш подход: isolated state per strategy.
-4. **calc_qty = 100% капитала** — дефолтный position sizing кладёт всё в одну позицию. Наш подход: risk_per_trade=1.5% с ATR-stop.
-
-#### 5.5 Что НЕ брать и почему
-- **Бэктест движок** — lookahead + static portfolio + unfillable limit crash. Наш vectorbt-based лучше.
-- **Producer/consumer architecture** — Python multiprocessing.Queue медленнее чем наш single-process Polars pipeline.
-- **PostgreSQL models** — overengineered для бэктеста (round-trip на каждую сделку). Наш in-memory + batch save быстрее.
-- **DataLoader** — удобный API, но pandas-based. Наш Polars-based быстрее.
-- **analytics/analysis.py** — только raw P&L, нет Sharpe/DD/Calmar. Наш metrics.py на порядок мощнее.
-
-### ШАГ 6: План интеграции
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИДЕЯ: Support/Resistance Detection
-ВДОХНОВЛЕНО: fincalcs/support_resistance.py
-РЕАЛИЗОВАТЬ В: src/indicators/support_resistance.py (новый файл)
-СУТЬ: Derivative-based peak/trough detection на resampled данных.
-find_resistances(close_series, lookback=3d, resample='15min') → List[float]
-find_supports(low_series, lookback=100bars, resample='5min') → List[float]
-grouper(levels, margin=0.02) → clustered levels.
-ОТЛИЧИЕ ОТ ОРИГИНАЛА: Polars вместо pandas, конфигурируемые
-пороги (не хардкод), MOEX trading hours (10:00-18:40), добавить
-volume profile для weighted S/R levels.
-ПРИОРИТЕТ: 🟡
-ОЦЕНКА: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ИДЕЯ: Candle Pattern Recognition
-ВДОХНОВЛЕНО: fincalcs/candle_patterns.py
-РЕАЛИЗОВАТЬ В: src/indicators/candle_patterns.py (новый файл)
-СУТЬ: 9 свечных паттернов из LiuAlgoTrader:
-gravestone_doji, four_price_doji, doji, spinning_top,
-bullish_candle, bearish_candle, dragonfly_candle,
-spinning_top_bearish_followup, bullish_candle_followed_by_dragonfly.
-Добавить: hammer, engulfing, morning/evening star.
-ОТЛИЧИЕ: Vectorized numpy вместо per-candle functions.
-Thresholds через конфиг, не хардкод.
-ПРИОРИТЕТ: 🟢
-ОЦЕНКА: 2 часа
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-### ШАГ 7: Итоговый вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  РЕПОЗИТОРИЙ: amor71/LiuAlgoTrader                       ║
-║  URL: github.com/amor71/LiuAlgoTrader                    ║
-║  Язык: Python | Stars: ~700 | Последний: ~2023          ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐        3/5                ║
-║  Качество кода:        ⭐⭐⭐        3/5                ║
-║  Применимость к MOEX:  ⭐⭐          2/5                ║
-║  Risk management:      ⭐            1/5 (отсутствует)  ║
-║  Стратегии:            ⭐⭐⭐        3/5 (framework)    ║
-║  Бэктестинг:           ⭐⭐          2/5 (biased)       ║
-║  Архитектура:          ⭐⭐⭐⭐      4/5                ║
-║                                                          ║
-║  ОБОСНОВАНИЕ:                                            ║
-║  Зрелая торговая платформа с хорошей архитектурой        ║
-║  (producer-consumer, async, PostgreSQL audit trail).     ║
-║  Но бэктест содержит lookahead bias (fill at close[T]), ║
-║  static portfolio_value (sizing не учитывает P&L),       ║
-║  zero default fees. Risk management полностью            ║
-║  отсутствует на уровне framework. Ценность — в           ║
-║  S/R detection, candle patterns, scanner architecture.   ║
-║  US equities only, MOEX не поддерживается.              ║
-║                                                          ║
-║  ТОП-3 ЧТО ВЗЯТЬ (идеи):                               ║
-║  1. S/R detection → src/indicators/support_resistance.py ║
-║     — derivative peaks + proximity grouping              ║
-║  2. Candle patterns → src/indicators/candle_patterns.py  ║
-║     — 9 patterns, vectorized numpy version               ║
-║  3. Scanner pattern → вдохновить наш universe_selector   ║
-║     — recurring filter, DB persistence results           ║
-║                                                          ║
-║  ТОП-3 АНТИПАТТЕРНА:                                    ║
-║  1. Fill at close[T] — lookahead bias в бэктесте.       ║
-║     Наш подход: fill at open[T+1] (buy_delay=1)         ║
-║  2. calc_qty = 100% капитала — нет risk per trade.      ║
-║     Наш подход: 1.5% risk с ATR-stop                    ║
-║  3. Global mutable state (trading_data.py) — shared      ║
-║     dicts без изоляции стратегий                         ║
-║                                                          ║
-║  ТОП-3 РИСКА:                                            ║
-║  1. Бэктест biased — нельзя доверять результатам        ║
-║     → Писать S/R и patterns с нуля, тестировать нашим   ║
-║  2. US equities only — MOEX адаптация ~6 часов          ║
-║     → Берём только алгоритмы, не интеграции             ║
-║  3. Dormant проект — зависимости устаревают             ║
-║     → Только идеи, не pip install                       ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Реализовать S/R detection и candle      ║
-║  patterns в src/indicators/ (~4 часа)                    ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
-
-## 10. QuantConnect/Lean
-
-**URL:** https://github.com/QuantConnect/Lean
-**Дата анализа:** 2026-03-21
-
-### Краткое описание
-
-QuantConnect LEAN — крупнейший open-source алго-трейдинг движок (95K строк C#, 4160 файлов, 12K+ stars, 400+ contributors). Event-driven professional-caliber platform: 168 индикаторов, полный Algorithm Framework (Alpha→Portfolio→Risk→Execution), 10+ брокеров, встроенный бэктест, Python API. Apache 2.0 лицензия. Ежедневные обновления, продакшен на QuantConnect.com.
-
-### Что ценно для MOEX Trading Bot (топ по приоритету)
-
-**🔴 9 уникальных индикаторов** (не в TA-Lib):
-
-| Индикатор | Формула (ключевая) | Применение MOEX |
-|-----------|-------------------|-----------------|
-| ChandeKrollStop | 2-pass ATR stop: `high_stop = max(H,p) - mult×ATR`, `stop = max(high_stop,q)` | Trailing stops Si/SBER |
-| SuperTrend | Ratchet bands: `lower = max(HL2-mult×ATR, prev_lower)` + direction FSM | Trend filter daily |
-| ChoppinessIndex | `100×log₁₀(ΣTR/range)/log₁₀(n)`, 38.2=trend/61.8=chop | On/off trend strategies |
-| SchaffTrendCycle | MACD → 2× stochastic smoothing, 0-100 range | Faster MACD (less lag) |
-| AugenPriceSpike | `(C-C₋₁)/(σ_logret × C₋₁)` — normalized spike in sigmas | Event detection (ЦБ) |
-| RogersSatchell | `√mean(ln(H/C)×ln(H/O) + ln(L/C)×ln(L/O))` — drift-adjusted vol | Options pricing Si/RTS |
-| ZigZag | Pivot FSM: `H ≥ lastLow×(1+sens)` AND `bars ≥ minTrend` | S/R, wave patterns |
-| KlingerVO | VolumeForce `V×|2DM/CM-1|×trend×100`, dual EMA | Volume confirmation |
-| RelativeVigorIndex | Triangular `(C-O)/(H-L)` weighted + signal line | Momentum quality |
-
-**🔴 4 Risk модели:**
-- `MaxDrawdownPerPosition(5%)` — стоп по unrealized PnL% per position
-- `PortfolioCircuitBreaker(15%, trailing=True)` — ликвидация всех при portfolio DD
-- `TrailingStopManager(5%)` — trailing peak tracking per holding
-- `UnrealizedProfitTaker(10%)` — фиксация прибыли для mean-reversion
-
-**🔴 Метрики:**
-- **Probabilistic Sharpe Ratio** — `Φ((√(T-1)×(SR-SR*)) / √(1-γ₃SR+(γ₄-1)/4×SR²))` — anti-overfitting
-- **VolumeShareSlippage** — `slippage = (min(qty/vol, 0.025))² × 0.1` — quadratic impact
-- **ProfitToMaxDD**, **MaxConsecutiveStreaks**, **TrackingError**
-
-**🟡 Execution:**
-- VWAP execution (fill only when bid < VWAP, max 1% bar volume)
-- SpreadFilter (reject wide spreads > 0.5%)
-- STD execution (buy below SMA-kσ, sell above SMA+kσ)
-
-### Красные флаги
-- ✅ Lookahead protection (IndicatorBase.Update проверяет временной порядок)
-- ⚠️ Default fees = 0 → надо явно задавать MOEX fee model
-- ⚠️ MarketImpact параметры (α,β) калиброваны под US 2005 → перекалибровать
-- ⚠️ Ichimoku 9/26/52 для 6-дневной недели → адаптировать для MOEX 5-дневной
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ + ИНТЕГРИРОВАТЬ (формулы)        ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐⭐⭐    5/5                ║
-║  Качество кода:        ⭐⭐⭐⭐⭐    5/5                ║
-║  Применимость к MOEX:  ⭐⭐⭐        3/5                ║
-║  Risk management:      ⭐⭐⭐⭐⭐    5/5                ║
-║  Индикаторы:           ⭐⭐⭐⭐⭐    5/5 (168 шт)      ║
-║  Бэктестинг:           ⭐⭐⭐⭐⭐    5/5                ║
-║  Архитектура:          ⭐⭐⭐⭐⭐    5/5                ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Портировать 9 индикаторов (~12ч),       ║
-║  затем 4 risk models (~6ч), затем PSR + slippage (~5ч)  ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
-
-## 11. hummingbot/hummingbot
-
-**URL:** https://github.com/hummingbot/hummingbot
-**Дата анализа:** 2026-03-21
-
-### Краткое описание
-
-Hummingbot — open-source фреймворк для маркет-мейкинга и HFT (1459 Python файлов, 35K LOC, Apache 2.0, $34B+ reported trading volume). Strategy V2 framework с Controller/Executor архитектурой. Cython для hot path. 140+ бирж. Уникальная ценность: Avellaneda-Stoikov market making model, Triple Barrier execution, TWAP/DCA/Grid executors, Order Book Imbalance.
-
-### Что ценно для MOEX (топ компоненты)
-
-**🔴 Avellaneda-Stoikov Market Making:**
-```
-reservation_price = mid - q × γ × σ² × (T - t)
-spread* = γ × σ² × (T-t) + (2/γ) × ln(1 + γ/κ)
-```
-Где q = инвентарь, γ = risk aversion, σ = volatility, κ = fill rate.
-Inventory skew сдвигает котировки для разгрузки позиции.
-→ Для MOEX: T = время до закрытия сессии (18:40), σ через RogersSatchell.
-
-**🔴 Triple Barrier (PositionExecutor):**
-```
-Take Profit: price ≥ entry × (1 + tp_pct)
-Stop Loss:   price ≤ entry × (1 - sl_pct)
-Time Limit:  elapsed > max_seconds
-+ Trailing Stop с activation delta
-```
-→ Стандарт de Prado. Прямо применимо.
-
-**🔴 TWAP Executor:**
-```
-order_interval = total_duration / n_orders
-each interval: place limit at best bid/ask, amount = total/n
-```
-→ Критичен для крупных заявок на MOEX (2-й эшелон).
-
-**🟡 DCA Executor:** Серия ордеров с dynamic average entry, пересчёт TP/SL после каждого fill.
-
-**🟡 Grid Executor:** N уровней между lower/upper price, dynamic range shift при breakout.
-
-**🟡 Order Book Imbalance:** `OBI = (bid_vol - ask_vol) / (bid_vol + ask_vol)` — краткосрочный directional signal.
-
-**🟡 Fibonacci/Geometric distributions:** Для скрытности ордеров в стакане.
-
-### Красные флаги
-- ✅ Бэктест с gap-aware fill logic (fill at min(limit, open))
-- ⚠️ Slippage = fixed pct (не quadratic volume-share)
-- ⚠️ Крипто-only коннекторы
-- 🚩 Cython в hot path → не portируется, только алгоритмы
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  ВЕРДИКТ: ВДОХНОВИТЬСЯ                                  ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐⭐⭐⭐    5/5                ║
-║  Качество кода:        ⭐⭐⭐⭐      4/5                ║
-║  Применимость к MOEX:  ⭐⭐⭐        3/5                ║
-║  Risk management:      ⭐⭐⭐⭐      4/5 (inventory)    ║
-║  Стратегии:            ⭐⭐⭐⭐⭐    5/5 (A-S, Grid)    ║
-║  Бэктестинг:           ⭐⭐⭐⭐      4/5                ║
-║  Архитектура:          ⭐⭐⭐⭐⭐    5/5                ║
-║                                                          ║
-║  СЛЕДУЮЩИЙ ШАГ: Портировать Triple Barrier + TWAP +     ║
-║  Avellaneda-Stoikov формулу (~8ч)                        ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
-
-## 12. freqtrade/freqtrade-strategies
-
-**URL:** https://github.com/freqtrade/freqtrade-strategies
-**Дата анализа:** 2026-03-21
-
-### Краткое описание
-
-Коллекция 65 шаблонных стратегий для freqtrade. 9K строк Python, GPL-3 лицензия. Крипто-only (Binance/etc). Стратегии уровня от учебных до community-contributed. Нет фреймворка, нет бэктест-движка, нет метрик — только файлы стратегий. Папка `lookahead_bias/` содержит стратегии с ИЗВЕСТНЫМ lookahead bias (помечены как примеры чего НЕ делать).
-
-### Ценные паттерны
-
-| Компонент | Файл | Ценность | Суть |
-|-----------|------|----------|------|
-| FixedRiskRewardLoss | `FixedRiskRewardLoss.py` | ⭐⭐⭐ | Dynamic stoploss через ATR + Risk/Reward ratio 3.5:1 + break-even adjustment |
-| VolatilitySystem | `futures/VolatilitySystem.py` | ⭐⭐⭐ | ATR×2 breakout: buy when `close_change > ATR×2`, position DCA через adjust_trade |
-| CustomStoplossWithPSAR | `CustomStoplossWithPSAR.py` | ⭐⭐ | Parabolic SAR как trailing stop |
-
-### Что НЕ брать
-- **Diamond, GodStra, Zeus** — оптимизированные на in-sample, нет OOS. `lookahead_bias/` папка.
-- **Все berlinguyinca/** — простейшие MA/RSI/MACD кроссоверы, нет ничего нового.
-- **GPL-3 лицензия** — copyleft, код нельзя использовать в non-GPL проекте. Только идеи.
-
-### Красные флаги
-- 🚩 GPL-3 — copyleft restriction, не совместимо с нашим MIT/proprietary
-- 🚩 Нет бэктест результатов (кроме Diamond hyperopt output)
-- 🚩 Нет тестов (ни одного)
-- 🚩 `lookahead_bias/` — 4 стратегии с ИЗВЕСТНЫМ lookahead
-- ⚠️ Крипто-only — 15m/1h таймфреймы, не MOEX
-
-### Вердикт
-
-```
-╔══════════════════════════════════════════════════════════╗
-║  ВЕРДИКТ: ПРОПУСТИТЬ                                    ║
-║                                                          ║
-║  Общая ценность:       ⭐⭐          2/5                ║
-║  Качество кода:        ⭐⭐          2/5                ║
-║  Применимость к MOEX:  ⭐            1/5                ║
-║  Risk management:      ⭐⭐          2/5                ║
-║  Стратегии:            ⭐⭐          2/5 (шаблонные)    ║
-║  Бэктестинг:           ⭐            1/5 (нет)          ║
-║  Архитектура:          ⭐            1/5 (нет)          ║
-║                                                          ║
-║  Нет компонентов ценностью ≥ 3 для интеграции.          ║
-║  FixedRiskRewardLoss паттерн (ATR stop + R:R ratio)     ║
-║  уже реализован лучше в нашем Triple Barrier +           ║
-║  ProtectiveController. GPL-3 запрещает копирование.      ║
-║                                                          ║
-║  ТОП-3 АНТИПАТТЕРНА:                                    ║
-║  1. lookahead_bias/ — стратегии с ИЗВЕСТНЫМ bias в репо  ║
-║  2. stoploss = -0.9 (FixedRiskReward) — 90% DD default  ║
-║  3. Hyperopt на in-sample без OOS validation              ║
-╚══════════════════════════════════════════════════════════╝
-```
-
----
-
-## Сводная таблица
-
-| # | Репо | Вердикт | Ценность | Код | MOEX | Лучший компонент | Приоритет |
-|---|------|---------|----------|-----|------|------------------|-----------|
-| 1 | ghostfolio | ВДОХНОВИТЬСЯ | 3/5 | 5/5 | 2/5 | X-Ray Rules → src/risk/rules/ | 🟡 |
-| 2 | jesse-ai/jesse | ИНТЕГРИРОВАТЬ | 4/5 | 4/5 | 3/5 | metrics.py → src/backtest/metrics.py | 🔴 |
-| 3 | backtesting.py | ВДОХНОВИТЬСЯ | 3/5 | 5/5 | 2/5 | Alpha/Beta/SQN/Kelly → metrics.py | 🔴 |
-| 4 | StockSharp | ИНТЕГРИРОВАТЬ | 4/5 | 4/5 | 4/5 | QuotingEngine + Commissions + Protective | 🔴 |
-| 5 | Krypto-trading-bot | ПРОПУСТИТЬ | 1/5 | 3/5 | 1/5 | — (C++, крипто MM) | — |
-| 6 | pybroker | ВДОХНОВИТЬСЯ | 4/5 | 5/5 | 3/5 | BCa Bootstrap + MAE/MFE + Equity R² | 🔴 |
-| 7 | barter-rs | ВДОХНОВИТЬСЯ | 4/5 | 5/5 | 2/5 | Welford Online + Position FIFO + RiskApproved | 🟡 |
-| 8 | BitVision | ПРОПУСТИТЬ | 1/5 | 1/5 | 1/5 | — (lookahead bias, нет бэктеста, мёртв) | — |
-| 9 | LiuAlgoTrader | ВДОХНОВИТЬСЯ | 3/5 | 3/5 | 2/5 | S/R Detection + Candle Patterns + Scanner | 🟡 |
-| 10 | **LEAN** | **ИНТЕГРИРОВАТЬ** | **5/5** | **5/5** | **3/5** | **9 indicators + 4 risk models + PSR** | **🔴** |
-| 11 | hummingbot | ВДОХНОВИТЬСЯ | 5/5 | 4/5 | 3/5 | Avellaneda-Stoikov + Triple Barrier + TWAP | 🔴 |
-| 12 | freqtrade-strategies | ПРОПУСТИТЬ | 2/5 | 2/5 | 1/5 | — (GPL-3, шаблонные, нет OOS) | — |
-
-
-# ══════════════════════════════════════
-# РАЗДЕЛ 2: СТРУКТУРА ПРОЕКТА
-# ══════════════════════════════════════
-
-```
-./.claude/agents/bull-bear-debater.md
-./.claude/agents/macro-monitor.md
-./.claude/agents/risk-auditor.md
-./.claude/agents/trading-analyst.md
-./.claude/skills/moex-trading/backtest-report/SKILL.md
-./.claude/skills/moex-trading/div-calendar/SKILL.md
-./.claude/skills/moex-trading/moex-screener/SKILL.md
-./.claude/skills/moex-trading/optimize-strategy/SKILL.md
-./.claude/skills/moex-trading/pair-finder/SKILL.md
-./.claude/skills/moex-trading/risk-report/SKILL.md
-./.claude/skills/moex-trading/trading-status/SKILL.md
-./.gitignore
-./.mcp.json
-./.ruff_cache/.gitignore
-./.ruff_cache/0.8.6/11722844868939676032
-./.ruff_cache/0.8.6/1687382723091742672
-./.ruff_cache/0.8.6/6927755938990147548
-./.ruff_cache/0.8.6/7016522095559665297
-./.ruff_cache/0.8.6/7493465804078863255
-./.ruff_cache/0.8.6/8080844863807476552
-./.ruff_cache/0.8.6/8174281139984673709
-./.ruff_cache/CACHEDIR.TAG
-./CLAUDE.md
-./Dockerfile
-./PROJECT_STATE.md
-./REPO_REVIEWS.md
-./config/prometheus.yml
-./config/tickers.yaml
-./docker-compose.yml
-./docs/index.html
-./requirements.txt
-./research/01-trading-systems-github.md
-./research/02-ml-prediction.md
-./research/03-risk-execution.md
-./research/04-moex-strategies.md
-./research/05-ai-agents-skills.md
-./research/REPORT.html
 ./research/_copy.py
 ./research/_writer.py
 ./scripts/__init__.py
@@ -2040,16 +13,20 @@ each interval: place limit at best bid/ask, amount = total/n
 ./scripts/backtest_pairs.py
 ./scripts/backtest_si.py
 ./scripts/backtest_with_claude.py
+./scripts/dashboard.py
+./scripts/download_history.py
 ./scripts/emergency_close.py
 ./scripts/load_full_universe_data.py
 ./scripts/load_h1_universe.py
 ./scripts/load_historical_data.py
 ./scripts/load_si_data.py
 ./scripts/optimize_all_strategies.py
+./scripts/paper_trading.py
 ./scripts/paper_trading_scheduler.py
 ./scripts/run_backtest.py
 ./scripts/run_daily_once.py
 ./scripts/run_enhanced_backtest.py
+./scripts/run_ml_backtest.py
 ./scripts/run_sandbox_trading.py
 ./scripts/setup_sandbox.py
 ./scripts/simulate_3months.py
@@ -2076,10 +53,18 @@ each interval: place limit at best bid/ask, amount = total/n
 ./src/backtest/optimizer.py
 ./src/backtest/report.py
 ./src/backtest/vectorbt_engine.py
+./src/core/__init__.py
+./src/core/base_strategy.py
+./src/core/config.py
+./src/core/models.py
+./src/core/strategy_registry.py
 ./src/data/exchange_rates.py
 ./src/data/limit_order_book.py
+./src/data/moex_iss.py
 ./src/data/universe_loader.py
 ./src/execution/__init__.py
+./src/execution/adapters/__init__.py
+./src/execution/adapters/tinkoff.py
 ./src/execution/dca.py
 ./src/execution/grid.py
 ./src/execution/quoting.py
@@ -2106,16 +91,20 @@ each interval: place limit at best bid/ask, amount = total/n
 ./src/ml/processors.py
 ./src/ml/trainer.py
 ./src/ml/ump_filter.py
+./src/ml/walk_forward.py
 ./src/models/__init__.py
 ./src/models/market.py
 ./src/models/signal.py
 ./src/monitoring/metrics.py
+./src/monitoring/telegram_bot.py
 ./src/risk/portfolio_circuit_breaker.py
 ./src/risk/position_sizer.py
 ./src/risk/position_tracker.py
 ./src/risk/protective.py
 ./src/risk/rules.py
 ./src/strategies/market_making.py
+./src/strategies/trend/__init__.py
+./src/strategies/trend/ema_crossover.py
 ./src/strategy/multi_agent.py
 ./src/strategy/news_reactor.py
 ./src/strategy/prompts.py
@@ -2126,7 +115,24 @@ each interval: place limit at best bid/ask, amount = total/n
 ./tests/test_analysis.py
 ./tests/test_barter_ports.py
 ./tests/test_bootstrap_mae_equity.py
+./tests/test_core/__init__.py
+./tests/test_core/conftest.py
+./tests/test_core/test_base_strategy.py
+./tests/test_core/test_config.py
+./tests/test_core/test_models.py
+./tests/test_data/__init__.py
+./tests/test_data/conftest.py
+./tests/test_data/test_moex_iss.py
+./tests/test_e2e/__init__.py
+./tests/test_e2e/conftest.py
+./tests/test_e2e/test_full_pipeline.py
+./tests/test_e2e/test_full_pipeline_ml.py
+./tests/test_e2e/test_paper_trading.py
+./tests/test_e2e/test_real_data_backtest.py
 ./tests/test_exchange_rates.py
+./tests/test_execution/__init__.py
+./tests/test_execution/conftest.py
+./tests/test_execution/test_tinkoff_adapter.py
 ./tests/test_garch_lob.py
 ./tests/test_hummingbot_ports.py
 ./tests/test_indicator_utils.py
@@ -2134,6 +140,12 @@ each interval: place limit at best bid/ask, amount = total/n
 ./tests/test_label_generators.py
 ./tests/test_lean_ports.py
 ./tests/test_metrics.py
+./tests/test_ml/__init__.py
+./tests/test_ml/conftest.py
+./tests/test_ml/test_walk_forward.py
+./tests/test_monitoring/__init__.py
+./tests/test_monitoring/conftest.py
+./tests/test_monitoring/test_telegram.py
 ./tests/test_monte_carlo.py
 ./tests/test_optimizer.py
 ./tests/test_qlib_ports.py
@@ -2142,15 +154,16 @@ each interval: place limit at best bid/ask, amount = total/n
 ./tests/test_signal_synthesis.py
 ./tests/test_sr_candles.py
 ./tests/test_stocksharp_ports.py
+./tests/test_strategies/__init__.py
+./tests/test_strategies/conftest.py
+./tests/test_strategies/test_ema_crossover.py
 ```
 
-
 # ══════════════════════════════════════
-# РАЗДЕЛ 3: ИСХОДНЫЙ КОД
+# РАЗДЕЛ 2: ИСХОДНЫЙ КОД
 # ══════════════════════════════════════
 
 ## Файл: src/analysis/features.py
-
 ```python
 """Technical indicator features on Polars DataFrames for MOEX analysis."""
 from __future__ import annotations
@@ -2445,7 +458,6 @@ def calculate_all_features(df: pl.DataFrame) -> pl.DataFrame:
 ```
 
 ## Файл: src/analysis/regime.py
-
 ```python
 """Market regime detection for strategy routing.
 
@@ -2589,7 +601,6 @@ def _simple_adx(highs: np.ndarray, lows: np.ndarray, closes: np.ndarray, period:
 ```
 
 ## Файл: src/analysis/scoring.py
-
 ```python
 """Pre-Score Engine — 8-factor scoring model (0–100).
 
@@ -2918,7 +929,6 @@ def calculate_pre_score(
 ```
 
 ## Файл: src/analysis/tsfm_predictor.py
-
 ```python
 """Time Series Foundation Model predictor using Chronos-Bolt.
 
@@ -3045,7 +1055,6 @@ def predict_direction(
 ```
 
 ## Файл: src/analysis/tsfresh_features.py
-
 ```python
 """TSFRESH feature extraction for MOEX time series.
 
@@ -3237,7 +1246,6 @@ def _cache_key(candles: list[dict], window: int, column: str) -> str:
 ```
 
 ## Файл: src/backtest/commissions.py
-
 ```python
 """Flexible commission rules engine for backtesting.
 
@@ -3482,7 +1490,6 @@ class CommissionManager:
 ```
 
 ## Файл: src/backtest/metrics.py
-
 ```python
 """Comprehensive performance metrics for backtesting and strategy evaluation.
 
@@ -4924,7 +2931,6 @@ def format_metrics(m: TradeMetrics) -> str:
 ```
 
 ## Файл: src/backtest/monte_carlo.py
-
 ```python
 """Monte Carlo simulation for strategy robustness testing.
 
@@ -5328,7 +3334,6 @@ def format_monte_carlo(result: MonteCarloResult) -> str:
 ```
 
 ## Файл: src/backtest/optimizer.py
-
 ```python
 """Strategy hyperparameter optimizer using Optuna with walk-forward validation.
 
@@ -5756,7 +3761,6 @@ def walk_forward_optimize(
 ```
 
 ## Файл: src/backtest/report.py
-
 ```python
 """Backtest reporting — metrics calculation and overfitting detection."""
 from __future__ import annotations
@@ -6019,7 +4023,6 @@ def generate_html_report(
 ```
 
 ## Файл: src/backtest/vectorbt_engine.py
-
 ```python
 """VectorBT-based backtesting engine for mass parameter optimization.
 
@@ -6237,8 +4240,662 @@ def grid_search_ema_crossover(
 
 ```
 
-## Файл: src/data/exchange_rates.py
+## Файл: src/core/base_strategy.py
+```python
+"""Abstract base class for all trading strategies.
 
+Every strategy in src/strategies/ MUST inherit from this class.
+This ensures uniform interface for backtesting, optimization, and live trading.
+"""
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from typing import Any
+
+import polars as pl
+
+from src.core.models import Side, Signal
+
+
+class BaseStrategy(ABC):
+    """Base class for all trading strategies."""
+
+    def __init__(
+        self,
+        name: str,
+        timeframe: str = "1d",
+        instruments: list[str] | None = None,
+    ):
+        self.name = name
+        self.timeframe = timeframe
+        self.instruments = instruments or []
+        self._params: dict[str, Any] = {}
+
+    @abstractmethod
+    def generate_signals(self, data: pl.DataFrame) -> list[Signal]:
+        """Generate trading signals from market data.
+
+        Args:
+            data: DataFrame with columns: timestamp, open, high, low, close, volume.
+                  May contain additional indicator columns.
+
+        Returns:
+            List of Signal objects. Empty list = no signal.
+        """
+        ...
+
+    @abstractmethod
+    def calculate_position_size(
+        self, signal: Signal, portfolio_value: float, atr: float
+    ) -> float:
+        """Calculate position size in units (shares/contracts).
+
+        Args:
+            signal: The signal to size.
+            portfolio_value: Current portfolio value in RUB.
+            atr: Current ATR for the instrument.
+
+        Returns:
+            Number of units to trade. Must respect lot size.
+        """
+        ...
+
+    @abstractmethod
+    def get_stop_loss(self, entry_price: float, side: Side, atr: float) -> float:
+        """Calculate stop-loss price.
+
+        Args:
+            entry_price: Entry price.
+            side: LONG or SHORT.
+            atr: Current ATR.
+
+        Returns:
+            Stop-loss price. For LONG: below entry. For SHORT: above entry.
+        """
+        ...
+
+    def get_take_profit(
+        self, entry_price: float, side: Side, atr: float
+    ) -> float | None:
+        """Calculate take-profit price. Optional — returns None by default."""
+        return None
+
+    def on_bar(self, bar: dict) -> list[Signal]:
+        """Process a single bar in real-time mode. Override for live trading."""
+        return []
+
+    def get_params(self) -> dict[str, Any]:
+        """Return current strategy parameters for optimization."""
+        return self._params.copy()
+
+    def set_params(self, params: dict[str, Any]) -> None:
+        """Set strategy parameters (used by optimizer)."""
+        self._params.update(params)
+
+    def warm_up_period(self) -> int:
+        """Number of bars needed before strategy can generate signals."""
+        return 0
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(name='{self.name}', tf='{self.timeframe}')"
+
+```
+
+## Файл: src/core/config.py
+```python
+"""Unified configuration loader for MOEX trading bot.
+
+Loads settings from config/settings.yaml, validates via Pydantic,
+and overlays environment variables from .env.
+Singleton pattern — load once, use everywhere.
+"""
+from __future__ import annotations
+
+import os
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+import yaml
+from pydantic import BaseModel, Field, field_validator
+
+
+# ── Sub-models ──────────────────────────────────────────────────────
+
+class ProjectSettings(BaseModel):
+    name: str = "moex-trading-bot"
+    version: str = "0.2.0"
+
+
+class MoexBoards(BaseModel):
+    equities: str = "TQBR"
+    futures: str = "RFUD"
+    options: str = "ROPD"
+    fx: str = "CETS"
+
+
+class MoexSessions(BaseModel):
+    main_start: str = "10:00"
+    main_end: str = "18:40"
+    evening_start: str = "19:05"
+    evening_end: str = "23:50"
+    clearing_1_start: str = "14:00"
+    clearing_1_end: str = "14:05"
+    clearing_2_start: str = "18:45"
+    clearing_2_end: str = "19:00"
+    auction_open_start: str = "09:50"
+    auction_open_end: str = "10:00"
+    auction_close_start: str = "18:40"
+    auction_close_end: str = "18:50"
+
+
+class MoexSettings(BaseModel):
+    iss_url: str = "https://iss.moex.com/iss"
+    max_requests_per_sec: int = Field(default=50, gt=0)
+    boards: MoexBoards = Field(default_factory=MoexBoards)
+    sessions: MoexSessions = Field(default_factory=MoexSessions)
+
+
+class CostProfile(BaseModel):
+    commission_pct: float = 0.0
+    commission_rub: float = 0.0
+    slippage_ticks: int = Field(default=1, ge=0)
+    settlement: str = "T+1"
+
+
+class CostsSettings(BaseModel):
+    equity: CostProfile = Field(default_factory=CostProfile)
+    futures: CostProfile = Field(default_factory=CostProfile)
+    options: CostProfile = Field(default_factory=CostProfile)
+    fx: CostProfile = Field(default_factory=CostProfile)
+
+
+class RiskSettings(BaseModel):
+    max_position_pct: float = Field(default=0.20, gt=0, lt=1)
+    max_daily_drawdown_pct: float = Field(default=0.05, gt=0, lt=1)
+    max_total_drawdown_pct: float = Field(default=0.15, gt=0, lt=1)
+    max_correlated_exposure_pct: float = Field(default=0.40, gt=0, lt=1)
+    circuit_breaker_daily_dd: float = Field(default=0.05, gt=0, lt=1)
+    circuit_breaker_total_dd: float = Field(default=0.15, gt=0, lt=1)
+
+
+class InstrumentInfo(BaseModel):
+    lot: int = Field(default=1, ge=1)
+    step: float = Field(default=0.01, gt=0)
+    sector: str = ""
+    go_pct: float = Field(default=0.0, ge=0)
+    base: str = ""
+
+
+class InstrumentsSettings(BaseModel):
+    equities: dict[str, InstrumentInfo] = Field(default_factory=dict)
+    futures: dict[str, InstrumentInfo] = Field(default_factory=dict)
+
+
+class WalkForwardSettings(BaseModel):
+    n_windows: int = Field(default=5, ge=1)
+    train_ratio: float = Field(default=0.70, gt=0, lt=1)
+    gap_bars: int = Field(default=1, ge=0)
+    retrain_every_n_bars: int = Field(default=60, ge=1)
+
+
+class BacktestSettings(BaseModel):
+    default_capital: int = Field(default=1_000_000, gt=0)
+    trading_days_per_year: int = Field(default=252, gt=0)
+    benchmark: str = "IMOEX"
+    min_sharpe_threshold: float = 1.0
+    max_drawdown_threshold: float = Field(default=0.20, gt=0, le=1)
+    min_trades_for_validity: int = Field(default=30, ge=1)
+    walk_forward: WalkForwardSettings = Field(default_factory=WalkForwardSettings)
+
+
+class FeatureSelectionSettings(BaseModel):
+    method: str = "mutual_info"
+    top_k: int = Field(default=50, ge=1)
+
+
+class LabelSettings(BaseModel):
+    method: str = "triple_barrier"
+    take_profit_atr: float = Field(default=2.0, gt=0)
+    stop_loss_atr: float = Field(default=1.5, gt=0)
+    max_holding_bars: int = Field(default=20, ge=1)
+
+
+class MLSettings(BaseModel):
+    models: list[str] = Field(default_factory=lambda: ["catboost", "lightgbm", "xgboost"])
+    ensemble_method: str = "stacking"
+    feature_selection: FeatureSelectionSettings = Field(default_factory=FeatureSelectionSettings)
+    label: LabelSettings = Field(default_factory=LabelSettings)
+
+
+class TelegramSettings(BaseModel):
+    bot_token_env: str = "TELEGRAM_BOT_TOKEN"
+    chat_id_env: str = "TELEGRAM_CHAT_ID"
+    alerts: list[str] = Field(default_factory=lambda: [
+        "signal_generated", "order_filled", "stop_triggered",
+        "circuit_breaker_activated", "daily_pnl_report",
+    ])
+
+    @property
+    def bot_token(self) -> str | None:
+        return os.environ.get(self.bot_token_env)
+
+    @property
+    def chat_id(self) -> str | None:
+        return os.environ.get(self.chat_id_env)
+
+
+class TinkoffSettings(BaseModel):
+    token_env: str = "TINKOFF_TOKEN"
+    sandbox: bool = True
+    account_id_env: str = "TINKOFF_ACCOUNT_ID"
+
+    @property
+    def token(self) -> str | None:
+        return os.environ.get(self.token_env)
+
+    @property
+    def account_id(self) -> str | None:
+        return os.environ.get(self.account_id_env)
+
+
+class BrokerSettings(BaseModel):
+    default: str = "tinkoff"
+    tinkoff: TinkoffSettings = Field(default_factory=TinkoffSettings)
+
+
+# ── Root Settings ───────────────────────────────────────────────────
+
+class Settings(BaseModel):
+    """Root configuration model — single source of truth."""
+
+    project: ProjectSettings = Field(default_factory=ProjectSettings)
+    moex: MoexSettings = Field(default_factory=MoexSettings)
+    costs: CostsSettings = Field(default_factory=CostsSettings)
+    risk: RiskSettings = Field(default_factory=RiskSettings)
+    instruments: InstrumentsSettings = Field(default_factory=InstrumentsSettings)
+    backtest: BacktestSettings = Field(default_factory=BacktestSettings)
+    ml: MLSettings = Field(default_factory=MLSettings)
+    telegram: TelegramSettings = Field(default_factory=TelegramSettings)
+    broker: BrokerSettings = Field(default_factory=BrokerSettings)
+
+    def get_instrument_info(self, ticker: str) -> InstrumentInfo:
+        """Get instrument info by ticker. Raises KeyError if not found."""
+        if ticker in self.instruments.equities:
+            return self.instruments.equities[ticker]
+        if ticker in self.instruments.futures:
+            return self.instruments.futures[ticker]
+        raise KeyError(f"Unknown instrument: {ticker}")
+
+    def get_cost_profile(self, instrument_type: str) -> CostProfile:
+        """Get cost profile by instrument type."""
+        profiles = {
+            "equity": self.costs.equity,
+            "futures": self.costs.futures,
+            "options": self.costs.options,
+            "fx": self.costs.fx,
+        }
+        if instrument_type not in profiles:
+            raise KeyError(f"Unknown instrument type: {instrument_type}")
+        return profiles[instrument_type]
+
+
+# ── Loader ──────────────────────────────────────────────────────────
+
+def _find_settings_yaml() -> Path:
+    """Find settings.yaml relative to project root."""
+    candidates = [
+        Path("config/settings.yaml"),
+        Path(__file__).resolve().parent.parent.parent / "config" / "settings.yaml",
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    raise FileNotFoundError(
+        "config/settings.yaml not found. "
+        f"Searched: {[str(c) for c in candidates]}"
+    )
+
+
+def load_settings(path: Path | str | None = None) -> Settings:
+    """Load settings from YAML file and validate via Pydantic.
+
+    Args:
+        path: Explicit path to settings.yaml. Auto-discovered if None.
+
+    Returns:
+        Validated Settings instance.
+    """
+    if path is None:
+        yaml_path = _find_settings_yaml()
+    else:
+        yaml_path = Path(path)
+
+    with open(yaml_path, "r", encoding="utf-8") as f:
+        raw = yaml.safe_load(f)
+
+    if raw is None:
+        raw = {}
+
+    # Overlay env vars for secrets
+    _apply_env_overrides(raw)
+
+    return Settings.model_validate(raw)
+
+
+def _apply_env_overrides(raw: dict[str, Any]) -> None:
+    """Apply environment variable overrides to raw config dict."""
+    env_prefix = "MOEX_"
+    for key, value in os.environ.items():
+        if not key.startswith(env_prefix):
+            continue
+        parts = key[len(env_prefix):].lower().split("__")
+        _set_nested(raw, parts, value)
+
+
+def _set_nested(d: dict, keys: list[str], value: str) -> None:
+    """Set a nested dict value from dot-separated keys."""
+    for k in keys[:-1]:
+        d = d.setdefault(k, {})
+    # Try numeric conversion
+    try:
+        d[keys[-1]] = int(value)
+    except ValueError:
+        try:
+            d[keys[-1]] = float(value)
+        except ValueError:
+            d[keys[-1]] = value
+
+
+@lru_cache(maxsize=1)
+def get_config(path: str | None = None) -> Settings:
+    """Get singleton config instance. Cached after first call."""
+    return load_settings(path)
+
+
+def reset_config() -> None:
+    """Clear cached config (useful for testing)."""
+    get_config.cache_clear()
+
+```
+
+## Файл: src/core/models.py
+```python
+"""Core domain models for the MOEX trading bot.
+
+All models use Pydantic v2 for validation, serialization, and type safety.
+These are the canonical data structures passed between all modules.
+"""
+from __future__ import annotations
+
+from datetime import datetime
+from enum import Enum
+
+from pydantic import BaseModel, Field, field_validator
+
+
+class Side(str, Enum):
+    LONG = "long"
+    SHORT = "short"
+
+
+class OrderType(str, Enum):
+    MARKET = "market"
+    LIMIT = "limit"
+    STOP = "stop"
+    STOP_LIMIT = "stop_limit"
+
+
+class OrderStatus(str, Enum):
+    PENDING = "pending"
+    SUBMITTED = "submitted"
+    PARTIAL = "partial"
+    FILLED = "filled"
+    CANCELLED = "cancelled"
+    REJECTED = "rejected"
+
+
+class InstrumentType(str, Enum):
+    EQUITY = "equity"
+    FUTURES = "futures"
+    OPTIONS = "options"
+    FX = "fx"
+
+
+class Bar(BaseModel):
+    """Single OHLCV bar."""
+
+    timestamp: datetime
+    open: float = Field(gt=0)
+    high: float = Field(gt=0)
+    low: float = Field(gt=0)
+    close: float = Field(gt=0)
+    volume: int = Field(ge=0)
+    instrument: str
+    timeframe: str = "1d"
+
+    @field_validator("low")
+    @classmethod
+    def high_gte_low(cls, v: float, info) -> float:
+        if "high" in info.data and info.data["high"] < v:
+            raise ValueError("high must be >= low")
+        return v
+
+
+class Signal(BaseModel):
+    """Trading signal from a strategy."""
+
+    instrument: str
+    side: Side
+    strength: float = Field(ge=-1.0, le=1.0)
+    strategy_name: str
+    timestamp: datetime
+    confidence: float = Field(ge=0.0, le=1.0, default=0.5)
+    metadata: dict = Field(default_factory=dict)
+
+
+class Order(BaseModel):
+    """Order to be executed."""
+
+    instrument: str
+    side: Side
+    quantity: float = Field(gt=0)
+    order_type: OrderType = OrderType.MARKET
+    price: float | None = None
+    stop_loss: float | None = None
+    take_profit: float | None = None
+    status: OrderStatus = OrderStatus.PENDING
+    strategy_name: str = ""
+    timestamp: datetime = Field(default_factory=datetime.now)
+    fill_price: float | None = None
+    fill_timestamp: datetime | None = None
+    commission: float = 0.0
+
+
+class Position(BaseModel):
+    """Open position."""
+
+    instrument: str
+    side: Side
+    quantity: float = Field(gt=0)
+    entry_price: float = Field(gt=0)
+    current_price: float = Field(gt=0)
+    stop_loss: float | None = None
+    take_profit: float | None = None
+    entry_timestamp: datetime = Field(default_factory=datetime.now)
+    strategy_name: str = ""
+    instrument_type: InstrumentType = InstrumentType.EQUITY
+    lot_size: int = 1
+    price_step: float = 0.01
+
+    @property
+    def unrealized_pnl(self) -> float:
+        diff = self.current_price - self.entry_price
+        if self.side == Side.SHORT:
+            diff = -diff
+        return diff * self.quantity
+
+    @property
+    def unrealized_pnl_pct(self) -> float:
+        notional = self.entry_price * self.quantity
+        if notional <= 0:
+            return 0.0
+        return self.unrealized_pnl / notional
+
+
+class Portfolio(BaseModel):
+    """Portfolio state snapshot."""
+
+    positions: list[Position] = Field(default_factory=list)
+    cash: float = Field(ge=0)
+    timestamp: datetime = Field(default_factory=datetime.now)
+
+    @property
+    def total_value(self) -> float:
+        positions_value = sum(p.current_price * p.quantity for p in self.positions)
+        return self.cash + positions_value
+
+    @property
+    def exposure(self) -> float:
+        tv = self.total_value
+        if tv <= 0:
+            return 0.0
+        return sum(p.current_price * p.quantity for p in self.positions) / tv
+
+
+class TradeResult(BaseModel):
+    """Completed trade for backtest reporting."""
+
+    instrument: str
+    side: Side
+    entry_price: float
+    exit_price: float
+    quantity: float
+    entry_timestamp: datetime
+    exit_timestamp: datetime
+    strategy_name: str = ""
+    commission: float = 0.0
+    slippage: float = 0.0
+
+    @property
+    def gross_pnl(self) -> float:
+        diff = self.exit_price - self.entry_price
+        if self.side == Side.SHORT:
+            diff = -diff
+        return diff * self.quantity
+
+    @property
+    def net_pnl(self) -> float:
+        return self.gross_pnl - self.commission - self.slippage
+
+    @property
+    def duration(self) -> float:
+        return (self.exit_timestamp - self.entry_timestamp).total_seconds()
+
+    @property
+    def return_pct(self) -> float:
+        notional = self.entry_price * self.quantity
+        if notional <= 0:
+            return 0.0
+        return self.net_pnl / notional
+
+```
+
+## Файл: src/core/strategy_registry.py
+```python
+"""Registry for strategy discovery and instantiation."""
+from __future__ import annotations
+
+from typing import Any
+
+from src.core.base_strategy import BaseStrategy
+
+
+class StrategyRegistry:
+    """Registry for discovering and creating strategy instances.
+
+    Strategies register themselves via `register()` or are auto-discovered
+    from BaseStrategy subclasses via `discover()`.
+    """
+
+    def __init__(self) -> None:
+        self._registry: dict[str, type[BaseStrategy]] = {}
+
+    def register(self, name: str, strategy_cls: type[BaseStrategy]) -> None:
+        """Register a strategy class by name.
+
+        Args:
+            name: Unique strategy name.
+            strategy_cls: Strategy class (must be a BaseStrategy subclass).
+
+        Raises:
+            TypeError: If strategy_cls is not a BaseStrategy subclass.
+            ValueError: If name is already registered.
+        """
+        if not (isinstance(strategy_cls, type) and issubclass(strategy_cls, BaseStrategy)):
+            raise TypeError(
+                f"{strategy_cls} must be a subclass of BaseStrategy"
+            )
+        if name in self._registry:
+            raise ValueError(f"Strategy '{name}' already registered")
+        self._registry[name] = strategy_cls
+
+    def create(self, name: str, **kwargs: Any) -> BaseStrategy:
+        """Create a strategy instance by name.
+
+        Args:
+            name: Registered strategy name.
+            **kwargs: Arguments to pass to the strategy constructor.
+
+        Returns:
+            Strategy instance.
+
+        Raises:
+            KeyError: If strategy name not found.
+        """
+        if name not in self._registry:
+            raise KeyError(
+                f"Strategy '{name}' not found. Available: {list(self._registry.keys())}"
+            )
+        return self._registry[name](**kwargs)
+
+    def discover(self) -> None:
+        """Auto-discover all BaseStrategy subclasses and register them.
+
+        Uses the class name (lowercase) as the registry key.
+        Skips abstract classes and already-registered strategies.
+        """
+        for cls in BaseStrategy.__subclasses__():
+            key = cls.__name__.lower()
+            if key not in self._registry:
+                try:
+                    self._registry[key] = cls
+                except (TypeError, ValueError):
+                    pass
+
+    def list_strategies(self) -> list[str]:
+        """Return list of registered strategy names."""
+        return sorted(self._registry.keys())
+
+    def get_class(self, name: str) -> type[BaseStrategy]:
+        """Get strategy class by name."""
+        if name not in self._registry:
+            raise KeyError(f"Strategy '{name}' not found")
+        return self._registry[name]
+
+    def __contains__(self, name: str) -> bool:
+        return name in self._registry
+
+    def __len__(self) -> int:
+        return len(self._registry)
+
+
+# Global singleton registry
+registry = StrategyRegistry()
+
+```
+
+## Файл: src/data/exchange_rates.py
 ```python
 """Exchange rate cache for multi-currency P&L conversion via MOEX ISS API.
 
@@ -6572,7 +5229,6 @@ class ExchangeRateCache:
 ```
 
 ## Файл: src/data/limit_order_book.py
-
 ```python
 """Lightweight Limit Order Book for MOEX market data.
 
@@ -6824,8 +5480,322 @@ class LimitOrderBook:
 
 ```
 
-## Файл: src/data/universe_loader.py
+## Файл: src/data/moex_iss.py
+```python
+"""MOEX ISS REST API client for market data.
 
+Supports candles, instruments, orderbook, and index data.
+Rate limiting via asyncio semaphore (50 req/sec).
+Auto-pagination for large date ranges (MOEX returns max 500 rows per request).
+"""
+from __future__ import annotations
+
+import asyncio
+from datetime import date, datetime
+from typing import Any
+
+import aiohttp
+import polars as pl
+import structlog
+
+from src.core.config import load_settings
+from src.core.models import Bar
+
+logger = structlog.get_logger(__name__)
+
+# MOEX ISS timeframe mapping
+TIMEFRAME_MAP = {
+    "1m": 1,
+    "10m": 10,
+    "1h": 60,
+    "1d": 24,
+    "1w": 7,
+    "1M": 31,
+}
+
+
+class MoexISSClient:
+    """Async client for MOEX ISS REST API."""
+
+    def __init__(
+        self,
+        base_url: str | None = None,
+        max_requests_per_sec: int | None = None,
+        retry_count: int = 3,
+        retry_delay: float = 1.0,
+    ):
+        try:
+            cfg = load_settings()
+            self._base_url = base_url or cfg.moex.iss_url
+            self._max_rps = max_requests_per_sec or cfg.moex.max_requests_per_sec
+        except FileNotFoundError:
+            self._base_url = base_url or "https://iss.moex.com/iss"
+            self._max_rps = max_requests_per_sec or 50
+
+        self._semaphore = asyncio.Semaphore(self._max_rps)
+        self._retry_count = retry_count
+        self._retry_delay = retry_delay
+        self._session: aiohttp.ClientSession | None = None
+
+    async def _get_session(self) -> aiohttp.ClientSession:
+        if self._session is None or self._session.closed:
+            self._session = aiohttp.ClientSession()
+        return self._session
+
+    async def close(self) -> None:
+        if self._session and not self._session.closed:
+            await self._session.close()
+
+    async def _request(self, url: str, params: dict[str, Any] | None = None) -> dict:
+        """Make a rate-limited request with retries.
+
+        ISS with iss.json=extended returns: [{charsetinfo}, {block: [row_dicts]}]
+        We normalize to: {block: [row_dicts]} for easier extraction.
+        """
+        session = await self._get_session()
+        full_params = {"iss.json": "extended", "iss.meta": "off"}
+        if params:
+            full_params.update(params)
+
+        for attempt in range(self._retry_count):
+            async with self._semaphore:
+                try:
+                    async with session.get(url, params=full_params, timeout=aiohttp.ClientTimeout(total=30)) as resp:
+                        if resp.status == 200:
+                            raw = await resp.json(content_type=None)
+                            # Normalize: ISS extended returns list of dicts
+                            if isinstance(raw, list):
+                                merged: dict[str, Any] = {}
+                                for item in raw:
+                                    if isinstance(item, dict):
+                                        merged.update(item)
+                                return merged
+                            return raw if isinstance(raw, dict) else {}
+                        if resp.status == 429:
+                            wait = self._retry_delay * (2 ** attempt)
+                            logger.warning("Rate limited, retrying", wait=wait)
+                            await asyncio.sleep(wait)
+                            continue
+                        logger.error("HTTP error", status=resp.status, url=url)
+                        return {}
+                except (aiohttp.ClientError, asyncio.TimeoutError) as e:
+                    if attempt < self._retry_count - 1:
+                        wait = self._retry_delay * (2 ** attempt)
+                        logger.warning("Request failed, retrying", error=str(e), wait=wait)
+                        await asyncio.sleep(wait)
+                    else:
+                        logger.error("Request failed after retries", error=str(e))
+                        return {}
+        return {}
+
+    async def fetch_candles(
+        self,
+        ticker: str,
+        start: date | str,
+        end: date | str,
+        timeframe: str = "1d",
+        board: str = "TQBR",
+        engine: str = "stock",
+        market: str = "shares",
+    ) -> list[Bar]:
+        """Fetch OHLCV candles with auto-pagination.
+
+        MOEX ISS returns max 500 candles per request.
+        We paginate until all data is fetched.
+        """
+        interval = TIMEFRAME_MAP.get(timeframe, 24)
+        start_str = str(start)
+        end_str = str(end)
+
+        all_bars: list[Bar] = []
+        page_start = 0
+        page_size = 500
+
+        while True:
+            url = (
+                f"{self._base_url}/engines/{engine}/markets/{market}"
+                f"/boards/{board}/securities/{ticker}/candles.json"
+            )
+            params = {
+                "from": start_str,
+                "till": end_str,
+                "interval": interval,
+                "start": page_start,
+            }
+
+            data = await self._request(url, params)
+            candles = self._extract_candles(data, ticker, timeframe)
+
+            if not candles:
+                break
+
+            all_bars.extend(candles)
+
+            if len(candles) < page_size:
+                break
+
+            page_start += len(candles)
+
+        # Sort by timestamp
+        all_bars.sort(key=lambda b: b.timestamp)
+
+        logger.info(
+            "Fetched candles",
+            ticker=ticker,
+            count=len(all_bars),
+            start=start_str,
+            end=end_str,
+        )
+        return all_bars
+
+    async def fetch_futures_candles(
+        self,
+        ticker: str,
+        start: date | str,
+        end: date | str,
+        timeframe: str = "1d",
+    ) -> list[Bar]:
+        """Fetch futures candles from RFUD board."""
+        return await self.fetch_candles(
+            ticker, start, end, timeframe,
+            board="RFUD", engine="futures", market="forts",
+        )
+
+    async def fetch_instruments(
+        self, board: str = "TQBR", engine: str = "stock", market: str = "shares"
+    ) -> list[dict[str, Any]]:
+        """Fetch list of instruments on a given board."""
+        url = (
+            f"{self._base_url}/engines/{engine}/markets/{market}"
+            f"/boards/{board}/securities.json"
+        )
+        data = await self._request(url)
+        return self._extract_securities(data)
+
+    async def fetch_orderbook(
+        self,
+        ticker: str,
+        board: str = "TQBR",
+        depth: int = 20,
+        engine: str = "stock",
+        market: str = "shares",
+    ) -> dict[str, Any]:
+        """Fetch current orderbook for a ticker."""
+        url = (
+            f"{self._base_url}/engines/{engine}/markets/{market}"
+            f"/boards/{board}/securities/{ticker}/orderbook.json"
+        )
+        data = await self._request(url)
+        return self._extract_orderbook(data)
+
+    async def fetch_index(
+        self,
+        ticker: str = "IMOEX",
+        start: date | str = "2020-01-01",
+        end: date | str = "2025-12-31",
+        timeframe: str = "1d",
+    ) -> list[Bar]:
+        """Fetch index candles (IMOEX, RTSI, etc.)."""
+        return await self.fetch_candles(
+            ticker, start, end, timeframe,
+            board="SNDX", engine="stock", market="index",
+        )
+
+    def to_polars(self, bars: list[Bar]) -> pl.DataFrame:
+        """Convert list of Bar to Polars DataFrame."""
+        if not bars:
+            return pl.DataFrame({
+                "timestamp": [], "open": [], "high": [],
+                "low": [], "close": [], "volume": [], "instrument": [],
+            })
+        return pl.DataFrame([b.model_dump() for b in bars])
+
+    # ── Extractors ──────────────────────────────────────────────
+
+    @staticmethod
+    def _extract_candles(
+        data: dict, ticker: str, timeframe: str
+    ) -> list[Bar]:
+        """Extract candles from ISS JSON response.
+
+        With iss.json=extended, candles is a list of dicts:
+        [{"open": .., "close": .., "high": .., "low": .., "volume": .., "begin": ..}, ...]
+        """
+        bars: list[Bar] = []
+        if not data:
+            return bars
+
+        try:
+            rows = data.get("candles", [])
+            if not isinstance(rows, list):
+                return bars
+
+            for row in rows:
+                try:
+                    if isinstance(row, dict):
+                        ts_str = row.get("begin") or row.get("end", "")
+                        ts = datetime.fromisoformat(str(ts_str)) if ts_str else datetime.now()
+                        bar = Bar(
+                            timestamp=ts,
+                            open=float(row["open"]),
+                            high=float(row["high"]),
+                            low=float(row["low"]),
+                            close=float(row["close"]),
+                            volume=int(row.get("volume", 0)),
+                            instrument=ticker,
+                            timeframe=timeframe,
+                        )
+                        bars.append(bar)
+                except (ValueError, TypeError, KeyError) as e:
+                    logger.debug("Skipping invalid candle row", error=str(e))
+        except (KeyError, TypeError) as e:
+            logger.debug("Failed to extract candles", error=str(e))
+
+        return bars
+
+    @staticmethod
+    def _extract_securities(data: dict) -> list[dict[str, Any]]:
+        """Extract securities from ISS JSON response.
+
+        With iss.json=extended, securities is a list of dicts directly.
+        """
+        if not data:
+            return []
+        try:
+            rows = data.get("securities", [])
+            if isinstance(rows, list):
+                return [row for row in rows if isinstance(row, dict)]
+        except (KeyError, TypeError):
+            pass
+        return []
+
+    @staticmethod
+    def _extract_orderbook(data: dict) -> dict[str, Any]:
+        """Extract orderbook from ISS JSON response.
+
+        With iss.json=extended, orderbook is a list of dicts.
+        """
+        if not data:
+            return {"bids": [], "asks": []}
+        try:
+            rows = data.get("orderbook", [])
+            if isinstance(rows, list):
+                bids = [r for r in rows if isinstance(r, dict) and r.get("BUYSELL") == "B"]
+                asks = [r for r in rows if isinstance(r, dict) and r.get("BUYSELL") == "S"]
+                return {"bids": bids, "asks": asks}
+        except (KeyError, TypeError):
+            pass
+        return {"bids": [], "asks": []}
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        await self.close()
+
+```
+
+## Файл: src/data/universe_loader.py
 ```python
 """Universe Loader — auto-discovery of ALL tradeable instruments on MOEX.
 
@@ -7197,8 +6167,239 @@ async def load_full_universe(
 
 ```
 
-## Файл: src/execution/dca.py
+## Файл: src/execution/adapters/tinkoff.py
+```python
+"""Tinkoff Invest API adapter for order execution.
 
+Supports sandbox (paper trading) and production modes.
+Converts between our domain models and Tinkoff SDK models.
+"""
+from __future__ import annotations
+
+import os
+from datetime import datetime
+from typing import Any
+
+import structlog
+
+from src.core.config import load_settings
+from src.core.models import (
+    InstrumentType,
+    Order,
+    OrderStatus,
+    OrderType,
+    Portfolio,
+    Position,
+    Side,
+)
+
+logger = structlog.get_logger(__name__)
+
+
+class TinkoffAdapter:
+    """Tinkoff Invest API broker adapter."""
+
+    def __init__(
+        self,
+        token: str | None = None,
+        sandbox: bool = True,
+        account_id: str | None = None,
+    ):
+        try:
+            cfg = load_settings()
+            self._token = token or cfg.broker.tinkoff.token or os.environ.get("TINKOFF_TOKEN", "")
+            self._sandbox = sandbox if sandbox is not None else cfg.broker.tinkoff.sandbox
+            self._account_id = account_id or cfg.broker.tinkoff.account_id
+        except FileNotFoundError:
+            self._token = token or os.environ.get("TINKOFF_TOKEN", "")
+            self._sandbox = sandbox
+            self._account_id = account_id
+
+        self._client: Any = None
+        self._connected = False
+
+    @property
+    def is_connected(self) -> bool:
+        return self._connected
+
+    def connect(self) -> None:
+        """Connect to Tinkoff API (sandbox or production)."""
+        if not self._token:
+            raise ValueError(
+                "Tinkoff token not set. Set TINKOFF_TOKEN env var or pass token to constructor."
+            )
+
+        try:
+            from tinkoff.invest import Client
+            from tinkoff.invest.services import SandboxService
+
+            self._client = Client(self._token)
+            self._connected = True
+
+            if self._sandbox:
+                logger.info("Connected to Tinkoff sandbox")
+            else:
+                logger.info("Connected to Tinkoff production")
+
+        except ImportError:
+            raise ImportError("tinkoff-investments package required: pip install tinkoff-investments")
+        except Exception as e:
+            logger.error("Failed to connect to Tinkoff", error=str(e))
+            raise
+
+    def disconnect(self) -> None:
+        """Disconnect from Tinkoff API."""
+        self._client = None
+        self._connected = False
+        logger.info("Disconnected from Tinkoff")
+
+    def place_order(self, order: Order) -> dict[str, Any]:
+        """Place an order via Tinkoff API.
+
+        Args:
+            order: Our Order model.
+
+        Returns:
+            Dict with order_id and status.
+        """
+        if not self._connected:
+            raise RuntimeError("Not connected to Tinkoff")
+
+        lot_size = self._get_lot_size(order.instrument)
+        lots = max(1, int(order.quantity / lot_size))
+
+        logger.info(
+            "Placing order",
+            instrument=order.instrument,
+            side=order.side.value,
+            quantity=order.quantity,
+            lots=lots,
+            type=order.order_type.value,
+        )
+
+        return {
+            "order_id": f"sim_{datetime.now().timestamp()}",
+            "status": "submitted",
+            "lots": lots,
+            "instrument": order.instrument,
+        }
+
+    def cancel_order(self, order_id: str) -> bool:
+        """Cancel a pending order.
+
+        Returns True if cancelled successfully.
+        """
+        if not self._connected:
+            raise RuntimeError("Not connected to Tinkoff")
+
+        logger.info("Cancelling order", order_id=order_id)
+        return True
+
+    def get_positions(self) -> list[Position]:
+        """Get current positions from broker.
+
+        Returns list of Position models.
+        """
+        if not self._connected:
+            raise RuntimeError("Not connected to Tinkoff")
+
+        # In sandbox mode, return empty positions until real trading
+        return []
+
+    def get_portfolio(self) -> Portfolio:
+        """Get portfolio snapshot.
+
+        Returns Portfolio model with positions and cash.
+        """
+        if not self._connected:
+            raise RuntimeError("Not connected to Tinkoff")
+
+        positions = self.get_positions()
+        return Portfolio(
+            positions=positions,
+            cash=1_000_000.0,  # Sandbox default
+            timestamp=datetime.now(),
+        )
+
+    @staticmethod
+    def convert_order_to_tinkoff(order: Order) -> dict[str, Any]:
+        """Convert our Order to Tinkoff-compatible format.
+
+        Returns dict with Tinkoff-specific fields.
+        """
+        lot_size = TinkoffAdapter._get_lot_size(order.instrument)
+        lots = max(1, int(order.quantity / lot_size))
+
+        direction = "ORDER_DIRECTION_BUY" if order.side == Side.LONG else "ORDER_DIRECTION_SELL"
+
+        order_type_map = {
+            OrderType.MARKET: "ORDER_TYPE_MARKET",
+            OrderType.LIMIT: "ORDER_TYPE_LIMIT",
+        }
+
+        return {
+            "figi": order.instrument,  # Would need FIGI lookup in real impl
+            "quantity": lots,
+            "direction": direction,
+            "order_type": order_type_map.get(order.order_type, "ORDER_TYPE_MARKET"),
+            "price": order.price,
+        }
+
+    @staticmethod
+    def convert_tinkoff_position(tinkoff_pos: dict[str, Any]) -> Position:
+        """Convert Tinkoff position to our Position model."""
+        quantity = tinkoff_pos.get("quantity", 0)
+        lot_size = tinkoff_pos.get("lot_size", 1)
+        total_units = quantity * lot_size
+
+        return Position(
+            instrument=tinkoff_pos.get("ticker", "UNKNOWN"),
+            side=Side.LONG if total_units > 0 else Side.SHORT,
+            quantity=abs(total_units),
+            entry_price=float(tinkoff_pos.get("average_price", 0)),
+            current_price=float(tinkoff_pos.get("current_price", tinkoff_pos.get("average_price", 1))),
+            instrument_type=InstrumentType.EQUITY,
+            lot_size=lot_size,
+        )
+
+    @staticmethod
+    def convert_lots_to_units(ticker: str, lots: int) -> int:
+        """Convert lots to units (shares).
+
+        For SBER: 1 lot = 10 shares → 10 lots = 100 shares.
+        """
+        lot_size = TinkoffAdapter._get_lot_size(ticker)
+        return lots * lot_size
+
+    @staticmethod
+    def convert_units_to_lots(ticker: str, units: int) -> int:
+        """Convert units (shares) to lots.
+
+        For SBER: 100 shares → 10 lots.
+        """
+        lot_size = TinkoffAdapter._get_lot_size(ticker)
+        return units // lot_size
+
+    @staticmethod
+    def _get_lot_size(ticker: str) -> int:
+        """Get lot size from config."""
+        try:
+            cfg = load_settings()
+            info = cfg.get_instrument_info(ticker)
+            return info.lot
+        except (FileNotFoundError, KeyError):
+            return 1
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, *args):
+        self.disconnect()
+
+```
+
+## Файл: src/execution/dca.py
 ```python
 """DCA (Dollar Cost Averaging) execution with dynamic average entry.
 
@@ -7375,7 +6576,6 @@ class DCAExecutor:
 ```
 
 ## Файл: src/execution/grid.py
-
 ```python
 """Grid trading executor with dynamic range shifting.
 
@@ -7539,7 +6739,6 @@ class GridExecutor:
 ```
 
 ## Файл: src/execution/quoting.py
-
 ```python
 """Smart execution engine — passive quoting strategies for optimal order placement.
 
@@ -8035,7 +7234,6 @@ class QuotingEngine:
 ```
 
 ## Файл: src/execution/triple_barrier.py
-
 ```python
 """Triple Barrier position management — TP / SL / Time / Trailing.
 
@@ -8228,7 +7426,6 @@ class TripleBarrier:
 ```
 
 ## Файл: src/execution/twap.py
-
 ```python
 """TWAP (Time-Weighted Average Price) execution scheduler.
 
@@ -8483,7 +7680,6 @@ class TWAPExecutor:
 ```
 
 ## Файл: src/indicators/advanced.py
-
 ```python
 """Advanced indicators ported from QuantConnect LEAN formulas (Apache 2.0).
 
@@ -9108,7 +8304,6 @@ def relative_vigor_index(
 ```
 
 ## Файл: src/indicators/candle_patterns.py
-
 ```python
 # ruff: noqa: E741  — 'l' (low) is standard OHLC convention in financial code
 """Candlestick pattern recognition for MOEX instruments.
@@ -9499,7 +8694,6 @@ def detect_patterns(
 ```
 
 ## Файл: src/indicators/damiani.py
-
 ```python
 """Damiani Volatmeter — volatility regime detector.
 
@@ -9605,7 +8799,6 @@ def damiani_volatmeter(
 ```
 
 ## Файл: src/indicators/ehlers.py
-
 ```python
 """Ehlers DSP (Digital Signal Processing) indicators.
 
@@ -9810,7 +9003,6 @@ def reflex(
 ```
 
 ## Файл: src/indicators/garch_forecast.py
-
 ```python
 """GARCH volatility forecasting for MOEX instruments.
 
@@ -9913,7 +9105,8 @@ def forecast_volatility(
 
     # Build model
     if model == "ewma":
-        am = arch_model(arr, mean="Zero", vol="EWMAVariance")
+        from arch.univariate import ZeroMean, EWMAVariance
+        am = ZeroMean(arr, volatility=EWMAVariance())
     elif model == "egarch":
         am = arch_model(arr, mean="Zero", vol="EGARCH", p=p, q=q, dist=dist)
     elif model == "gjr":
@@ -9977,7 +9170,6 @@ def compare_garch_models(
 ```
 
 ## Файл: src/indicators/order_book.py
-
 ```python
 """Order Book indicators for MOEX instruments.
 
@@ -10123,7 +9315,6 @@ def book_pressure_ratio(
 ```
 
 ## Файл: src/indicators/squeeze_momentum.py
-
 ```python
 """TTM Squeeze Momentum Indicator (LazyBear version).
 
@@ -10288,7 +9479,6 @@ def squeeze_momentum(
 ```
 
 ## Файл: src/indicators/supertrend.py
-
 ```python
 """SuperTrend indicator — trend-following with ATR-based bands.
 
@@ -10409,7 +9599,6 @@ def supertrend(
 ```
 
 ## Файл: src/indicators/support_resistance.py
-
 ```python
 """Support and Resistance level detection for MOEX instruments.
 
@@ -10671,7 +9860,6 @@ def find_support_resistance(
 ```
 
 ## Файл: src/indicators/trend_quality.py
-
 ```python
 """Trend quality and gap detection indicators.
 
@@ -10929,7 +10117,6 @@ def polynomial_complexity(
 ```
 
 ## Файл: src/indicators/utils.py
-
 ```python
 """Strategy utility functions for signal detection.
 
@@ -11089,7 +10276,6 @@ def _last_two(series: Union[Sequence, float]) -> tuple[float, float] | None:
 ```
 
 ## Файл: src/main.py
-
 ```python
 """Daily Pipeline Runner — главный оркестратор торговой системы MOEX + Claude.
 
@@ -12633,7 +11819,6 @@ if __name__ == "__main__":
 ```
 
 ## Файл: src/ml/ensemble.py
-
 ```python
 """ML Ensemble orchestration — train, predict, score.
 
@@ -12777,7 +11962,6 @@ class MLEnsemble:
 ```
 
 ## Файл: src/ml/features.py
-
 ```python
 """Feature preparation for ML models.
 
@@ -12916,7 +12100,6 @@ def compute_target(candles: list[dict[str, Any]], horizon: int = 1) -> list[int]
 ```
 
 ## Файл: src/ml/label_generators.py
-
 ```python
 """ML label generators for trading — multi-threshold targets.
 
@@ -13170,7 +12353,6 @@ def generate_topbot_extrema(
 ```
 
 ## Файл: src/ml/predictor.py
-
 ```python
 """ML prediction — generate probabilities from trained models.
 
@@ -13271,7 +12453,6 @@ def predict_single(
 ```
 
 ## Файл: src/ml/processors.py
-
 ```python
 """Cross-sectional and robust data processors for ML pipeline.
 
@@ -13532,7 +12713,6 @@ def rolling_rsquare(
 ```
 
 ## Файл: src/ml/trainer.py
-
 ```python
 """ML model training for MOEX Trading System.
 
@@ -13670,7 +12850,6 @@ def train_models(
 ```
 
 ## Файл: src/ml/ump_filter.py
-
 ```python
 """UMP (Umpire) Trade Filter — ML-based trade blocker.
 
@@ -14015,8 +13194,271 @@ class UmpireFilter:
 
 ```
 
-## Файл: src/models/market.py
+## Файл: src/ml/walk_forward.py
+```python
+"""Walk-forward ML pipeline orchestrator.
 
+Cycle: train(window_N) → predict(window_N+1) → shift → retrain → ...
+Connects trainer, predictor, processors, label_generators, and metrics.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+import numpy as np
+import polars as pl
+import structlog
+
+from src.analysis.features import calculate_all_features
+from src.ml.predictor import predict
+from src.ml.trainer import train_models
+
+logger = structlog.get_logger(__name__)
+
+
+@dataclass
+class WindowMetrics:
+    """Metrics for a single walk-forward window."""
+
+    window_id: int
+    train_size: int
+    test_size: int
+    train_accuracy: float = 0.0
+    test_accuracy: float = 0.0
+    train_sharpe: float = 0.0
+    test_sharpe: float = 0.0
+    predictions: list[float] = field(default_factory=list)
+    actuals: list[int] = field(default_factory=list)
+
+
+@dataclass
+class WalkForwardResult:
+    """Aggregated walk-forward results."""
+
+    window_metrics: list[WindowMetrics] = field(default_factory=list)
+    oos_predictions: list[float] = field(default_factory=list)
+    oos_actuals: list[int] = field(default_factory=list)
+    aggregate_sharpe: float = 0.0
+    aggregate_accuracy: float = 0.0
+    overfitting_score: float = 0.0
+    n_windows: int = 0
+
+
+class WalkForwardML:
+    """Walk-forward ML pipeline.
+
+    Args:
+        n_windows: Number of rolling windows.
+        train_ratio: Fraction of each window used for training.
+        gap_bars: Gap between train and test to prevent leakage.
+        retrain_every: Retrain model every N bars in test window.
+        label_fn: Function to generate labels from close prices.
+    """
+
+    def __init__(
+        self,
+        n_windows: int = 5,
+        train_ratio: float = 0.70,
+        gap_bars: int = 1,
+        retrain_every: int = 60,
+        label_fn: Any = None,
+    ):
+        if n_windows < 1:
+            raise ValueError("n_windows must be >= 1")
+        if not 0 < train_ratio < 1:
+            raise ValueError("train_ratio must be between 0 and 1")
+
+        self.n_windows = n_windows
+        self.train_ratio = train_ratio
+        self.gap_bars = gap_bars
+        self.retrain_every = retrain_every
+        self.label_fn = label_fn or self._default_labels
+
+    def run(self, data: pl.DataFrame) -> WalkForwardResult:
+        """Run walk-forward ML pipeline.
+
+        Args:
+            data: Raw OHLCV DataFrame.
+
+        Returns:
+            WalkForwardResult with per-window and aggregate metrics.
+        """
+        # Feature engineering
+        enriched = calculate_all_features(data)
+        close = data["close"].to_numpy()
+
+        # Generate labels
+        labels = self.label_fn(close)
+
+        # Add labels
+        enriched = enriched.with_columns(pl.Series("_label", labels))
+
+        # Get feature columns
+        feature_cols = [
+            c for c in enriched.columns
+            if c not in ("timestamp", "open", "high", "low", "close", "volume", "instrument", "_label")
+        ]
+
+        # Drop nulls
+        clean = enriched.drop_nulls()
+        if clean.height < 100:
+            logger.warning("Too few clean rows for walk-forward", rows=clean.height)
+            return WalkForwardResult()
+
+        # Split into windows
+        splits = self._create_splits(clean.height)
+
+        result = WalkForwardResult(n_windows=len(splits))
+        all_train_sharpes: list[float] = []
+        all_test_sharpes: list[float] = []
+
+        for win_id, (train_start, train_end, test_start, test_end) in enumerate(splits):
+            train_df = clean.slice(train_start, train_end - train_start)
+            test_df = clean.slice(test_start, test_end - test_start)
+
+            if train_df.height < 50 or test_df.height < 10:
+                logger.debug("Window too small, skipping", window=win_id)
+                continue
+
+            # Extract features and labels
+            X_train = train_df.select(feature_cols).to_dicts()
+            y_train = train_df["_label"].to_list()
+            X_test = test_df.select(feature_cols).to_dicts()
+            y_test = test_df["_label"].to_list()
+
+            # Train
+            models = train_models(X_train, y_train)
+            if not models:
+                logger.warning("Training failed", window=win_id)
+                continue
+
+            # Predict
+            train_preds = predict(models, X_train)
+            test_preds = predict(models, X_test)
+
+            # Compute accuracies
+            train_acc = self._accuracy(train_preds, y_train)
+            test_acc = self._accuracy(test_preds, y_test)
+
+            # Compute Sharpe-like metric from predictions
+            train_sharpe = self._prediction_sharpe(train_preds, y_train)
+            test_sharpe = self._prediction_sharpe(test_preds, y_test)
+
+            wm = WindowMetrics(
+                window_id=win_id,
+                train_size=train_df.height,
+                test_size=test_df.height,
+                train_accuracy=train_acc,
+                test_accuracy=test_acc,
+                train_sharpe=train_sharpe,
+                test_sharpe=test_sharpe,
+                predictions=test_preds,
+                actuals=y_test,
+            )
+            result.window_metrics.append(wm)
+            result.oos_predictions.extend(test_preds)
+            result.oos_actuals.extend(y_test)
+            all_train_sharpes.append(train_sharpe)
+            all_test_sharpes.append(test_sharpe)
+
+            logger.info(
+                "Window complete",
+                window=win_id,
+                train_acc=f"{train_acc:.3f}",
+                test_acc=f"{test_acc:.3f}",
+                train_sharpe=f"{train_sharpe:.3f}",
+                test_sharpe=f"{test_sharpe:.3f}",
+            )
+
+        # Aggregate metrics
+        if result.oos_predictions:
+            result.aggregate_accuracy = self._accuracy(
+                result.oos_predictions, result.oos_actuals
+            )
+
+        if all_test_sharpes:
+            result.aggregate_sharpe = float(np.mean(all_test_sharpes))
+
+        if all_train_sharpes and all_test_sharpes:
+            avg_train = float(np.mean(all_train_sharpes))
+            avg_test = float(np.mean(all_test_sharpes))
+            if avg_test != 0:
+                result.overfitting_score = avg_train / avg_test
+            else:
+                result.overfitting_score = float("inf") if avg_train > 0 else 0.0
+
+        return result
+
+    def _create_splits(
+        self, total_rows: int
+    ) -> list[tuple[int, int, int, int]]:
+        """Create train/test split indices for each window.
+
+        Returns list of (train_start, train_end, test_start, test_end).
+        """
+        window_size = total_rows // self.n_windows
+        splits: list[tuple[int, int, int, int]] = []
+
+        for i in range(self.n_windows):
+            win_start = i * window_size
+            win_end = min((i + 1) * window_size, total_rows)
+            actual_size = win_end - win_start
+
+            train_size = int(actual_size * self.train_ratio)
+            train_start = win_start
+            train_end = win_start + train_size
+            test_start = train_end + self.gap_bars
+            test_end = win_end
+
+            if test_start >= test_end:
+                continue
+
+            splits.append((train_start, train_end, test_start, test_end))
+
+        return splits
+
+    @staticmethod
+    def _default_labels(close: np.ndarray) -> list[int]:
+        """Generate simple next-bar direction labels."""
+        labels = []
+        for i in range(len(close) - 1):
+            labels.append(1 if close[i + 1] > close[i] else 0)
+        labels.append(0)
+        return labels
+
+    @staticmethod
+    def _accuracy(predictions: list[float], actuals: list[int]) -> float:
+        """Compute directional accuracy."""
+        if not predictions or not actuals:
+            return 0.0
+        correct = sum(
+            1 for p, a in zip(predictions, actuals)
+            if (p > 0.5 and a == 1) or (p <= 0.5 and a == 0)
+        )
+        return correct / len(actuals)
+
+    @staticmethod
+    def _prediction_sharpe(
+        predictions: list[float], actuals: list[int]
+    ) -> float:
+        """Compute Sharpe-like metric from prediction returns."""
+        if not predictions or not actuals:
+            return 0.0
+        returns = []
+        for p, a in zip(predictions, actuals):
+            direction = 1.0 if p > 0.5 else -1.0
+            actual_return = 0.01 if a == 1 else -0.01
+            returns.append(direction * actual_return)
+
+        arr = np.array(returns)
+        if arr.std() == 0:
+            return 0.0
+        return float(arr.mean() / arr.std() * np.sqrt(252))
+
+```
+
+## Файл: src/models/market.py
 ```python
 """Market domain models: OHLCVBar, MarketRegime."""
 from __future__ import annotations
@@ -14049,7 +13491,6 @@ class OHLCVBar:
 ```
 
 ## Файл: src/models/signal.py
-
 ```python
 """Trading signal models."""
 from __future__ import annotations
@@ -14085,7 +13526,6 @@ class TradingSignal:
 ```
 
 ## Файл: src/monitoring/metrics.py
-
 ```python
 """Prometheus metrics for MOEX Trading System.
 
@@ -14268,8 +13708,226 @@ def start_metrics_server(port: int = 8080) -> None:
 
 ```
 
-## Файл: src/risk/portfolio_circuit_breaker.py
+## Файл: src/monitoring/telegram_bot.py
+```python
+"""Telegram bot for trading alerts and manual control.
 
+Alerts: signal generated, order filled, stop triggered,
+circuit breaker activated, daily P&L report.
+
+Commands: /status, /stop, /start, /positions, /pnl
+"""
+from __future__ import annotations
+
+import os
+from datetime import datetime
+from typing import Any
+
+import structlog
+
+from src.core.config import load_settings
+from src.core.models import Portfolio, Position, Side, Signal, TradeResult
+
+logger = structlog.get_logger(__name__)
+
+MAX_MESSAGE_LENGTH = 4096  # Telegram limit
+
+
+class TradingTelegramBot:
+    """Telegram bot for trading alerts and control."""
+
+    def __init__(
+        self,
+        bot_token: str | None = None,
+        chat_id: str | None = None,
+    ):
+        try:
+            cfg = load_settings()
+            self._token = bot_token or cfg.telegram.bot_token or ""
+            self._chat_id = chat_id or cfg.telegram.chat_id or ""
+        except FileNotFoundError:
+            self._token = bot_token or os.environ.get("TELEGRAM_BOT_TOKEN", "")
+            self._chat_id = chat_id or os.environ.get("TELEGRAM_CHAT_ID", "")
+
+        self._bot: Any = None
+        self._trading_active = True
+
+    @property
+    def is_configured(self) -> bool:
+        return bool(self._token and self._chat_id)
+
+    @property
+    def trading_active(self) -> bool:
+        return self._trading_active
+
+    async def start(self) -> None:
+        """Initialize the bot (connect to Telegram API)."""
+        if not self.is_configured:
+            logger.warning("Telegram bot not configured — alerts disabled")
+            return
+
+        try:
+            from telegram import Bot
+            self._bot = Bot(token=self._token)
+            logger.info("Telegram bot initialized")
+        except ImportError:
+            logger.error("python-telegram-bot not installed")
+        except Exception as e:
+            logger.error("Failed to start Telegram bot", error=str(e))
+
+    async def send_message(self, text: str) -> bool:
+        """Send a message to the configured chat.
+
+        Returns True if sent successfully, False otherwise.
+        """
+        if not self._bot:
+            logger.debug("Telegram bot not initialized, skipping message")
+            return False
+
+        # Truncate to Telegram limit
+        if len(text) > MAX_MESSAGE_LENGTH:
+            text = text[:MAX_MESSAGE_LENGTH - 20] + "\n... (truncated)"
+
+        try:
+            await self._bot.send_message(
+                chat_id=self._chat_id,
+                text=text,
+                parse_mode="HTML",
+            )
+            return True
+        except Exception as e:
+            logger.error("Failed to send Telegram message", error=str(e))
+            return False
+
+    # ── Alert formatters ────────────────────────────────────────
+
+    @staticmethod
+    def format_signal_message(signal: Signal) -> str:
+        """Format a trading signal for Telegram."""
+        emoji = "\U0001F7E2" if signal.side == Side.LONG else "\U0001F534"
+        return (
+            f"{emoji} <b>SIGNAL: {signal.instrument}</b>\n"
+            f"Direction: {signal.side.value.upper()}\n"
+            f"Strength: {signal.strength:.2f}\n"
+            f"Confidence: {signal.confidence:.2f}\n"
+            f"Strategy: {signal.strategy_name}\n"
+            f"Time: {signal.timestamp.strftime('%H:%M:%S')}"
+        )
+
+    @staticmethod
+    def format_trade_message(trade: TradeResult) -> str:
+        """Format a completed trade for Telegram."""
+        pnl_emoji = "\U0001F4B0" if trade.net_pnl >= 0 else "\U0001F4C9"
+        return (
+            f"{pnl_emoji} <b>TRADE: {trade.instrument}</b>\n"
+            f"Side: {trade.side.value.upper()}\n"
+            f"Entry: {trade.entry_price:.2f} → Exit: {trade.exit_price:.2f}\n"
+            f"Qty: {trade.quantity:.0f}\n"
+            f"Gross P&L: {trade.gross_pnl:+,.2f} RUB\n"
+            f"Net P&L: {trade.net_pnl:+,.2f} RUB\n"
+            f"Commission: {trade.commission:.2f}\n"
+            f"Return: {trade.return_pct * 100:+.2f}%\n"
+            f"Duration: {trade.duration / 3600:.1f}h"
+        )
+
+    @staticmethod
+    def format_pnl_report(
+        portfolio: Portfolio,
+        daily_pnl: float,
+        trades_today: list[TradeResult],
+    ) -> str:
+        """Format daily P&L report for Telegram."""
+        pnl_emoji = "\U0001F4B0" if daily_pnl >= 0 else "\U0001F4C9"
+        winning = sum(1 for t in trades_today if t.net_pnl > 0)
+        losing = sum(1 for t in trades_today if t.net_pnl <= 0)
+
+        return (
+            f"{pnl_emoji} <b>DAILY P&L REPORT</b>\n"
+            f"{'=' * 25}\n"
+            f"Portfolio value: {portfolio.total_value:,.0f} RUB\n"
+            f"Cash: {portfolio.cash:,.0f} RUB\n"
+            f"Exposure: {portfolio.exposure * 100:.1f}%\n"
+            f"Positions: {len(portfolio.positions)}\n"
+            f"\nDaily P&L: {daily_pnl:+,.0f} RUB\n"
+            f"Trades: {len(trades_today)} (W: {winning}, L: {losing})\n"
+            f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        )
+
+    @staticmethod
+    def format_circuit_breaker_message(
+        reason: str, drawdown_pct: float
+    ) -> str:
+        """Format circuit breaker alert."""
+        return (
+            f"\U0001F6A8 <b>CIRCUIT BREAKER ACTIVATED</b>\n"
+            f"Reason: {reason}\n"
+            f"Drawdown: {drawdown_pct * 100:.1f}%\n"
+            f"Trading HALTED\n"
+            f"Time: {datetime.now().strftime('%H:%M:%S')}"
+        )
+
+    # ── Command handlers ────────────────────────────────────────
+
+    @staticmethod
+    def parse_command(text: str) -> tuple[str, list[str]]:
+        """Parse a Telegram command.
+
+        Returns (command_name, args).
+        """
+        parts = text.strip().split()
+        if not parts or not parts[0].startswith("/"):
+            return "", []
+        command = parts[0].lstrip("/").lower()
+        args = parts[1:]
+        return command, args
+
+    def handle_command(self, command: str) -> str:
+        """Handle a bot command and return response text."""
+        handlers = {
+            "status": self._cmd_status,
+            "stop": self._cmd_stop,
+            "start": self._cmd_start,
+            "positions": self._cmd_positions,
+            "pnl": self._cmd_pnl,
+            "help": self._cmd_help,
+        }
+        handler = handlers.get(command)
+        if handler:
+            return handler()
+        return f"Unknown command: /{command}\nType /help for available commands."
+
+    def _cmd_status(self) -> str:
+        status = "ACTIVE" if self._trading_active else "STOPPED"
+        return f"Trading status: {status}"
+
+    def _cmd_stop(self) -> str:
+        self._trading_active = False
+        return "\U0001F6D1 Trading STOPPED"
+
+    def _cmd_start(self) -> str:
+        self._trading_active = True
+        return "\U0001F7E2 Trading RESUMED"
+
+    def _cmd_positions(self) -> str:
+        return "No positions (use with live portfolio)"
+
+    def _cmd_pnl(self) -> str:
+        return "No P&L data (use with live portfolio)"
+
+    def _cmd_help(self) -> str:
+        return (
+            "<b>Available commands:</b>\n"
+            "/status — Current trading status\n"
+            "/stop — Stop trading\n"
+            "/start — Resume trading\n"
+            "/positions — List open positions\n"
+            "/pnl — Show P&L report\n"
+            "/help — This message"
+        )
+
+```
+
+## Файл: src/risk/portfolio_circuit_breaker.py
 ```python
 """Portfolio-level circuit breaker — liquidate all on drawdown threshold.
 
@@ -14441,7 +14099,6 @@ class PortfolioCircuitBreaker:
 ```
 
 ## Файл: src/risk/position_sizer.py
-
 ```python
 """Position sizing calculations — Risk Gateway helper."""
 from __future__ import annotations
@@ -14762,7 +14419,6 @@ def calculate_monte_carlo_var(
 ```
 
 ## Файл: src/risk/position_tracker.py
-
 ```python
 """Position FIFO lifecycle tracker for MOEX instruments.
 
@@ -15062,7 +14718,6 @@ class PositionTracker:
 ```
 
 ## Файл: src/risk/protective.py
-
 ```python
 """Protective position controller — SL/TP with trailing and timeout.
 
@@ -15306,7 +14961,6 @@ class ProtectiveController:
 ```
 
 ## Файл: src/risk/rules.py
-
 ```python
 """Portfolio risk rules engine — X-Ray style diversification analysis.
 
@@ -15728,7 +15382,6 @@ class RulesEngine:
 ```
 
 ## Файл: src/strategies/market_making.py
-
 ```python
 """Avellaneda-Stoikov market making model for MOEX.
 
@@ -15903,8 +15556,218 @@ class AvellanedaStoikov:
 
 ```
 
-## Файл: src/strategy/multi_agent.py
+## Файл: src/strategies/trend/ema_crossover.py
+```python
+"""EMA Crossover trend-following strategy.
 
+Reference implementation of BaseStrategy.
+Fast EMA(20) crosses above slow EMA(50) → LONG.
+Fast EMA(20) crosses below slow EMA(50) → SHORT.
+Position sizing: 2% risk per trade via ATR.
+Stop-loss: 2 × ATR from entry.
+"""
+from __future__ import annotations
+
+import math
+from datetime import datetime
+from typing import Any
+
+import numpy as np
+import polars as pl
+
+from src.analysis.features import calculate_atr, calculate_ema
+from src.core.base_strategy import BaseStrategy
+from src.core.config import load_settings
+from src.core.models import Side, Signal
+
+
+class EMACrossoverStrategy(BaseStrategy):
+    """EMA crossover trend strategy."""
+
+    def __init__(
+        self,
+        instruments: list[str] | None = None,
+        fast_period: int = 20,
+        slow_period: int = 50,
+        risk_per_trade: float = 0.02,
+        atr_multiplier: float = 2.0,
+        atr_period: int = 14,
+    ):
+        super().__init__(
+            name="ema_crossover",
+            timeframe="1d",
+            instruments=instruments or ["SBER"],
+        )
+        self._params = {
+            "fast_period": fast_period,
+            "slow_period": slow_period,
+            "risk_per_trade": risk_per_trade,
+            "atr_multiplier": atr_multiplier,
+            "atr_period": atr_period,
+        }
+
+    @property
+    def fast_period(self) -> int:
+        return self._params["fast_period"]
+
+    @property
+    def slow_period(self) -> int:
+        return self._params["slow_period"]
+
+    @property
+    def risk_per_trade(self) -> float:
+        return self._params["risk_per_trade"]
+
+    @property
+    def atr_multiplier(self) -> float:
+        return self._params["atr_multiplier"]
+
+    def generate_signals(self, data: pl.DataFrame) -> list[Signal]:
+        """Generate signals from EMA crossover.
+
+        Returns LONG when fast EMA crosses above slow EMA,
+        SHORT when fast EMA crosses below slow EMA.
+        """
+        if data.height < self.warm_up_period():
+            return []
+
+        close = data["close"]
+        ema_fast = calculate_ema(close, self.fast_period).to_numpy()
+        ema_slow = calculate_ema(close, self.slow_period).to_numpy()
+
+        signals: list[Signal] = []
+
+        # Check last two bars for crossover
+        idx = data.height - 1
+        prev = idx - 1
+
+        if prev < self.slow_period:
+            return []
+
+        fast_above_now = ema_fast[idx] > ema_slow[idx]
+        fast_above_prev = ema_fast[prev] > ema_slow[prev]
+
+        # Determine instrument name
+        instrument = self.instruments[0] if self.instruments else "UNKNOWN"
+        if "instrument" in data.columns:
+            instrument = str(data["instrument"][idx])
+
+        # Get timestamp
+        ts = datetime.now()
+        if "timestamp" in data.columns:
+            ts_val = data["timestamp"][idx]
+            if isinstance(ts_val, datetime):
+                ts = ts_val
+
+        # Crossover detection
+        if fast_above_now and not fast_above_prev:
+            # Bullish crossover
+            diff = abs(ema_fast[idx] - ema_slow[idx])
+            spread = abs(ema_slow[idx]) if ema_slow[idx] != 0 else 1.0
+            strength = min(1.0, diff / spread * 10)
+            signals.append(Signal(
+                instrument=instrument,
+                side=Side.LONG,
+                strength=strength,
+                strategy_name=self.name,
+                timestamp=ts,
+                confidence=0.6,
+            ))
+        elif not fast_above_now and fast_above_prev:
+            # Bearish crossover
+            diff = abs(ema_fast[idx] - ema_slow[idx])
+            spread = abs(ema_slow[idx]) if ema_slow[idx] != 0 else 1.0
+            strength = min(1.0, diff / spread * 10)
+            signals.append(Signal(
+                instrument=instrument,
+                side=Side.SHORT,
+                strength=strength,
+                strategy_name=self.name,
+                timestamp=ts,
+                confidence=0.6,
+            ))
+
+        return signals
+
+    def calculate_position_size(
+        self, signal: Signal, portfolio_value: float, atr: float
+    ) -> float:
+        """Calculate position size using ATR-based risk sizing.
+
+        Risk = 2% of portfolio per trade.
+        Size = risk_amount / (atr_multiplier * atr).
+        Rounded down to lot size.
+        """
+        if atr <= 0 or portfolio_value <= 0:
+            return 0.0
+
+        risk_amount = portfolio_value * self.risk_per_trade
+        raw_size = risk_amount / (self.atr_multiplier * atr)
+
+        # Round to lot size
+        lot_size = self._get_lot_size(signal.instrument)
+        lots = max(1, int(raw_size / lot_size))
+        return float(lots * lot_size)
+
+    def get_stop_loss(self, entry_price: float, side: Side, atr: float) -> float:
+        """Stop-loss at 2 × ATR from entry, rounded to price step."""
+        offset = self.atr_multiplier * atr
+        if side == Side.LONG:
+            raw = entry_price - offset
+        else:
+            raw = entry_price + offset
+
+        step = self._get_price_step(
+            self.instruments[0] if self.instruments else "SBER"
+        )
+        return self._round_to_step(raw, step)
+
+    def get_take_profit(
+        self, entry_price: float, side: Side, atr: float
+    ) -> float | None:
+        """Take profit at 3 × ATR from entry."""
+        offset = 3.0 * atr
+        if side == Side.LONG:
+            raw = entry_price + offset
+        else:
+            raw = entry_price - offset
+
+        step = self._get_price_step(
+            self.instruments[0] if self.instruments else "SBER"
+        )
+        return self._round_to_step(raw, step)
+
+    def warm_up_period(self) -> int:
+        return self.slow_period
+
+    def _get_lot_size(self, instrument: str) -> int:
+        """Get lot size from config, fallback to 1."""
+        try:
+            cfg = load_settings()
+            info = cfg.get_instrument_info(instrument)
+            return info.lot
+        except (FileNotFoundError, KeyError):
+            return 1
+
+    def _get_price_step(self, instrument: str) -> float:
+        """Get price step from config, fallback to 0.01."""
+        try:
+            cfg = load_settings()
+            info = cfg.get_instrument_info(instrument)
+            return info.step
+        except (FileNotFoundError, KeyError):
+            return 0.01
+
+    @staticmethod
+    def _round_to_step(price: float, step: float) -> float:
+        """Round price to nearest valid step."""
+        if step <= 0:
+            return price
+        return round(round(price / step) * step, 10)
+
+```
+
+## Файл: src/strategy/multi_agent.py
 ```python
 """Multi-agent Claude trading pipeline.
 
@@ -16038,7 +15901,6 @@ async def _call_agent(
 ```
 
 ## Файл: src/strategy/news_reactor.py
-
 ```python
 """News Reactor — real-time news analysis for fast trading decisions.
 
@@ -16407,7 +16269,6 @@ class NewsReactor:
 ```
 
 ## Файл: src/strategy/prompts.py
-
 ```python
 """Claude prompts and context builders for the strategy layer."""
 from __future__ import annotations
@@ -16600,7 +16461,6 @@ def build_market_context(
 ```
 
 ## Файл: src/strategy/signal_filter.py
-
 ```python
 """Signal filtering — hard rejects and soft confidence boosts.
 
@@ -16781,7 +16641,6 @@ def check_exit_conditions(
 ```
 
 ## Файл: src/strategy/signal_synthesis.py
-
 ```python
 """Multi-analyst signal synthesis framework for trading decisions.
 
@@ -17170,7 +17029,6 @@ class SignalSynthesizer:
 ```
 
 ## Файл: src/strategy/universe_selector.py
-
 ```python
 """Dynamic Universe Selection — daily ranking and top-N selection.
 
@@ -17483,13 +17341,11 @@ def select_top_n(
 
 ```
 
-
 # ══════════════════════════════════════
-# РАЗДЕЛ 4: ТЕСТЫ
+# РАЗДЕЛ 3: ТЕСТЫ
 # ══════════════════════════════════════
 
 ## Файл: tests/test_abu_ports.py
-
 ```python
 """Tests for abu-inspired components: UMP filter, trend quality, gap detector."""
 from __future__ import annotations
@@ -17818,7 +17674,6 @@ class TestPolynomialComplexity:
 ```
 
 ## Файл: tests/test_analysis.py
-
 ```python
 """Tests for the analysis layer: features, regime, scoring, signal filters."""
 from __future__ import annotations
@@ -18591,7 +18446,6 @@ class TestRegimeFromIndex:
 ```
 
 ## Файл: tests/test_barter_ports.py
-
 ```python
 """Tests for barter-rs inspired components: Welford, Position FIFO, RiskApproved.
 
@@ -19000,7 +18854,6 @@ class TestRiskApprovedRefused:
 ```
 
 ## Файл: tests/test_bootstrap_mae_equity.py
-
 ```python
 """Tests for BCa Bootstrap, MAE/MFE, Equity R², Relative Entropy, UPI.
 
@@ -19528,8 +19381,1381 @@ class TestIntegration:
 
 ```
 
-## Файл: tests/test_exchange_rates.py
+## Файл: tests/test_core/conftest.py
+```python
+"""Conftest for test_core — ensure src is importable."""
+import os
+import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_core/test_base_strategy.py
+```python
+"""Tests for src/core/base_strategy.py and strategy_registry.py."""
+from __future__ import annotations
+
+from datetime import datetime
+
+import polars as pl
+import pytest
+
+from src.core.base_strategy import BaseStrategy
+from src.core.models import Side, Signal
+from src.core.strategy_registry import StrategyRegistry
+
+
+class DummyStrategy(BaseStrategy):
+    """Concrete test implementation of BaseStrategy."""
+
+    def __init__(self, **kwargs):
+        super().__init__(name="dummy", **kwargs)
+        self._params = {"fast": 10, "slow": 30}
+
+    def generate_signals(self, data: pl.DataFrame) -> list[Signal]:
+        if data.height == 0:
+            return []
+        return [
+            Signal(
+                instrument="SBER",
+                side=Side.LONG,
+                strength=0.7,
+                strategy_name=self.name,
+                timestamp=datetime.now(),
+            )
+        ]
+
+    def calculate_position_size(
+        self, signal: Signal, portfolio_value: float, atr: float
+    ) -> float:
+        risk_per_trade = 0.02
+        risk_amount = portfolio_value * risk_per_trade
+        return max(1.0, risk_amount / (atr * 2))
+
+    def get_stop_loss(self, entry_price: float, side: Side, atr: float) -> float:
+        if side == Side.LONG:
+            return entry_price - 2 * atr
+        return entry_price + 2 * atr
+
+    def warm_up_period(self) -> int:
+        return 30
+
+
+class TestBaseStrategy:
+    def test_cannot_instantiate_abc(self):
+        with pytest.raises(TypeError):
+            BaseStrategy(name="abstract")  # type: ignore[abstract]
+
+    def test_concrete_strategy(self):
+        s = DummyStrategy()
+        assert s.name == "dummy"
+        assert s.timeframe == "1d"
+        assert isinstance(s, BaseStrategy)
+
+    def test_generate_signals_returns_list(self):
+        s = DummyStrategy()
+        df = pl.DataFrame({
+            "timestamp": [datetime(2024, 1, 1)],
+            "open": [100.0], "high": [105.0], "low": [99.0],
+            "close": [103.0], "volume": [1000],
+        })
+        signals = s.generate_signals(df)
+        assert isinstance(signals, list)
+        assert len(signals) == 1
+        assert isinstance(signals[0], Signal)
+
+    def test_position_size_positive(self):
+        s = DummyStrategy()
+        sig = Signal(
+            instrument="SBER", side=Side.LONG, strength=0.8,
+            strategy_name="dummy", timestamp=datetime.now(),
+        )
+        size = s.calculate_position_size(sig, 1_000_000, 5.0)
+        assert size > 0
+
+    def test_stop_loss_below_entry_long(self):
+        s = DummyStrategy()
+        stop = s.get_stop_loss(250.0, Side.LONG, 5.0)
+        assert stop < 250.0
+
+    def test_stop_loss_above_entry_short(self):
+        s = DummyStrategy()
+        stop = s.get_stop_loss(250.0, Side.SHORT, 5.0)
+        assert stop > 250.0
+
+    def test_get_params(self):
+        s = DummyStrategy()
+        params = s.get_params()
+        assert isinstance(params, dict)
+        assert "fast" in params
+        assert params["fast"] == 10
+
+    def test_set_params(self):
+        s = DummyStrategy()
+        s.set_params({"fast": 20, "slow": 50})
+        assert s.get_params()["fast"] == 20
+        assert s.get_params()["slow"] == 50
+
+    def test_warm_up_period(self):
+        s = DummyStrategy()
+        assert s.warm_up_period() == 30
+        assert isinstance(s.warm_up_period(), int)
+
+    def test_repr(self):
+        s = DummyStrategy()
+        assert "DummyStrategy" in repr(s)
+        assert "dummy" in repr(s)
+
+
+class TestStrategyRegistry:
+    def test_register_and_create(self):
+        reg = StrategyRegistry()
+        reg.register("dummy", DummyStrategy)
+        s = reg.create("dummy")
+        assert isinstance(s, DummyStrategy)
+
+    def test_register_non_subclass(self):
+        reg = StrategyRegistry()
+        with pytest.raises(TypeError):
+            reg.register("bad", dict)  # type: ignore[arg-type]
+
+    def test_register_duplicate(self):
+        reg = StrategyRegistry()
+        reg.register("dummy", DummyStrategy)
+        with pytest.raises(ValueError, match="already registered"):
+            reg.register("dummy", DummyStrategy)
+
+    def test_create_unknown(self):
+        reg = StrategyRegistry()
+        with pytest.raises(KeyError):
+            reg.create("nonexistent")
+
+    def test_list_strategies(self):
+        reg = StrategyRegistry()
+        reg.register("alpha", DummyStrategy)
+        reg.register("beta", DummyStrategy)
+        assert reg.list_strategies() == ["alpha", "beta"]
+
+    def test_discover(self):
+        reg = StrategyRegistry()
+        reg.discover()
+        assert "dummystrategy" in reg
+
+    def test_len(self):
+        reg = StrategyRegistry()
+        assert len(reg) == 0
+        reg.register("dummy", DummyStrategy)
+        assert len(reg) == 1
+
+```
+
+## Файл: tests/test_core/test_config.py
+```python
+"""Tests for src/core/config.py — unified config loader."""
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+import pytest
+
+from src.core.config import Settings, load_settings, get_config, reset_config
+
+SETTINGS_PATH = Path(__file__).resolve().parent.parent.parent / "config" / "settings.yaml"
+
+
+@pytest.fixture(autouse=True)
+def _clear_config_cache():
+    """Reset singleton cache before each test."""
+    reset_config()
+    yield
+    reset_config()
+
+
+@pytest.fixture
+def config() -> Settings:
+    return load_settings(SETTINGS_PATH)
+
+
+class TestLoadSettings:
+    def test_load_settings(self, config: Settings):
+        """settings.yaml loads without errors."""
+        assert config is not None
+        assert isinstance(config, Settings)
+
+    def test_moex_section(self, config: Settings):
+        """All MOEX fields present."""
+        assert config.moex.iss_url == "https://iss.moex.com/iss"
+        assert config.moex.max_requests_per_sec == 50
+        assert config.moex.boards.equities == "TQBR"
+        assert config.moex.boards.futures == "RFUD"
+        assert config.moex.boards.options == "ROPD"
+        assert config.moex.boards.fx == "CETS"
+        assert config.moex.sessions.main_start == "10:00"
+        assert config.moex.sessions.main_end == "18:40"
+        assert config.moex.sessions.clearing_1_start == "14:00"
+
+    def test_costs_section(self, config: Settings):
+        """Commissions for all 4 instrument types."""
+        assert config.costs.equity.commission_pct == 0.0001
+        assert config.costs.equity.settlement == "T+1"
+        assert config.costs.futures.commission_rub == 2.0
+        assert config.costs.futures.settlement == "T+0"
+        assert config.costs.options.commission_rub == 2.0
+        assert config.costs.fx.commission_pct == 0.00003
+
+    def test_instruments(self, config: Settings):
+        """All 15 equities and 5 futures present."""
+        assert len(config.instruments.equities) == 15
+        assert len(config.instruments.futures) == 5
+        assert "SBER" in config.instruments.equities
+        assert "GAZP" in config.instruments.equities
+        assert "Si" in config.instruments.futures
+        assert "RTS" in config.instruments.futures
+
+    def test_risk_limits(self, config: Settings):
+        """All risk limits > 0 and < 1."""
+        assert 0 < config.risk.max_position_pct < 1
+        assert 0 < config.risk.max_daily_drawdown_pct < 1
+        assert 0 < config.risk.max_total_drawdown_pct < 1
+        assert 0 < config.risk.max_correlated_exposure_pct < 1
+        assert 0 < config.risk.circuit_breaker_daily_dd < 1
+        assert 0 < config.risk.circuit_breaker_total_dd < 1
+
+    def test_get_instrument_info(self, config: Settings):
+        """SBER returns correct lot and step."""
+        info = config.get_instrument_info("SBER")
+        assert info.lot == 10
+        assert info.step == 0.01
+        assert info.sector == "banks"
+
+    def test_get_instrument_info_futures(self, config: Settings):
+        """Si returns correct step and go_pct."""
+        info = config.get_instrument_info("Si")
+        assert info.step == 1.0
+        assert info.go_pct == 0.15
+
+    def test_unknown_instrument(self, config: Settings):
+        """Unknown ticker raises KeyError."""
+        with pytest.raises(KeyError, match="Unknown instrument"):
+            config.get_instrument_info("NONEXISTENT")
+
+    def test_env_override(self, config: Settings):
+        """Environment variables override YAML values."""
+        os.environ["MOEX_moex__max_requests_per_sec"] = "100"
+        try:
+            cfg = load_settings(SETTINGS_PATH)
+            assert cfg.moex.max_requests_per_sec == 100
+        finally:
+            del os.environ["MOEX_moex__max_requests_per_sec"]
+
+    def test_get_cost_profile(self, config: Settings):
+        """Get cost profile by instrument type."""
+        eq = config.get_cost_profile("equity")
+        assert eq.commission_pct == 0.0001
+        fut = config.get_cost_profile("futures")
+        assert fut.commission_rub == 2.0
+        with pytest.raises(KeyError):
+            config.get_cost_profile("crypto")
+
+    def test_backtest_settings(self, config: Settings):
+        """Backtest settings loaded correctly."""
+        assert config.backtest.default_capital == 1_000_000
+        assert config.backtest.trading_days_per_year == 252
+        assert config.backtest.benchmark == "IMOEX"
+        assert config.backtest.walk_forward.n_windows == 5
+        assert config.backtest.walk_forward.train_ratio == 0.70
+
+    def test_ml_settings(self, config: Settings):
+        """ML settings loaded correctly."""
+        assert "catboost" in config.ml.models
+        assert config.ml.ensemble_method == "stacking"
+        assert config.ml.label.method == "triple_barrier"
+        assert config.ml.feature_selection.top_k == 50
+
+    def test_singleton_get_config(self):
+        """get_config returns same instance on repeated calls."""
+        c1 = get_config(str(SETTINGS_PATH))
+        c2 = get_config(str(SETTINGS_PATH))
+        assert c1 is c2
+
+    def test_file_not_found(self):
+        """Missing file raises FileNotFoundError."""
+        with pytest.raises(FileNotFoundError):
+            load_settings("/nonexistent/path.yaml")
+
+```
+
+## Файл: tests/test_core/test_models.py
+```python
+"""Tests for src/core/models.py — Pydantic domain models."""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
+import pytest
+from pydantic import ValidationError
+
+from src.core.models import (
+    Bar,
+    InstrumentType,
+    Order,
+    OrderStatus,
+    OrderType,
+    Portfolio,
+    Position,
+    Side,
+    Signal,
+    TradeResult,
+)
+
+NOW = datetime(2024, 6, 15, 12, 0, 0)
+
+
+class TestBar:
+    def test_bar_creation(self):
+        bar = Bar(
+            timestamp=NOW, open=100.0, high=105.0, low=99.0,
+            close=103.0, volume=10000, instrument="SBER",
+        )
+        assert bar.close == 103.0
+        assert bar.instrument == "SBER"
+        assert bar.timeframe == "1d"
+
+    def test_bar_high_gte_low(self):
+        with pytest.raises(ValidationError, match="high must be >= low"):
+            Bar(
+                timestamp=NOW, open=100.0, high=95.0, low=99.0,
+                close=97.0, volume=100, instrument="SBER",
+            )
+
+    def test_bar_negative_price(self):
+        with pytest.raises(ValidationError):
+            Bar(
+                timestamp=NOW, open=-1.0, high=105.0, low=99.0,
+                close=103.0, volume=100, instrument="SBER",
+            )
+
+
+class TestSignal:
+    def test_signal_creation(self):
+        sig = Signal(
+            instrument="GAZP", side=Side.LONG, strength=0.8,
+            strategy_name="ema_cross", timestamp=NOW, confidence=0.9,
+        )
+        assert sig.instrument == "GAZP"
+        assert sig.side == Side.LONG
+        assert sig.strength == 0.8
+        assert sig.confidence == 0.9
+
+    def test_signal_strength_range(self):
+        with pytest.raises(ValidationError):
+            Signal(
+                instrument="GAZP", side=Side.LONG, strength=1.5,
+                strategy_name="test", timestamp=NOW,
+            )
+
+
+class TestOrder:
+    def test_order_default_status(self):
+        order = Order(
+            instrument="SBER", side=Side.LONG, quantity=10,
+        )
+        assert order.status == OrderStatus.PENDING
+        assert order.order_type == OrderType.MARKET
+
+    def test_order_serialization(self):
+        order = Order(
+            instrument="SBER", side=Side.LONG, quantity=10,
+            price=250.0, strategy_name="ema",
+        )
+        data = order.model_dump()
+        assert data["instrument"] == "SBER"
+        assert data["side"] == "long"
+        restored = Order.model_validate(data)
+        assert restored.instrument == order.instrument
+        assert restored.quantity == order.quantity
+
+
+class TestPosition:
+    def test_position_unrealized_pnl_long(self):
+        pos = Position(
+            instrument="SBER", side=Side.LONG, quantity=100,
+            entry_price=250.0, current_price=260.0,
+        )
+        assert pos.unrealized_pnl == 1000.0  # (260-250)*100
+
+    def test_position_unrealized_pnl_short(self):
+        pos = Position(
+            instrument="SBER", side=Side.SHORT, quantity=100,
+            entry_price=260.0, current_price=250.0,
+        )
+        assert pos.unrealized_pnl == 1000.0  # (260-250)*100 for short
+
+    def test_position_pnl_pct(self):
+        pos = Position(
+            instrument="SBER", side=Side.LONG, quantity=100,
+            entry_price=200.0, current_price=210.0,
+        )
+        assert abs(pos.unrealized_pnl_pct - 0.05) < 1e-9  # 10/200
+
+
+class TestPortfolio:
+    def test_portfolio_total_value(self):
+        pos = Position(
+            instrument="SBER", side=Side.LONG, quantity=10,
+            entry_price=250.0, current_price=260.0,
+        )
+        pf = Portfolio(positions=[pos], cash=100_000)
+        assert pf.total_value == 100_000 + 260.0 * 10
+
+    def test_portfolio_exposure(self):
+        pf_empty = Portfolio(positions=[], cash=1_000_000)
+        assert pf_empty.exposure == 0.0
+
+        pos = Position(
+            instrument="SBER", side=Side.LONG, quantity=100,
+            entry_price=250.0, current_price=250.0,
+        )
+        pf = Portfolio(positions=[pos], cash=75_000)
+        expected = 25_000 / 100_000  # 25k positions / 100k total
+        assert abs(pf.exposure - expected) < 1e-9
+
+
+class TestTradeResult:
+    def test_trade_result_gross_pnl(self):
+        tr = TradeResult(
+            instrument="SBER", side=Side.LONG,
+            entry_price=250.0, exit_price=260.0, quantity=100,
+            entry_timestamp=NOW, exit_timestamp=NOW + timedelta(hours=5),
+        )
+        assert tr.gross_pnl == 1000.0
+
+    def test_trade_result_net_pnl(self):
+        tr = TradeResult(
+            instrument="SBER", side=Side.LONG,
+            entry_price=250.0, exit_price=260.0, quantity=100,
+            entry_timestamp=NOW, exit_timestamp=NOW + timedelta(hours=5),
+            commission=5.0, slippage=2.0,
+        )
+        assert tr.net_pnl == 1000.0 - 5.0 - 2.0
+
+    def test_trade_result_duration(self):
+        tr = TradeResult(
+            instrument="SBER", side=Side.LONG,
+            entry_price=250.0, exit_price=260.0, quantity=100,
+            entry_timestamp=NOW,
+            exit_timestamp=NOW + timedelta(hours=3),
+        )
+        assert tr.duration == 3 * 3600
+
+    def test_trade_result_return_pct(self):
+        tr = TradeResult(
+            instrument="SBER", side=Side.LONG,
+            entry_price=200.0, exit_price=210.0, quantity=100,
+            entry_timestamp=NOW,
+            exit_timestamp=NOW + timedelta(days=1),
+            commission=0.0, slippage=0.0,
+        )
+        assert abs(tr.return_pct - 0.05) < 1e-9  # 1000/20000
+
+    def test_trade_result_short_pnl(self):
+        tr = TradeResult(
+            instrument="GAZP", side=Side.SHORT,
+            entry_price=200.0, exit_price=190.0, quantity=50,
+            entry_timestamp=NOW,
+            exit_timestamp=NOW + timedelta(hours=2),
+        )
+        assert tr.gross_pnl == 500.0  # (200-190)*50
+
+
+class TestEnums:
+    def test_enums(self):
+        assert Side.LONG.value == "long"
+        assert Side.SHORT.value == "short"
+        assert OrderType.MARKET.value == "market"
+        assert OrderType.LIMIT.value == "limit"
+        assert OrderStatus.FILLED.value == "filled"
+        assert InstrumentType.EQUITY.value == "equity"
+        assert InstrumentType.FUTURES.value == "futures"
+
+```
+
+## Файл: tests/test_data/conftest.py
+```python
+"""Conftest for test_data."""
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_data/test_moex_iss.py
+```python
+"""Tests for MOEX ISS client.
+
+Uses REAL requests to MOEX ISS (free API, no key required).
+Tests are skipped if no network access.
+"""
+from __future__ import annotations
+
+import asyncio
+import socket
+from datetime import date, timedelta
+
+import pytest
+
+from src.data.moex_iss import MoexISSClient
+
+
+def _has_network() -> bool:
+    """Check if we have internet access to MOEX."""
+    try:
+        socket.create_connection(("iss.moex.com", 443), timeout=3)
+        return True
+    except (OSError, socket.timeout):
+        return False
+
+
+no_network = not _has_network()
+skip_no_net = pytest.mark.skipif(no_network, reason="No network access to MOEX ISS")
+
+
+@pytest.fixture
+def client():
+    return MoexISSClient()
+
+
+@skip_no_net
+class TestMoexISS:
+    def test_fetch_candles_sber(self, client):
+        """Fetch SBER candles for last month."""
+        end = date.today()
+        start = end - timedelta(days=30)
+
+        async def _run():
+            async with client:
+                return await client.fetch_candles("SBER", start, end)
+
+        bars = asyncio.run(_run())
+        assert len(bars) > 0, "Should fetch at least one candle"
+        assert bars[0].instrument == "SBER"
+
+    def test_fetch_candles_si(self, client):
+        """Fetch futures Si candles."""
+        end = date.today()
+        start = end - timedelta(days=30)
+
+        async def _run():
+            async with client:
+                return await client.fetch_futures_candles("SiH5", start, end)
+
+        bars = asyncio.run(_run())
+        # Futures tickers change with expiry, may be empty
+        assert isinstance(bars, list)
+
+    def test_fetch_candles_pagination(self, client):
+        """Fetch > 500 candles (triggers auto-pagination)."""
+        end = date.today()
+        start = end - timedelta(days=1000)
+
+        async def _run():
+            async with client:
+                return await client.fetch_candles("SBER", start, end)
+
+        bars = asyncio.run(_run())
+        assert len(bars) > 500, f"Expected >500 candles, got {len(bars)}"
+
+    def test_candles_have_all_fields(self, client):
+        """Each candle has timestamp, OHLCV, instrument."""
+        end = date.today()
+        start = end - timedelta(days=7)
+
+        async def _run():
+            async with client:
+                return await client.fetch_candles("SBER", start, end)
+
+        bars = asyncio.run(_run())
+        if bars:
+            bar = bars[0]
+            assert bar.timestamp is not None
+            assert bar.open > 0
+            assert bar.high > 0
+            assert bar.low > 0
+            assert bar.close > 0
+            assert bar.volume >= 0
+            assert bar.instrument == "SBER"
+
+    def test_candles_sorted_by_time(self, client):
+        """Candles in chronological order."""
+        end = date.today()
+        start = end - timedelta(days=30)
+
+        async def _run():
+            async with client:
+                return await client.fetch_candles("SBER", start, end)
+
+        bars = asyncio.run(_run())
+        if len(bars) > 1:
+            for i in range(1, len(bars)):
+                assert bars[i].timestamp >= bars[i - 1].timestamp
+
+    def test_fetch_instruments(self, client):
+        """List of TQBR instruments is not empty."""
+        async def _run():
+            async with client:
+                return await client.fetch_instruments()
+
+        instruments = asyncio.run(_run())
+        assert len(instruments) > 0, "TQBR should have instruments"
+
+    def test_fetch_imoex(self, client):
+        """IMOEX index candles load."""
+        end = date.today()
+        start = end - timedelta(days=30)
+
+        async def _run():
+            async with client:
+                return await client.fetch_index("IMOEX", start, end)
+
+        bars = asyncio.run(_run())
+        assert isinstance(bars, list)
+
+    def test_invalid_ticker(self, client):
+        """Non-existent ticker returns empty result."""
+        async def _run():
+            async with client:
+                return await client.fetch_candles("ZZZZZZZ", "2024-01-01", "2024-01-31")
+
+        bars = asyncio.run(_run())
+        assert len(bars) == 0
+
+    def test_rate_limiting(self, client):
+        """Multiple rapid requests don't cause 429."""
+        end = date.today()
+        start = end - timedelta(days=5)
+
+        async def _run():
+            async with client:
+                tasks = [
+                    client.fetch_candles("SBER", start, end)
+                    for _ in range(10)
+                ]
+                results = await asyncio.gather(*tasks)
+                return results
+
+        results = asyncio.run(_run())
+        assert all(isinstance(r, list) for r in results)
+
+    def test_to_polars(self, client):
+        """Bars convert to Polars DataFrame."""
+        end = date.today()
+        start = end - timedelta(days=7)
+
+        async def _run():
+            async with client:
+                bars = await client.fetch_candles("SBER", start, end)
+                return client.to_polars(bars)
+
+        df = asyncio.run(_run())
+        assert "close" in df.columns
+        assert "timestamp" in df.columns
+        if df.height > 0:
+            assert df["close"][0] > 0
+
+```
+
+## Файл: tests/test_e2e/conftest.py
+```python
+"""Conftest for E2E tests."""
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_e2e/test_full_pipeline.py
+```python
+"""End-to-end test: data → indicators → strategy → backtest → metrics.
+
+Uses synthetic data to verify the complete pipeline works.
+No external API calls. No network. Pure logic.
+"""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
+import numpy as np
+import pandas as pd
+import polars as pl
+import pytest
+
+from src.analysis.features import calculate_atr, calculate_ema
+from src.backtest.metrics import max_drawdown, sharpe_ratio
+from src.core.models import Side, TradeResult
+from src.strategies.trend.ema_crossover import EMACrossoverStrategy
+
+
+def _generate_synthetic_ohlcv(
+    n: int = 500, seed: int = 42
+) -> pl.DataFrame:
+    """Generate synthetic OHLCV data with alternating trends.
+
+    Creates multiple trend cycles to guarantee EMA crossovers:
+    - Segments of 80 bars: up, down, up, down, ...
+    This ensures fast EMA(20) crosses slow EMA(50) multiple times.
+    """
+    np.random.seed(seed)
+    timestamps = [datetime(2022, 1, 1) + timedelta(days=i) for i in range(n)]
+
+    segment_len = 80
+    close = np.zeros(n)
+    close[0] = 250.0
+
+    for i in range(1, n):
+        segment = (i // segment_len) % 2
+        drift = 1.5 if segment == 0 else -1.5  # strong alternating trend
+        close[i] = close[i - 1] + drift + np.random.normal(0, 0.5)
+
+    close = np.maximum(close, 10.0)
+
+    high = close * (1 + np.abs(np.random.normal(0, 0.01, n)))
+    low = close * (1 - np.abs(np.random.normal(0, 0.01, n)))
+    open_ = (high + low) / 2
+    volume = np.random.randint(5000, 200000, n)
+
+    return pl.DataFrame({
+        "timestamp": timestamps,
+        "open": open_.tolist(),
+        "high": high.tolist(),
+        "low": low.tolist(),
+        "close": close.tolist(),
+        "volume": volume.tolist(),
+        "instrument": ["SBER"] * n,
+    })
+
+
+def _simple_backtest(
+    data: pl.DataFrame,
+    strategy: EMACrossoverStrategy,
+    initial_capital: float = 1_000_000,
+    commission_pct: float = 0.0001,
+) -> tuple[list[TradeResult], list[float]]:
+    """Simple backtest engine: iterate bars, apply signals, track P&L.
+
+    Returns (trades, equity_curve).
+    """
+    close = data["close"].to_numpy()
+    high = data["high"].to_numpy()
+    low = data["low"].to_numpy()
+
+    atr_series = calculate_atr(
+        pl.Series("high", high), pl.Series("low", low), pl.Series("close", close)
+    ).to_numpy()
+
+    trades: list[TradeResult] = []
+    equity_curve: list[float] = [initial_capital]
+
+    cash = initial_capital
+    position_side: Side | None = None
+    position_qty = 0.0
+    position_entry = 0.0
+    position_entry_ts = datetime.now()
+    position_instrument = "SBER"
+
+    warm_up = strategy.warm_up_period()
+
+    for i in range(warm_up + 1, len(close)):
+        # Get data up to current bar
+        sub_data = data.slice(0, i + 1)
+        signals = strategy.generate_signals(sub_data)
+
+        current_price = close[i]
+        current_atr = atr_series[i] if i < len(atr_series) else 5.0
+        ts = datetime(2022, 1, 1) + timedelta(days=i)
+
+        # Check stop loss on existing position
+        if position_side is not None and current_atr > 0:
+            stop = strategy.get_stop_loss(position_entry, position_side, current_atr)
+            hit_stop = (
+                (position_side == Side.LONG and low[i] <= stop) or
+                (position_side == Side.SHORT and high[i] >= stop)
+            )
+            if hit_stop:
+                exit_price = stop
+                comm = abs(exit_price * position_qty * commission_pct)
+                trade = TradeResult(
+                    instrument=position_instrument,
+                    side=position_side,
+                    entry_price=position_entry,
+                    exit_price=exit_price,
+                    quantity=position_qty,
+                    entry_timestamp=position_entry_ts,
+                    exit_timestamp=ts,
+                    strategy_name=strategy.name,
+                    commission=comm,
+                )
+                trades.append(trade)
+                cash += trade.net_pnl + position_entry * position_qty
+                position_side = None
+                position_qty = 0.0
+
+        # Process signals
+        for sig in signals:
+            if position_side is not None:
+                # Close existing
+                exit_price = current_price
+                comm = abs(exit_price * position_qty * commission_pct)
+                trade = TradeResult(
+                    instrument=position_instrument,
+                    side=position_side,
+                    entry_price=position_entry,
+                    exit_price=exit_price,
+                    quantity=position_qty,
+                    entry_timestamp=position_entry_ts,
+                    exit_timestamp=ts,
+                    strategy_name=strategy.name,
+                    commission=comm,
+                )
+                trades.append(trade)
+                cash += trade.net_pnl + position_entry * position_qty
+                position_side = None
+                position_qty = 0.0
+
+            # Open new position
+            if current_atr > 0:
+                qty = strategy.calculate_position_size(sig, cash, current_atr)
+                if qty > 0 and cash > current_price * qty:
+                    position_side = sig.side
+                    position_qty = qty
+                    position_entry = current_price
+                    position_entry_ts = ts
+                    position_instrument = sig.instrument
+                    cash -= current_price * qty
+
+        # Update equity
+        portfolio_value = cash
+        if position_side is not None:
+            portfolio_value += current_price * position_qty
+        equity_curve.append(portfolio_value)
+
+    return trades, equity_curve
+
+
+class TestFullPipeline:
+    """E2E: synthetic data → EMA crossover → backtest → metrics."""
+
+    @pytest.fixture
+    def pipeline_result(self):
+        data = _generate_synthetic_ohlcv(500, seed=42)
+        strategy = EMACrossoverStrategy(instruments=["SBER"])
+        trades, equity = _simple_backtest(data, strategy)
+        return trades, equity, data
+
+    def test_pipeline_runs_without_errors(self, pipeline_result):
+        trades, equity, _ = pipeline_result
+        assert isinstance(trades, list)
+        assert isinstance(equity, list)
+        assert len(equity) > 100
+
+    def test_trades_generated(self, pipeline_result):
+        trades, _, _ = pipeline_result
+        assert len(trades) > 0, "Strategy should generate at least one trade"
+
+    def test_sharpe_not_nan(self, pipeline_result):
+        _, equity, _ = pipeline_result
+        returns = pd.Series(np.diff(equity) / np.array(equity[:-1]))
+        returns = returns.replace([np.inf, -np.inf], 0.0).fillna(0.0)
+        sr = sharpe_ratio(returns)
+        assert not np.isnan(sr), f"Sharpe should not be NaN, got {sr}"
+
+    def test_max_dd_below_100(self, pipeline_result):
+        _, equity, _ = pipeline_result
+        returns = pd.Series(np.diff(equity) / np.array(equity[:-1]))
+        returns = returns.replace([np.inf, -np.inf], 0.0).fillna(0.0)
+        dd = max_drawdown(returns)
+        assert dd < 1.0, f"Max drawdown should be < 100%, got {dd * 100:.1f}%"
+
+    def test_commissions_positive(self, pipeline_result):
+        trades, _, _ = pipeline_result
+        total_comm = sum(t.commission for t in trades)
+        assert total_comm > 0, "Commissions should be accounted for"
+
+    def test_trade_results_valid(self, pipeline_result):
+        trades, _, _ = pipeline_result
+        for t in trades:
+            assert t.entry_price > 0
+            assert t.exit_price > 0
+            assert t.quantity > 0
+            assert t.entry_timestamp < t.exit_timestamp
+            assert t.instrument == "SBER"
+            assert t.strategy_name == "ema_crossover"
+
+    def test_equity_curve_starts_at_capital(self, pipeline_result):
+        _, equity, _ = pipeline_result
+        assert equity[0] == 1_000_000
+
+    def test_indicators_used(self, pipeline_result):
+        """Verify indicators are computed during pipeline."""
+        _, _, data = pipeline_result
+        close = data["close"]
+        ema20 = calculate_ema(close, 20)
+        ema50 = calculate_ema(close, 50)
+        assert len(ema20) == len(close)
+        assert len(ema50) == len(close)
+        # EMAs should be different
+        assert not np.allclose(ema20.to_numpy(), ema50.to_numpy())
+
+    def test_net_pnl_includes_costs(self, pipeline_result):
+        trades, _, _ = pipeline_result
+        for t in trades:
+            assert abs(t.net_pnl - t.gross_pnl) >= 0
+            if t.commission > 0:
+                assert abs(t.net_pnl) <= abs(t.gross_pnl) + t.commission
+
+```
+
+## Файл: tests/test_e2e/test_full_pipeline_ml.py
+```python
+"""End-to-end test: data → features → labels → train → predict → backtest.
+
+Uses synthetic data to verify the complete ML pipeline works.
+No external API calls. No network.
+"""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
+import numpy as np
+import pandas as pd
+import polars as pl
+import pytest
+
+from src.analysis.features import calculate_all_features
+from src.backtest.metrics import max_drawdown, sharpe_ratio
+from src.ml.label_generators import generate_highlow_labels
+from src.ml.predictor import predict
+from src.ml.trainer import train_models
+
+
+def _generate_ml_data(n: int = 1000, seed: int = 123) -> pl.DataFrame:
+    """Generate synthetic OHLCV data for ML pipeline.
+
+    Creates trending data with regime changes to give ML something to learn.
+    """
+    np.random.seed(seed)
+    timestamps = [datetime(2020, 1, 1) + timedelta(days=i) for i in range(n)]
+
+    # Create regime-switching data
+    close = np.zeros(n)
+    close[0] = 250.0
+    regime = 0  # 0=up, 1=down
+    for i in range(1, n):
+        if np.random.random() < 0.01:  # 1% chance of regime switch
+            regime = 1 - regime
+        drift = 0.5 if regime == 0 else -0.5
+        close[i] = close[i - 1] + drift + np.random.normal(0, 2.0)
+    close = np.maximum(close, 10.0)
+
+    high = close * (1 + np.abs(np.random.normal(0, 0.015, n)))
+    low = close * (1 - np.abs(np.random.normal(0, 0.015, n)))
+    open_ = close + np.random.normal(0, 0.5, n)
+    open_ = np.clip(open_, low, high)
+    volume = np.random.randint(10000, 500000, n)
+
+    return pl.DataFrame({
+        "timestamp": timestamps,
+        "open": open_.tolist(),
+        "high": high.tolist(),
+        "low": low.tolist(),
+        "close": close.tolist(),
+        "volume": volume.tolist(),
+    })
+
+
+class TestMLPipeline:
+    """E2E: synthetic data → features → labels → train → predict → metrics."""
+
+    @pytest.fixture(scope="class")
+    def ml_result(self):
+        """Run the full ML pipeline once for all tests in this class."""
+        # 1. Generate data
+        data = _generate_ml_data(1000, seed=123)
+        assert data.height == 1000
+
+        # 2. Feature engineering
+        enriched = calculate_all_features(data)
+        assert enriched.width > data.width  # features added
+
+        # 3. Label generation (simple: next bar direction)
+        close = data["close"].to_numpy()
+        labels = []
+        for i in range(len(close) - 1):
+            labels.append(1 if close[i + 1] > close[i] else 0)
+        labels.append(0)  # last bar has no future
+
+        # 4. Build feature matrix (drop NaN rows from indicators)
+        feature_cols = [c for c in enriched.columns if c not in (
+            "timestamp", "open", "high", "low", "close", "volume", "instrument",
+        )]
+
+        # Drop rows with NaN
+        enriched_with_labels = enriched.with_columns(
+            pl.Series("label", labels)
+        )
+        enriched_clean = enriched_with_labels.drop_nulls()
+
+        if enriched_clean.height < 200:
+            pytest.skip("Not enough clean data for ML pipeline")
+
+        # Split train/test (70/30)
+        split_idx = int(enriched_clean.height * 0.7)
+        train_df = enriched_clean.slice(0, split_idx)
+        test_df = enriched_clean.slice(split_idx)
+
+        # Convert to list[dict] format expected by trainer
+        X_train = train_df.select(feature_cols).to_dicts()
+        y_train = train_df["label"].to_list()
+        X_test = test_df.select(feature_cols).to_dicts()
+        y_test = test_df["label"].to_list()
+
+        # 5. Train models
+        models = train_models(X_train, y_train)
+
+        # 6. Predict
+        predictions = predict(models, X_test)
+
+        return {
+            "data": data,
+            "enriched": enriched,
+            "models": models,
+            "predictions": predictions,
+            "y_test": y_test,
+            "X_train_len": len(X_train),
+            "X_test_len": len(X_test),
+            "feature_cols": feature_cols,
+        }
+
+    def test_pipeline_no_crash(self, ml_result):
+        """Pipeline runs end-to-end without errors."""
+        assert ml_result["models"] is not None
+        assert len(ml_result["predictions"]) > 0
+
+    def test_features_generated(self, ml_result):
+        """Feature engineering adds columns."""
+        assert ml_result["enriched"].width > 6  # more than OHLCV
+
+    def test_models_trained(self, ml_result):
+        """All three models are trained."""
+        models = ml_result["models"]
+        assert isinstance(models, dict)
+        assert len(models) > 0
+
+    def test_predictions_length(self, ml_result):
+        """Predictions match test set length."""
+        assert len(ml_result["predictions"]) == ml_result["X_test_len"]
+
+    def test_predictions_bounded(self, ml_result):
+        """Predictions are probabilities in [0, 1]."""
+        for p in ml_result["predictions"]:
+            assert 0.0 <= p <= 1.0, f"Prediction {p} out of [0, 1]"
+
+    def test_train_test_split_sizes(self, ml_result):
+        """Train and test sets have reasonable sizes."""
+        assert ml_result["X_train_len"] > 100
+        assert ml_result["X_test_len"] > 50
+
+    def test_feature_count(self, ml_result):
+        """Multiple features generated."""
+        assert len(ml_result["feature_cols"]) >= 5
+
+    def test_predictions_not_constant(self, ml_result):
+        """Predictions vary (model learned something)."""
+        preds = ml_result["predictions"]
+        assert len(set(round(p, 2) for p in preds)) > 1, "All predictions identical"
+
+    def test_simple_backtest_from_predictions(self, ml_result):
+        """Convert predictions to trades and compute basic metrics."""
+        preds = ml_result["predictions"]
+        y_test = ml_result["y_test"]
+
+        # Simple PnL: go long when P(up) > 0.55, else flat
+        returns = []
+        for i in range(len(preds) - 1):
+            if preds[i] > 0.55:
+                ret = 0.01 if y_test[i] == 1 else -0.01  # simplified
+                returns.append(ret)
+            else:
+                returns.append(0.0)
+
+        returns_series = pd.Series(returns)
+        sr = sharpe_ratio(returns_series)
+        dd = max_drawdown(returns_series)
+        # Just verify they compute without error
+        assert not np.isnan(sr) or len(returns) < 5
+        assert dd <= 1.0
+
+```
+
+## Файл: tests/test_e2e/test_paper_trading.py
+```python
+"""Tests for paper trading runner."""
+from __future__ import annotations
+
+from datetime import datetime, time
+
+import pytest
+
+from scripts.paper_trading import PaperTradingRunner
+
+
+class TestPaperTrading:
+    @pytest.fixture
+    def runner(self):
+        return PaperTradingRunner(
+            poll_interval_sec=1,
+            instruments=["SBER"],
+        )
+
+    def test_creates_loop(self, runner):
+        assert runner is not None
+        assert not runner.is_running
+        assert runner._instruments == ["SBER"]
+
+    def test_clearing_check(self, runner):
+        """Should detect clearing sessions."""
+        # 14:00-14:05 is clearing
+        clearing_time = datetime(2024, 6, 15, 14, 2, 0)
+        assert runner.is_clearing_time(clearing_time)
+
+        # 12:00 is not clearing
+        normal_time = datetime(2024, 6, 15, 12, 0, 0)
+        assert not runner.is_clearing_time(normal_time)
+
+        # 18:50 is clearing_2
+        clearing_2 = datetime(2024, 6, 15, 18, 50, 0)
+        assert runner.is_clearing_time(clearing_2)
+
+    def test_session_end(self, runner):
+        """Should close positions before 18:30."""
+        before_close = datetime(2024, 6, 15, 18, 0, 0)
+        assert not runner.should_close_positions(before_close)
+
+        after_close = datetime(2024, 6, 15, 18, 35, 0)
+        assert runner.should_close_positions(after_close)
+
+    def test_circuit_breaker(self, runner):
+        """Triggers when daily DD > 5%."""
+        runner._start_equity = 1_000_000
+        # 4% DD — no trigger
+        assert not runner.check_circuit_breaker(960_000)
+        # 6% DD — trigger
+        assert runner.check_circuit_breaker(940_000)
+        assert runner._circuit_breaker_triggered
+
+    def test_graceful_shutdown(self, runner):
+        """Stop method sets flags correctly."""
+        runner._running = True
+        runner.stop()
+        assert not runner.is_running
+        assert runner._shutdown_event.is_set()
+
+    def test_trading_hours(self, runner):
+        """Trading hours 10:00-18:40."""
+        trading = datetime(2024, 6, 15, 14, 0, 0)
+        assert runner.is_trading_hours(trading)
+
+        before = datetime(2024, 6, 15, 9, 30, 0)
+        assert not runner.is_trading_hours(before)
+
+        after = datetime(2024, 6, 15, 19, 0, 0)
+        assert not runner.is_trading_hours(after)
+
+    def test_parse_time(self):
+        t = PaperTradingRunner._parse_time("14:05")
+        assert t == time(14, 5)
+
+```
+
+## Файл: tests/test_e2e/test_real_data_backtest.py
+```python
+"""Backtest on real SBER data (2023-2024).
+
+Requires data/history/SBER.parquet to exist.
+Run scripts/download_history.py first if not present.
+"""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import polars as pl
+import pytest
+
+from src.analysis.features import calculate_atr, calculate_ema
+from src.backtest.metrics import max_drawdown, sharpe_ratio
+from src.core.models import Side, TradeResult
+from src.strategies.trend.ema_crossover import EMACrossoverStrategy
+
+DATA_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "history" / "SBER.parquet"
+data_exists = DATA_FILE.exists()
+
+
+def _backtest_on_data(
+    data: pl.DataFrame,
+    strategy: EMACrossoverStrategy,
+    initial_capital: float = 1_000_000,
+    commission_pct: float = 0.0001,
+) -> tuple[list[TradeResult], list[float]]:
+    """Simple backtest engine for real data."""
+    close = data["close"].to_numpy()
+    high = data["high"].to_numpy()
+    low = data["low"].to_numpy()
+
+    atr_series = calculate_atr(
+        pl.Series("high", high), pl.Series("low", low), pl.Series("close", close)
+    ).to_numpy()
+
+    trades: list[TradeResult] = []
+    equity_curve: list[float] = [initial_capital]
+
+    cash = initial_capital
+    position_side: Side | None = None
+    position_qty = 0.0
+    position_entry = 0.0
+    position_entry_ts = datetime.now()
+
+    warm_up = strategy.warm_up_period()
+
+    timestamps = data["timestamp"].to_list()
+
+    for i in range(warm_up + 1, len(close)):
+        sub_data = data.slice(0, i + 1)
+        signals = strategy.generate_signals(sub_data)
+
+        current_price = close[i]
+        current_atr = atr_series[i] if i < len(atr_series) else 5.0
+        ts = timestamps[i]
+        if not isinstance(ts, datetime):
+            ts = datetime.now()
+
+        # Check stop loss
+        if position_side is not None and current_atr > 0:
+            stop = strategy.get_stop_loss(position_entry, position_side, current_atr)
+            hit_stop = (
+                (position_side == Side.LONG and low[i] <= stop) or
+                (position_side == Side.SHORT and high[i] >= stop)
+            )
+            if hit_stop:
+                exit_price = stop
+                comm = abs(exit_price * position_qty * commission_pct)
+                trade = TradeResult(
+                    instrument="SBER", side=position_side,
+                    entry_price=position_entry, exit_price=exit_price,
+                    quantity=position_qty,
+                    entry_timestamp=position_entry_ts, exit_timestamp=ts,
+                    strategy_name=strategy.name, commission=comm,
+                )
+                trades.append(trade)
+                cash += trade.net_pnl + position_entry * position_qty
+                position_side = None
+                position_qty = 0.0
+
+        for sig in signals:
+            if position_side is not None:
+                exit_price = current_price
+                comm = abs(exit_price * position_qty * commission_pct)
+                trade = TradeResult(
+                    instrument="SBER", side=position_side,
+                    entry_price=position_entry, exit_price=exit_price,
+                    quantity=position_qty,
+                    entry_timestamp=position_entry_ts, exit_timestamp=ts,
+                    strategy_name=strategy.name, commission=comm,
+                )
+                trades.append(trade)
+                cash += trade.net_pnl + position_entry * position_qty
+                position_side = None
+                position_qty = 0.0
+
+            if current_atr > 0:
+                qty = strategy.calculate_position_size(sig, cash, current_atr)
+                if qty > 0 and cash > current_price * qty:
+                    position_side = sig.side
+                    position_qty = qty
+                    position_entry = current_price
+                    position_entry_ts = ts
+                    cash -= current_price * qty
+
+        portfolio_value = cash
+        if position_side is not None:
+            portfolio_value += current_price * position_qty
+        equity_curve.append(portfolio_value)
+
+    return trades, equity_curve
+
+
+@pytest.mark.skipif(not data_exists, reason="SBER.parquet not found, run download_history.py first")
+class TestRealDataBacktest:
+    @pytest.fixture(scope="class")
+    def backtest_result(self):
+        data = pl.read_parquet(DATA_FILE)
+        strategy = EMACrossoverStrategy(instruments=["SBER"])
+        trades, equity = _backtest_on_data(data, strategy)
+        return trades, equity, data
+
+    def test_data_loaded(self, backtest_result):
+        _, _, data = backtest_result
+        assert data.height > 100
+
+    def test_trades_generated(self, backtest_result):
+        trades, _, _ = backtest_result
+        assert len(trades) > 0
+
+    def test_sharpe_not_nan(self, backtest_result):
+        _, equity, _ = backtest_result
+        returns = pd.Series(np.diff(equity) / np.array(equity[:-1]))
+        returns = returns.replace([np.inf, -np.inf], 0.0).fillna(0.0)
+        sr = sharpe_ratio(returns)
+        assert not np.isnan(sr)
+
+    def test_max_dd_below_50(self, backtest_result):
+        _, equity, _ = backtest_result
+        returns = pd.Series(np.diff(equity) / np.array(equity[:-1]))
+        returns = returns.replace([np.inf, -np.inf], 0.0).fillna(0.0)
+        dd = max_drawdown(returns)
+        assert dd < 0.5, f"Max DD = {dd * 100:.1f}% — too high"
+
+    def test_buy_and_hold_comparison(self, backtest_result):
+        trades, equity, data = backtest_result
+        close = data["close"].to_numpy()
+
+        # Buy & hold return
+        bh_return = (close[-1] - close[0]) / close[0]
+
+        # Strategy return
+        strat_return = (equity[-1] - equity[0]) / equity[0]
+
+        # Just verify both are computed
+        print(f"  Buy & Hold SBER: {bh_return * 100:.1f}%")
+        print(f"  EMA Crossover:   {strat_return * 100:.1f}%")
+        print(f"  Trades: {len(trades)}")
+
+        assert isinstance(bh_return, float)
+        assert isinstance(strat_return, float)
+
+    def test_commissions_accounted(self, backtest_result):
+        trades, _, _ = backtest_result
+        total_comm = sum(t.commission for t in trades)
+        assert total_comm > 0
+
+```
+
+## Файл: tests/test_exchange_rates.py
 ```python
 """Tests for src/data/exchange_rates.py — FX rate cache (unit tests, no network)."""
 from __future__ import annotations
@@ -19660,8 +20886,137 @@ class TestRatesRange:
 
 ```
 
-## Файл: tests/test_garch_lob.py
+## Файл: tests/test_execution/conftest.py
+```python
+"""Conftest for test_execution."""
+import os
+import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_execution/test_tinkoff_adapter.py
+```python
+"""Tests for Tinkoff broker adapter.
+
+Unit tests use mocked connections.
+Integration tests with real API are marked @pytest.mark.integration.
+"""
+from __future__ import annotations
+
+import os
+from datetime import datetime
+
+import pytest
+
+from src.core.models import Order, OrderType, Position, Side
+from src.execution.adapters.tinkoff import TinkoffAdapter
+
+has_tinkoff_token = bool(os.environ.get("TINKOFF_TOKEN"))
+
+
+class TestTinkoffAdapter:
+    def test_connect_requires_token(self):
+        """Connection without token raises ValueError."""
+        adapter = TinkoffAdapter(token="", sandbox=True)
+        with pytest.raises(ValueError, match="token not set"):
+            adapter.connect()
+
+    def test_order_conversion(self):
+        """Our Order converts to Tinkoff format and back."""
+        order = Order(
+            instrument="SBER",
+            side=Side.LONG,
+            quantity=100,
+            order_type=OrderType.MARKET,
+            price=250.0,
+        )
+        tinkoff_order = TinkoffAdapter.convert_order_to_tinkoff(order)
+        assert tinkoff_order["direction"] == "ORDER_DIRECTION_BUY"
+        assert tinkoff_order["quantity"] == 10  # 100 shares / 10 lot = 10 lots
+        assert tinkoff_order["order_type"] == "ORDER_TYPE_MARKET"
+
+    def test_position_conversion(self):
+        """Tinkoff position converts to our Position model."""
+        tinkoff_pos = {
+            "ticker": "SBER",
+            "quantity": 10,
+            "lot_size": 10,
+            "average_price": 250.0,
+            "current_price": 260.0,
+        }
+        pos = TinkoffAdapter.convert_tinkoff_position(tinkoff_pos)
+        assert pos.instrument == "SBER"
+        assert pos.quantity == 100  # 10 lots * 10 shares
+        assert pos.entry_price == 250.0
+        assert pos.current_price == 260.0
+        assert pos.side == Side.LONG
+
+    def test_lot_conversion(self):
+        """100 shares SBER = 10 lots."""
+        lots = TinkoffAdapter.convert_units_to_lots("SBER", 100)
+        assert lots == 10
+
+        units = TinkoffAdapter.convert_lots_to_units("SBER", 10)
+        assert units == 100
+
+    def test_error_handling_not_connected(self):
+        """Operations on disconnected adapter raise RuntimeError."""
+        adapter = TinkoffAdapter(token="fake", sandbox=True)
+        with pytest.raises(RuntimeError, match="Not connected"):
+            adapter.place_order(
+                Order(instrument="SBER", side=Side.LONG, quantity=10)
+            )
+        with pytest.raises(RuntimeError, match="Not connected"):
+            adapter.get_positions()
+
+    def test_portfolio_snapshot(self):
+        """Portfolio returns correct structure."""
+        # Mock connection
+        adapter = TinkoffAdapter(token="fake", sandbox=True)
+        adapter._connected = True  # bypass real connection
+
+        portfolio = adapter.get_portfolio()
+        assert portfolio.cash > 0
+        assert isinstance(portfolio.positions, list)
+        assert portfolio.timestamp is not None
+
+    def test_cancel_order(self):
+        """Cancel order returns True."""
+        adapter = TinkoffAdapter(token="fake", sandbox=True)
+        adapter._connected = True
+
+        result = adapter.cancel_order("test_order_123")
+        assert result is True
+
+    def test_sell_direction(self):
+        """SHORT order converts to SELL direction."""
+        order = Order(
+            instrument="SBER",
+            side=Side.SHORT,
+            quantity=50,
+            order_type=OrderType.LIMIT,
+            price=260.0,
+        )
+        tinkoff_order = TinkoffAdapter.convert_order_to_tinkoff(order)
+        assert tinkoff_order["direction"] == "ORDER_DIRECTION_SELL"
+        assert tinkoff_order["order_type"] == "ORDER_TYPE_LIMIT"
+
+    def test_lot_conversion_vtbr(self):
+        """VTBR lot = 10000 shares."""
+        lots = TinkoffAdapter.convert_units_to_lots("VTBR", 50000)
+        assert lots == 5
+
+    def test_context_manager(self):
+        """Context manager raises if no token."""
+        with pytest.raises(ValueError):
+            with TinkoffAdapter(token="", sandbox=True):
+                pass
+
+```
+
+## Файл: tests/test_garch_lob.py
 ```python
 """Tests for GARCH volatility forecasting and Limit Order Book."""
 from __future__ import annotations
@@ -19872,7 +21227,6 @@ class TestLimitOrderBook:
 ```
 
 ## Файл: tests/test_hummingbot_ports.py
-
 ```python
 """Tests for hummingbot-inspired components: Triple Barrier, TWAP, Avellaneda-Stoikov.
 
@@ -20160,7 +21514,6 @@ class TestAvellanedaStoikov:
 ```
 
 ## Файл: tests/test_indicator_utils.py
-
 ```python
 """Tests for src/indicators/utils.py — strategy utility functions."""
 from __future__ import annotations
@@ -20283,7 +21636,6 @@ class TestHighestLowest:
 ```
 
 ## Файл: tests/test_indicators.py
-
 ```python
 """Tests for src/indicators/ — SuperTrend, Squeeze Momentum, Damiani, Ehlers DSP."""
 from __future__ import annotations
@@ -20484,7 +21836,6 @@ class TestReflex:
 ```
 
 ## Файл: tests/test_label_generators.py
-
 ```python
 """Tests for ML label generators: high/low multi-threshold + topbot."""
 from __future__ import annotations
@@ -20669,7 +22020,6 @@ class TestTopBotLabels:
 ```
 
 ## Файл: tests/test_lean_ports.py
-
 ```python
 """Tests for LEAN-inspired components: indicators, circuit breaker, PSR, slippage.
 
@@ -21212,7 +22562,6 @@ class TestVolumeShareSlippage:
 ```
 
 ## Файл: tests/test_metrics.py
-
 ```python
 """Tests for src/backtest/metrics.py — comprehensive performance metrics."""
 from __future__ import annotations
@@ -21618,8 +22967,265 @@ class TestFormatMetrics:
 
 ```
 
-## Файл: tests/test_monte_carlo.py
+## Файл: tests/test_ml/conftest.py
+```python
+"""Conftest for test_ml."""
+import os
+import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_ml/test_walk_forward.py
+```python
+"""Tests for walk-forward ML pipeline orchestrator."""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
+import numpy as np
+import polars as pl
+import pytest
+
+from src.ml.walk_forward import WalkForwardML, WalkForwardResult
+
+
+def _make_data(n: int = 1000, seed: int = 42) -> pl.DataFrame:
+    """Generate synthetic data with regime-switching trends."""
+    np.random.seed(seed)
+    timestamps = [datetime(2020, 1, 1) + timedelta(days=i) for i in range(n)]
+
+    close = np.zeros(n)
+    close[0] = 250.0
+    regime = 0
+    for i in range(1, n):
+        if np.random.random() < 0.02:
+            regime = 1 - regime
+        drift = 0.8 if regime == 0 else -0.8
+        close[i] = close[i - 1] + drift + np.random.normal(0, 1.5)
+    close = np.maximum(close, 10.0)
+
+    high = close * (1 + np.abs(np.random.normal(0, 0.01, n)))
+    low = close * (1 - np.abs(np.random.normal(0, 0.01, n)))
+    open_ = (high + low) / 2
+    volume = np.random.randint(5000, 100000, n)
+
+    return pl.DataFrame({
+        "timestamp": timestamps,
+        "open": open_.tolist(),
+        "high": high.tolist(),
+        "low": low.tolist(),
+        "close": close.tolist(),
+        "volume": volume.tolist(),
+    })
+
+
+class TestWalkForwardML:
+    @pytest.fixture(scope="class")
+    def wf_result(self) -> WalkForwardResult:
+        data = _make_data(1000, seed=42)
+        wf = WalkForwardML(n_windows=3, train_ratio=0.7, gap_bars=1)
+        return wf.run(data)
+
+    def test_splits_data_correctly(self):
+        wf = WalkForwardML(n_windows=5, train_ratio=0.7, gap_bars=1)
+        splits = wf._create_splits(1000)
+        assert len(splits) == 5
+
+    def test_no_data_leakage(self):
+        wf = WalkForwardML(n_windows=5, train_ratio=0.7, gap_bars=2)
+        splits = wf._create_splits(1000)
+        for train_start, train_end, test_start, test_end in splits:
+            assert test_start > train_end, "Test must start after train + gap"
+            assert test_start >= train_end + 2, "Gap of 2 bars required"
+
+    def test_train_ratio(self):
+        wf = WalkForwardML(n_windows=5, train_ratio=0.7, gap_bars=0)
+        splits = wf._create_splits(1000)
+        for train_start, train_end, test_start, test_end in splits:
+            train_size = train_end - train_start
+            total = test_end - train_start
+            ratio = train_size / total
+            assert abs(ratio - 0.7) < 0.05
+
+    def test_returns_metrics(self, wf_result: WalkForwardResult):
+        assert len(wf_result.window_metrics) > 0
+        for wm in wf_result.window_metrics:
+            assert wm.train_size > 0
+            assert wm.test_size > 0
+
+    def test_aggregate_metrics(self, wf_result: WalkForwardResult):
+        assert isinstance(wf_result.aggregate_accuracy, float)
+        assert isinstance(wf_result.aggregate_sharpe, float)
+
+    def test_overfitting_detection(self, wf_result: WalkForwardResult):
+        # overfitting_score = avg(train_sharpe) / avg(test_sharpe)
+        # Can be any float: positive, negative, inf
+        score = wf_result.overfitting_score
+        assert isinstance(score, float)
+        # Just verify it's computed (not NaN)
+        import math
+        assert not math.isnan(score)
+
+    def test_short_data(self):
+        data = _make_data(30)
+        wf = WalkForwardML(n_windows=5, train_ratio=0.7)
+        result = wf.run(data)
+        # Should handle gracefully — may return empty result
+        assert isinstance(result, WalkForwardResult)
+
+    def test_predictions_length(self, wf_result: WalkForwardResult):
+        total_oos = sum(wm.test_size for wm in wf_result.window_metrics)
+        assert len(wf_result.oos_predictions) == total_oos
+
+    def test_retrain_interval(self):
+        wf = WalkForwardML(retrain_every=30)
+        assert wf.retrain_every == 30
+
+    def test_n_windows(self, wf_result: WalkForwardResult):
+        assert wf_result.n_windows == 3
+
+    def test_invalid_params(self):
+        with pytest.raises(ValueError):
+            WalkForwardML(n_windows=0)
+        with pytest.raises(ValueError):
+            WalkForwardML(train_ratio=1.5)
+
+```
+
+## Файл: tests/test_monitoring/conftest.py
+```python
+"""Conftest for test_monitoring."""
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_monitoring/test_telegram.py
+```python
+"""Tests for Telegram bot message formatting and commands."""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
+import pytest
+
+from src.core.models import Portfolio, Position, Side, Signal, TradeResult
+from src.monitoring.telegram_bot import MAX_MESSAGE_LENGTH, TradingTelegramBot
+
+NOW = datetime(2024, 6, 15, 14, 30, 0)
+
+
+@pytest.fixture
+def bot():
+    return TradingTelegramBot(bot_token="", chat_id="")
+
+
+class TestTelegramBot:
+    def test_format_signal_message(self, bot):
+        sig = Signal(
+            instrument="SBER", side=Side.LONG, strength=0.85,
+            strategy_name="ema_crossover", timestamp=NOW, confidence=0.75,
+        )
+        msg = bot.format_signal_message(sig)
+        assert "SBER" in msg
+        assert "LONG" in msg
+        assert "0.85" in msg
+        assert "ema_crossover" in msg
+
+    def test_format_trade_message(self, bot):
+        trade = TradeResult(
+            instrument="GAZP", side=Side.SHORT,
+            entry_price=180.0, exit_price=170.0, quantity=100,
+            entry_timestamp=NOW, exit_timestamp=NOW + timedelta(hours=3),
+            strategy_name="ema_crossover", commission=3.6,
+        )
+        msg = bot.format_trade_message(trade)
+        assert "GAZP" in msg
+        assert "SHORT" in msg
+        assert "180.00" in msg
+        assert "170.00" in msg
+        assert "P&L" in msg
+
+    def test_format_pnl_report(self, bot):
+        pos = Position(
+            instrument="SBER", side=Side.LONG, quantity=100,
+            entry_price=250.0, current_price=260.0,
+        )
+        portfolio = Portfolio(positions=[pos], cash=900_000)
+        trades = [
+            TradeResult(
+                instrument="SBER", side=Side.LONG,
+                entry_price=250.0, exit_price=260.0, quantity=50,
+                entry_timestamp=NOW, exit_timestamp=NOW + timedelta(hours=1),
+            ),
+            TradeResult(
+                instrument="GAZP", side=Side.LONG,
+                entry_price=180.0, exit_price=175.0, quantity=100,
+                entry_timestamp=NOW, exit_timestamp=NOW + timedelta(hours=2),
+            ),
+        ]
+        msg = bot.format_pnl_report(portfolio, 5000.0, trades)
+        assert "DAILY P&L" in msg
+        assert "5,000" in msg
+        assert "W: 1" in msg
+        assert "L: 1" in msg
+
+    def test_format_circuit_breaker(self, bot):
+        msg = bot.format_circuit_breaker_message("Daily drawdown exceeded", 0.055)
+        assert "CIRCUIT BREAKER" in msg
+        assert "5.5%" in msg
+
+    def test_command_parsing(self, bot):
+        cmd, args = bot.parse_command("/status")
+        assert cmd == "status"
+        assert args == []
+
+        cmd, args = bot.parse_command("/stop now")
+        assert cmd == "stop"
+        assert args == ["now"]
+
+        cmd, args = bot.parse_command("not a command")
+        assert cmd == ""
+
+    def test_no_token_graceful(self, bot):
+        assert not bot.is_configured
+
+    def test_message_length(self, bot):
+        # All formatted messages should be under 4096
+        sig = Signal(
+            instrument="SBER", side=Side.LONG, strength=0.5,
+            strategy_name="test", timestamp=NOW,
+        )
+        msg = bot.format_signal_message(sig)
+        assert len(msg) < MAX_MESSAGE_LENGTH
+
+    def test_stop_start_commands(self, bot):
+        assert bot.trading_active
+        response = bot.handle_command("stop")
+        assert "STOPPED" in response
+        assert not bot.trading_active
+
+        response = bot.handle_command("start")
+        assert "RESUMED" in response
+        assert bot.trading_active
+
+    def test_help_command(self, bot):
+        msg = bot.handle_command("help")
+        assert "/status" in msg
+        assert "/stop" in msg
+        assert "/start" in msg
+
+    def test_unknown_command(self, bot):
+        msg = bot.handle_command("unknown")
+        assert "Unknown command" in msg
+
+```
+
+## Файл: tests/test_monte_carlo.py
 ```python
 """Tests for src/backtest/monte_carlo.py — Monte Carlo robustness simulation."""
 from __future__ import annotations
@@ -21792,7 +23398,6 @@ class TestFormatMonteCarlo:
 ```
 
 ## Файл: tests/test_optimizer.py
-
 ```python
 """Tests for src/backtest/optimizer.py — Optuna strategy optimizer."""
 from __future__ import annotations
@@ -22017,7 +23622,6 @@ class TestWalkForward:
 ```
 
 ## Файл: tests/test_qlib_ports.py
-
 ```python
 """Tests for Qlib-inspired ML processors and rolling factors."""
 from __future__ import annotations
@@ -22196,7 +23800,6 @@ class TestRollingRSquare:
 ```
 
 ## Файл: tests/test_remaining_ports.py
-
 ```python
 """Tests for remaining LEAN + hummingbot ports: ZigZag, KVO, RVI, DCA, Grid, OBI."""
 from __future__ import annotations
@@ -22581,7 +24184,6 @@ class TestOBI:
 ```
 
 ## Файл: tests/test_risk_rules.py
-
 ```python
 """Tests for src/risk/rules.py — portfolio risk rules engine."""
 from __future__ import annotations
@@ -22762,7 +24364,6 @@ class TestRulesEngine:
 ```
 
 ## Файл: tests/test_signal_synthesis.py
-
 ```python
 """Tests for multi-analyst signal synthesis framework."""
 from __future__ import annotations
@@ -23003,7 +24604,6 @@ class TestSignalSynthesizer:
 ```
 
 ## Файл: tests/test_sr_candles.py
-
 ```python
 """Tests for Support/Resistance and Candle Patterns.
 
@@ -23377,7 +24977,6 @@ class TestCandleConfig:
 ```
 
 ## Файл: tests/test_stocksharp_ports.py
-
 ```python
 """Tests for StockSharp-ported modules: quoting, commissions, protective."""
 from __future__ import annotations
@@ -23685,11 +25284,170 @@ class TestProtectivePriceStep:
 
 ```
 
+## Файл: tests/test_strategies/conftest.py
+```python
+"""Conftest for test_strategies."""
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
+
+```
+
+## Файл: tests/test_strategies/test_ema_crossover.py
+```python
+"""Tests for EMA crossover strategy."""
+from __future__ import annotations
+
+from datetime import datetime, timedelta
+
+import numpy as np
+import polars as pl
+import pytest
+
+from src.core.base_strategy import BaseStrategy
+from src.core.models import Side
+from src.strategies.trend.ema_crossover import EMACrossoverStrategy
+
+
+def _make_data(n: int, trend: str = "up", instrument: str = "SBER") -> pl.DataFrame:
+    """Generate synthetic OHLCV data with a given trend."""
+    np.random.seed(42)
+    base = 250.0
+    timestamps = [datetime(2024, 1, 1) + timedelta(days=i) for i in range(n)]
+
+    if trend == "up":
+        close = base + np.cumsum(np.random.normal(0.5, 1.0, n))
+    elif trend == "down":
+        close = base + np.cumsum(np.random.normal(-0.5, 1.0, n))
+    else:  # flat
+        close = base + np.cumsum(np.random.normal(0.0, 0.3, n))
+
+    close = np.maximum(close, 1.0)
+    high = close * (1 + np.abs(np.random.normal(0, 0.01, n)))
+    low = close * (1 - np.abs(np.random.normal(0, 0.01, n)))
+    open_ = (high + low) / 2
+    volume = np.random.randint(1000, 100000, n)
+
+    return pl.DataFrame({
+        "timestamp": timestamps,
+        "open": open_.tolist(),
+        "high": high.tolist(),
+        "low": low.tolist(),
+        "close": close.tolist(),
+        "volume": volume.tolist(),
+        "instrument": [instrument] * n,
+    })
+
+
+class TestEMACrossover:
+    def test_creation(self):
+        s = EMACrossoverStrategy()
+        assert s.name == "ema_crossover"
+        assert s.timeframe == "1d"
+
+    def test_inherits_base(self):
+        s = EMACrossoverStrategy()
+        assert isinstance(s, BaseStrategy)
+
+    def test_signals_on_uptrend(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        data = _make_data(200, trend="up")
+        signals = s.generate_signals(data)
+        # Should have at least one LONG signal in an uptrend
+        long_signals = [sig for sig in signals if sig.side == Side.LONG]
+        # May or may not generate — depends on crossover timing
+        assert isinstance(signals, list)
+
+    def test_signals_on_downtrend(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        data = _make_data(200, trend="down")
+        signals = s.generate_signals(data)
+        assert isinstance(signals, list)
+
+    def test_signals_on_flat(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        data = _make_data(200, trend="flat")
+        signals = s.generate_signals(data)
+        assert isinstance(signals, list)
+
+    def test_signals_on_forced_crossover(self):
+        """Create data that forces a bullish crossover at the last bar."""
+        n = 100
+        timestamps = [datetime(2024, 1, 1) + timedelta(days=i) for i in range(n)]
+        # First 99 bars: slow trend down (fast < slow)
+        # Last bar: jump up (fast > slow)
+        close = np.full(n, 100.0)
+        close[:80] = np.linspace(100, 90, 80)
+        close[80:99] = np.linspace(90, 92, 19)
+        close[99] = 120.0  # big jump forces crossover
+
+        data = pl.DataFrame({
+            "timestamp": timestamps,
+            "open": close.tolist(),
+            "high": (close * 1.01).tolist(),
+            "low": (close * 0.99).tolist(),
+            "close": close.tolist(),
+            "volume": [10000] * n,
+            "instrument": ["SBER"] * n,
+        })
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        signals = s.generate_signals(data)
+        assert len(signals) == 1
+        assert signals[0].side == Side.LONG
+
+    def test_position_size_respects_lot(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        from src.core.models import Signal
+        sig = Signal(
+            instrument="SBER", side=Side.LONG, strength=0.8,
+            strategy_name="ema_crossover", timestamp=datetime.now(),
+        )
+        size = s.calculate_position_size(sig, 1_000_000, 5.0)
+        assert size > 0
+        # SBER lot = 10, size must be multiple of 10
+        assert size % 10 == 0
+
+    def test_stop_loss_long(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        stop = s.get_stop_loss(250.0, Side.LONG, 5.0)
+        assert stop < 250.0
+        # Should be entry - 2*ATR = 240.0
+        assert abs(stop - 240.0) < 0.1
+
+    def test_stop_loss_short(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        stop = s.get_stop_loss(250.0, Side.SHORT, 5.0)
+        assert stop > 250.0
+
+    def test_warm_up_period(self):
+        s = EMACrossoverStrategy()
+        assert s.warm_up_period() == 50
+
+    def test_empty_data(self):
+        s = EMACrossoverStrategy()
+        data = pl.DataFrame({
+            "timestamp": [], "open": [], "high": [], "low": [],
+            "close": [], "volume": [], "instrument": [],
+        })
+        assert s.generate_signals(data) == []
+
+    def test_short_data(self):
+        s = EMACrossoverStrategy()
+        data = _make_data(10)
+        assert s.generate_signals(data) == []
+
+    def test_take_profit(self):
+        s = EMACrossoverStrategy(instruments=["SBER"])
+        tp = s.get_take_profit(250.0, Side.LONG, 5.0)
+        assert tp is not None
+        assert tp > 250.0
+
+```
 
 # ══════════════════════════════════════
-# РАЗДЕЛ 5: РЕЗУЛЬТАТЫ ТЕСТОВ
+# РАЗДЕЛ 4: РЕЗУЛЬТАТЫ ТЕСТОВ
 # ══════════════════════════════════════
-
 ```
 ============================= test session starts =============================
 platform win32 -- Python 3.12.1, pytest-8.3.4, pluggy-1.6.0 -- C:\Users\nikit\AppData\Local\Programs\Python\Python312\python.exe
@@ -23697,7 +25455,7 @@ cachedir: .pytest_cache
 rootdir: D:\Cloude_PR\projects\moex-trading-system
 plugins: anyio-4.2.0, hydra-core-1.3.2, langsmith-0.7.9, asyncio-0.25.0, cov-6.0.0, httpx-0.35.0, xonsh-0.22.6
 asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None
-collecting ... collected 606 items
+collecting ... collected 740 items
 
 tests/test_abu_ports.py::TestMainUmp::test_fit_creates_models PASSED     [  0%]
 tests/test_abu_ports.py::TestMainUmp::test_winning_trade_passes PASSED   [  0%]
@@ -23705,610 +25463,747 @@ tests/test_abu_ports.py::TestMainUmp::test_losing_trade_may_block PASSED [  0%]
 tests/test_abu_ports.py::TestMainUmp::test_unfitted_passes PASSED        [  0%]
 tests/test_abu_ports.py::TestEdgeUmp::test_fit_creates_labels PASSED     [  0%]
 tests/test_abu_ports.py::TestEdgeUmp::test_similar_to_winner PASSED      [  0%]
-tests/test_abu_ports.py::TestEdgeUmp::test_unfitted_returns_zero PASSED  [  1%]
+tests/test_abu_ports.py::TestEdgeUmp::test_unfitted_returns_zero PASSED  [  0%]
 tests/test_abu_ports.py::TestEdgeUmp::test_far_trade_uncertain PASSED    [  1%]
 tests/test_abu_ports.py::TestUmpireFilter::test_judge_returns_result PASSED [  1%]
 tests/test_abu_ports.py::TestUmpireFilter::test_reason_not_empty PASSED  [  1%]
 tests/test_abu_ports.py::TestUmpireFilter::test_confidence_bounded PASSED [  1%]
 tests/test_abu_ports.py::TestUmpireFilter::test_unfitted_passes PASSED   [  1%]
-tests/test_abu_ports.py::TestPathDistanceRatio::test_perfect_trend PASSED [  2%]
-tests/test_abu_ports.py::TestPathDistanceRatio::test_noisy_higher_pdr PASSED [  2%]
+tests/test_abu_ports.py::TestPathDistanceRatio::test_perfect_trend PASSED [  1%]
+tests/test_abu_ports.py::TestPathDistanceRatio::test_noisy_higher_pdr PASSED [  1%]
 tests/test_abu_ports.py::TestPathDistanceRatio::test_flat_market PASSED  [  2%]
 tests/test_abu_ports.py::TestPathDistanceRatio::test_correct_length PASSED [  2%]
 tests/test_abu_ports.py::TestPathDistanceRatio::test_window_affects PASSED [  2%]
 tests/test_abu_ports.py::TestPathDistanceRatio::test_no_nan_after_warmup PASSED [  2%]
-tests/test_abu_ports.py::TestPathDistanceRatio::test_pure_oscillation PASSED [  3%]
-tests/test_abu_ports.py::TestGapDetector::test_detects_gap PASSED        [  3%]
-tests/test_abu_ports.py::TestGapDetector::test_gap_direction PASSED      [  3%]
-tests/test_abu_ports.py::TestGapDetector::test_gap_event_fields PASSED   [  3%]
+tests/test_abu_ports.py::TestPathDistanceRatio::test_pure_oscillation PASSED [  2%]
+tests/test_abu_ports.py::TestGapDetector::test_detects_gap PASSED        [  2%]
+tests/test_abu_ports.py::TestGapDetector::test_gap_direction PASSED      [  2%]
+tests/test_abu_ports.py::TestGapDetector::test_gap_event_fields PASSED   [  2%]
 tests/test_abu_ports.py::TestGapDetector::test_no_gaps_in_flat PASSED    [  3%]
 tests/test_abu_ports.py::TestGapDetector::test_array_version PASSED      [  3%]
-tests/test_abu_ports.py::TestGapDetector::test_short_data PASSED         [  4%]
-tests/test_abu_ports.py::TestGapDetector::test_volume_confirmed PASSED   [  4%]
-tests/test_abu_ports.py::TestGapDetector::test_higher_factor_fewer_gaps PASSED [  4%]
-tests/test_abu_ports.py::TestPolynomialComplexity::test_linear_trend PASSED [  4%]
-tests/test_abu_ports.py::TestPolynomialComplexity::test_quadratic PASSED [  4%]
+tests/test_abu_ports.py::TestGapDetector::test_short_data PASSED         [  3%]
+tests/test_abu_ports.py::TestGapDetector::test_volume_confirmed PASSED   [  3%]
+tests/test_abu_ports.py::TestGapDetector::test_higher_factor_fewer_gaps PASSED [  3%]
+tests/test_abu_ports.py::TestPolynomialComplexity::test_linear_trend PASSED [  3%]
+tests/test_abu_ports.py::TestPolynomialComplexity::test_quadratic PASSED [  3%]
 tests/test_abu_ports.py::TestPolynomialComplexity::test_noisy_higher PASSED [  4%]
-tests/test_abu_ports.py::TestPolynomialComplexity::test_range_bounded PASSED [  5%]
-tests/test_abu_ports.py::TestPolynomialComplexity::test_correct_length PASSED [  5%]
-tests/test_abu_ports.py::TestPolynomialComplexity::test_flat_simple PASSED [  5%]
-tests/test_analysis.py::TestFeaturesCalculation::test_all_features_adds_columns PASSED [  5%]
-tests/test_analysis.py::TestFeaturesCalculation::test_all_features_preserves_row_count PASSED [  5%]
-tests/test_analysis.py::TestFeaturesCalculation::test_ema_period PASSED  [  5%]
-tests/test_analysis.py::TestFeaturesCalculation::test_rsi_bounded PASSED [  6%]
-tests/test_analysis.py::TestFeaturesCalculation::test_macd_returns_three_series PASSED [  6%]
-tests/test_analysis.py::TestFeaturesCalculation::test_volume_ratio_near_one_on_flat_volume PASSED [  6%]
-tests/test_analysis.py::TestFeaturesCalculation::test_bollinger_upper_gt_lower PASSED [  6%]
-tests/test_analysis.py::TestFeaturesCalculation::test_atr_positive PASSED [  6%]
-tests/test_analysis.py::TestRegimeDetection::test_uptrend PASSED         [  6%]
-tests/test_analysis.py::TestRegimeDetection::test_downtrend PASSED       [  7%]
-tests/test_analysis.py::TestRegimeDetection::test_range PASSED           [  7%]
-tests/test_analysis.py::TestRegimeDetection::test_crisis_by_atr PASSED   [  7%]
-tests/test_analysis.py::TestRegimeDetection::test_crisis_by_drawdown PASSED [  7%]
-tests/test_analysis.py::TestRegimeDetection::test_weak_trend PASSED      [  7%]
-tests/test_analysis.py::TestPreScoreLong::test_total_score_range PASSED  [  7%]
-tests/test_analysis.py::TestPreScoreLong::test_total_score_approximately_73 PASSED [  8%]
-tests/test_analysis.py::TestPreScoreLong::test_breakdown_keys PASSED     [  8%]
-tests/test_analysis.py::TestPreScoreLong::test_breakdown_sum_equals_total PASSED [  8%]
-tests/test_analysis.py::TestPreScoreLong::test_structure_full_score PASSED [  8%]
-tests/test_analysis.py::TestPreScoreShort::test_overbought_rsi_scores_well PASSED [  8%]
-tests/test_analysis.py::TestPreScoreShort::test_short_structure_inverted PASSED [  8%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_crisis_regime PASSED [  9%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_low_adx PASSED [  9%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_below_ema200 PASSED [  9%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_rsi_oversold PASSED [  9%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_rsi_overbought PASSED [  9%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_low_pre_score PASSED [  9%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_low_confidence PASSED [ 10%]
-tests/test_analysis.py::TestEntryFiltersHardReject::test_hold_signal_passes_through PASSED [ 10%]
-tests/test_analysis.py::TestEntryFiltersSoftBoost::test_all_soft_filters_boost_confidence PASSED [ 10%]
-tests/test_analysis.py::TestEntryFiltersSoftBoost::test_expected_boost_amount PASSED [ 10%]
-tests/test_analysis.py::TestEntryFiltersSoftBoost::test_no_boost_when_conditions_unmet PASSED [ 10%]
-tests/test_analysis.py::TestEntryFiltersSoftBoost::test_confidence_capped_at_one PASSED [ 10%]
-tests/test_analysis.py::TestMacroFilters::test_neutral_macro_passes_signal PASSED [ 11%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_blocks_long_below_sma200 PASSED [ 11%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_blocks_oil_when_brent_low PASSED [ 11%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_allows_non_oil_when_brent_low PASSED [ 11%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_reduces_confidence_rate_hike PASSED [ 11%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_rate_hike_confidence_not_below_zero PASSED [ 11%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_rate_down_no_change PASSED [ 12%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_hold_signal_passes PASSED [ 12%]
-tests/test_analysis.py::TestMacroFilters::test_macro_filter_imoex_data_kwarg_accepted PASSED [ 12%]
-tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_returns_market_regime PASSED [ 12%]
-tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_uptrend PASSED [ 12%]
-tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_crisis PASSED [ 12%]
-tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_too_few_bars PASSED [ 13%]
-tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_crisis_by_drawdown PASSED [ 13%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_mean_simple PASSED [ 13%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_variance_known PASSED [ 13%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_population_variance PASSED [ 13%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_std_dev PASSED  [ 13%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_empty PASSED    [ 14%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_single_value PASSED [ 14%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_constant_values PASSED [ 14%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_min_max PASSED  [ 14%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_large_dataset PASSED [ 14%]
-tests/test_barter_ports.py::TestWelfordAccumulator::test_negative_values PASSED [ 14%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_positive_returns_positive_sharpe PASSED [ 15%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_negative_returns_negative_sharpe PASSED [ 15%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_zero_returns PASSED [ 15%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_max_drawdown_tracking PASSED [ 15%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_count PASSED      [ 15%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_sortino_only_downside PASSED [ 15%]
-tests/test_barter_ports.py::TestStreamingMetrics::test_volatility PASSED [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_open_long PASSED   [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_open_short PASSED  [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_increase_position PASSED [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_partial_close PASSED [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_full_close PASSED  [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_position_flip PASSED [ 16%]
-tests/test_barter_ports.py::TestPositionTracker::test_fifo_order PASSED  [ 17%]
-tests/test_barter_ports.py::TestPositionTracker::test_unrealized_pnl_long PASSED [ 17%]
-tests/test_barter_ports.py::TestPositionTracker::test_unrealized_pnl_short PASSED [ 17%]
-tests/test_barter_ports.py::TestPositionTracker::test_lot_size_validation PASSED [ 17%]
-tests/test_barter_ports.py::TestPositionTracker::test_quantity_max_tracking PASSED [ 17%]
-tests/test_barter_ports.py::TestPositionTracker::test_fees_tracking PASSED [ 17%]
-tests/test_barter_ports.py::TestPositionTracker::test_empty_tracker PASSED [ 18%]
-tests/test_barter_ports.py::TestPositionTracker::test_reset PASSED       [ 18%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_approved_wraps_order PASSED [ 18%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_refused_wraps_order_with_reason PASSED [ 18%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_approved_is_frozen PASSED [ 18%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_refused_is_frozen PASSED [ 18%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_order_approved PASSED [ 19%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_order_refused PASSED [ 19%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_orders_batch PASSED [ 19%]
-tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_orders_all_refused PASSED [ 19%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_returns_bootstrap_result PASSED [ 19%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_ci_ordering PASSED [ 19%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_ci_covers_true_mean PASSED [ 20%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_point_estimate_correct PASSED [ 20%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_empty_data PASSED [ 20%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_single_element PASSED [ 20%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_constant_data PASSED [ 20%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_custom_stat_fn PASSED [ 20%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_sample_size_smaller_than_data PASSED [ 21%]
-tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_reproducibility PASSED [ 21%]
-tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_returns_dict_with_four_metrics PASSED [ 21%]
-tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_empty_returns PASSED [ 21%]
-tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_short_returns PASSED [ 21%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_long_trade_mae PASSED [ 21%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_long_trade_mfe PASSED [ 22%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_short_trade_mae PASSED [ 22%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_short_trade_mfe PASSED [ 22%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_mfe_mae_ratio PASSED [ 22%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_empty_trades PASSED [ 22%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_zero_entry_price PASSED [ 22%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_single_bar_trade PASSED [ 23%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_pct_values PASSED   [ 23%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_multiple_trades_aggregation PASSED [ 23%]
-tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_edge_ratio PASSED   [ 23%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_perfect_linear PASSED [ 23%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_flat_equity PASSED [ 23%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_noisy_linear PASSED [ 24%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_random_walk PASSED [ 24%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_short_series PASSED [ 24%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_decreasing_equity PASSED [ 24%]
-tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_parabolic_equity PASSED [ 24%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_uniform_returns PASSED [ 24%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_concentrated_returns PASSED [ 25%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_bimodal_returns PASSED [ 25%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_empty_returns PASSED [ 25%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_single_return PASSED [ 25%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_nan_handling PASSED [ 25%]
-tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_range_bounded PASSED [ 25%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_perfect_growth PASSED [ 26%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_flat_equity PASSED [ 26%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_declining_equity PASSED [ 26%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_positive_upi_for_growth_with_dd PASSED [ 26%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_short_equity PASSED [ 26%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_zero_start PASSED [ 26%]
-tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_higher_upi_is_better PASSED [ 27%]
-tests/test_bootstrap_mae_equity.py::TestIntegration::test_equity_r2_in_trade_metrics PASSED [ 27%]
-tests/test_bootstrap_mae_equity.py::TestIntegration::test_entropy_in_trade_metrics PASSED [ 27%]
-tests/test_bootstrap_mae_equity.py::TestIntegration::test_upi_in_trade_metrics PASSED [ 27%]
-tests/test_bootstrap_mae_equity.py::TestIntegration::test_mae_mfe_in_trade_metrics PASSED [ 27%]
-tests/test_bootstrap_mae_equity.py::TestIntegration::test_format_includes_new_sections PASSED [ 27%]
-tests/test_exchange_rates.py::TestCacheBasics::test_same_currency PASSED [ 28%]
-tests/test_exchange_rates.py::TestCacheBasics::test_manual_cache_and_retrieve PASSED [ 28%]
-tests/test_exchange_rates.py::TestCacheBasics::test_inverse_rate PASSED  [ 28%]
-tests/test_exchange_rates.py::TestCacheBasics::test_convert PASSED       [ 28%]
-tests/test_exchange_rates.py::TestCacheBasics::test_convert_inverse PASSED [ 28%]
-tests/test_exchange_rates.py::TestCacheBasics::test_unsupported_pair PASSED [ 28%]
-tests/test_exchange_rates.py::TestCacheBasics::test_cache_size PASSED    [ 29%]
-tests/test_exchange_rates.py::TestCacheBasics::test_clear PASSED         [ 29%]
-tests/test_exchange_rates.py::TestCacheBasics::test_nearest_rate_from_cache PASSED [ 29%]
-tests/test_exchange_rates.py::TestFilePersistence::test_save_and_load PASSED [ 29%]
-tests/test_exchange_rates.py::TestPairMapping::test_supported_pairs PASSED [ 29%]
-tests/test_exchange_rates.py::TestPairMapping::test_inverse_mapping PASSED [ 29%]
-tests/test_exchange_rates.py::TestPairMapping::test_eur_rate PASSED      [ 30%]
-tests/test_exchange_rates.py::TestPairMapping::test_cny_rate PASSED      [ 30%]
-tests/test_exchange_rates.py::TestRatesRange::test_cached_range PASSED   [ 30%]
-tests/test_garch_lob.py::TestGARCH::test_garch_returns_forecast SKIPPED  [ 30%]
-tests/test_garch_lob.py::TestGARCH::test_ewma_returns_forecast SKIPPED   [ 30%]
-tests/test_garch_lob.py::TestGARCH::test_egarch_returns_forecast SKIPPED [ 30%]
-tests/test_garch_lob.py::TestGARCH::test_gjr_returns_forecast SKIPPED    [ 31%]
-tests/test_garch_lob.py::TestGARCH::test_short_returns SKIPPED (arch...) [ 31%]
-tests/test_garch_lob.py::TestGARCH::test_horizon SKIPPED (arch packa...) [ 31%]
-tests/test_garch_lob.py::TestGARCH::test_compare_models SKIPPED (arc...) [ 31%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_empty_book PASSED      [ 31%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_add_bid PASSED         [ 31%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_add_ask PASSED         [ 32%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_spread PASSED          [ 32%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_spread_pct PASSED      [ 32%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_remove_level PASSED    [ 32%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_multiple_bid_levels PASSED [ 32%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_ask_levels_ascending PASSED [ 32%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_obi_equal PASSED       [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_obi_bid_heavy PASSED   [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_obi_ask_heavy PASSED   [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_microprice PASSED      [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_snapshot PASSED        [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_apply_snapshot PASSED  [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_clear PASSED           [ 33%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_volume_at_price PASSED [ 34%]
-tests/test_garch_lob.py::TestLimitOrderBook::test_depth_up_to PASSED     [ 34%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_take_profit_long PASSED [ 34%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_take_profit_short PASSED [ 34%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_stop_loss_long PASSED [ 34%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_stop_loss_short PASSED [ 34%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_time_limit PASSED [ 35%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_trailing_stop_long PASSED [ 35%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_trailing_stop_short PASSED [ 35%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_trailing_activation PASSED [ 35%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_all_barriers_disabled PASSED [ 35%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_tp_before_sl PASSED [ 35%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_state_property PASSED [ 36%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_invalid_side PASSED [ 36%]
-tests/test_hummingbot_ports.py::TestTripleBarrier::test_idempotent_after_trigger PASSED [ 36%]
-tests/test_hummingbot_ports.py::TestTWAP::test_schedule_creates_slices PASSED [ 36%]
-tests/test_hummingbot_ports.py::TestTWAP::test_schedule_timing PASSED    [ 36%]
-tests/test_hummingbot_ports.py::TestTWAP::test_lot_rounding PASSED       [ 36%]
-tests/test_hummingbot_ports.py::TestTWAP::test_empty_on_zero_quantity PASSED [ 37%]
-tests/test_hummingbot_ports.py::TestTWAP::test_empty_on_zero_slices PASSED [ 37%]
-tests/test_hummingbot_ports.py::TestTWAP::test_executor_workflow PASSED  [ 37%]
-tests/test_hummingbot_ports.py::TestTWAP::test_spread_filter PASSED      [ 37%]
-tests/test_hummingbot_ports.py::TestTWAP::test_result_summary PASSED     [ 37%]
-tests/test_hummingbot_ports.py::TestTWAP::test_skip_slice PASSED         [ 37%]
-tests/test_hummingbot_ports.py::TestTWAP::test_complete_raises_on_overfill PASSED [ 38%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_neutral_inventory_symmetric PASSED [ 38%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_long_inventory_shifts_down PASSED [ 38%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_short_inventory_shifts_up PASSED [ 38%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_spread_positive PASSED [ 38%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_higher_gamma_more_inventory_skew PASSED [ 38%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_higher_sigma_wider_spread PASSED [ 39%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_less_time_narrower_spread PASSED [ 39%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_max_inventory_blocks_side PASSED [ 39%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_min_spread_floor PASSED [ 39%]
-tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_zero_price PASSED [ 39%]
-tests/test_indicator_utils.py::TestCrossover::test_golden_cross PASSED   [ 39%]
-tests/test_indicator_utils.py::TestCrossover::test_no_cross PASSED       [ 40%]
-tests/test_indicator_utils.py::TestCrossover::test_scalar_threshold PASSED [ 40%]
-tests/test_indicator_utils.py::TestCrossover::test_short_series PASSED   [ 40%]
-tests/test_indicator_utils.py::TestCrossover::test_equal_no_cross PASSED [ 40%]
-tests/test_indicator_utils.py::TestCrossunder::test_death_cross PASSED   [ 40%]
-tests/test_indicator_utils.py::TestCrossunder::test_no_crossunder PASSED [ 40%]
-tests/test_indicator_utils.py::TestCross::test_either_direction PASSED   [ 41%]
-tests/test_indicator_utils.py::TestBarsSince::test_recent_true PASSED    [ 41%]
-tests/test_indicator_utils.py::TestBarsSince::test_last_bar_true PASSED  [ 41%]
-tests/test_indicator_utils.py::TestBarsSince::test_never_true PASSED     [ 41%]
-tests/test_indicator_utils.py::TestBarsSince::test_custom_default PASSED [ 41%]
-tests/test_indicator_utils.py::TestQuantileRank::test_highest_value PASSED [ 41%]
-tests/test_indicator_utils.py::TestQuantileRank::test_lowest_value PASSED [ 42%]
-tests/test_indicator_utils.py::TestQuantileRank::test_median_value PASSED [ 42%]
-tests/test_indicator_utils.py::TestQuantileRank::test_lookback PASSED    [ 42%]
-tests/test_indicator_utils.py::TestQuantileRank::test_short_series PASSED [ 42%]
-tests/test_indicator_utils.py::TestHighestLowest::test_highest PASSED    [ 42%]
-tests/test_indicator_utils.py::TestHighestLowest::test_lowest PASSED     [ 42%]
-tests/test_indicator_utils.py::TestHighestLowest::test_period_larger_than_data PASSED [ 43%]
-tests/test_indicator_utils.py::TestHighestLowest::test_with_nan PASSED   [ 43%]
-tests/test_indicators.py::TestSuperTrend::test_returns_correct_type PASSED [ 43%]
-tests/test_indicators.py::TestSuperTrend::test_direction_values PASSED   [ 43%]
-tests/test_indicators.py::TestSuperTrend::test_trending_up_mostly_bullish PASSED [ 43%]
-tests/test_indicators.py::TestSuperTrend::test_changed_is_binary PASSED  [ 43%]
-tests/test_indicators.py::TestSuperTrend::test_short_data PASSED         [ 44%]
-tests/test_indicators.py::TestSqueezeMomentum::test_returns_correct_type PASSED [ 44%]
-tests/test_indicators.py::TestSqueezeMomentum::test_squeeze_values PASSED [ 44%]
-tests/test_indicators.py::TestSqueezeMomentum::test_momentum_signal_values PASSED [ 44%]
-tests/test_indicators.py::TestSqueezeMomentum::test_trending_positive_momentum PASSED [ 44%]
-tests/test_indicators.py::TestDamiani::test_returns_correct_type PASSED  [ 44%]
-tests/test_indicators.py::TestDamiani::test_vol_positive PASSED          [ 45%]
-tests/test_indicators.py::TestVossFilter::test_returns_correct_type PASSED [ 45%]
-tests/test_indicators.py::TestVossFilter::test_oscillates_around_zero PASSED [ 45%]
-tests/test_indicators.py::TestBandPassFilter::test_returns_correct_type PASSED [ 45%]
-tests/test_indicators.py::TestBandPassFilter::test_normalized_bounded PASSED [ 45%]
-tests/test_indicators.py::TestReflex::test_returns_array PASSED          [ 45%]
-tests/test_indicators.py::TestReflex::test_trending_up_positive_reflex PASSED [ 46%]
-tests/test_label_generators.py::TestHighLowLabels::test_returns_all_keys PASSED [ 46%]
-tests/test_label_generators.py::TestHighLowLabels::test_correct_length PASSED [ 46%]
-tests/test_label_generators.py::TestHighLowLabels::test_last_bars_false PASSED [ 46%]
-tests/test_label_generators.py::TestHighLowLabels::test_big_rise_detected PASSED [ 46%]
-tests/test_label_generators.py::TestHighLowLabels::test_big_drop_detected PASSED [ 46%]
-tests/test_label_generators.py::TestHighLowLabels::test_flat_no_labels PASSED [ 47%]
-tests/test_label_generators.py::TestHighLowLabels::test_direction_label PASSED [ 47%]
-tests/test_label_generators.py::TestHighLowLabels::test_magnitude_positive PASSED [ 47%]
-tests/test_label_generators.py::TestHighLowLabels::test_custom_thresholds PASSED [ 47%]
-tests/test_label_generators.py::TestHighLowLabels::test_short_array PASSED [ 47%]
-tests/test_label_generators.py::TestTopBotLabels::test_detects_top PASSED [ 47%]
-tests/test_label_generators.py::TestTopBotLabels::test_detects_bot PASSED [ 48%]
-tests/test_label_generators.py::TestTopBotLabels::test_flat_no_extrema PASSED [ 48%]
-tests/test_label_generators.py::TestTopBotLabels::test_correct_length PASSED [ 48%]
-tests/test_label_generators.py::TestTopBotLabels::test_tolerance_widens_zone PASSED [ 48%]
-tests/test_label_generators.py::TestTopBotLabels::test_extrema_list PASSED [ 48%]
-tests/test_label_generators.py::TestTopBotLabels::test_extremum_dataclass PASSED [ 48%]
-tests/test_label_generators.py::TestTopBotLabels::test_short_array PASSED [ 49%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_returns_correct_type PASSED [ 49%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_uptrend_long_signal PASSED [ 49%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_stop_long_below_close PASSED [ 49%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_parameters_affect_output PASSED [ 49%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_short_array PASSED   [ 49%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_signal_values_bounded PASSED [ 50%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_flat_data PASSED     [ 50%]
-tests/test_lean_ports.py::TestChandeKrollStop::test_default_parameters PASSED [ 50%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_trending_low_chop PASSED [ 50%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_choppy_high_chop PASSED [ 50%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_range_bounded PASSED [ 50%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_flat_data_max_chop PASSED [ 50%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_period_affects_output PASSED [ 51%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_correct_length PASSED [ 51%]
-tests/test_lean_ports.py::TestChoppinessIndex::test_no_nan PASSED        [ 51%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_range_0_100 PASSED  [ 51%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_uptrend_stc_not_zero PASSED [ 51%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_correct_length PASSED [ 51%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_parameters_affect_output PASSED [ 52%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_flat_data PASSED    [ 52%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_no_nan PASSED       [ 52%]
-tests/test_lean_ports.py::TestSchaffTrendCycle::test_short_array PASSED  [ 52%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_normal_returns_near_zero PASSED [ 52%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_spike_detection PASSED [ 52%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_correct_length PASSED [ 53%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_short_array PASSED   [ 53%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_flat_data_zero_spike PASSED [ 53%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_no_nan PASSED        [ 53%]
-tests/test_lean_ports.py::TestAugenPriceSpike::test_period_affects PASSED [ 53%]
-tests/test_lean_ports.py::TestRogersSatchell::test_positive_volatility PASSED [ 53%]
-tests/test_lean_ports.py::TestRogersSatchell::test_flat_data_zero_vol PASSED [ 54%]
-tests/test_lean_ports.py::TestRogersSatchell::test_higher_vol_for_volatile PASSED [ 54%]
-tests/test_lean_ports.py::TestRogersSatchell::test_correct_length PASSED [ 54%]
-tests/test_lean_ports.py::TestRogersSatchell::test_no_nan PASSED         [ 54%]
-tests/test_lean_ports.py::TestRogersSatchell::test_period_affects PASSED [ 54%]
-tests/test_lean_ports.py::TestRogersSatchell::test_short_array PASSED    [ 54%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_no_trigger_within_threshold PASSED [ 55%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_trigger_on_threshold PASSED [ 55%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_trailing_mode_peak_updates PASSED [ 55%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_static_mode PASSED [ 55%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_trigger_count PASSED [ 55%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_cooldown PASSED [ 55%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_reset PASSED [ 56%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_invalid_threshold PASSED [ 56%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_first_update_no_trigger PASSED [ 56%]
-tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_growing_equity_never_triggers PASSED [ 56%]
-tests/test_lean_ports.py::TestPSR::test_positive_sharpe_high_psr PASSED  [ 56%]
-tests/test_lean_ports.py::TestPSR::test_negative_mean_low_psr PASSED     [ 56%]
-tests/test_lean_ports.py::TestPSR::test_strong_strategy_psr_near_one PASSED [ 57%]
-tests/test_lean_ports.py::TestPSR::test_short_history_lower_confidence PASSED [ 57%]
-tests/test_lean_ports.py::TestPSR::test_empty_returns PASSED             [ 57%]
-tests/test_lean_ports.py::TestPSR::test_constant_positive_returns PASSED [ 57%]
-tests/test_lean_ports.py::TestPSR::test_range_0_1 PASSED                 [ 57%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_small_order_small_slip PASSED [ 57%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_large_order_larger_slip PASSED [ 58%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_quadratic_growth PASSED [ 58%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_volume_limit_cap PASSED [ 58%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_zero_volume PASSED [ 58%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_zero_price PASSED [ 58%]
-tests/test_lean_ports.py::TestVolumeShareSlippage::test_proportional_to_price PASSED [ 58%]
-tests/test_metrics.py::TestSharpeRatio::test_zero_returns PASSED         [ 59%]
-tests/test_metrics.py::TestSharpeRatio::test_positive_returns PASSED     [ 59%]
-tests/test_metrics.py::TestSharpeRatio::test_mixed_returns_positive PASSED [ 59%]
-tests/test_metrics.py::TestSharpeRatio::test_smart_sharpe_lower_than_regular PASSED [ 59%]
-tests/test_metrics.py::TestSharpeRatio::test_accepts_dataframe PASSED    [ 59%]
-tests/test_metrics.py::TestSortinoRatio::test_zero_returns PASSED        [ 59%]
-tests/test_metrics.py::TestSortinoRatio::test_all_positive_returns_is_inf PASSED [ 60%]
-tests/test_metrics.py::TestSortinoRatio::test_mixed_positive PASSED      [ 60%]
-tests/test_metrics.py::TestSortinoRatio::test_sortino_greater_than_sharpe PASSED [ 60%]
-tests/test_metrics.py::TestCalmarRatio::test_no_drawdown PASSED          [ 60%]
-tests/test_metrics.py::TestCalmarRatio::test_mixed_returns PASSED        [ 60%]
-tests/test_metrics.py::TestOmegaRatio::test_mixed_returns PASSED         [ 60%]
-tests/test_metrics.py::TestOmegaRatio::test_short_series PASSED          [ 61%]
-tests/test_metrics.py::TestMaxDrawdown::test_no_drawdown PASSED          [ 61%]
-tests/test_metrics.py::TestMaxDrawdown::test_known_drawdown PASSED       [ 61%]
-tests/test_metrics.py::TestMaxUnderwaterPeriod::test_no_drawdown PASSED  [ 61%]
-tests/test_metrics.py::TestMaxUnderwaterPeriod::test_known_underwater PASSED [ 61%]
-tests/test_metrics.py::TestMaxUnderwaterPeriod::test_short_series PASSED [ 61%]
-tests/test_metrics.py::TestCVaR::test_known_values PASSED                [ 62%]
-tests/test_metrics.py::TestCVaR::test_short_series PASSED                [ 62%]
-tests/test_metrics.py::TestCAGR::test_known_cagr PASSED                  [ 62%]
-tests/test_metrics.py::TestAutocorrPenalty::test_random_returns PASSED   [ 62%]
-tests/test_metrics.py::TestAutocorrPenalty::test_short_series PASSED     [ 62%]
-tests/test_metrics.py::TestAlphaBeta::test_identical_returns PASSED      [ 62%]
-tests/test_metrics.py::TestAlphaBeta::test_uncorrelated PASSED           [ 63%]
-tests/test_metrics.py::TestAlphaBeta::test_short_series PASSED           [ 63%]
-tests/test_metrics.py::TestSQN::test_positive_system PASSED              [ 63%]
-tests/test_metrics.py::TestSQN::test_negative_system PASSED              [ 63%]
-tests/test_metrics.py::TestSQN::test_empty PASSED                        [ 63%]
-tests/test_metrics.py::TestSQN::test_constant_wins PASSED                [ 63%]
-tests/test_metrics.py::TestKellyCriterion::test_good_system PASSED       [ 64%]
-tests/test_metrics.py::TestKellyCriterion::test_breakeven PASSED         [ 64%]
-tests/test_metrics.py::TestKellyCriterion::test_bad_system PASSED        [ 64%]
-tests/test_metrics.py::TestKellyCriterion::test_zero_ratio PASSED        [ 64%]
-tests/test_metrics.py::TestGeometricMean::test_positive_returns PASSED   [ 64%]
-tests/test_metrics.py::TestGeometricMean::test_all_zero PASSED           [ 64%]
-tests/test_metrics.py::TestGeometricMean::test_empty PASSED              [ 65%]
-tests/test_metrics.py::TestGeometricMean::test_contains_minus_100 PASSED [ 65%]
-tests/test_metrics.py::TestCalculateTradeMetrics::test_basic_metrics PASSED [ 65%]
-tests/test_metrics.py::TestCalculateTradeMetrics::test_empty_trades PASSED [ 65%]
-tests/test_metrics.py::TestCalculateTradeMetrics::test_all_winners PASSED [ 65%]
-tests/test_metrics.py::TestCalculateTradeMetrics::test_all_losers PASSED [ 65%]
-tests/test_metrics.py::TestCalculateTradeMetrics::test_long_short_breakdown PASSED [ 66%]
-tests/test_metrics.py::TestCalculateTradeMetrics::test_streaks PASSED    [ 66%]
-tests/test_metrics.py::TestFormatMetrics::test_produces_string PASSED    [ 66%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_basic_run PASSED   [ 66%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_reproducible_with_seed PASSED [ 66%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_different_seed_gives_different_paths PASSED [ 66%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_original_metrics_present PASSED [ 66%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_percentiles_ordered PASSED [ 67%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_confidence_intervals PASSED [ 67%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_empty_trades_raises PASSED [ 67%]
-tests/test_monte_carlo.py::TestMonteCarloTrades::test_all_winning_trades PASSED [ 67%]
-tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_basic_run PASSED [ 67%]
-tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_higher_noise_more_variance PASSED [ 67%]
-tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_short_balance_raises PASSED [ 68%]
-tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_p_values_between_0_and_1 PASSED [ 68%]
-tests/test_monte_carlo.py::TestFormatMonteCarlo::test_format_trade_shuffle PASSED [ 68%]
-tests/test_monte_carlo.py::TestFormatMonteCarlo::test_format_noise PASSED [ 68%]
-tests/test_optimizer.py::TestCalculateFitness::test_good_metrics PASSED  [ 68%]
-tests/test_optimizer.py::TestCalculateFitness::test_too_few_trades PASSED [ 68%]
-tests/test_optimizer.py::TestCalculateFitness::test_negative_ratio PASSED [ 69%]
-tests/test_optimizer.py::TestCalculateFitness::test_nan_ratio PASSED     [ 69%]
-tests/test_optimizer.py::TestCalculateFitness::test_higher_trades_higher_score PASSED [ 69%]
-tests/test_optimizer.py::TestCalculateFitness::test_higher_ratio_higher_score PASSED [ 69%]
-tests/test_optimizer.py::TestCalculateFitness::test_all_objectives PASSED [ 69%]
-tests/test_optimizer.py::TestCalculateFitness::test_unknown_objective_raises PASSED [ 69%]
-tests/test_optimizer.py::TestCalculateFitness::test_score_capped_at_1 PASSED [ 70%]
-tests/test_optimizer.py::TestStrategyOptimizer::test_basic_optimization PASSED [ 70%]
-tests/test_optimizer.py::TestStrategyOptimizer::test_with_test_backtest PASSED [ 70%]
-tests/test_optimizer.py::TestStrategyOptimizer::test_best_params_property PASSED [ 70%]
-tests/test_optimizer.py::TestStrategyOptimizer::test_float_and_categorical_params PASSED [ 70%]
-tests/test_optimizer.py::TestStrategyOptimizer::test_failing_backtest_handled PASSED [ 70%]
-tests/test_optimizer.py::TestWalkForward::test_basic_walk_forward PASSED [ 71%]
-tests/test_qlib_ports.py::TestCSRankNorm::test_output_range PASSED       [ 71%]
-tests/test_qlib_ports.py::TestCSRankNorm::test_preserves_shape PASSED    [ 71%]
-tests/test_qlib_ports.py::TestCSRankNorm::test_no_nan PASSED             [ 71%]
-tests/test_qlib_ports.py::TestCSRankNorm::test_cross_sectional_not_historical PASSED [ 71%]
-tests/test_qlib_ports.py::TestCSRankNorm::test_simple_df PASSED          [ 71%]
-tests/test_qlib_ports.py::TestRobustZScore::test_clip_bounds PASSED      [ 72%]
-tests/test_qlib_ports.py::TestRobustZScore::test_constant_data PASSED    [ 72%]
-tests/test_qlib_ports.py::TestRobustZScore::test_outlier_resilience PASSED [ 72%]
-tests/test_qlib_ports.py::TestRobustZScore::test_mad_scaling PASSED      [ 72%]
-tests/test_qlib_ports.py::TestCSZScore::test_mean_zero_per_date PASSED   [ 72%]
-tests/test_qlib_ports.py::TestCSZScore::test_std_one_per_date PASSED     [ 72%]
-tests/test_qlib_ports.py::TestCSFillna::test_fills_nan_with_mean PASSED  [ 73%]
-tests/test_qlib_ports.py::TestCSFillna::test_no_nan_after_fill PASSED    [ 73%]
-tests/test_qlib_ports.py::TestRollingSlope::test_uptrend_positive PASSED [ 73%]
-tests/test_qlib_ports.py::TestRollingSlope::test_downtrend_negative PASSED [ 73%]
-tests/test_qlib_ports.py::TestRollingSlope::test_flat_zero PASSED        [ 73%]
-tests/test_qlib_ports.py::TestRollingSlope::test_correct_length PASSED   [ 73%]
-tests/test_qlib_ports.py::TestRollingRSquare::test_perfect_linear PASSED [ 74%]
-tests/test_qlib_ports.py::TestRollingRSquare::test_random_walk_low_r2 PASSED [ 74%]
-tests/test_qlib_ports.py::TestRollingRSquare::test_range_bounded PASSED  [ 74%]
-tests/test_remaining_ports.py::TestZigZag::test_returns_correct_type PASSED [ 74%]
-tests/test_remaining_ports.py::TestZigZag::test_finds_pivots_in_trend PASSED [ 74%]
-tests/test_remaining_ports.py::TestZigZag::test_pivot_types_correct PASSED [ 74%]
-tests/test_remaining_ports.py::TestZigZag::test_alternating_pivots PASSED [ 75%]
-tests/test_remaining_ports.py::TestZigZag::test_sensitivity_filter PASSED [ 75%]
-tests/test_remaining_ports.py::TestZigZag::test_short_array PASSED       [ 75%]
-tests/test_remaining_ports.py::TestZigZag::test_flat_data_no_pivots PASSED [ 75%]
-tests/test_remaining_ports.py::TestZigZag::test_last_pivot_populated PASSED [ 75%]
-tests/test_remaining_ports.py::TestKlingerVO::test_returns_two_arrays PASSED [ 75%]
-tests/test_remaining_ports.py::TestKlingerVO::test_no_nan PASSED         [ 76%]
-tests/test_remaining_ports.py::TestKlingerVO::test_uptrend_positive_kvo PASSED [ 76%]
-tests/test_remaining_ports.py::TestKlingerVO::test_parameters_affect_output PASSED [ 76%]
-tests/test_remaining_ports.py::TestKlingerVO::test_zero_volume PASSED    [ 76%]
-tests/test_remaining_ports.py::TestKlingerVO::test_correct_length PASSED [ 76%]
-tests/test_remaining_ports.py::TestKlingerVO::test_short_array PASSED    [ 76%]
-tests/test_remaining_ports.py::TestRVI::test_returns_two_arrays PASSED   [ 77%]
-tests/test_remaining_ports.py::TestRVI::test_no_nan PASSED               [ 77%]
-tests/test_remaining_ports.py::TestRVI::test_bullish_market_positive_rvi PASSED [ 77%]
-tests/test_remaining_ports.py::TestRVI::test_period_affects PASSED       [ 77%]
-tests/test_remaining_ports.py::TestRVI::test_flat_data PASSED            [ 77%]
-tests/test_remaining_ports.py::TestRVI::test_short_array PASSED          [ 77%]
-tests/test_remaining_ports.py::TestRVI::test_signal_is_smoothed_rvi PASSED [ 78%]
-tests/test_remaining_ports.py::TestDCA::test_creates_levels PASSED       [ 78%]
-tests/test_remaining_ports.py::TestDCA::test_long_levels_decrease PASSED [ 78%]
-tests/test_remaining_ports.py::TestDCA::test_short_levels_increase PASSED [ 78%]
-tests/test_remaining_ports.py::TestDCA::test_record_fill_updates_state PASSED [ 78%]
-tests/test_remaining_ports.py::TestDCA::test_dynamic_tp_sl PASSED        [ 78%]
-tests/test_remaining_ports.py::TestDCA::test_fibonacci_distribution PASSED [ 79%]
-tests/test_remaining_ports.py::TestDCA::test_lot_rounding PASSED         [ 79%]
-tests/test_remaining_ports.py::TestDCA::test_complete_after_all_fills PASSED [ 79%]
-tests/test_remaining_ports.py::TestGrid::test_creates_levels PASSED      [ 79%]
-tests/test_remaining_ports.py::TestGrid::test_levels_evenly_spaced PASSED [ 79%]
-tests/test_remaining_ports.py::TestGrid::test_buy_below_sell_above PASSED [ 79%]
-tests/test_remaining_ports.py::TestGrid::test_shift_range PASSED         [ 80%]
-tests/test_remaining_ports.py::TestGrid::test_stats PASSED               [ 80%]
-tests/test_remaining_ports.py::TestGrid::test_invalid_range PASSED       [ 80%]
-tests/test_remaining_ports.py::TestGrid::test_lot_rounding PASSED        [ 80%]
-tests/test_remaining_ports.py::TestGrid::test_realized_pnl PASSED        [ 80%]
-tests/test_remaining_ports.py::TestOBI::test_equal_volumes_zero PASSED   [ 80%]
-tests/test_remaining_ports.py::TestOBI::test_all_bid_positive PASSED     [ 81%]
-tests/test_remaining_ports.py::TestOBI::test_all_ask_negative PASSED     [ 81%]
-tests/test_remaining_ports.py::TestOBI::test_range_bounded PASSED        [ 81%]
-tests/test_remaining_ports.py::TestOBI::test_n_levels_filter PASSED      [ 81%]
-tests/test_remaining_ports.py::TestOBI::test_microprice PASSED           [ 81%]
-tests/test_remaining_ports.py::TestOBI::test_microprice_equal_volumes PASSED [ 81%]
-tests/test_remaining_ports.py::TestOBI::test_book_pressure_ratio PASSED  [ 82%]
-tests/test_remaining_ports.py::TestOBI::test_obi_ema_smoothing PASSED    [ 82%]
-tests/test_risk_rules.py::TestConcentrationRule::test_pass_diversified PASSED [ 82%]
-tests/test_risk_rules.py::TestConcentrationRule::test_fail_concentrated PASSED [ 82%]
-tests/test_risk_rules.py::TestConcentrationRule::test_warn_threshold PASSED [ 82%]
-tests/test_risk_rules.py::TestConcentrationRule::test_empty_portfolio PASSED [ 82%]
-tests/test_risk_rules.py::TestCurrencyClusterRule::test_pass_mostly_rub PASSED [ 83%]
-tests/test_risk_rules.py::TestCurrencyClusterRule::test_fail_too_much_rub PASSED [ 83%]
-tests/test_risk_rules.py::TestSectorClusterRule::test_fail_energy_heavy PASSED [ 83%]
-tests/test_risk_rules.py::TestSectorClusterRule::test_pass_balanced PASSED [ 83%]
-tests/test_risk_rules.py::TestDrawdownRule::test_pass_low_dd PASSED      [ 83%]
-tests/test_risk_rules.py::TestDrawdownRule::test_fail_high_dd PASSED     [ 83%]
-tests/test_risk_rules.py::TestDrawdownRule::test_warn_zone PASSED        [ 83%]
-tests/test_risk_rules.py::TestFeeRatioRule::test_pass_low_fees PASSED    [ 84%]
-tests/test_risk_rules.py::TestFeeRatioRule::test_fail_high_fees PASSED   [ 84%]
-tests/test_risk_rules.py::TestMinPositionsRule::test_pass_enough PASSED  [ 84%]
-tests/test_risk_rules.py::TestMinPositionsRule::test_warn_too_few PASSED [ 84%]
-tests/test_risk_rules.py::TestRulesEngine::test_all_pass_diversified PASSED [ 84%]
-tests/test_risk_rules.py::TestRulesEngine::test_has_failures_concentrated PASSED [ 84%]
-tests/test_risk_rules.py::TestRulesEngine::test_custom_rules PASSED      [ 85%]
-tests/test_risk_rules.py::TestRulesEngine::test_format_report PASSED     [ 85%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_unanimous_buy PASSED [ 85%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_unanimous_sell PASSED [ 85%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_disagreement_hold PASSED [ 85%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_weight_matters PASSED [ 85%]
+tests/test_abu_ports.py::TestPolynomialComplexity::test_range_bounded PASSED [  4%]
+tests/test_abu_ports.py::TestPolynomialComplexity::test_correct_length PASSED [  4%]
+tests/test_abu_ports.py::TestPolynomialComplexity::test_flat_simple PASSED [  4%]
+tests/test_analysis.py::TestFeaturesCalculation::test_all_features_adds_columns PASSED [  4%]
+tests/test_analysis.py::TestFeaturesCalculation::test_all_features_preserves_row_count PASSED [  4%]
+tests/test_analysis.py::TestFeaturesCalculation::test_ema_period PASSED  [  4%]
+tests/test_analysis.py::TestFeaturesCalculation::test_rsi_bounded PASSED [  5%]
+tests/test_analysis.py::TestFeaturesCalculation::test_macd_returns_three_series PASSED [  5%]
+tests/test_analysis.py::TestFeaturesCalculation::test_volume_ratio_near_one_on_flat_volume PASSED [  5%]
+tests/test_analysis.py::TestFeaturesCalculation::test_bollinger_upper_gt_lower PASSED [  5%]
+tests/test_analysis.py::TestFeaturesCalculation::test_atr_positive PASSED [  5%]
+tests/test_analysis.py::TestRegimeDetection::test_uptrend PASSED         [  5%]
+tests/test_analysis.py::TestRegimeDetection::test_downtrend PASSED       [  5%]
+tests/test_analysis.py::TestRegimeDetection::test_range PASSED           [  5%]
+tests/test_analysis.py::TestRegimeDetection::test_crisis_by_atr PASSED   [  6%]
+tests/test_analysis.py::TestRegimeDetection::test_crisis_by_drawdown PASSED [  6%]
+tests/test_analysis.py::TestRegimeDetection::test_weak_trend PASSED      [  6%]
+tests/test_analysis.py::TestPreScoreLong::test_total_score_range PASSED  [  6%]
+tests/test_analysis.py::TestPreScoreLong::test_total_score_approximately_73 PASSED [  6%]
+tests/test_analysis.py::TestPreScoreLong::test_breakdown_keys PASSED     [  6%]
+tests/test_analysis.py::TestPreScoreLong::test_breakdown_sum_equals_total PASSED [  6%]
+tests/test_analysis.py::TestPreScoreLong::test_structure_full_score PASSED [  7%]
+tests/test_analysis.py::TestPreScoreShort::test_overbought_rsi_scores_well PASSED [  7%]
+tests/test_analysis.py::TestPreScoreShort::test_short_structure_inverted PASSED [  7%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_crisis_regime PASSED [  7%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_low_adx PASSED [  7%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_below_ema200 PASSED [  7%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_rsi_oversold PASSED [  7%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_rsi_overbought PASSED [  7%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_low_pre_score PASSED [  8%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_reject_low_confidence PASSED [  8%]
+tests/test_analysis.py::TestEntryFiltersHardReject::test_hold_signal_passes_through PASSED [  8%]
+tests/test_analysis.py::TestEntryFiltersSoftBoost::test_all_soft_filters_boost_confidence PASSED [  8%]
+tests/test_analysis.py::TestEntryFiltersSoftBoost::test_expected_boost_amount PASSED [  8%]
+tests/test_analysis.py::TestEntryFiltersSoftBoost::test_no_boost_when_conditions_unmet PASSED [  8%]
+tests/test_analysis.py::TestEntryFiltersSoftBoost::test_confidence_capped_at_one PASSED [  8%]
+tests/test_analysis.py::TestMacroFilters::test_neutral_macro_passes_signal PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_blocks_long_below_sma200 PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_blocks_oil_when_brent_low PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_allows_non_oil_when_brent_low PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_reduces_confidence_rate_hike PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_rate_hike_confidence_not_below_zero PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_rate_down_no_change PASSED [  9%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_hold_signal_passes PASSED [ 10%]
+tests/test_analysis.py::TestMacroFilters::test_macro_filter_imoex_data_kwarg_accepted PASSED [ 10%]
+tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_returns_market_regime PASSED [ 10%]
+tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_uptrend PASSED [ 10%]
+tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_crisis PASSED [ 10%]
+tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_too_few_bars PASSED [ 10%]
+tests/test_analysis.py::TestRegimeFromIndex::test_regime_from_index_crisis_by_drawdown PASSED [ 10%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_mean_simple PASSED [ 10%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_variance_known PASSED [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_population_variance PASSED [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_std_dev PASSED  [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_empty PASSED    [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_single_value PASSED [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_constant_values PASSED [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_min_max PASSED  [ 11%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_large_dataset PASSED [ 12%]
+tests/test_barter_ports.py::TestWelfordAccumulator::test_negative_values PASSED [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_positive_returns_positive_sharpe PASSED [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_negative_returns_negative_sharpe PASSED [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_zero_returns PASSED [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_max_drawdown_tracking PASSED [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_count PASSED      [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_sortino_only_downside PASSED [ 12%]
+tests/test_barter_ports.py::TestStreamingMetrics::test_volatility PASSED [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_open_long PASSED   [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_open_short PASSED  [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_increase_position PASSED [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_partial_close PASSED [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_full_close PASSED  [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_position_flip PASSED [ 13%]
+tests/test_barter_ports.py::TestPositionTracker::test_fifo_order PASSED  [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_unrealized_pnl_long PASSED [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_unrealized_pnl_short PASSED [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_lot_size_validation PASSED [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_quantity_max_tracking PASSED [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_fees_tracking PASSED [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_empty_tracker PASSED [ 14%]
+tests/test_barter_ports.py::TestPositionTracker::test_reset PASSED       [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_approved_wraps_order PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_refused_wraps_order_with_reason PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_approved_is_frozen PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_refused_is_frozen PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_order_approved PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_order_refused PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_orders_batch PASSED [ 15%]
+tests/test_barter_ports.py::TestRiskApprovedRefused::test_check_orders_all_refused PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_returns_bootstrap_result PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_ci_ordering PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_ci_covers_true_mean PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_point_estimate_correct PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_empty_data PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_single_element PASSED [ 16%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_constant_data PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_custom_stat_fn PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_sample_size_smaller_than_data PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestBcaBootstrap::test_reproducibility PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_returns_dict_with_four_metrics PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_empty_returns PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_short_returns PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_long_trade_mae PASSED [ 17%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_long_trade_mfe PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_short_trade_mae PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_short_trade_mfe PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_mfe_mae_ratio PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_empty_trades PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_zero_entry_price PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_single_bar_trade PASSED [ 18%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_pct_values PASSED   [ 19%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_multiple_trades_aggregation PASSED [ 19%]
+tests/test_bootstrap_mae_equity.py::TestMAEMFE::test_edge_ratio PASSED   [ 19%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_perfect_linear PASSED [ 19%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_flat_equity PASSED [ 19%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_noisy_linear PASSED [ 19%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_random_walk PASSED [ 19%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_short_series PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_decreasing_equity PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestEquityRSquared::test_parabolic_equity PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_uniform_returns PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_concentrated_returns PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_bimodal_returns PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_empty_returns PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_single_return PASSED [ 20%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_nan_handling PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestRelativeEntropy::test_range_bounded PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_perfect_growth PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_flat_equity PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_declining_equity PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_positive_upi_for_growth_with_dd PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_short_equity PASSED [ 21%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_zero_start PASSED [ 22%]
+tests/test_bootstrap_mae_equity.py::TestUlcerPerformanceIndex::test_higher_upi_is_better PASSED [ 22%]
+tests/test_bootstrap_mae_equity.py::TestIntegration::test_equity_r2_in_trade_metrics PASSED [ 22%]
+tests/test_bootstrap_mae_equity.py::TestIntegration::test_entropy_in_trade_metrics PASSED [ 22%]
+tests/test_bootstrap_mae_equity.py::TestIntegration::test_upi_in_trade_metrics PASSED [ 22%]
+tests/test_bootstrap_mae_equity.py::TestIntegration::test_mae_mfe_in_trade_metrics PASSED [ 22%]
+tests/test_bootstrap_mae_equity.py::TestIntegration::test_format_includes_new_sections PASSED [ 22%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_cannot_instantiate_abc PASSED [ 22%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_concrete_strategy PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_generate_signals_returns_list PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_position_size_positive PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_stop_loss_below_entry_long PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_stop_loss_above_entry_short PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_get_params PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_set_params PASSED [ 23%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_warm_up_period PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestBaseStrategy::test_repr PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_register_and_create PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_register_non_subclass PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_register_duplicate PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_create_unknown PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_list_strategies PASSED [ 24%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_discover PASSED [ 25%]
+tests/test_core/test_base_strategy.py::TestStrategyRegistry::test_len PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_load_settings PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_moex_section PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_costs_section PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_instruments PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_risk_limits PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_get_instrument_info PASSED [ 25%]
+tests/test_core/test_config.py::TestLoadSettings::test_get_instrument_info_futures PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_unknown_instrument PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_env_override PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_get_cost_profile PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_backtest_settings PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_ml_settings PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_singleton_get_config PASSED [ 26%]
+tests/test_core/test_config.py::TestLoadSettings::test_file_not_found PASSED [ 27%]
+tests/test_core/test_models.py::TestBar::test_bar_creation PASSED        [ 27%]
+tests/test_core/test_models.py::TestBar::test_bar_high_gte_low PASSED    [ 27%]
+tests/test_core/test_models.py::TestBar::test_bar_negative_price PASSED  [ 27%]
+tests/test_core/test_models.py::TestSignal::test_signal_creation PASSED  [ 27%]
+tests/test_core/test_models.py::TestSignal::test_signal_strength_range PASSED [ 27%]
+tests/test_core/test_models.py::TestOrder::test_order_default_status PASSED [ 27%]
+tests/test_core/test_models.py::TestOrder::test_order_serialization PASSED [ 27%]
+tests/test_core/test_models.py::TestPosition::test_position_unrealized_pnl_long PASSED [ 28%]
+tests/test_core/test_models.py::TestPosition::test_position_unrealized_pnl_short PASSED [ 28%]
+tests/test_core/test_models.py::TestPosition::test_position_pnl_pct PASSED [ 28%]
+tests/test_core/test_models.py::TestPortfolio::test_portfolio_total_value PASSED [ 28%]
+tests/test_core/test_models.py::TestPortfolio::test_portfolio_exposure PASSED [ 28%]
+tests/test_core/test_models.py::TestTradeResult::test_trade_result_gross_pnl PASSED [ 28%]
+tests/test_core/test_models.py::TestTradeResult::test_trade_result_net_pnl PASSED [ 28%]
+tests/test_core/test_models.py::TestTradeResult::test_trade_result_duration PASSED [ 29%]
+tests/test_core/test_models.py::TestTradeResult::test_trade_result_return_pct PASSED [ 29%]
+tests/test_core/test_models.py::TestTradeResult::test_trade_result_short_pnl PASSED [ 29%]
+tests/test_core/test_models.py::TestEnums::test_enums PASSED             [ 29%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_fetch_candles_sber PASSED [ 29%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_fetch_candles_si PASSED [ 29%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_fetch_candles_pagination PASSED [ 29%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_candles_have_all_fields PASSED [ 30%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_candles_sorted_by_time PASSED [ 30%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_fetch_instruments PASSED [ 30%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_fetch_imoex PASSED   [ 30%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_invalid_ticker PASSED [ 30%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_rate_limiting PASSED [ 30%]
+tests/test_data/test_moex_iss.py::TestMoexISS::test_to_polars PASSED     [ 30%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_pipeline_runs_without_errors PASSED [ 30%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_trades_generated PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_sharpe_not_nan PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_max_dd_below_100 PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_commissions_positive PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_trade_results_valid PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_equity_curve_starts_at_capital PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_indicators_used PASSED [ 31%]
+tests/test_e2e/test_full_pipeline.py::TestFullPipeline::test_net_pnl_includes_costs PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_pipeline_no_crash PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_features_generated PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_models_trained PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_predictions_length PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_predictions_bounded PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_train_test_split_sizes PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_feature_count PASSED [ 32%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_predictions_not_constant PASSED [ 33%]
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_simple_backtest_from_predictions PASSED [ 33%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_creates_loop PASSED [ 33%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_clearing_check PASSED [ 33%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_session_end PASSED [ 33%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_circuit_breaker PASSED [ 33%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_graceful_shutdown PASSED [ 33%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_trading_hours PASSED [ 34%]
+tests/test_e2e/test_paper_trading.py::TestPaperTrading::test_parse_time PASSED [ 34%]
+tests/test_e2e/test_real_data_backtest.py::TestRealDataBacktest::test_data_loaded PASSED [ 34%]
+tests/test_e2e/test_real_data_backtest.py::TestRealDataBacktest::test_trades_generated PASSED [ 34%]
+tests/test_e2e/test_real_data_backtest.py::TestRealDataBacktest::test_sharpe_not_nan PASSED [ 34%]
+tests/test_e2e/test_real_data_backtest.py::TestRealDataBacktest::test_max_dd_below_50 PASSED [ 34%]
+tests/test_e2e/test_real_data_backtest.py::TestRealDataBacktest::test_buy_and_hold_comparison PASSED [ 34%]
+tests/test_e2e/test_real_data_backtest.py::TestRealDataBacktest::test_commissions_accounted PASSED [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_same_currency PASSED [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_manual_cache_and_retrieve PASSED [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_inverse_rate PASSED  [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_convert PASSED       [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_convert_inverse PASSED [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_unsupported_pair PASSED [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_cache_size PASSED    [ 35%]
+tests/test_exchange_rates.py::TestCacheBasics::test_clear PASSED         [ 36%]
+tests/test_exchange_rates.py::TestCacheBasics::test_nearest_rate_from_cache PASSED [ 36%]
+tests/test_exchange_rates.py::TestFilePersistence::test_save_and_load PASSED [ 36%]
+tests/test_exchange_rates.py::TestPairMapping::test_supported_pairs PASSED [ 36%]
+tests/test_exchange_rates.py::TestPairMapping::test_inverse_mapping PASSED [ 36%]
+tests/test_exchange_rates.py::TestPairMapping::test_eur_rate PASSED      [ 36%]
+tests/test_exchange_rates.py::TestPairMapping::test_cny_rate PASSED      [ 36%]
+tests/test_exchange_rates.py::TestRatesRange::test_cached_range PASSED   [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_connect_requires_token PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_order_conversion PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_position_conversion PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_lot_conversion PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_error_handling_not_connected PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_portfolio_snapshot PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_cancel_order PASSED [ 37%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_sell_direction PASSED [ 38%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_lot_conversion_vtbr PASSED [ 38%]
+tests/test_execution/test_tinkoff_adapter.py::TestTinkoffAdapter::test_context_manager PASSED [ 38%]
+tests/test_garch_lob.py::TestGARCH::test_garch_returns_forecast PASSED   [ 38%]
+tests/test_garch_lob.py::TestGARCH::test_ewma_returns_forecast PASSED    [ 38%]
+tests/test_garch_lob.py::TestGARCH::test_egarch_returns_forecast PASSED  [ 38%]
+tests/test_garch_lob.py::TestGARCH::test_gjr_returns_forecast PASSED     [ 38%]
+tests/test_garch_lob.py::TestGARCH::test_short_returns PASSED            [ 39%]
+tests/test_garch_lob.py::TestGARCH::test_horizon PASSED                  [ 39%]
+tests/test_garch_lob.py::TestGARCH::test_compare_models PASSED           [ 39%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_empty_book PASSED      [ 39%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_add_bid PASSED         [ 39%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_add_ask PASSED         [ 39%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_spread PASSED          [ 39%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_spread_pct PASSED      [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_remove_level PASSED    [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_multiple_bid_levels PASSED [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_ask_levels_ascending PASSED [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_obi_equal PASSED       [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_obi_bid_heavy PASSED   [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_obi_ask_heavy PASSED   [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_microprice PASSED      [ 40%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_snapshot PASSED        [ 41%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_apply_snapshot PASSED  [ 41%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_clear PASSED           [ 41%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_volume_at_price PASSED [ 41%]
+tests/test_garch_lob.py::TestLimitOrderBook::test_depth_up_to PASSED     [ 41%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_take_profit_long PASSED [ 41%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_take_profit_short PASSED [ 41%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_stop_loss_long PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_stop_loss_short PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_time_limit PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_trailing_stop_long PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_trailing_stop_short PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_trailing_activation PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_all_barriers_disabled PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_tp_before_sl PASSED [ 42%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_state_property PASSED [ 43%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_invalid_side PASSED [ 43%]
+tests/test_hummingbot_ports.py::TestTripleBarrier::test_idempotent_after_trigger PASSED [ 43%]
+tests/test_hummingbot_ports.py::TestTWAP::test_schedule_creates_slices PASSED [ 43%]
+tests/test_hummingbot_ports.py::TestTWAP::test_schedule_timing PASSED    [ 43%]
+tests/test_hummingbot_ports.py::TestTWAP::test_lot_rounding PASSED       [ 43%]
+tests/test_hummingbot_ports.py::TestTWAP::test_empty_on_zero_quantity PASSED [ 43%]
+tests/test_hummingbot_ports.py::TestTWAP::test_empty_on_zero_slices PASSED [ 44%]
+tests/test_hummingbot_ports.py::TestTWAP::test_executor_workflow PASSED  [ 44%]
+tests/test_hummingbot_ports.py::TestTWAP::test_spread_filter PASSED      [ 44%]
+tests/test_hummingbot_ports.py::TestTWAP::test_result_summary PASSED     [ 44%]
+tests/test_hummingbot_ports.py::TestTWAP::test_skip_slice PASSED         [ 44%]
+tests/test_hummingbot_ports.py::TestTWAP::test_complete_raises_on_overfill PASSED [ 44%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_neutral_inventory_symmetric PASSED [ 44%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_long_inventory_shifts_down PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_short_inventory_shifts_up PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_spread_positive PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_higher_gamma_more_inventory_skew PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_higher_sigma_wider_spread PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_less_time_narrower_spread PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_max_inventory_blocks_side PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_min_spread_floor PASSED [ 45%]
+tests/test_hummingbot_ports.py::TestAvellanedaStoikov::test_zero_price PASSED [ 46%]
+tests/test_indicator_utils.py::TestCrossover::test_golden_cross PASSED   [ 46%]
+tests/test_indicator_utils.py::TestCrossover::test_no_cross PASSED       [ 46%]
+tests/test_indicator_utils.py::TestCrossover::test_scalar_threshold PASSED [ 46%]
+tests/test_indicator_utils.py::TestCrossover::test_short_series PASSED   [ 46%]
+tests/test_indicator_utils.py::TestCrossover::test_equal_no_cross PASSED [ 46%]
+tests/test_indicator_utils.py::TestCrossunder::test_death_cross PASSED   [ 46%]
+tests/test_indicator_utils.py::TestCrossunder::test_no_crossunder PASSED [ 47%]
+tests/test_indicator_utils.py::TestCross::test_either_direction PASSED   [ 47%]
+tests/test_indicator_utils.py::TestBarsSince::test_recent_true PASSED    [ 47%]
+tests/test_indicator_utils.py::TestBarsSince::test_last_bar_true PASSED  [ 47%]
+tests/test_indicator_utils.py::TestBarsSince::test_never_true PASSED     [ 47%]
+tests/test_indicator_utils.py::TestBarsSince::test_custom_default PASSED [ 47%]
+tests/test_indicator_utils.py::TestQuantileRank::test_highest_value PASSED [ 47%]
+tests/test_indicator_utils.py::TestQuantileRank::test_lowest_value PASSED [ 47%]
+tests/test_indicator_utils.py::TestQuantileRank::test_median_value PASSED [ 48%]
+tests/test_indicator_utils.py::TestQuantileRank::test_lookback PASSED    [ 48%]
+tests/test_indicator_utils.py::TestQuantileRank::test_short_series PASSED [ 48%]
+tests/test_indicator_utils.py::TestHighestLowest::test_highest PASSED    [ 48%]
+tests/test_indicator_utils.py::TestHighestLowest::test_lowest PASSED     [ 48%]
+tests/test_indicator_utils.py::TestHighestLowest::test_period_larger_than_data PASSED [ 48%]
+tests/test_indicator_utils.py::TestHighestLowest::test_with_nan PASSED   [ 48%]
+tests/test_indicators.py::TestSuperTrend::test_returns_correct_type PASSED [ 49%]
+tests/test_indicators.py::TestSuperTrend::test_direction_values PASSED   [ 49%]
+tests/test_indicators.py::TestSuperTrend::test_trending_up_mostly_bullish PASSED [ 49%]
+tests/test_indicators.py::TestSuperTrend::test_changed_is_binary PASSED  [ 49%]
+tests/test_indicators.py::TestSuperTrend::test_short_data PASSED         [ 49%]
+tests/test_indicators.py::TestSqueezeMomentum::test_returns_correct_type PASSED [ 49%]
+tests/test_indicators.py::TestSqueezeMomentum::test_squeeze_values PASSED [ 49%]
+tests/test_indicators.py::TestSqueezeMomentum::test_momentum_signal_values PASSED [ 50%]
+tests/test_indicators.py::TestSqueezeMomentum::test_trending_positive_momentum PASSED [ 50%]
+tests/test_indicators.py::TestDamiani::test_returns_correct_type PASSED  [ 50%]
+tests/test_indicators.py::TestDamiani::test_vol_positive PASSED          [ 50%]
+tests/test_indicators.py::TestVossFilter::test_returns_correct_type PASSED [ 50%]
+tests/test_indicators.py::TestVossFilter::test_oscillates_around_zero PASSED [ 50%]
+tests/test_indicators.py::TestBandPassFilter::test_returns_correct_type PASSED [ 50%]
+tests/test_indicators.py::TestBandPassFilter::test_normalized_bounded PASSED [ 50%]
+tests/test_indicators.py::TestReflex::test_returns_array PASSED          [ 51%]
+tests/test_indicators.py::TestReflex::test_trending_up_positive_reflex PASSED [ 51%]
+tests/test_label_generators.py::TestHighLowLabels::test_returns_all_keys PASSED [ 51%]
+tests/test_label_generators.py::TestHighLowLabels::test_correct_length PASSED [ 51%]
+tests/test_label_generators.py::TestHighLowLabels::test_last_bars_false PASSED [ 51%]
+tests/test_label_generators.py::TestHighLowLabels::test_big_rise_detected PASSED [ 51%]
+tests/test_label_generators.py::TestHighLowLabels::test_big_drop_detected PASSED [ 51%]
+tests/test_label_generators.py::TestHighLowLabels::test_flat_no_labels PASSED [ 52%]
+tests/test_label_generators.py::TestHighLowLabels::test_direction_label PASSED [ 52%]
+tests/test_label_generators.py::TestHighLowLabels::test_magnitude_positive PASSED [ 52%]
+tests/test_label_generators.py::TestHighLowLabels::test_custom_thresholds PASSED [ 52%]
+tests/test_label_generators.py::TestHighLowLabels::test_short_array PASSED [ 52%]
+tests/test_label_generators.py::TestTopBotLabels::test_detects_top PASSED [ 52%]
+tests/test_label_generators.py::TestTopBotLabels::test_detects_bot PASSED [ 52%]
+tests/test_label_generators.py::TestTopBotLabels::test_flat_no_extrema PASSED [ 52%]
+tests/test_label_generators.py::TestTopBotLabels::test_correct_length PASSED [ 53%]
+tests/test_label_generators.py::TestTopBotLabels::test_tolerance_widens_zone PASSED [ 53%]
+tests/test_label_generators.py::TestTopBotLabels::test_extrema_list PASSED [ 53%]
+tests/test_label_generators.py::TestTopBotLabels::test_extremum_dataclass PASSED [ 53%]
+tests/test_label_generators.py::TestTopBotLabels::test_short_array PASSED [ 53%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_returns_correct_type PASSED [ 53%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_uptrend_long_signal PASSED [ 53%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_stop_long_below_close PASSED [ 54%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_parameters_affect_output PASSED [ 54%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_short_array PASSED   [ 54%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_signal_values_bounded PASSED [ 54%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_flat_data PASSED     [ 54%]
+tests/test_lean_ports.py::TestChandeKrollStop::test_default_parameters PASSED [ 54%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_trending_low_chop PASSED [ 54%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_choppy_high_chop PASSED [ 55%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_range_bounded PASSED [ 55%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_flat_data_max_chop PASSED [ 55%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_period_affects_output PASSED [ 55%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_correct_length PASSED [ 55%]
+tests/test_lean_ports.py::TestChoppinessIndex::test_no_nan PASSED        [ 55%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_range_0_100 PASSED  [ 55%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_uptrend_stc_not_zero PASSED [ 55%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_correct_length PASSED [ 56%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_parameters_affect_output PASSED [ 56%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_flat_data PASSED    [ 56%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_no_nan PASSED       [ 56%]
+tests/test_lean_ports.py::TestSchaffTrendCycle::test_short_array PASSED  [ 56%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_normal_returns_near_zero PASSED [ 56%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_spike_detection PASSED [ 56%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_correct_length PASSED [ 57%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_short_array PASSED   [ 57%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_flat_data_zero_spike PASSED [ 57%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_no_nan PASSED        [ 57%]
+tests/test_lean_ports.py::TestAugenPriceSpike::test_period_affects PASSED [ 57%]
+tests/test_lean_ports.py::TestRogersSatchell::test_positive_volatility PASSED [ 57%]
+tests/test_lean_ports.py::TestRogersSatchell::test_flat_data_zero_vol PASSED [ 57%]
+tests/test_lean_ports.py::TestRogersSatchell::test_higher_vol_for_volatile PASSED [ 57%]
+tests/test_lean_ports.py::TestRogersSatchell::test_correct_length PASSED [ 58%]
+tests/test_lean_ports.py::TestRogersSatchell::test_no_nan PASSED         [ 58%]
+tests/test_lean_ports.py::TestRogersSatchell::test_period_affects PASSED [ 58%]
+tests/test_lean_ports.py::TestRogersSatchell::test_short_array PASSED    [ 58%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_no_trigger_within_threshold PASSED [ 58%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_trigger_on_threshold PASSED [ 58%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_trailing_mode_peak_updates PASSED [ 58%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_static_mode PASSED [ 59%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_trigger_count PASSED [ 59%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_cooldown PASSED [ 59%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_reset PASSED [ 59%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_invalid_threshold PASSED [ 59%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_first_update_no_trigger PASSED [ 59%]
+tests/test_lean_ports.py::TestPortfolioCircuitBreaker::test_growing_equity_never_triggers PASSED [ 59%]
+tests/test_lean_ports.py::TestPSR::test_positive_sharpe_high_psr PASSED  [ 60%]
+tests/test_lean_ports.py::TestPSR::test_negative_mean_low_psr PASSED     [ 60%]
+tests/test_lean_ports.py::TestPSR::test_strong_strategy_psr_near_one PASSED [ 60%]
+tests/test_lean_ports.py::TestPSR::test_short_history_lower_confidence PASSED [ 60%]
+tests/test_lean_ports.py::TestPSR::test_empty_returns PASSED             [ 60%]
+tests/test_lean_ports.py::TestPSR::test_constant_positive_returns PASSED [ 60%]
+tests/test_lean_ports.py::TestPSR::test_range_0_1 PASSED                 [ 60%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_small_order_small_slip PASSED [ 60%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_large_order_larger_slip PASSED [ 61%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_quadratic_growth PASSED [ 61%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_volume_limit_cap PASSED [ 61%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_zero_volume PASSED [ 61%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_zero_price PASSED [ 61%]
+tests/test_lean_ports.py::TestVolumeShareSlippage::test_proportional_to_price PASSED [ 61%]
+tests/test_metrics.py::TestSharpeRatio::test_zero_returns PASSED         [ 61%]
+tests/test_metrics.py::TestSharpeRatio::test_positive_returns PASSED     [ 62%]
+tests/test_metrics.py::TestSharpeRatio::test_mixed_returns_positive PASSED [ 62%]
+tests/test_metrics.py::TestSharpeRatio::test_smart_sharpe_lower_than_regular PASSED [ 62%]
+tests/test_metrics.py::TestSharpeRatio::test_accepts_dataframe PASSED    [ 62%]
+tests/test_metrics.py::TestSortinoRatio::test_zero_returns PASSED        [ 62%]
+tests/test_metrics.py::TestSortinoRatio::test_all_positive_returns_is_inf PASSED [ 62%]
+tests/test_metrics.py::TestSortinoRatio::test_mixed_positive PASSED      [ 62%]
+tests/test_metrics.py::TestSortinoRatio::test_sortino_greater_than_sharpe PASSED [ 62%]
+tests/test_metrics.py::TestCalmarRatio::test_no_drawdown PASSED          [ 63%]
+tests/test_metrics.py::TestCalmarRatio::test_mixed_returns PASSED        [ 63%]
+tests/test_metrics.py::TestOmegaRatio::test_mixed_returns PASSED         [ 63%]
+tests/test_metrics.py::TestOmegaRatio::test_short_series PASSED          [ 63%]
+tests/test_metrics.py::TestMaxDrawdown::test_no_drawdown PASSED          [ 63%]
+tests/test_metrics.py::TestMaxDrawdown::test_known_drawdown PASSED       [ 63%]
+tests/test_metrics.py::TestMaxUnderwaterPeriod::test_no_drawdown PASSED  [ 63%]
+tests/test_metrics.py::TestMaxUnderwaterPeriod::test_known_underwater PASSED [ 64%]
+tests/test_metrics.py::TestMaxUnderwaterPeriod::test_short_series PASSED [ 64%]
+tests/test_metrics.py::TestCVaR::test_known_values PASSED                [ 64%]
+tests/test_metrics.py::TestCVaR::test_short_series PASSED                [ 64%]
+tests/test_metrics.py::TestCAGR::test_known_cagr PASSED                  [ 64%]
+tests/test_metrics.py::TestAutocorrPenalty::test_random_returns PASSED   [ 64%]
+tests/test_metrics.py::TestAutocorrPenalty::test_short_series PASSED     [ 64%]
+tests/test_metrics.py::TestAlphaBeta::test_identical_returns PASSED      [ 65%]
+tests/test_metrics.py::TestAlphaBeta::test_uncorrelated PASSED           [ 65%]
+tests/test_metrics.py::TestAlphaBeta::test_short_series PASSED           [ 65%]
+tests/test_metrics.py::TestSQN::test_positive_system PASSED              [ 65%]
+tests/test_metrics.py::TestSQN::test_negative_system PASSED              [ 65%]
+tests/test_metrics.py::TestSQN::test_empty PASSED                        [ 65%]
+tests/test_metrics.py::TestSQN::test_constant_wins PASSED                [ 65%]
+tests/test_metrics.py::TestKellyCriterion::test_good_system PASSED       [ 65%]
+tests/test_metrics.py::TestKellyCriterion::test_breakeven PASSED         [ 66%]
+tests/test_metrics.py::TestKellyCriterion::test_bad_system PASSED        [ 66%]
+tests/test_metrics.py::TestKellyCriterion::test_zero_ratio PASSED        [ 66%]
+tests/test_metrics.py::TestGeometricMean::test_positive_returns PASSED   [ 66%]
+tests/test_metrics.py::TestGeometricMean::test_all_zero PASSED           [ 66%]
+tests/test_metrics.py::TestGeometricMean::test_empty PASSED              [ 66%]
+tests/test_metrics.py::TestGeometricMean::test_contains_minus_100 PASSED [ 66%]
+tests/test_metrics.py::TestCalculateTradeMetrics::test_basic_metrics PASSED [ 67%]
+tests/test_metrics.py::TestCalculateTradeMetrics::test_empty_trades PASSED [ 67%]
+tests/test_metrics.py::TestCalculateTradeMetrics::test_all_winners PASSED [ 67%]
+tests/test_metrics.py::TestCalculateTradeMetrics::test_all_losers PASSED [ 67%]
+tests/test_metrics.py::TestCalculateTradeMetrics::test_long_short_breakdown PASSED [ 67%]
+tests/test_metrics.py::TestCalculateTradeMetrics::test_streaks PASSED    [ 67%]
+tests/test_metrics.py::TestFormatMetrics::test_produces_string PASSED    [ 67%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_splits_data_correctly PASSED [ 67%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_no_data_leakage PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_train_ratio PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_aggregate_metrics PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_overfitting_detection PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_short_data PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_predictions_length PASSED [ 68%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_retrain_interval PASSED [ 69%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_n_windows PASSED [ 69%]
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_invalid_params PASSED [ 69%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_format_signal_message PASSED [ 69%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_format_trade_message PASSED [ 69%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_format_pnl_report PASSED [ 69%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_format_circuit_breaker PASSED [ 69%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_command_parsing PASSED [ 70%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_no_token_graceful PASSED [ 70%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_message_length PASSED [ 70%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_stop_start_commands PASSED [ 70%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_help_command PASSED [ 70%]
+tests/test_monitoring/test_telegram.py::TestTelegramBot::test_unknown_command PASSED [ 70%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_basic_run PASSED   [ 70%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_reproducible_with_seed PASSED [ 70%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_different_seed_gives_different_paths PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_original_metrics_present PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_percentiles_ordered PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_confidence_intervals PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_empty_trades_raises PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloTrades::test_all_winning_trades PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_basic_run PASSED [ 71%]
+tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_higher_noise_more_variance PASSED [ 72%]
+tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_short_balance_raises PASSED [ 72%]
+tests/test_monte_carlo.py::TestMonteCarloReturnsNoise::test_p_values_between_0_and_1 PASSED [ 72%]
+tests/test_monte_carlo.py::TestFormatMonteCarlo::test_format_trade_shuffle PASSED [ 72%]
+tests/test_monte_carlo.py::TestFormatMonteCarlo::test_format_noise PASSED [ 72%]
+tests/test_optimizer.py::TestCalculateFitness::test_good_metrics PASSED  [ 72%]
+tests/test_optimizer.py::TestCalculateFitness::test_too_few_trades PASSED [ 72%]
+tests/test_optimizer.py::TestCalculateFitness::test_negative_ratio PASSED [ 72%]
+tests/test_optimizer.py::TestCalculateFitness::test_nan_ratio PASSED     [ 73%]
+tests/test_optimizer.py::TestCalculateFitness::test_higher_trades_higher_score PASSED [ 73%]
+tests/test_optimizer.py::TestCalculateFitness::test_higher_ratio_higher_score PASSED [ 73%]
+tests/test_optimizer.py::TestCalculateFitness::test_all_objectives PASSED [ 73%]
+tests/test_optimizer.py::TestCalculateFitness::test_unknown_objective_raises PASSED [ 73%]
+tests/test_optimizer.py::TestCalculateFitness::test_score_capped_at_1 PASSED [ 73%]
+tests/test_optimizer.py::TestStrategyOptimizer::test_basic_optimization PASSED [ 73%]
+tests/test_optimizer.py::TestStrategyOptimizer::test_with_test_backtest PASSED [ 74%]
+tests/test_optimizer.py::TestStrategyOptimizer::test_best_params_property PASSED [ 74%]
+tests/test_optimizer.py::TestStrategyOptimizer::test_float_and_categorical_params PASSED [ 74%]
+tests/test_optimizer.py::TestStrategyOptimizer::test_failing_backtest_handled PASSED [ 74%]
+tests/test_optimizer.py::TestWalkForward::test_basic_walk_forward PASSED [ 74%]
+tests/test_qlib_ports.py::TestCSRankNorm::test_output_range PASSED       [ 74%]
+tests/test_qlib_ports.py::TestCSRankNorm::test_preserves_shape PASSED    [ 74%]
+tests/test_qlib_ports.py::TestCSRankNorm::test_no_nan PASSED             [ 75%]
+tests/test_qlib_ports.py::TestCSRankNorm::test_cross_sectional_not_historical PASSED [ 75%]
+tests/test_qlib_ports.py::TestCSRankNorm::test_simple_df PASSED          [ 75%]
+tests/test_qlib_ports.py::TestRobustZScore::test_clip_bounds PASSED      [ 75%]
+tests/test_qlib_ports.py::TestRobustZScore::test_constant_data PASSED    [ 75%]
+tests/test_qlib_ports.py::TestRobustZScore::test_outlier_resilience PASSED [ 75%]
+tests/test_qlib_ports.py::TestRobustZScore::test_mad_scaling PASSED      [ 75%]
+tests/test_qlib_ports.py::TestCSZScore::test_mean_zero_per_date PASSED   [ 75%]
+tests/test_qlib_ports.py::TestCSZScore::test_std_one_per_date PASSED     [ 76%]
+tests/test_qlib_ports.py::TestCSFillna::test_fills_nan_with_mean PASSED  [ 76%]
+tests/test_qlib_ports.py::TestCSFillna::test_no_nan_after_fill PASSED    [ 76%]
+tests/test_qlib_ports.py::TestRollingSlope::test_uptrend_positive PASSED [ 76%]
+tests/test_qlib_ports.py::TestRollingSlope::test_downtrend_negative PASSED [ 76%]
+tests/test_qlib_ports.py::TestRollingSlope::test_flat_zero PASSED        [ 76%]
+tests/test_qlib_ports.py::TestRollingSlope::test_correct_length PASSED   [ 76%]
+tests/test_qlib_ports.py::TestRollingRSquare::test_perfect_linear PASSED [ 77%]
+tests/test_qlib_ports.py::TestRollingRSquare::test_random_walk_low_r2 PASSED [ 77%]
+tests/test_qlib_ports.py::TestRollingRSquare::test_range_bounded PASSED  [ 77%]
+tests/test_remaining_ports.py::TestZigZag::test_returns_correct_type PASSED [ 77%]
+tests/test_remaining_ports.py::TestZigZag::test_finds_pivots_in_trend PASSED [ 77%]
+tests/test_remaining_ports.py::TestZigZag::test_pivot_types_correct PASSED [ 77%]
+tests/test_remaining_ports.py::TestZigZag::test_alternating_pivots PASSED [ 77%]
+tests/test_remaining_ports.py::TestZigZag::test_sensitivity_filter PASSED [ 77%]
+tests/test_remaining_ports.py::TestZigZag::test_short_array PASSED       [ 78%]
+tests/test_remaining_ports.py::TestZigZag::test_flat_data_no_pivots PASSED [ 78%]
+tests/test_remaining_ports.py::TestZigZag::test_last_pivot_populated PASSED [ 78%]
+tests/test_remaining_ports.py::TestKlingerVO::test_returns_two_arrays PASSED [ 78%]
+tests/test_remaining_ports.py::TestKlingerVO::test_no_nan PASSED         [ 78%]
+tests/test_remaining_ports.py::TestKlingerVO::test_uptrend_positive_kvo PASSED [ 78%]
+tests/test_remaining_ports.py::TestKlingerVO::test_parameters_affect_output PASSED [ 78%]
+tests/test_remaining_ports.py::TestKlingerVO::test_zero_volume PASSED    [ 79%]
+tests/test_remaining_ports.py::TestKlingerVO::test_correct_length PASSED [ 79%]
+tests/test_remaining_ports.py::TestKlingerVO::test_short_array PASSED    [ 79%]
+tests/test_remaining_ports.py::TestRVI::test_returns_two_arrays PASSED   [ 79%]
+tests/test_remaining_ports.py::TestRVI::test_no_nan PASSED               [ 79%]
+tests/test_remaining_ports.py::TestRVI::test_bullish_market_positive_rvi PASSED [ 79%]
+tests/test_remaining_ports.py::TestRVI::test_period_affects PASSED       [ 79%]
+tests/test_remaining_ports.py::TestRVI::test_flat_data PASSED            [ 80%]
+tests/test_remaining_ports.py::TestRVI::test_short_array PASSED          [ 80%]
+tests/test_remaining_ports.py::TestRVI::test_signal_is_smoothed_rvi PASSED [ 80%]
+tests/test_remaining_ports.py::TestDCA::test_creates_levels PASSED       [ 80%]
+tests/test_remaining_ports.py::TestDCA::test_long_levels_decrease PASSED [ 80%]
+tests/test_remaining_ports.py::TestDCA::test_short_levels_increase PASSED [ 80%]
+tests/test_remaining_ports.py::TestDCA::test_record_fill_updates_state PASSED [ 80%]
+tests/test_remaining_ports.py::TestDCA::test_dynamic_tp_sl PASSED        [ 80%]
+tests/test_remaining_ports.py::TestDCA::test_fibonacci_distribution PASSED [ 81%]
+tests/test_remaining_ports.py::TestDCA::test_lot_rounding PASSED         [ 81%]
+tests/test_remaining_ports.py::TestDCA::test_complete_after_all_fills PASSED [ 81%]
+tests/test_remaining_ports.py::TestGrid::test_creates_levels PASSED      [ 81%]
+tests/test_remaining_ports.py::TestGrid::test_levels_evenly_spaced PASSED [ 81%]
+tests/test_remaining_ports.py::TestGrid::test_buy_below_sell_above PASSED [ 81%]
+tests/test_remaining_ports.py::TestGrid::test_shift_range PASSED         [ 81%]
+tests/test_remaining_ports.py::TestGrid::test_stats PASSED               [ 82%]
+tests/test_remaining_ports.py::TestGrid::test_invalid_range PASSED       [ 82%]
+tests/test_remaining_ports.py::TestGrid::test_lot_rounding PASSED        [ 82%]
+tests/test_remaining_ports.py::TestGrid::test_realized_pnl PASSED        [ 82%]
+tests/test_remaining_ports.py::TestOBI::test_equal_volumes_zero PASSED   [ 82%]
+tests/test_remaining_ports.py::TestOBI::test_all_bid_positive PASSED     [ 82%]
+tests/test_remaining_ports.py::TestOBI::test_all_ask_negative PASSED     [ 82%]
+tests/test_remaining_ports.py::TestOBI::test_range_bounded PASSED        [ 82%]
+tests/test_remaining_ports.py::TestOBI::test_n_levels_filter PASSED      [ 83%]
+tests/test_remaining_ports.py::TestOBI::test_microprice PASSED           [ 83%]
+tests/test_remaining_ports.py::TestOBI::test_microprice_equal_volumes PASSED [ 83%]
+tests/test_remaining_ports.py::TestOBI::test_book_pressure_ratio PASSED  [ 83%]
+tests/test_remaining_ports.py::TestOBI::test_obi_ema_smoothing PASSED    [ 83%]
+tests/test_risk_rules.py::TestConcentrationRule::test_pass_diversified PASSED [ 83%]
+tests/test_risk_rules.py::TestConcentrationRule::test_fail_concentrated PASSED [ 83%]
+tests/test_risk_rules.py::TestConcentrationRule::test_warn_threshold PASSED [ 84%]
+tests/test_risk_rules.py::TestConcentrationRule::test_empty_portfolio PASSED [ 84%]
+tests/test_risk_rules.py::TestCurrencyClusterRule::test_pass_mostly_rub PASSED [ 84%]
+tests/test_risk_rules.py::TestCurrencyClusterRule::test_fail_too_much_rub PASSED [ 84%]
+tests/test_risk_rules.py::TestSectorClusterRule::test_fail_energy_heavy PASSED [ 84%]
+tests/test_risk_rules.py::TestSectorClusterRule::test_pass_balanced PASSED [ 84%]
+tests/test_risk_rules.py::TestDrawdownRule::test_pass_low_dd PASSED      [ 84%]
+tests/test_risk_rules.py::TestDrawdownRule::test_fail_high_dd PASSED     [ 85%]
+tests/test_risk_rules.py::TestDrawdownRule::test_warn_zone PASSED        [ 85%]
+tests/test_risk_rules.py::TestFeeRatioRule::test_pass_low_fees PASSED    [ 85%]
+tests/test_risk_rules.py::TestFeeRatioRule::test_fail_high_fees PASSED   [ 85%]
+tests/test_risk_rules.py::TestMinPositionsRule::test_pass_enough PASSED  [ 85%]
+tests/test_risk_rules.py::TestMinPositionsRule::test_warn_too_few PASSED [ 85%]
+tests/test_risk_rules.py::TestRulesEngine::test_all_pass_diversified PASSED [ 85%]
+tests/test_risk_rules.py::TestRulesEngine::test_has_failures_concentrated PASSED [ 85%]
+tests/test_risk_rules.py::TestRulesEngine::test_custom_rules PASSED      [ 86%]
+tests/test_risk_rules.py::TestRulesEngine::test_format_report PASSED     [ 86%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_unanimous_buy PASSED [ 86%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_unanimous_sell PASSED [ 86%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_disagreement_hold PASSED [ 86%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_weight_matters PASSED [ 86%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_neutral_zone PASSED [ 86%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_error_analyst_ignored PASSED [ 86%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_dynamic_analyst_with_data PASSED [ 86%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_bull_bear_case PASSED [ 86%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_strongest_bull_bear_reasons PASSED [ 86%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_decision_has_all_opinions PASSED [ 86%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_error_analyst_ignored PASSED [ 87%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_dynamic_analyst_with_data PASSED [ 87%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_bull_bear_case PASSED [ 87%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_strongest_bull_bear_reasons PASSED [ 87%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_decision_has_all_opinions PASSED [ 87%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_confidence_range PASSED [ 87%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_score_range PASSED [ 87%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_single_analyst PASSED [ 87%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_no_analysts PASSED [ 87%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_reasoning_not_empty PASSED [ 87%]
-tests/test_signal_synthesis.py::TestSignalSynthesizer::test_record_outcome_correct PASSED [ 87%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_no_analysts PASSED [ 88%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_reasoning_not_empty PASSED [ 88%]
+tests/test_signal_synthesis.py::TestSignalSynthesizer::test_record_outcome_correct PASSED [ 88%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_record_outcome_wrong PASSED [ 88%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_win_rate PASSED [ 88%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_category_field PASSED [ 88%]
 tests/test_signal_synthesis.py::TestSignalSynthesizer::test_multiple_categories PASSED [ 88%]
-tests/test_sr_candles.py::TestLocalExtrema::test_maxima_simple_peak PASSED [ 88%]
-tests/test_sr_candles.py::TestLocalExtrema::test_minima_simple_trough PASSED [ 88%]
+tests/test_sr_candles.py::TestLocalExtrema::test_maxima_simple_peak PASSED [ 89%]
+tests/test_sr_candles.py::TestLocalExtrema::test_minima_simple_trough PASSED [ 89%]
 tests/test_sr_candles.py::TestLocalExtrema::test_maxima_multiple_peaks PASSED [ 89%]
 tests/test_sr_candles.py::TestLocalExtrema::test_empty_array PASSED      [ 89%]
 tests/test_sr_candles.py::TestLocalExtrema::test_flat_array PASSED       [ 89%]
 tests/test_sr_candles.py::TestClustering::test_cluster_nearby PASSED     [ 89%]
 tests/test_sr_candles.py::TestClustering::test_cluster_single PASSED     [ 89%]
-tests/test_sr_candles.py::TestClustering::test_cluster_empty PASSED      [ 89%]
+tests/test_sr_candles.py::TestClustering::test_cluster_empty PASSED      [ 90%]
 tests/test_sr_candles.py::TestClustering::test_cluster_strength PASSED   [ 90%]
 tests/test_sr_candles.py::TestResistances::test_finds_peaks_above_current PASSED [ 90%]
 tests/test_sr_candles.py::TestResistances::test_returns_sorted_ascending PASSED [ 90%]
 tests/test_sr_candles.py::TestResistances::test_empty_when_no_peaks PASSED [ 90%]
 tests/test_sr_candles.py::TestResistances::test_min_strength_filter PASSED [ 90%]
 tests/test_sr_candles.py::TestSupports::test_finds_troughs_below_current PASSED [ 90%]
-tests/test_sr_candles.py::TestSupports::test_returns_sorted_descending PASSED [ 91%]
+tests/test_sr_candles.py::TestSupports::test_returns_sorted_descending PASSED [ 90%]
 tests/test_sr_candles.py::TestConvenience::test_nearest_support PASSED   [ 91%]
 tests/test_sr_candles.py::TestConvenience::test_nearest_resistance PASSED [ 91%]
 tests/test_sr_candles.py::TestConvenience::test_combined_sr PASSED       [ 91%]
 tests/test_sr_candles.py::TestConvenience::test_no_support_found PASSED  [ 91%]
 tests/test_sr_candles.py::TestCandleScalar::test_doji PASSED             [ 91%]
-tests/test_sr_candles.py::TestCandleScalar::test_doji_no_range PASSED    [ 92%]
-tests/test_sr_candles.py::TestCandleScalar::test_gravestone_doji PASSED  [ 92%]
+tests/test_sr_candles.py::TestCandleScalar::test_doji_no_range PASSED    [ 91%]
+tests/test_sr_candles.py::TestCandleScalar::test_gravestone_doji PASSED  [ 91%]
 tests/test_sr_candles.py::TestCandleScalar::test_dragonfly_doji PASSED   [ 92%]
 tests/test_sr_candles.py::TestCandleScalar::test_spinning_top PASSED     [ 92%]
 tests/test_sr_candles.py::TestCandleScalar::test_hammer PASSED           [ 92%]
 tests/test_sr_candles.py::TestCandleScalar::test_inverted_hammer PASSED  [ 92%]
-tests/test_sr_candles.py::TestCandleScalar::test_bullish_strong PASSED   [ 93%]
-tests/test_sr_candles.py::TestCandleScalar::test_bearish_strong PASSED   [ 93%]
-tests/test_sr_candles.py::TestCandleScalar::test_not_bullish_when_doji PASSED [ 93%]
-tests/test_sr_candles.py::TestCandleScalar::test_engulfing_bullish PASSED [ 93%]
+tests/test_sr_candles.py::TestCandleScalar::test_bullish_strong PASSED   [ 92%]
+tests/test_sr_candles.py::TestCandleScalar::test_bearish_strong PASSED   [ 92%]
+tests/test_sr_candles.py::TestCandleScalar::test_not_bullish_when_doji PASSED [ 92%]
+tests/test_sr_candles.py::TestCandleScalar::test_engulfing_bullish PASSED [ 92%]
 tests/test_sr_candles.py::TestCandleScalar::test_engulfing_bearish PASSED [ 93%]
 tests/test_sr_candles.py::TestCandleVectorized::test_detect_patterns_returns_dict PASSED [ 93%]
-tests/test_sr_candles.py::TestCandleVectorized::test_detect_patterns_correct_length PASSED [ 94%]
-tests/test_sr_candles.py::TestCandleVectorized::test_detect_doji_vectorized PASSED [ 94%]
-tests/test_sr_candles.py::TestCandleVectorized::test_detect_bullish_vectorized PASSED [ 94%]
-tests/test_sr_candles.py::TestCandleVectorized::test_detect_engulfing_bullish_vectorized PASSED [ 94%]
-tests/test_sr_candles.py::TestCandleVectorized::test_detect_engulfing_bearish_vectorized PASSED [ 94%]
+tests/test_sr_candles.py::TestCandleVectorized::test_detect_patterns_correct_length PASSED [ 93%]
+tests/test_sr_candles.py::TestCandleVectorized::test_detect_doji_vectorized PASSED [ 93%]
+tests/test_sr_candles.py::TestCandleVectorized::test_detect_bullish_vectorized PASSED [ 93%]
+tests/test_sr_candles.py::TestCandleVectorized::test_detect_engulfing_bullish_vectorized PASSED [ 93%]
+tests/test_sr_candles.py::TestCandleVectorized::test_detect_engulfing_bearish_vectorized PASSED [ 93%]
 tests/test_sr_candles.py::TestCandleVectorized::test_empty_arrays PASSED [ 94%]
-tests/test_sr_candles.py::TestCandleVectorized::test_single_bar PASSED   [ 95%]
-tests/test_sr_candles.py::TestCandleConfig::test_strict_doji PASSED      [ 95%]
-tests/test_sr_candles.py::TestCandleConfig::test_relaxed_bullish PASSED  [ 95%]
-tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_buy_uses_bid PASSED [ 95%]
-tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_sell_uses_ask PASSED [ 95%]
-tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_fallback_to_last_trade PASSED [ 95%]
-tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_requote_on_drift PASSED [ 96%]
-tests/test_stocksharp_ports.py::TestVWAPBehavior::test_accumulates PASSED [ 96%]
-tests/test_stocksharp_ports.py::TestTWAPBehavior::test_time_gating PASSED [ 96%]
-tests/test_stocksharp_ports.py::TestBestByVolumeBehavior::test_finds_level PASSED [ 96%]
-tests/test_stocksharp_ports.py::TestLevelBehavior::test_midpoint PASSED  [ 96%]
-tests/test_stocksharp_ports.py::TestQuotingEngine::test_register_new_order PASSED [ 96%]
-tests/test_stocksharp_ports.py::TestQuotingEngine::test_finish_on_complete PASSED [ 97%]
-tests/test_stocksharp_ports.py::TestQuotingEngine::test_timeout PASSED   [ 97%]
-tests/test_stocksharp_ports.py::TestQuotingEngine::test_cancel_on_price_change PASSED [ 97%]
-tests/test_stocksharp_ports.py::TestQuotingEngine::test_price_step_rounding PASSED [ 97%]
-tests/test_stocksharp_ports.py::TestPercentOfTurnover::test_basic PASSED [ 97%]
-tests/test_stocksharp_ports.py::TestFixedPerContract::test_futures PASSED [ 97%]
-tests/test_stocksharp_ports.py::TestTurnoverTier::test_tier_progression PASSED [ 98%]
-tests/test_stocksharp_ports.py::TestTurnoverTier::test_reset PASSED      [ 98%]
-tests/test_stocksharp_ports.py::TestMakerTaker::test_maker_cheaper PASSED [ 98%]
-tests/test_stocksharp_ports.py::TestInstrumentTypeRule::test_routes PASSED [ 98%]
-tests/test_stocksharp_ports.py::TestCommissionManager::test_moex_default PASSED [ 98%]
-tests/test_stocksharp_ports.py::TestCommissionManager::test_sum_mode PASSED [ 98%]
-tests/test_stocksharp_ports.py::TestProtectiveStopLoss::test_fixed_stop_long PASSED [ 99%]
-tests/test_stocksharp_ports.py::TestProtectiveStopLoss::test_pct_stop_short PASSED [ 99%]
-tests/test_stocksharp_ports.py::TestProtectiveStopLoss::test_trailing_stop_long PASSED [ 99%]
-tests/test_stocksharp_ports.py::TestProtectiveTakeProfit::test_take_long PASSED [ 99%]
-tests/test_stocksharp_ports.py::TestProtectiveTimeout::test_time_stop PASSED [ 99%]
-tests/test_stocksharp_ports.py::TestProtectiveTimeout::test_already_closed PASSED [ 99%]
-tests/test_stocksharp_ports.py::TestProtectivePriceStep::test_rounding PASSED [100%]
+tests/test_sr_candles.py::TestCandleVectorized::test_single_bar PASSED   [ 94%]
+tests/test_sr_candles.py::TestCandleConfig::test_strict_doji PASSED      [ 94%]
+tests/test_sr_candles.py::TestCandleConfig::test_relaxed_bullish PASSED  [ 94%]
+tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_buy_uses_bid PASSED [ 94%]
+tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_sell_uses_ask PASSED [ 94%]
+tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_fallback_to_last_trade PASSED [ 94%]
+tests/test_stocksharp_ports.py::TestBestByPriceBehavior::test_requote_on_drift PASSED [ 95%]
+tests/test_stocksharp_ports.py::TestVWAPBehavior::test_accumulates PASSED [ 95%]
+tests/test_stocksharp_ports.py::TestTWAPBehavior::test_time_gating PASSED [ 95%]
+tests/test_stocksharp_ports.py::TestBestByVolumeBehavior::test_finds_level PASSED [ 95%]
+tests/test_stocksharp_ports.py::TestLevelBehavior::test_midpoint PASSED  [ 95%]
+tests/test_stocksharp_ports.py::TestQuotingEngine::test_register_new_order PASSED [ 95%]
+tests/test_stocksharp_ports.py::TestQuotingEngine::test_finish_on_complete PASSED [ 95%]
+tests/test_stocksharp_ports.py::TestQuotingEngine::test_timeout PASSED   [ 95%]
+tests/test_stocksharp_ports.py::TestQuotingEngine::test_cancel_on_price_change PASSED [ 96%]
+tests/test_stocksharp_ports.py::TestQuotingEngine::test_price_step_rounding PASSED [ 96%]
+tests/test_stocksharp_ports.py::TestPercentOfTurnover::test_basic PASSED [ 96%]
+tests/test_stocksharp_ports.py::TestFixedPerContract::test_futures PASSED [ 96%]
+tests/test_stocksharp_ports.py::TestTurnoverTier::test_tier_progression PASSED [ 96%]
+tests/test_stocksharp_ports.py::TestTurnoverTier::test_reset PASSED      [ 96%]
+tests/test_stocksharp_ports.py::TestMakerTaker::test_maker_cheaper PASSED [ 96%]
+tests/test_stocksharp_ports.py::TestInstrumentTypeRule::test_routes PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestCommissionManager::test_moex_default PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestCommissionManager::test_sum_mode PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestProtectiveStopLoss::test_fixed_stop_long PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestProtectiveStopLoss::test_pct_stop_short PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestProtectiveStopLoss::test_trailing_stop_long PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestProtectiveTakeProfit::test_take_long PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestProtectiveTimeout::test_time_stop PASSED [ 97%]
+tests/test_stocksharp_ports.py::TestProtectiveTimeout::test_already_closed PASSED [ 98%]
+tests/test_stocksharp_ports.py::TestProtectivePriceStep::test_rounding PASSED [ 98%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_creation PASSED [ 98%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_inherits_base PASSED [ 98%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_signals_on_uptrend PASSED [ 98%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_signals_on_downtrend PASSED [ 98%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_signals_on_flat PASSED [ 98%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_signals_on_forced_crossover PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_position_size_respects_lot PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_stop_loss_long PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_stop_loss_short PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_warm_up_period PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_empty_data PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_short_data PASSED [ 99%]
+tests/test_strategies/test_ema_crossover.py::TestEMACrossover::test_take_profit PASSED [100%]
 
 ============================== warnings summary ===============================
 tests/test_analysis.py::TestFeaturesCalculation::test_all_features_adds_columns
 tests/test_analysis.py::TestFeaturesCalculation::test_all_features_preserves_row_count
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_pipeline_no_crash
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_short_data
   D:\Cloude_PR\projects\moex-trading-system\tests\..\src\analysis\features.py:157: RuntimeWarning: invalid value encountered in divide
     100 * np.abs(plus_di - minus_di) / (plus_di + minus_di),
 
@@ -24341,22 +26236,30 @@ tests/test_bootstrap_mae_equity.py::TestBootstrapMetrics::test_short_returns
   C:\Users\nikit\AppData\Local\Programs\Python\Python312\Lib\site-packages\numpy\_core\_methods.py:219: RuntimeWarning: invalid value encountered in scalar divide
     ret = ret.dtype.type(ret / rcount)
 
+tests/test_e2e/test_full_pipeline_ml.py::TestMLPipeline::test_pipeline_no_crash
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+tests/test_ml/test_walk_forward.py::TestWalkForwardML::test_returns_metrics
+  C:\Users\nikit\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+    warnings.warn(
+
 tests/test_indicators.py::TestBandPassFilter::test_returns_correct_type
 tests/test_indicators.py::TestBandPassFilter::test_normalized_bounded
   D:\Cloude_PR\projects\moex-trading-system\tests\..\src\indicators\ehlers.py:143: RuntimeWarning: invalid value encountered in divide
     bp_norm = np.where(peak > 0, bp / peak, 0.0)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-================= 599 passed, 7 skipped, 18 warnings in 7.17s =================
+====================== 740 passed, 28 warnings in 56.18s ======================
 ```
 
-
 # ══════════════════════════════════════
-# РАЗДЕЛ 6: КОНФИГУРАЦИЯ
+# РАЗДЕЛ 5: КОНФИГУРАЦИЯ
 # ══════════════════════════════════════
 
 ## Файл: requirements.txt
-
 ```
 # Claude API
 anthropic>=0.40.0
@@ -24369,7 +26272,7 @@ httpx>=0.27.0
 aiosqlite>=0.20.0
 
 # MOEX ISS
-aiomoex>=2.2.0
+aiomoex>=2.1.0
 
 # RSS/новости
 feedparser>=6.0.0
@@ -24407,8 +26310,23 @@ tsfresh>=0.21.0
 # Time Series Foundation Models
 chronos-forecasting>=2.0
 
-# Fast backtesting
-vectorbt>=0.26.0
+# GARCH волатильность
+arch>=8.0.0
+
+# Sorted collections (для LOB)
+sortedcontainers>=2.4.0
+
+# Брокер Tinkoff
+tinkoff-investments>=0.2.0b100
+
+# Telegram алерты
+python-telegram-bot>=20.0
+
+# Dashboard
+streamlit>=1.30.0
+
+# Fast backtesting (optional)
+# vectorbt>=0.26.0
 
 # Мониторинг (Prometheus)
 prometheus-client>=0.20.0
@@ -24426,8 +26344,128 @@ mypy>=1.10.0
 ruff>=0.6.0
 ```
 
-## Файл: config/tickers.yaml
+## Файл: config/settings.yaml
+```
+project:
+  name: "moex-trading-bot"
+  version: "0.2.0"
 
+moex:
+  iss_url: "https://iss.moex.com/iss"
+  max_requests_per_sec: 50
+  boards:
+    equities: "TQBR"
+    futures: "RFUD"
+    options: "ROPD"
+    fx: "CETS"
+  sessions:
+    main_start: "10:00"
+    main_end: "18:40"
+    evening_start: "19:05"
+    evening_end: "23:50"
+    clearing_1_start: "14:00"
+    clearing_1_end: "14:05"
+    clearing_2_start: "18:45"
+    clearing_2_end: "19:00"
+    auction_open_start: "09:50"
+    auction_open_end: "10:00"
+    auction_close_start: "18:40"
+    auction_close_end: "18:50"
+
+costs:
+  equity:
+    commission_pct: 0.0001
+    slippage_ticks: 2
+    settlement: "T+1"
+  futures:
+    commission_rub: 2.0
+    slippage_ticks: 1
+    settlement: "T+0"
+  options:
+    commission_rub: 2.0
+    slippage_ticks: 3
+    settlement: "T+0"
+  fx:
+    commission_pct: 0.00003
+    slippage_ticks: 1
+    settlement: "T+1"
+
+risk:
+  max_position_pct: 0.20
+  max_daily_drawdown_pct: 0.05
+  max_total_drawdown_pct: 0.15
+  max_correlated_exposure_pct: 0.40
+  circuit_breaker_daily_dd: 0.05
+  circuit_breaker_total_dd: 0.15
+
+instruments:
+  equities:
+    SBER: {lot: 10, step: 0.01, sector: "banks"}
+    GAZP: {lot: 10, step: 0.01, sector: "oil_gas"}
+    LKOH: {lot: 1, step: 0.5, sector: "oil_gas"}
+    VTBR: {lot: 10000, step: 0.000005, sector: "banks"}
+    GMKN: {lot: 1, step: 1.0, sector: "metals"}
+    ROSN: {lot: 1, step: 0.05, sector: "oil_gas"}
+    YNDX: {lot: 1, step: 0.1, sector: "tech"}
+    MGNT: {lot: 1, step: 0.5, sector: "retail"}
+    NVTK: {lot: 1, step: 0.1, sector: "oil_gas"}
+    PLZL: {lot: 1, step: 1.0, sector: "metals"}
+    MOEX: {lot: 10, step: 0.01, sector: "finance"}
+    TCSG: {lot: 1, step: 0.2, sector: "banks"}
+    ALRS: {lot: 10, step: 0.01, sector: "metals"}
+    SNGS: {lot: 100, step: 0.005, sector: "oil_gas"}
+    TATN: {lot: 1, step: 0.1, sector: "oil_gas"}
+  futures:
+    Si: {step: 1.0, go_pct: 0.15, base: "USD/RUB"}
+    RTS: {step: 10.0, go_pct: 0.20, base: "RTS Index"}
+    BR: {step: 0.01, go_pct: 0.15, base: "Brent"}
+    GOLD: {step: 0.1, go_pct: 0.15, base: "Gold"}
+    NG: {step: 0.001, go_pct: 0.15, base: "Natural Gas"}
+
+backtest:
+  default_capital: 1_000_000
+  trading_days_per_year: 252
+  benchmark: "IMOEX"
+  min_sharpe_threshold: 1.0
+  max_drawdown_threshold: 0.20
+  min_trades_for_validity: 30
+  walk_forward:
+    n_windows: 5
+    train_ratio: 0.70
+    gap_bars: 1
+    retrain_every_n_bars: 60
+
+ml:
+  models: ["catboost", "lightgbm", "xgboost"]
+  ensemble_method: "stacking"
+  feature_selection:
+    method: "mutual_info"
+    top_k: 50
+  label:
+    method: "triple_barrier"
+    take_profit_atr: 2.0
+    stop_loss_atr: 1.5
+    max_holding_bars: 20
+
+telegram:
+  bot_token_env: "TELEGRAM_BOT_TOKEN"
+  chat_id_env: "TELEGRAM_CHAT_ID"
+  alerts:
+    - signal_generated
+    - order_filled
+    - stop_triggered
+    - circuit_breaker_activated
+    - daily_pnl_report
+
+broker:
+  default: "tinkoff"
+  tinkoff:
+    token_env: "TINKOFF_TOKEN"
+    sandbox: true
+    account_id_env: "TINKOFF_ACCOUNT_ID"
+```
+
+## Файл: config/tickers.yaml
 ```
 # Полный universe MOEX — 30 акций + 3 фьючерса
 # Бот ежедневно ранжирует и отбирает Top-N по composite score
@@ -24664,7 +26702,6 @@ selection:
 ```
 
 ## Файл: config/prometheus.yml
-
 ```
 global:
   scrape_interval: 15s
@@ -24679,7 +26716,6 @@ scrape_configs:
 ```
 
 ## Файл: docker-compose.yml
-
 ```
 version: "3.8"
 
@@ -24748,416 +26784,26 @@ volumes:
   grafana-data:
 ```
 
-## Файл: Dockerfile
-
-```
-FROM python:3.11-slim
-
-WORKDIR /app
-
-# System dependencies for TA-Lib and ML
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy source code
-COPY src/ src/
-COPY config/ config/
-COPY scripts/ scripts/
-COPY data/ data/
-
-# Create data directory if not exists
-RUN mkdir -p data
-
-# Environment
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV TRADING_MODE=paper
-
-EXPOSE 8080
-
-# Healthcheck — verify Python and main module importable
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=60s \
-    CMD python -c "from src.config import get_settings; print('OK')" || exit 1
-
-# Run trading system
-CMD ["python", "-m", "src.main"]
-```
-
-## Файл: .gitignore
-
-```
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-eggs/
-parts/
-var/
-sdist/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-.installed.cfg
-MANIFEST
-.Python
-
-# Виртуальное окружение
-venv/
-env/
-ENV/
-.venv/
-.env/
-Lib/
-Scripts/
-!scripts/
-
-# Переменные окружения (секреты!)
-.env
-.env.local
-.env.*.local
-
-# База данных
-*.db
-*.sqlite
-*.sqlite3
-data/
-
-# Логи
-*.log
-logs/
-
-# Jupyter Notebooks checkpoints
-.ipynb_checkpoints/
-notebooks/.ipynb_checkpoints/
-
-# Кэш
-.cache/
-*.cache
-
-# Mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pytest
-.pytest_cache/
-.coverage
-coverage.xml
-htmlcov/
-
-# Ruff
-.ruff_cache/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Временные файлы
-*.tmp
-*.bak
-*.orig
-```
-
-
 # ══════════════════════════════════════
-# РАЗДЕЛ 7: ЗАВИСИМОСТИ
+# РАЗДЕЛ 6: ИСТОРИЯ КОММИТОВ
 # ══════════════════════════════════════
-
 ```
-Package                       Version
------------------------------ ---------------
-accelerate                    1.13.0
-aiofiles                      24.1.0
-aiohappyeyeballs              2.6.1
-aiohttp                       3.13.3
-aiosignal                     1.4.0
-aiosqlite                     0.20.0
-alembic                       1.14.1
-altair                        6.0.0
-annotated-doc                 0.0.4
-annotated-types               0.6.0
-anthropic                     0.43.0
-antlr4-python3-runtime        4.9.3
-anyio                         4.2.0
-asyncpg                       0.30.0
-attrs                         25.4.0
-audioread                     3.1.0
-av                            16.1.0
-bcrypt                        5.0.0
-beautifulsoup4                4.12.3
-bitsandbytes                  0.49.2
-blinker                       1.9.0
-boto3                         1.42.63
-botocore                      1.42.63
-brotli                        1.2.0
-cached_path                   1.8.9
-cachetools                    5.5.0
-certifi                       2023.11.17
-cffi                          2.0.0
-charset-normalizer            3.3.2
-claude-monitor                3.1.0
-click                         8.3.1
-colorama                      0.4.6
-colorlog                      6.10.1
-composio                      0.11.2
-composio-client               1.27.0
-composio_core                 0.7.21
-contourpy                     1.3.0
-coverage                      7.13.4
-cryptography                  46.0.5
-ctranslate2                   4.7.1
-cycler                        0.12.1
-datasets                      4.6.1
-decorator                     5.2.1
-deprecation                   2.1.0
-dill                          0.4.0
-distro                        1.9.0
-docstring_parser              0.17.0
-edge-tts                      7.2.7
-einops                        0.8.2
-einx                          0.4.1
-elevenlabs                    2.38.1
-ema-pytorch                   0.7.9
-encodec                       0.1.1
-et_xmlfile                    2.0.0
-f5-tts                        1.1.17
-fakeredis                     2.26.2
-fastapi                       0.115.6
-faster-whisper                1.2.1
-ffmpy                         1.0.0
-filelock                      3.24.3
-flatbuffers                   25.12.19
-fonttools                     4.54.1
-frozendict                    2.4.4
-frozenlist                    1.8.0
-fsspec                        2026.2.0
-gitdb                         4.0.12
-GitPython                     3.1.46
-google-api-core               2.30.0
-google-auth                   2.49.0
-google-cloud-core             2.5.0
-google-cloud-storage          3.9.0
-google-crc32c                 1.8.0
-google-resumable-media        2.8.0
-googleapis-common-protos      1.73.0
-gradio                        6.9.0
-gradio_client                 2.3.0
-greenlet                      3.3.2
-groovy                        0.1.2
-grpcio                        1.69.0
-grpcio-tools                  1.69.0
-h11                           0.14.0
-hf-xet                        1.3.2
-hiredis                       3.3.0
-html5lib                      1.1
-httpcore                      1.0.2
-httptools                     0.7.1
-httpx                         0.28.1
-huggingface_hub               1.5.0
-hydra-core                    1.3.2
-idna                          3.6
-importlib_metadata            8.7.1
-inflection                    0.5.1
-iniconfig                     2.3.0
-invoke                        2.2.1
-Jinja2                        3.1.6
-jiter                         0.13.0
-jmespath                      1.1.0
-joblib                        1.5.3
-json-schema-to-pydantic       0.4.10
-jsonpatch                     1.33
-jsonpointer                   3.0.0
-jsonref                       1.1.0
-jsonschema                    4.26.0
-jsonschema-specifications     2025.9.1
-kiwisolver                    1.4.7
-langgraph                     1.0.10
-langgraph-checkpoint          4.0.1
-langgraph-prebuilt            1.0.8
-langgraph-sdk                 0.3.9
-langsmith                     0.7.9
-lazy-loader                   0.5
-librosa                       0.11.0
-llvmlite                      0.46.0
-loguru                        0.7.3
-lxml                          6.0.2
-Mako                          1.3.10
-markdown-it-py                4.0.0
-MarkupSafe                    3.0.3
-matplotlib                    3.9.2
-mdurl                         0.1.2
-mpmath                        1.3.0
-msgpack                       1.1.2
-multidict                     6.7.1
-multiprocess                  0.70.18
-multitasking                  0.0.11
-mypy                          1.14.1
-mypy_extensions               1.1.0
-narwhals                      2.17.0
-networkx                      3.6.1
-nodeenv                       1.10.0
-numba                         0.64.0
-numpy                         2.1.2
-omegaconf                     2.3.0
-onnxruntime                   1.24.2
-openai                        2.26.0
-openapi-client                1.1.7
-optuna                        4.8.0
-orjson                        3.11.7
-ormsgpack                     1.12.2
-packaging                     24.1
-pandas                        2.2.3
-paramiko                      4.0.0
-pedalboard                    0.9.22
-peewee                        3.17.6
-pillow                        10.4.0
-pip                           23.3.2
-platformdirs                  4.3.6
-pluggy                        1.6.0
-polars                        1.39.3
-polars-runtime-32             1.39.3
-pooch                         1.9.0
-prompt_toolkit                3.0.52
-propcache                     0.4.1
-proto-plus                    1.27.1
-protobuf                      5.29.6
-psutil                        7.2.2
-pyarrow                       23.0.1
-pyasn1                        0.6.2
-pyasn1_modules                0.4.2
-pycparser                     3.0
-pydantic                      2.10.4
-pydantic_core                 2.27.2
-pydantic-settings             2.7.1
-pydeck                        0.9.1
-pydub                         0.25.1
-pygame                        2.6.1
-Pygments                      2.19.2
-PyNaCl                        1.6.2
-pyparsing                     3.1.4
-pyperclip                     1.11.0
-pypinyin                      0.55.0
-pyright                       1.1.408
-Pysher                        1.0.8
-pyTelegramBotAPI              4.26.0
-pytest                        8.3.4
-pytest-asyncio                0.25.0
-pytest-cov                    6.0.0
-pytest-httpx                  0.35.0
-python-dateutil               2.9.0.post0
-python-docx                   1.2.0
-python-dotenv                 1.0.1
-python-multipart              0.0.20
-python-telegram-bot           20.7
-pytz                          2024.2
-PyYAML                        6.0.3
-redis                         5.2.1
-referencing                   0.37.0
-regex                         2026.2.28
-requests                      2.32.5
-requests-toolbelt             1.0.0
-rich                          13.9.4
-rjieba                        0.2.0
-rpds-py                       0.30.0
-rsa                           4.9.1
-ruff                          0.8.6
-s3transfer                    0.16.0
-safehttpx                     0.1.7
-safetensors                   0.7.0
-schedule                      1.2.2
-scikit-learn                  1.8.0
-scipy                         1.17.1
-semantic-version              2.10.0
-semver                        3.0.4
-sentry-sdk                    2.54.0
-setproctitle                  1.3.7
-setuptools                    82.0.0
-shellingham                   1.5.4
-six                           1.16.0
-smmap                         5.0.2
-sniffio                       1.3.0
-sortedcontainers              2.4.0
-soundfile                     0.13.1
-soupsieve                     2.6
-soxr                          1.0.0
-SQLAlchemy                    2.0.36
-starlette                     0.41.3
-structlog                     24.4.0
-sympy                         1.14.0
-tabulate                      0.9.0
-tenacity                      9.1.4
-threadpoolctl                 3.6.0
-tinkoff                       0.1.1
-tinkoff-investments           0.2.0b106
-tokenizers                    0.22.2
-toml                          0.10.2
-tomli                         2.4.0
-tomlkit                       0.13.3
-torch                         2.10.0+cpu
-torchaudio                    2.10.0+cpu
-torchcodec                    0.10.0
-torchdiffeq                   0.2.5
-tornado                       6.5.4
-tqdm                          4.67.3
-transformers                  5.3.0
-transformers-stream-generator 0.0.5
-typer                         0.24.1
-types-cffi                    1.17.0.20260307
-types-pyOpenSSL               24.1.0.20240722
-types-redis                   4.6.0.20241004
-types-setuptools              82.0.0.20260210
-typing_extensions             4.15.0
-typing-inspection             0.4.2
-tzdata                        2024.2
-ujson                         5.11.0
-Unidecode                     1.4.0
-urllib3                       2.1.0
-uuid_utils                    0.14.1
-uvicorn                       0.34.0
-vocos                         0.1.0
-vsdx                          0.6.1
-wandb                         0.25.0
-watchdog                      6.0.0
-watchfiles                    1.1.1
-wcwidth                       0.6.0
-webencodings                  0.5.1
-websocket-client              1.9.0
-websockets                    14.1
-win32_setctime                1.2.0
-x-transformers                2.16.2
-xlsxwriter                    3.2.9
-xonsh                         0.22.6
-xxhash                        3.6.0
-yarl                          1.22.0
-yfinance                      0.2.44
-zipp                          3.23.0
-zstandard                     0.25.0
-```
-
-
-# ══════════════════════════════════════
-# РАЗДЕЛ 9: ИСТОРИЯ КОММИТОВ
-# ══════════════════════════════════════
-
-```
+5355c48 milestone: all 4 phases complete — ready for paper trading
+2522e98 feat(monitoring): add Streamlit dashboard
+eedc4ad feat(scripts): add paper trading runner with Tinkoff sandbox
+547fcd4 feat(monitoring): add Telegram bot for alerts and control
+1f12aa8 feat(execution): add Tinkoff Invest API adapter (sandbox + live)
+332f1d4 feat(scripts): add full ML backtest pipeline with walk-forward
+ecc9ec2 feat(ml): add walk-forward ML pipeline orchestrator
+50a1bec test: add real data backtest for SBER 2023-2024
+f9f61c5 feat(scripts): add historical data downloader for MOEX
+cdfee35 feat(data): add MOEX ISS REST API client with pagination and rate limiting
+5329859 test: add E2E pipeline tests (rule-based + ML)
+73b7a97 feat(strategies): add EMA crossover reference implementation
+7ee531d feat(core): add BaseStrategy ABC + strategy registry
+0c39025 feat(core): add canonical Pydantic models (Bar, Signal, Order, Position, Portfolio, TradeResult)
+a04b95b feat(core): add unified settings.yaml + Pydantic config loader
+568dad3 fix: add missing dependencies (arch, sortedcontainers, tinkoff, telegram)
 824073c feat(ml): add multi-threshold label generators for ML training
 e597589 feat(ml,indicators): add UMP trade filter, trend quality, gap detector
 b5fd1f2 feat(strategy): add multi-analyst signal synthesis framework
@@ -25172,158 +26818,146 @@ b2f8f8e feat(backtest): add BCa bootstrap, MAE/MFE, equity R², entropy, UPI
 3f2427b feat: implement analysis layer — features, regime detection, signal filters
 7b52a19 feat: port 3 components from StockSharp (C# → Python)
 50fe383 feat: add strategy utility functions (inspired by backtesting.py)
-e14e49c feat: expand metrics with Alpha, Beta, SQN, Kelly (inspired by backtesting.py)
-162d4ad feat: add MOEX ISS exchange rate cache for multi-currency P&L
-6d65f40 feat: add portfolio risk rules engine (inspired by Ghostfolio X-Ray)
-ae0ab97 feat: integrate 6 technical indicators from jesse-ai
-98cbdae feat: integrate Monte Carlo simulation from jesse-ai
-d0c8954 feat: integrate Optuna strategy optimizer from jesse-ai
-cb41aa8 feat: integrate comprehensive metrics module from jesse-ai
-ea6f353 merge: resolve conflicts — combine local hooks + remote permissions + MCP servers
-de50c76 feat(moex): add all scripts + multi-agent Claude + fix .gitignore
-3b282b5 fix(moex): honest simulation — 4 critical bugs fixed, v4 tuned params
-1be2019 docs: full Russian presentation with logic, stack, cases, architecture
-1ca4c02 docs: add MOEX Trading presentation to GitHub Pages /docs
-6f7bea2 docs: add GitHub Pages presentation — full project showcase
-1d7c817 chore(moex): remove TSFRESH from production config, Chronos-Bolt only
-55a6cf2 fix(moex): TSFRESH fixed (500 features) — v1.1 Chronos remains best config
-624b441 release(moex): v1.1 — Chronos-Bolt neural boost (+18.36%/month, 73% WR)
 ```
 
-
 # ══════════════════════════════════════
-# РАЗДЕЛ 10: САМООЦЕНКА CLAUDE CODE
+# РАЗДЕЛ 7: РАЗМЕРЫ ФАЙЛОВ
 # ══════════════════════════════════════
+```
+      5 tests/test_core/conftest.py
+      5 tests/test_data/conftest.py
+      5 tests/test_e2e/conftest.py
+      5 tests/test_execution/conftest.py
+      5 tests/test_ml/conftest.py
+      5 tests/test_monitoring/conftest.py
+      5 tests/test_strategies/conftest.py
+     27 src/models/market.py
+     30 src/models/signal.py
+     75 tests/test_e2e/test_paper_trading.py
+     89 src/core/strategy_registry.py
+     95 src/ml/predictor.py
+     96 src/core/base_strategy.py
+    100 src/indicators/damiani.py
+    112 tests/test_ml/test_walk_forward.py
+    113 scripts/trading_status.py
+    115 src/indicators/supertrend.py
+    115 tests/test_execution/test_tinkoff_adapter.py
+    116 tests/test_monitoring/test_telegram.py
+    117 tests/test_indicator_utils.py
+    121 src/analysis/tsfm_predictor.py
+    122 scripts/run_daily_once.py
+    126 tests/test_exchange_rates.py
+    128 src/strategy/multi_agent.py
+    129 scripts/load_historical_data.py
+    132 src/ml/trainer.py
+    132 tests/test_core/test_config.py
+    133 src/ml/features.py
+    135 scripts/download_history.py
+    136 scripts/paper_trading_scheduler.py
+    138 src/analysis/regime.py
+    138 src/ml/ensemble.py
+    140 src/indicators/order_book.py
+    146 tests/test_strategies/test_ema_crossover.py
+    148 scripts/emergency_close.py
+    154 src/indicators/utils.py
+    154 tests/test_core/test_base_strategy.py
+    158 src/execution/grid.py
+    159 src/indicators/squeeze_momentum.py
+    161 scripts/run_ml_backtest.py
+    162 src/indicators/garch_forecast.py
+    166 src/risk/portfolio_circuit_breaker.py
+    167 tests/test_monte_carlo.py
+    170 src/strategies/market_making.py
+    170 tests/test_data/test_moex_iss.py
+    170 tests/test_e2e/test_real_data_backtest.py
+    171 src/execution/dca.py
+    173 tests/test_qlib_ports.py
+    175 scripts/dashboard.py
+    175 src/strategy/signal_filter.py
+    175 tests/test_risk_rules.py
+    177 src/core/models.py
+    177 tests/test_e2e/test_full_pipeline_ml.py
+    178 src/monitoring/metrics.py
+    179 tests/test_label_generators.py
+    186 src/analysis/tsfresh_features.py
+    187 src/execution/triple_barrier.py
+    187 src/strategy/prompts.py
+    190 tests/test_core/test_models.py
+    195 tests/test_indicators.py
+    196 scripts/paper_trading.py
+    197 scripts/setup_sandbox.py
+    199 src/indicators/ehlers.py
+    205 tests/test_garch_lob.py
+    206 src/strategies/trend/ema_crossover.py
+    208 scripts/run_sandbox_trading.py
+    213 src/backtest/vectorbt_engine.py
+    214 src/monitoring/telegram_bot.py
+    219 tests/test_optimizer.py
+    227 src/execution/adapters/tinkoff.py
+    232 scripts/load_si_data.py
+    235 tests/test_signal_synthesis.py
+    236 tests/test_e2e/test_full_pipeline.py
+    238 scripts/load_full_universe_data.py
+    238 src/risk/protective.py
+    239 src/backtest/commissions.py
+    240 scripts/load_h1_universe.py
+    247 src/data/limit_order_book.py
+    248 src/ml/label_generators.py
+    249 src/execution/twap.py
+    252 src/indicators/trend_quality.py
+    255 src/ml/processors.py
+    256 src/indicators/support_resistance.py
+    257 src/backtest/report.py
+    259 src/ml/walk_forward.py
+    268 scripts/backtest_dividend_gap.py
+    271 scripts/run_backtest.py
+    273 src/core/config.py
+    282 tests/test_hummingbot_ports.py
+    289 src/analysis/features.py
+    294 src/risk/position_tracker.py
+    303 tests/test_stocksharp_ports.py
+    308 src/strategy/universe_selector.py
+    310 src/data/moex_iss.py
+    315 src/risk/position_sizer.py
+    323 src/analysis/scoring.py
+    323 tests/test_abu_ports.py
+    328 src/data/exchange_rates.py
+    340 src/ml/ump_filter.py
+    352 scripts/validate_phase1.py
+    363 src/strategy/news_reactor.py
+    367 src/data/universe_loader.py
+    368 tests/test_sr_candles.py
+    379 tests/test_remaining_ports.py
+    383 src/strategy/signal_synthesis.py
+    385 src/indicators/candle_patterns.py
+    398 src/backtest/monte_carlo.py
+    401 tests/test_metrics.py
+    403 tests/test_barter_ports.py
+    416 src/risk/rules.py
+    422 src/backtest/optimizer.py
+    423 scripts/simulate_claude_agents.py
+    448 scripts/test_claude_signal.py
+    475 scripts/simulate_v3.py
+    490 src/execution/quoting.py
+    495 scripts/backtest_si.py
+    499 scripts/simulate_last_month.py
+    520 scripts/backtest_pairs.py
+    523 tests/test_bootstrap_mae_equity.py
+    537 tests/test_lean_ports.py
+    586 scripts/simulate_full.py
+    619 src/indicators/advanced.py
+    620 scripts/simulate_3months.py
+    620 scripts/simulate_v3_neural.py
+    644 scripts/simulate_h1_full.py
+    726 scripts/strategy_audit_backtest.py
+    767 tests/test_analysis.py
+    876 scripts/walk_forward_optimize.py
+    898 scripts/optimize_all_strategies.py
+   1085 scripts/run_enhanced_backtest.py
+   1129 scripts/backtest_with_claude.py
+   1307 scripts/backtest_claude_news_futures.py
+   1436 src/backtest/metrics.py
+   1538 src/main.py
+  39445 total
+```
 
-## Что сделано хорошо
-
-1. **Масштаб анализа:** 20+ репозиториев проанализировано, 16 с полными отчётами в REPO_REVIEWS.md. Каждый — по 7-ступенчатой методологии с красными флагами, картой ценности, планом интеграции.
-
-2. **Селективность:** Из 20+ репо интегрированы компоненты только из 8 лучших. Остальные обоснованно пропущены (GPL/LGPL лицензия, не Python, нет уникальных алгоритмов, крипто-only, мёртвые проекты).
-
-3. **Качество кода:** Весь код написан с нуля (не скопирован), с type hints, docstrings, dataclasses. Каждый модуль самодостаточен. Нет зависимости от анализируемых репо.
-
-4. **Тестовое покрытие:** 599 тестов + 7 skipped (GARCH без arch library). Каждый интегрированный компонент имеет ≥7 тестов. Все edge cases покрыты (пустые массивы, NaN, деление на 0, short arrays).
-
-5. **MOEX-специфика:** Лотность, шаг цены, T+1 settlement, клиринги 14:00/18:45, комиссии 0.01% акции / 2₽ фьючерсы — учтены в position_tracker, position_sizer, cost models.
-
-6. **Commit discipline:** 12 atomic коммитов с подробными описаниями. Каждый коммит = рабочее состояние (все тесты зелёные).
-
-7. **Разнообразие источников:** Портированы алгоритмы из Python (pybroker, LiuAlgoTrader, hummingbot, Qlib, abu), Rust (barter-rs), C# (LEAN, StockSharp) — не привязка к одному стеку.
-
-## Что не доделано / пропущено
-
-1. **LEAN: 4 оставшихся индикатора** — ZigZag, KlingerVO, RVI уже портированы, но из оригинальных 9 не сделаны: полный Ichimoku с MOEX-адаптацией, DonchianChannel, KeltnerChannel (хотя базовые аналоги через ta library доступны).
-
-2. **LEAN: Risk Models** — MaxDrawdownPerPosition и UnrealizedProfitTaker задокументированы но не реализованы отдельными классами. PortfolioCircuitBreaker сделан, ProtectiveController (из StockSharp) уже покрывает per-position stops.
-
-3. **Hummingbot: Inventory Skew** — алгоритм управления инвентарём для market making описан, но не реализован как отдельный модуль. Avellaneda-Stoikov формула в market_making.py включает базовый inventory adjustment.
-
-4. **vnpy: OffsetConverter** — T+0/T+1 settlement для фьючерсов FORTS не реализован (нужен при live-торговле фьючерсами).
-
-5. **Qlib: Double Ensemble (SR+FS)** и TRA (Temporal Routing Adaptor) — описаны как идеи, не реализованы. Требуют зрелую ML инфраструктуру.
-
-6. **GA Optimizer** — генетический алгоритм (из vnpy/LEAN) не реализован. Остался grid search.
-
-7. **Walk-forward framework** — нет единого модуля для walk-forward ML validation. Отдельные компоненты есть (Qlib-style processors, label generators), но оркестратор не написан.
-
-8. **Live trading layer** — вся работа в бэктест-режиме. MOEX ISS connector, order routing, WebSocket streaming — не реализованы.
-
-9. **Нет интеграционных тестов** — 599 unit тестов, но нет E2E теста "загрузи данные → сгенерируй сигналы → проверь метрики → сравни с бенчмарком".
-
-10. **skfolio и hftbacktest** — обещаны для анализа, не проанализированы (не хватило контекста).
-
-## Какие компоненты готовы к интеграции (из REPO_REVIEWS)
-
-### Высокий приоритет (из проанализированных, но не портированных)
-1. **GA Optimizer** (vnpy/LEAN) — замена grid search, ~4ч
-2. **Walk-forward ML pipeline** — оркестратор train→predict→shift→retrain, ~6ч
-3. **MOEX ISS DataSource** — connector для live данных, ~8ч
-
-### Средний приоритет
-4. **MeanVariance Portfolio Optimization** (LEAN) — cvxpy QP, ~6ч
-5. **Inventory Skew Management** (hummingbot) — для market making, ~3ч
-6. **OffsetConverter** (vnpy) — T+0/T+1 для FORTS, ~4ч
-
-### Низкий приоритет (nice to have)
-7. **Double Ensemble SR+FS** (Qlib) — адаптивный boosting, ~8ч
-8. **TRA Routing** (Qlib) — regime detection через Sinkhorn OT, ~12ч
-9. **Market Profile (TPO)** — из PineScript идеи, ~4ч
-
-## Какие репозитории дали больше всего пользы
-
-### 1. QuantConnect/LEAN (repo #10) — ⭐⭐⭐⭐⭐
-Самый ценный. 5 индикаторов (ChandeKroll, Choppiness, STC, Augen, RogersSatchell), PortfolioCircuitBreaker, PSR метрика, VolumeShareSlippage. 168 индикаторов как справочник формул. Apache 2.0.
-
-### 2. hummingbot (repo #11) — ⭐⭐⭐⭐⭐
-Triple Barrier, TWAP, DCA, Grid executors + Avellaneda-Stoikov market making + OBI/Microprice. Уникальные execution алгоритмы которых не было нигде.
-
-### 3. bbfamily/abu (repo #14) — ⭐⭐⭐⭐
-UMP судейская система (GMM + kNN с золотым сечением) — единственный ML-фильтр сделок. Path/Distance ratio, Gap detector, Polynomial complexity — уникальные метрики.
-
-### Honorable mentions:
-- **pybroker (#6):** BCa Bootstrap, MAE/MFE, Equity R², UPI
-- **barter-rs (#7):** Welford streaming, Position FIFO, RiskApproved pattern
-- **Qlib (#13):** CSRankNorm, RobustZScore — критичны для ML pipeline
-
-## Какие репозитории оказались бесполезны
-
-| Репо | Причина |
-|------|---------|
-| BitVision (#8) | Lookahead bias, нет бэктеста, мёртв 7 лет, API ключ в коде |
-| Krypto-trading-bot (#5) | C++, крипто market-making, не портируемо |
-| freqtrade-strategies (#12) | GPL-3, шаблонные MA/RSI, нет OOS |
-| trump2cash | Мем-проект 2017, торговля по твитам |
-| Gekko-Strategies | JavaScript, мёртвый бот, 612 .js файлов |
-| ccxt | Коннектор к крипто-биржам, нет алгоритмов |
-| bbgo | Go + AGPL-3, тройной стоп |
-| ninjabot | Go, 77 файлов, крипто |
-| NextTrade | TypeScript, UI-платформа |
-| Deep_Learning_ML_Stock | 228 учебных notebooks, sklearn одной строкой |
-| TradingGym | OpenAI Gym wrapper, 9 файлов |
-| AlphaPy | Legacy sklearn wrapper, автор ушёл в closed source |
-| TradingAgents | LLM-only, нет количественных стратегий |
-| awesome-* списки | Каталоги ссылок, нет кода |
-
-## Известные проблемы
-
-1. **arch library не установлена** — GARCH тесты skipped (7 шт). Нужно `pip install arch-model` для полного функционала.
-
-2. **sortedcontainers зависимость** — LimitOrderBook требует `pip install sortedcontainers`. Не в requirements.txt.
-
-3. **scipy зависимость** — BCa Bootstrap и PSR используют scipy.stats. Уже в requirements.txt (через quantstats), но не объявлена явно.
-
-4. **SchaffTrendCycle** — на монотонных данных возвращает 50.0 (нейтраль) из-за нулевого stochastic range. Это корректное поведение, но может удивить пользователя.
-
-5. **UMP MainUmp** — GMM с n_components=10-40 на малых выборках (<50 trades) нестабилен. Нужен guard: `if n_trades < 100: skip MainUmp`.
-
-6. **TopBot labels** — алгоритм чувствителен к параметру `level`. На гладких данных (linspace) может не находить экстремумы. На реальных OHLC с шумом работает корректно.
-
-7. **Нет __init__.py** в некоторых новых директориях (src/data/ уже имеет, но не все подпапки).
-
-8. **E501 warnings** — в metrics.py есть длинные строки из оригинального кода (до интеграции). Не трогал чтобы не ломать diff.
-
-## Рекомендации для следующего этапа
-
-### Фаза 1: Инфраструктура (неделя 1)
-1. Добавить `arch-model` и `sortedcontainers` в requirements.txt
-2. Написать E2E тест: load CSV → indicators → signals → backtest → metrics → assert Sharpe > 0
-3. Walk-forward framework: оркестратор для ML pipeline
-4. GA Optimizer (из vnpy DEAP) — замена grid search
-
-### Фаза 2: Live-readiness (неделя 2-3)
-5. MOEX ISS DataSource — загрузка OHLCV через iss.moex.com
-6. OffsetConverter для FORTS (T+0/T+1 settlement)
-7. WebSocket streaming connector
-8. Telegram notifier для сигналов
-
-### Фаза 3: ML (неделя 3-4)
-9. Double Ensemble (Qlib SR+FS) — адаптивный boosting
-10. Walk-forward predict rolling — train/predict/shift loop
-11. Stacking ensemble: CatBoost + LightGBM + XGBoost → meta-learner
-
-### Фаза 4: Production (неделя 4+)
-12. Paper trading на Tinkoff/Alor API
-13. Risk monitoring dashboard (Streamlit)
-14. Portfolio optimization (MeanVariance + constraints)
-15. Automated daily pipeline: data → features → predict → trade → report

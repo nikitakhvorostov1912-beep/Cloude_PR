@@ -1,7 +1,7 @@
 """Signal filtering — hard rejects and soft confidence boosts.
 
 Entry filters: reject signals in bad conditions, boost confidence in good ones.
-Macro filters: block signals based on IMOEX, Brent, CBR key rate.
+Macro filters: block signals based on IMOEX, Brent, CBR key rate CHANGES.
 Exit filters: check conditions for closing positions.
 
 OIL_TICKERS — тикеры нефтяного сектора MOEX (блокируются при низком Brent).
@@ -11,11 +11,29 @@ from __future__ import annotations
 from copy import copy
 from typing import Optional
 
+import structlog
+
 from src.models.market import MarketRegime
 from src.models.signal import Action, TradingSignal
 
+logger = structlog.get_logger(__name__)
+
 # Нефтяники MOEX
 OIL_TICKERS = {"GAZP", "LKOH", "NVTK", "ROSN", "TATN", "SNGS", "SIBN", "TRNFP"}
+
+# Ticker → sector mapping for CBR rate impact
+TICKER_SECTOR = {
+    "SBER": "banks", "VTBR": "banks", "TCSG": "banks", "MOEX": "banks",
+    "GAZP": "oil_gas", "LKOH": "oil_gas", "ROSN": "oil_gas", "NVTK": "oil_gas",
+    "TATN": "oil_gas", "SNGS": "oil_gas", "TRNFP": "oil_gas",
+    "GMKN": "metals", "ALRS": "metals", "PLZL": "metals", "CHMF": "metals",
+    "NLMK": "metals", "RUAL": "metals",
+    "MGNT": "retail", "PIKK": "real_estate",
+    "YDEX": "it", "OZON": "it",
+    "MTSS": "telecom", "PHOR": "chemicals",
+    "AFLT": "transport", "FLOT": "transport",
+    "IRAO": "energy",
+}
 
 
 def apply_entry_filters(
@@ -76,7 +94,7 @@ def apply_entry_filters(
     if pre_score < 45:
         return None
 
-    if signal.confidence < 0.60:
+    if signal.confidence < 0.45:
         return None
 
     # --- Soft boosts ---
@@ -122,12 +140,13 @@ def apply_macro_filters(
 
     M1: IMOEX below SMA200 → block all longs
     M2: Brent below SMA50 → block oil sector longs
-    M3: Key rate rising → reduce confidence by 0.1
+    M3: CBR rate CHANGE → adjust confidence per sector
+        (replaces old "key_rate rising → -0.1" with precise sector impact)
 
     Args:
         signal: Trading signal.
         macro: Dict with keys: imoex_above_sma200, brent_above_sma50,
-               key_rate_direction, key_rate, usd_rub, brent.
+               cbr_signal (CBRRateSignal), key_rate, usd_rub, brent.
 
     Returns:
         Filtered signal or None.
@@ -146,10 +165,30 @@ def apply_macro_filters(
         if not macro.get("brent_above_sma50", True):
             return None
 
-    # M3: Key rate rising → reduce confidence
+    # M3: CBR rate change → sector-specific confidence adjustment
     result = copy(signal)
-    if macro.get("key_rate_direction") == "up":
-        result.confidence = max(0.0, result.confidence - 0.1)
+    cbr_signal = macro.get("cbr_signal")
+
+    if cbr_signal is not None and hasattr(cbr_signal, "is_actionable") and cbr_signal.is_actionable:
+        sector = TICKER_SECTOR.get(signal.ticker, "other")
+        sector_impacts = cbr_signal.sector_impacts
+        impact = sector_impacts.get(sector, cbr_signal.market_impact)
+
+        if impact != 0.0:
+            result.confidence = max(0.0, min(1.0, result.confidence + impact))
+            logger.info(
+                "cbr_rate_impact_applied",
+                ticker=signal.ticker,
+                sector=sector,
+                event=cbr_signal.event.value,
+                delta=cbr_signal.delta,
+                impact=round(impact, 4),
+                new_confidence=round(result.confidence, 4),
+            )
+    else:
+        # Fallback: old-style key_rate_direction check
+        if macro.get("key_rate_direction") == "up":
+            result.confidence = max(0.0, result.confidence - 0.1)
 
     return result
 

@@ -123,6 +123,21 @@ class MLSettings(BaseModel):
     label: LabelSettings = Field(default_factory=LabelSettings)
 
 
+class LLMSettings(BaseModel):
+    provider: str = "xiaomi"
+    base_url: str = "https://api.xiaomimimo.com/v1"
+    api_key_env: str = "XIAOMI_API_KEY"
+    default_model: str = "MiMo-7B-RL"
+    fallback_models: list[str] = Field(default_factory=lambda: ["MiMo-7B-RL"])
+    temperature: float = Field(default=0.3, ge=0, le=2)
+    max_tokens: int = Field(default=2000, gt=0)
+    timeout: int = Field(default=30, gt=0)
+
+    @property
+    def api_key(self) -> str | None:
+        return os.environ.get(self.api_key_env)
+
+
 class TelegramSettings(BaseModel):
     bot_token_env: str = "TELEGRAM_BOT_TOKEN"
     chat_id_env: str = "TELEGRAM_CHAT_ID"
@@ -171,8 +186,49 @@ class Settings(BaseModel):
     instruments: InstrumentsSettings = Field(default_factory=InstrumentsSettings)
     backtest: BacktestSettings = Field(default_factory=BacktestSettings)
     ml: MLSettings = Field(default_factory=MLSettings)
+    llm: LLMSettings = Field(default_factory=LLMSettings)
     telegram: TelegramSettings = Field(default_factory=TelegramSettings)
     broker: BrokerSettings = Field(default_factory=BrokerSettings)
+
+    # ── Convenience properties for main.py compatibility ──────────
+
+    @property
+    def log_level(self) -> str:
+        return os.environ.get("LOG_LEVEL", "INFO")
+
+    @property
+    def trading_mode(self) -> str:
+        return os.environ.get("TRADING_MODE", "paper")
+
+    @property
+    def default_strategy(self) -> str:
+        return os.environ.get("DEFAULT_STRATEGY", "conservative")
+
+    @property
+    def db_path(self) -> str:
+        return os.environ.get("DB_PATH", "data/trading.db")
+
+    @property
+    def db_path_resolved(self) -> Path:
+        return Path(self.db_path)
+
+    @property
+    def telegram_bot_token(self) -> str | None:
+        return self.telegram.bot_token
+
+    @property
+    def telegram_chat_id(self) -> str | None:
+        return self.telegram.chat_id
+
+    @property
+    def tinkoff_token(self) -> str | None:
+        return self.broker.tinkoff.token
+
+    @property
+    def tinkoff_account_id(self) -> str | None:
+        return self.broker.tinkoff.account_id
+
+    # ── Lookup helpers ──────────────────────────────────────────
 
     def get_instrument_info(self, ticker: str) -> InstrumentInfo:
         """Get instrument info by ticker. Raises KeyError if not found."""

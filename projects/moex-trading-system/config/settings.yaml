@@ -109,6 +109,17 @@ telegram:
     - circuit_breaker_activated
     - daily_pnl_report
 
+llm:
+  provider: "xiaomi"
+  base_url: "https://api.xiaomimimo.com/v1"
+  api_key_env: "XIAOMI_API_KEY"
+  default_model: "mimo-v2-pro"
+  fallback_models:
+    - "mimo-v2-flash"
+  temperature: 0.3
+  max_tokens: 2000
+  timeout: 30
+
 broker:
   default: "tinkoff"
   tinkoff:

@@ -61,7 +61,7 @@ from src.execution.executor import PaperExecutor  # noqa: E402
 from src.execution.tinkoff_adapter import TinkoffExecutor  # noqa: E402
 from src.models.market import MarketRegime  # noqa: E402
 from src.models.order import Order, OrderType  # noqa: E402
-from src.models.signal import Action, TradingSignal  # noqa: E402
+from src.models.signal import Action, Direction, TradingSignal  # noqa: E402
 from src.monitoring.telegram_bot import TelegramNotifier  # noqa: E402
 from src.monitoring.trade_journal import log_signal_decision, log_trade  # noqa: E402
 from src.risk.circuit_breaker import CircuitBreaker, CircuitState  # noqa: E402
@@ -143,6 +143,9 @@ class TradingPipeline:
         self._circuit_breaker = CircuitBreaker()
         self._telegram = self._init_telegram()
 
+        # Dynamic universe (loaded on first cycle)
+        self._universe_loaded = False
+
         # Текущий pre-score кеш (обновляется в step_analyze)
         self._pre_scores: dict[str, float] = {}
         # Текущие features кеш (обновляется в step_analyze)
@@ -177,7 +180,7 @@ class TradingPipeline:
             return {
                 "name": "conservative",
                 "pre_score_threshold": _MIN_PRE_SCORE_FOR_CLAUDE,
-                "confidence_threshold": 0.6,
+                "confidence_threshold": 0.45,
                 "atr_multiplier": 2.5,
                 "risk_per_trade": 0.015,
                 "max_position_pct": 0.15,
@@ -256,6 +259,39 @@ class TradingPipeline:
             logger.info("executor.paper.init", mode="paper")
             return PaperExecutor(initial_capital=1_000_000.0)
 
+    # ─── Dynamic Universe ───────────────────────────────────────────────────
+
+    async def _load_universe(self) -> None:
+        """Load full MOEX universe via universe_loader, merge with static watchlist."""
+        try:
+            from src.data.universe_loader import load_full_universe
+            universe = await load_full_universe(
+                min_adv_stocks=50_000_000,
+                min_adv_futures=10_000_000,
+                min_open_interest=500,
+                max_spread_pct=1.0,
+            )
+            dynamic_stocks = universe.stock_tickers
+            dynamic_futures = universe.futures_tickers
+            all_dynamic = dynamic_stocks + dynamic_futures
+
+            if all_dynamic:
+                static_only = [t for t in self._ticker_symbols
+                               if t not in all_dynamic]
+                self._ticker_symbols = all_dynamic + static_only
+                self._universe_loaded = True
+                logger.info(
+                    "universe_loaded",
+                    stocks=len(dynamic_stocks),
+                    futures=len(dynamic_futures),
+                    total=len(self._ticker_symbols),
+                    static_added=len(static_only),
+                )
+            else:
+                logger.warning("universe_empty_using_static_watchlist")
+        except Exception as e:
+            logger.warning("universe_load_failed_using_static", error=str(e))
+
     # ─── Шаг 1: Загрузка данных ──────────────────────────────────────────────
 
     async def step_load_data(self) -> dict[str, Any]:
@@ -272,8 +308,38 @@ class TradingPipeline:
         }
 
         today = date.today()
-        # Загружаем последние 5 торговых дней для обновления закрытий
-        from_date = today - timedelta(days=7)
+        # Загружаем 30 дней свежих данных (+ parquet history для 250-bar анализа)
+        from_date = today - timedelta(days=30)
+
+        # Загружаем историю из parquet только при первом цикле
+        if not hasattr(self, '_parquet_loaded'):
+            self._parquet_loaded = False
+        history_dir = Path("data/history")
+        if self._parquet_loaded:
+            history_dir = Path("__skip__")  # skip parquet on subsequent cycles
+        if history_dir.exists():
+            for pq_file in history_dir.glob("*.parquet"):
+                ticker = pq_file.stem
+                try:
+                    import polars as _pl
+                    df = _pl.read_parquet(pq_file)
+                    pq_bars = []
+                    for row in df.iter_rows(named=True):
+                        pq_bars.append({
+                            "ticker": ticker,
+                            "dt": str(row.get("timestamp", row.get("date", ""))),
+                            "open": row.get("open", 0),
+                            "high": row.get("high", 0),
+                            "low": row.get("low", 0),
+                            "close": row.get("close", 0),
+                            "volume": row.get("volume", 0),
+                        })
+                    if pq_bars:
+                        saved = await save_candles(self._db_path, pq_bars)
+                        logger.debug("data.parquet_loaded", ticker=ticker, rows=len(pq_bars))
+                except Exception as pq_exc:
+                    logger.debug("data.parquet_error", file=str(pq_file), error=str(pq_exc))
+            self._parquet_loaded = True
 
         # --- Свечи по всем тикерам + индекс IMOEX ---
         all_tickers = self._ticker_symbols + ["IMOEX"]
@@ -287,7 +353,25 @@ class TradingPipeline:
                     bars = await fetch_candles(ticker=ticker, from_date=from_date, to_date=today)
 
                 if bars:
-                    saved = await save_candles(self._db_path, bars)
+                    # Convert Bar objects to dicts for save_candles
+                    bar_dicts = []
+                    for b in bars:
+                        if isinstance(b, dict):
+                            bd = b
+                        elif hasattr(b, 'timestamp'):
+                            bd = {"ticker": ticker, "dt": str(b.timestamp),
+                                  "open": b.open, "high": b.high,
+                                  "low": b.low, "close": b.close, "volume": b.volume}
+                        elif hasattr(b, 'dt'):
+                            bd = {"ticker": ticker, "dt": str(b.dt),
+                                  "open": b.open, "high": b.high,
+                                  "low": b.low, "close": b.close, "volume": b.volume}
+                        else:
+                            bd = {"ticker": ticker, "dt": "", "open": 0, "high": 0,
+                                  "low": 0, "close": 0, "volume": 0}
+                        bd.setdefault("ticker", ticker)
+                        bar_dicts.append(bd)
+                    saved = await save_candles(self._db_path, bar_dicts)
                     bars_total += saved
                     logger.debug("data.candles_saved", ticker=ticker, count=saved)
                 else:
@@ -325,6 +409,9 @@ class TradingPipeline:
             logger.info("step.load_data.macro_done", indicators=list(macro.keys()))
         except Exception as exc:
             logger.warning("data.macro_error", error=str(exc))
+
+        # MTF данные берутся из DB (parquet уже загружен) — не нужна отдельная загрузка
+        self._mtf_candles: dict[str, dict] = {}
 
         logger.info("step.load_data.done", **{k: v for k, v in result.items() if k != "raw_articles"})
         return result
@@ -508,6 +595,41 @@ class TradingPipeline:
                     rsi=round(float(features["rsi_14"] or 50), 1),
                     adx=round(float(features["adx"] or 0), 1),
                 )
+
+                # MTF анализ — буст pre_score при согласовании таймфреймов
+                if len(bars) >= 50:
+                    try:
+                        from src.analysis.mtf import TimeFrame, analyze_mtf
+                        mtf_data: dict = {}
+                        # D1 = полные дневные свечи из DB
+                        mtf_data[TimeFrame.D1] = bars
+                        # H1 = последние 100 баров (proxy для intraday)
+                        if len(bars) >= 100:
+                            mtf_data[TimeFrame.H1] = bars[-100:]
+                        # W1 = последние 52 бара (proxy для weekly)
+                        if len(bars) >= 52:
+                            mtf_data[TimeFrame.W1] = bars[-52:]
+                        if len(mtf_data) >= 2:
+                            mtf_result = await analyze_mtf(ticker, mtf_data)
+                            if not hasattr(self, '_mtf_results'):
+                                self._mtf_results: dict = {}
+                            self._mtf_results[ticker] = mtf_result
+                            if mtf_result.tradeable and mtf_result.confidence_boost > 0:
+                                old_score = self._pre_scores.get(ticker, 0)
+                                boosted = min(100.0, old_score + mtf_result.confidence_boost * 20)
+                                self._pre_scores[ticker] = boosted
+                                result["pre_scores"][ticker] = boosted
+                                logger.info(
+                                    "mtf_boost_applied",
+                                    ticker=ticker,
+                                    pre_score_before=round(old_score, 1),
+                                    pre_score_after=round(boosted, 1),
+                                    dominant=mtf_result.dominant_signal.value,
+                                    agreement=mtf_result.agreement_ratio,
+                                )
+                    except Exception as mtf_exc:
+                        logger.debug("mtf_analyze_failed", ticker=ticker, error=str(mtf_exc))
+
             except Exception as exc:
                 logger.warning("step.analyze.ticker_error", ticker=ticker, error=str(exc))
 
@@ -534,6 +656,51 @@ class TradingPipeline:
         regime: MarketRegime = analysis.get("regime", MarketRegime.WEAK_TREND)
         macro = {}  # macro получили в step_load_data, берём из features_cache или передаём отдельно
 
+        # CRITICAL новости → немедленный сигнал без LLM
+        _critical_articles = [
+            a for a in analysis.get("raw_articles", [])
+            if a.get("impact") == "critical"
+        ]
+        for art in _critical_articles:
+            for _ct in art.get("tickers", []):
+                if _ct not in self._ticker_symbols:
+                    continue
+                _cdir = art.get("direction", "neutral")
+                if _cdir == "neutral":
+                    # Infer from sentiment
+                    _csent = art.get("sentiment", 0)
+                    _cdir = "bullish" if _csent > 0 else "bearish" if _csent < 0 else "neutral"
+                if _cdir == "neutral":
+                    continue
+                crit_signal = TradingSignal(
+                    ticker=_ct,
+                    action=Action.SELL if _cdir == "bearish" else Action.BUY,
+                    direction=Direction.SHORT if _cdir == "bearish" else Direction.LONG,
+                    confidence=min(0.85, max(0.5, abs(art.get("sentiment", 0.5)))),
+                    reasoning=f"CRITICAL NEWS: {art.get('title', '')[:100]}",
+                )
+                logger.info(
+                    "critical_news_signal",
+                    ticker=_ct,
+                    action=crit_signal.action.value,
+                    confidence=round(crit_signal.confidence, 2),
+                    headline=art.get("title", "")[:60],
+                )
+                # Bypass LLM — will be added to signals list below
+                pre_scores.setdefault(_ct, 0)
+        _critical_signals = [
+            TradingSignal(
+                ticker=_ct,
+                action=Action.SELL if (a.get("direction", "") == "bearish" or a.get("sentiment", 0) < 0) else Action.BUY,
+                direction=Direction.SHORT if (a.get("direction", "") == "bearish" or a.get("sentiment", 0) < 0) else Direction.LONG,
+                confidence=min(0.85, max(0.5, abs(a.get("sentiment", 0.5)))),
+                reasoning=f"CRITICAL NEWS: {a.get('title', '')[:100]}",
+            )
+            for a in _critical_articles
+            for _ct in a.get("tickers", [])
+            if _ct in self._ticker_symbols and a.get("direction", a.get("sentiment", 0)) != "neutral"
+        ]
+
         # Фильтруем тикеры: только Pre-Score >= 45
         threshold = float(self._strategy_cfg.get("pre_score_threshold", _MIN_PRE_SCORE_FOR_CLAUDE))
         candidates = [
@@ -544,9 +711,15 @@ class TradingPipeline:
         # Сортируем по убыванию score
         candidates.sort(key=lambda x: x[1], reverse=True)
 
+        # Ограничиваем топ-10 для LLM анализа — остальные получают HOLD
+        MAX_LLM_CANDIDATES = 10
+        total_above = len(candidates)
+        candidates = candidates[:MAX_LLM_CANDIDATES]
+
         logger.info(
             "step.generate_signals.candidates",
-            total=len(candidates),
+            total_above_threshold=total_above,
+            llm_candidates=len(candidates),
             threshold=threshold,
         )
 
@@ -567,70 +740,83 @@ class TradingPipeline:
 
         signals: list[TradingSignal] = []
 
-        for ticker, pre_score in candidates:
-            ticker_features = features.get(ticker, self._features_cache.get(ticker, {}))
-            sentiment_score = self._ticker_sentiment.get(ticker, 0.0)
+        # ── Parallel LLM analysis in batches of 5 ──────────────────────────
+        _macro_ctx = {
+            "key_rate_pct": macro.get("key_rate"),
+            "usd_rub": macro.get("usd_rub"),
+            "oil_brent": macro.get("brent"),
+        }
+        _mtf_results = getattr(self, '_mtf_results', {})
 
+        # Prepare per-ticker news lookup from raw_articles
+        _raw_articles = analysis.get("raw_articles", [])
+        _ticker_news: dict[str, list[dict]] = {}
+        for art in _raw_articles:
+            for t in art.get("tickers", []):
+                _ticker_news.setdefault(t, []).append({
+                    "title": art.get("title", ""),
+                    "sentiment": art.get("sentiment", 0.0),
+                    "impact": art.get("impact", "low"),
+                    "direction": "bullish" if art.get("sentiment", 0) > 0 else
+                                 "bearish" if art.get("sentiment", 0) < 0 else "neutral",
+                })
+        # Sort by abs(sentiment), keep top-3 per ticker
+        for t in _ticker_news:
+            _ticker_news[t] = sorted(
+                _ticker_news[t], key=lambda x: abs(x.get("sentiment", 0)), reverse=True
+            )[:3]
+
+        async def _analyze_one(ticker: str, pre_score: float) -> tuple[str, float, TradingSignal | None]:
+            """Analyze a single candidate — called in parallel."""
             try:
-                # Строим контекст для Claude
-                market_context = build_market_context(
-                    ticker=ticker,
-                    regime=regime,
-                    features=ticker_features,
-                    sentiment=sentiment_score,
-                    portfolio=portfolio_ctx,
-                    macro={
-                        "key_rate_pct": macro.get("key_rate"),
-                        "usd_rub": macro.get("usd_rub"),
-                        "oil_brent": macro.get("brent"),
-                    },
+                tf = features.get(ticker, self._features_cache.get(ticker, {}))
+                sent = self._ticker_sentiment.get(ticker, 0.0)
+                ctx = build_market_context(
+                    ticker=ticker, regime=regime, features=tf,
+                    sentiment=sent, portfolio=portfolio_ctx, macro=_macro_ctx,
+                    news=_ticker_news.get(ticker),
                 )
+                if ticker in _mtf_results:
+                    mtf = _mtf_results[ticker]
+                    ctx += (
+                        f"\n\n## MULTI-TIMEFRAME\n"
+                        f"Score: {mtf.mtf_score:+.3f} | "
+                        f"Dominant: {mtf.dominant_signal.value} | "
+                        f"Agreement: {mtf.agreement_count}/{len(mtf.analyses)}\n"
+                        f"{mtf.summary}"
+                    )
+                sig = await get_trading_signal(ticker=ticker, market_context=ctx)
+                sig = sig.with_pre_score(pre_score)
+                filtered = apply_entry_filters(signal=sig, features=tf, regime=regime, pre_score=pre_score)
+                return ticker, pre_score, filtered
+            except Exception as e:
+                logger.warning("candidate_error", ticker=ticker, error=str(e))
+                return ticker, pre_score, None
 
-                # Вызываем Claude
-                signal = await get_trading_signal(
-                    ticker=ticker,
-                    market_context=market_context,
-                )
-
-                # Устанавливаем pre_score в сигнал
-                signal = signal.with_pre_score(pre_score)
-
-                # Применяем entry filters
-                filtered = apply_entry_filters(
-                    signal=signal,
-                    features=ticker_features,
-                    regime=regime,
-                    pre_score=pre_score,
-                )
-
+        BATCH_SIZE = 5
+        for batch_idx in range(0, len(candidates), BATCH_SIZE):
+            batch = candidates[batch_idx:batch_idx + BATCH_SIZE]
+            batch_results = await asyncio.gather(
+                *[_analyze_one(t, s) for t, s in batch]
+            )
+            batch_actions = []
+            for ticker, pre_score, filtered in batch_results:
                 if filtered is not None:
                     signals.append(filtered)
-                    # Сохраняем сигнал в БД
                     try:
                         await save_signal(self._db_path, filtered)
                     except Exception as exc:
                         logger.warning("signal.save_error", ticker=ticker, error=str(exc))
-
-                    logger.info(
-                        "step.generate_signals.signal",
-                        ticker=ticker,
-                        action=filtered.action.value,
-                        direction=filtered.direction.value,
-                        confidence=round(filtered.confidence, 3),
-                        pre_score=round(pre_score, 1),
-                    )
-
-                    # Уведомляем в Telegram по всем значимым сигналам
-                    if self._telegram and filtered.action in (
-                        Action.BUY, Action.SELL, Action.REDUCE, Action.HOLD
-                    ):
+                    if self._telegram and filtered.action in (Action.BUY, Action.SELL, Action.REDUCE):
                         await self._safe_telegram(self._telegram.notify_signal(filtered))
+                    batch_actions.append(f"{ticker}={filtered.action.value}({filtered.confidence:.2f})")
                 else:
-                    logger.debug("step.generate_signals.filtered_out", ticker=ticker)
-
-            except Exception as exc:
-                # Ошибка одного тикера не останавливает генерацию остальных
-                logger.warning("step.generate_signals.error", ticker=ticker, error=str(exc))
+                    batch_actions.append(f"{ticker}=filtered")
+            logger.info(
+                "batch_done",
+                batch=batch_idx // BATCH_SIZE + 1,
+                results=batch_actions,
+            )
 
         # ─── Дивидендный гэп — отдельная алгоритмическая стратегия, не через Claude ───
         today = date.today()
@@ -670,16 +856,29 @@ class TradingPipeline:
 
         pairs_signals = generate_pairs_signals(candles_cache, today)
         for sig in pairs_signals:
-            signals.append(sig)
-            try:
-                await save_signal(self._db_path, sig)
-            except Exception as exc:
-                logger.warning("signal.pairs_trading.save_error", ticker=sig.ticker, error=str(exc))
+            # PairSignal has long_ticker/short_ticker, not ticker
+            # Convert to two TradingSignals: BUY long side, SELL short side
+            for _pair_ticker, _pair_side in [
+                (sig.long_ticker, Action.BUY),
+                (sig.short_ticker, Action.SELL),
+            ]:
+                pair_ts = TradingSignal(
+                    ticker=_pair_ticker,
+                    action=_pair_side,
+                    direction=Direction.LONG if _pair_side == Action.BUY else Direction.SHORT,
+                    confidence=sig.confidence,
+                    reasoning=f"Pairs: z={sig.zscore:.2f} L={sig.long_ticker} S={sig.short_ticker}",
+                )
+                signals.append(pair_ts)
+                try:
+                    await save_signal(self._db_path, pair_ts)
+                except Exception as exc:
+                    logger.warning("signal.pairs.save_error", ticker=_pair_ticker, error=str(exc))
             logger.info(
                 "step.generate_signals.pairs_trading",
-                ticker=sig.ticker,
-                action=sig.action.value,
-                direction=sig.direction.value,
+                long=sig.long_ticker,
+                short=sig.short_ticker,
+                zscore=round(sig.zscore, 3),
                 confidence=round(sig.confidence, 3),
             )
         # ─────────────────────────────────────────────────────────────────────────
@@ -721,6 +920,11 @@ class TradingPipeline:
             pairs_trading_signals=len(pairs_signals),
             futures_si_signals=len(si_signals),
         )
+        # Add critical news signals (bypass LLM)
+        if _critical_signals:
+            signals.extend(_critical_signals)
+            logger.info("critical_signals_added", count=len(_critical_signals))
+
         return signals
 
     # ─── Шаг 4: Risk Gateway + Execution ─────────────────────────────────────
@@ -1078,6 +1282,10 @@ class TradingPipeline:
         started_at = datetime.now()
         logger.info("daily_cycle.start", date=date.today().isoformat())
 
+        # Загружаем полный universe перед первым циклом
+        if not self._universe_loaded:
+            await self._load_universe()
+
         # Сброс дневного счётчика circuit breaker
         portfolio = await self._executor.get_portfolio()
         self._circuit_breaker.new_day(portfolio.equity)
@@ -1161,14 +1369,19 @@ class TradingPipeline:
     # ─── Вспомогательные методы ───────────────────────────────────────────────
 
     def _bars_to_df(self, bars: list) -> pl.DataFrame:
-        """Преобразовать список OHLCVBar в Polars DataFrame."""
+        """Преобразовать список OHLCVBar или dict в Polars DataFrame."""
+        def _get(b, key, alt=None):
+            if isinstance(b, dict):
+                return b.get(key, b.get(alt, None) if alt else None)
+            return getattr(b, key, getattr(b, alt, None) if alt else None)
+
         return pl.DataFrame({
-            "date": [b.dt for b in bars],
-            "open": [b.open for b in bars],
-            "high": [b.high for b in bars],
-            "low": [b.low for b in bars],
-            "close": [b.close for b in bars],
-            "volume": [b.volume for b in bars],
+            "date": [_get(b, "dt", "date") or _get(b, "timestamp") for b in bars],
+            "open": [float(_get(b, "open") or 0) for b in bars],
+            "high": [float(_get(b, "high") or 0) for b in bars],
+            "low": [float(_get(b, "low") or 0) for b in bars],
+            "close": [float(_get(b, "close") or 0) for b in bars],
+            "volume": [float(_get(b, "volume") or 0) for b in bars],
         })
 
     def _calc_obv_trend(self, df: pl.DataFrame) -> str:

@@ -30,7 +30,10 @@
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:developer.chrome.com)",
       "Bash(gh api:*)",
-      "Bash(git clone:*)"
+      "Bash(git clone:*)",
+      "Bash(powershell -Command \"Get-PnpDevice -Class AudioEndpoint -Status OK | Select-Object FriendlyName, Status, InstanceId | Format-Table -AutoSize\")",
+      "Bash(powershell -Command \"Get-PnpDevice | Where-Object {$_Class -eq ''AudioEndpoint''} | Select-Object FriendlyName, Status | Format-Table -AutoSize\")",
+      "Bash(powershell -Command \"Get-CimInstance Win32_SoundDevice | Select-Object Name, Status, StatusInfo | Format-Table -AutoSize\")"
     ]
   },
   "hooks": {

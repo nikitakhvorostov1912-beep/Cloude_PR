@@ -75,6 +75,7 @@ def build_market_context(
     portfolio: dict,
     macro: dict,
     fundamentals: dict | None = None,
+    news: list[dict] | None = None,
 ) -> str:
     """Build a structured JSON context string for Claude (~2000 tokens).
 
@@ -105,9 +106,10 @@ def build_market_context(
         JSON-formatted context string, ≤ ~2000 tokens.
     """
     close = features.get("close", 0)
+    regime_str = regime.value if hasattr(regime, "value") else str(regime)
     context: dict = {
         "ticker": ticker,
-        "market_regime": regime.value,
+        "market_regime": regime_str,
         "price": {
             "close": close,
             "ema_20": features.get("ema_20"),
@@ -183,5 +185,20 @@ def build_market_context(
             "div_yield_pct": fundamentals.get("div_yield"),
             "roe_pct": fundamentals.get("roe"),
         }
+
+    # Recent news for this ticker
+    if news:
+        context["recent_news"] = [
+            {
+                "title": n.get("title", "")[:100],
+                "sentiment": round(n.get("sentiment", 0.0), 2),
+                "impact": n.get("impact", "low"),
+                "direction": n.get("direction", "neutral"),
+            }
+            for n in news[:3]
+        ]
+        n_bull = sum(1 for n in news if n.get("direction") == "bullish")
+        n_bear = sum(1 for n in news if n.get("direction") == "bearish")
+        context["news_summary"] = f"{len(news)} новостей: {n_bull} bullish, {n_bear} bearish"
 
     return json.dumps(context, ensure_ascii=False, indent=None)

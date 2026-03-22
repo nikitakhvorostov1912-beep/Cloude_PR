@@ -253,9 +253,27 @@ async def load_all_futures(
             oi = 0
 
             if md_row:
-                last_price = float(md_row[md_idx.get("LAST", 0)] or 0)
-                volume_rub = float(md_row[md_idx.get("VALTODAY", 0)] or 0)
-                oi = int(md_row[md_idx.get("OPENPOSITIONS", 0)] or 0)
+                def _safe_float(col_name: str) -> float:
+                    idx = md_idx.get(col_name)
+                    if idx is not None and idx < len(md_row):
+                        try:
+                            return float(md_row[idx] or 0)
+                        except (ValueError, TypeError):
+                            return 0.0
+                    return 0.0
+
+                def _safe_int(col_name: str) -> int:
+                    idx = md_idx.get(col_name)
+                    if idx is not None and idx < len(md_row):
+                        try:
+                            return int(float(md_row[idx] or 0))
+                        except (ValueError, TypeError):
+                            return 0
+                    return 0
+
+                last_price = _safe_float("LAST")
+                volume_rub = _safe_float("VALTODAY")
+                oi = _safe_int("OPENPOSITIONS")
 
             # Determine sector from underlying
             sector = "futures"

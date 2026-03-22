@@ -212,3 +212,7 @@ class TradingTelegramBot:
             "/pnl — Show P&L report\n"
             "/help — This message"
         )
+
+
+# Alias for main.py compatibility
+TelegramNotifier = TradingTelegramBot

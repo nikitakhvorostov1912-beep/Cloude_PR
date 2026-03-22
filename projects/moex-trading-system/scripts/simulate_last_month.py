@@ -69,7 +69,7 @@ def load_all_candles() -> dict[str, list[dict]]:
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     rows = conn.execute(
-        "SELECT ticker, date, open, high, low, close, volume FROM candles ORDER BY date ASC"
+        "SELECT ticker, dt as date, open, high, low, close, volume FROM candles ORDER BY dt ASC"
     ).fetchall()
     conn.close()
 
@@ -221,7 +221,7 @@ def main() -> None:
     all_dates: set[str] = set()
     for candles in valid_tickers.values():
         for c in candles:
-            if sim_start <= c["date"] <= sim_end:
+            if sim_start <= c["date"][:10] <= sim_end:
                 all_dates.add(c["date"])
     sim_dates = sorted(all_dates)
     print(f"  Simulation days: {len(sim_dates)} ({sim_dates[0] if sim_dates else '?'} to {sim_dates[-1] if sim_dates else '?'})")
@@ -245,7 +245,7 @@ def main() -> None:
         closed_tickers = []
         for ticker, pos in list(positions.items()):
             candles = valid_tickers.get(ticker, [])
-            today_candle = next((c for c in candles if c["date"] == today), None)
+            today_candle = next((c for c in candles if c["date"][:10] == today[:10]), None)
             if not today_candle:
                 continue
 
@@ -264,7 +264,7 @@ def main() -> None:
                     "date": today, "ticker": ticker, "action": "STOP-LOSS",
                     "entry": pos.entry_price, "exit": sell_price,
                     "pnl": round(net_pnl, 2), "pnl_pct": round(net_pnl / (pos.entry_price * pos.shares) * 100, 2),
-                    "days": (datetime.strptime(today, "%Y-%m-%d") - datetime.strptime(pos.entry_date, "%Y-%m-%d")).days,
+                    "days": (datetime.strptime(today[:10], "%Y-%m-%d") - datetime.strptime(pos.entry_date[:10], "%Y-%m-%d")).days,
                 })
                 closed_tickers.append(ticker)
                 continue
@@ -280,7 +280,7 @@ def main() -> None:
                     "date": today, "ticker": ticker, "action": "TAKE-PROFIT",
                     "entry": pos.entry_price, "exit": sell_price,
                     "pnl": round(net_pnl, 2), "pnl_pct": round(net_pnl / (pos.entry_price * pos.shares) * 100, 2),
-                    "days": (datetime.strptime(today, "%Y-%m-%d") - datetime.strptime(pos.entry_date, "%Y-%m-%d")).days,
+                    "days": (datetime.strptime(today[:10], "%Y-%m-%d") - datetime.strptime(pos.entry_date[:10], "%Y-%m-%d")).days,
                 })
                 closed_tickers.append(ticker)
                 continue
@@ -294,7 +294,7 @@ def main() -> None:
             imoex_candles = all_candles.get("IMOEX", [])
             imoex_ret_20d = 0.0
             if len(imoex_candles) >= 20:
-                imoex_today = next((c for c in imoex_candles if c["date"] == today), None)
+                imoex_today = next((c for c in imoex_candles if c["date"][:10] == today[:10]), None)
                 if imoex_today:
                     idx = imoex_candles.index(imoex_today)
                     if idx >= 20:
@@ -304,7 +304,7 @@ def main() -> None:
                 if ticker in positions:
                     continue
 
-                today_feat = next((f for f in features_list if f["date"] == today), None)
+                today_feat = next((f for f in features_list if f["date"][:10] == today[:10]), None)
                 if not today_feat:
                     continue
 
@@ -375,7 +375,7 @@ def main() -> None:
         positions_value = 0.0
         for ticker, pos in positions.items():
             candles = valid_tickers.get(ticker, [])
-            today_candle = next((c for c in candles if c["date"] == today), None)
+            today_candle = next((c for c in candles if c["date"][:10] == today[:10]), None)
             if today_candle:
                 positions_value += pos.shares * float(today_candle["close"])
 
@@ -388,7 +388,7 @@ def main() -> None:
     # --- Close remaining positions ---
     for ticker, pos in list(positions.items()):
         candles = valid_tickers.get(ticker, [])
-        last_candle = next((c for c in reversed(candles) if c["date"] <= sim_end), None)
+        last_candle = next((c for c in reversed(candles) if c["date"][:10] <= sim_end), None)
         if last_candle:
             sell_price = float(last_candle["close"]) * (1 - SLIPPAGE_PCT / 100)
             pnl = (sell_price - pos.entry_price) * pos.shares
