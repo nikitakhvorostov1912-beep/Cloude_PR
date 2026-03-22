@@ -9,7 +9,7 @@ httpx>=0.27.0
 aiosqlite>=0.20.0
 
 # MOEX ISS
-aiomoex>=2.2.0
+aiomoex>=2.1.0
 
 # RSS/новости
 feedparser>=6.0.0
@@ -47,8 +47,23 @@ tsfresh>=0.21.0
 # Time Series Foundation Models
 chronos-forecasting>=2.0
 
-# Fast backtesting
-vectorbt>=0.26.0
+# GARCH волатильность
+arch>=8.0.0
+
+# Sorted collections (для LOB)
+sortedcontainers>=2.4.0
+
+# Брокер Tinkoff
+tinkoff-investments>=0.2.0b100
+
+# Telegram алерты
+python-telegram-bot>=20.0
+
+# Dashboard
+streamlit>=1.30.0
+
+# Fast backtesting (optional)
+# vectorbt>=0.26.0
 
 # Мониторинг (Prometheus)
 prometheus-client>=0.20.0

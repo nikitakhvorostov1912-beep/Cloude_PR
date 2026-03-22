@@ -99,7 +99,8 @@ def forecast_volatility(
 
     # Build model
     if model == "ewma":
-        am = arch_model(arr, mean="Zero", vol="EWMAVariance")
+        from arch.univariate import ZeroMean, EWMAVariance
+        am = ZeroMean(arr, volatility=EWMAVariance())
     elif model == "egarch":
         am = arch_model(arr, mean="Zero", vol="EGARCH", p=p, q=q, dist=dist)
     elif model == "gjr":
