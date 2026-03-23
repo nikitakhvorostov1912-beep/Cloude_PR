@@ -17,6 +17,23 @@
       "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
       "args": ["-y", "@modelcontextprotocol/server-fetch"],
       "description": "Web content fetching and conversion for efficient LLM usage."
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "description": "Up-to-date library documentation for Next.js, FastAPI, React, Python packages and more. Use resolve-library-id then get-library-docs."
+    },
+    "n8n-mcp": {
+      "type": "stdio",
+      "command": "C:/tools/nodejs/node-v22.14.0-win-x64/npx.cmd",
+      "args": ["-y", "n8n-mcp"],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true"
+      },
+      "description": "n8n workflow automation documentation — 1239 nodes, properties, operations. Use when designing automation workflows. Add N8N_API_URL + N8N_API_KEY env vars to enable live workflow management."
     }
   }
 }
