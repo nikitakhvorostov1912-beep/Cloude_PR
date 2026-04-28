@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Catalog uuid="679e963c-6617-413f-9517-34bb71efc332">
+		<InternalInfo>
+			<xr:GeneratedType name="CatalogObject.ГруппыДоступаПартнеров" category="Object">
+				<xr:TypeId>2a8a51fb-541a-4767-bf10-299be2921f68</xr:TypeId>
+				<xr:ValueId>d8ae09bc-d14f-45d1-bc1d-be1645218804</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogRef.ГруппыДоступаПартнеров" category="Ref">
+				<xr:TypeId>dfe434bf-00f8-4e91-ae52-268cfa29fc5b</xr:TypeId>
+				<xr:ValueId>af72f03f-db51-4b1b-b6fb-8233a418ffae</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogSelection.ГруппыДоступаПартнеров" category="Selection">
+				<xr:TypeId>0ec7566a-53a0-46e1-a2e4-89504ac66d31</xr:TypeId>
+				<xr:ValueId>ebe76755-0be4-48f9-bcb5-ab85b7ce1740</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogList.ГруппыДоступаПартнеров" category="List">
+				<xr:TypeId>1d9bc2fe-f7ce-4a01-97ae-371e1b271228</xr:TypeId>
+				<xr:ValueId>a0a5b111-4378-441f-8678-f5b6b2642e92</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogManager.ГруппыДоступаПартнеров" category="Manager">
+				<xr:TypeId>df6f8614-3dc4-4dec-b4c9-3f91015457cb</xr:TypeId>
+				<xr:ValueId>6b86436e-f1db-4236-958f-1419d088d54e</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<ObjectBelonging>Adopted</ObjectBelonging>
+			<Name>ГруппыДоступаПартнеров</Name>
+			<Comment/>
+			<ExtendedConfigurationObject>65d41e34-2701-496a-b478-7cad82a14c32</ExtendedConfigurationObject>
+		</Properties>
+		<ChildObjects/>
+	</Catalog>
+</MetaDataObject>

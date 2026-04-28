@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Title>
+		<v8:item>
+			<v8:lang>ru</v8:lang>
+			<v8:content>Загрузка реестра ТД</v8:content>
+		</v8:item>
+	</Title>
+	<AutoTitle>false</AutoTitle>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
+		<HorizontalAlign>Right</HorizontalAlign>
+		<Autofill>false</Autofill>
+	</AutoCommandBar>
+	<Events>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<UsualGroup name="ГруппаФайл" id="1">
+			<Group>Horizontal</Group>
+			<ExtendedTooltip name="ГруппаФайлРасширеннаяПодсказка" id="2"/>
+			<ChildItems>
+				<InputField name="ФайлCSV" id="3">
+					<DataPath>Объект.ФайлCSV</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Файл реестра ЭТД</v8:content>
+						</v8:item>
+					</Title>
+					<HorizontalStretch>true</HorizontalStretch>
+					<InputHint>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Выберите CSV-файл Владимира (windows-1251)</v8:content>
+						</v8:item>
+					</InputHint>
+					<ContextMenu name="ФайлCSVКонтекстноеМеню" id="4"/>
+					<ExtendedTooltip name="ФайлCSVРасширеннаяПодсказка" id="5"/>
+					<Events>
+						<Event name="StartChoice">ФайлCSVНачалоВыбора</Event>
+					</Events>
+					<ChoiceButton>true</ChoiceButton>
+					<ChoiceButtonRepresentation>ShowInDropList</ChoiceButtonRepresentation>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+		<UsualGroup name="ГруппаКоманды" id="6">
+			<Group>Horizontal</Group>
+			<ExtendedTooltip name="ГруппаКомандыРасширеннаяПодсказка" id="7"/>
+			<ChildItems>
+				<Button name="КнопкаПрочитатьCSV" id="8">
+					<CommandName>Form.Command.ПрочитатьCSV</CommandName>
+					<DefaultButton>true</DefaultButton>
+					<Representation>PictureAndText</Representation>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Шаг 1: прочитать CSV и сопоставить строки с существующими документами</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ExtendedTooltip name="КнопкаПрочитатьCSVРасширеннаяПодсказка" id="9"/>
+				</Button>
+				<Button name="КнопкаПрименить" id="10">
+					<CommandName>Form.Command.Применить</CommandName>
+					<Representation>PictureAndText</Representation>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Шаг 2: применить классификацию к отмеченным галочкой строкам (создать/обогатить документы)</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ExtendedTooltip name="КнопкаПрименитьРасширеннаяПодсказка" id="11"/>
+				</Button>
+			</ChildItems>
+		</UsualGroup>
+		<UsualGroup name="ГруппаСтатистика" id="12">
+			<Group>Horizontal</Group>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаСтатистикаРасширеннаяПодсказка" id="13"/>
+			<ChildItems>
+				<LabelField name="СтрокВсего" id="14">
+					<DataPath>Объект.СтрокВсего</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Всего</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="СтрокВсегоКонтекстноеМеню" id="15"/>
+					<ExtendedTooltip name="СтрокВсегоРасширеннаяПодсказка" id="16"/>
+				</LabelField>
+				<LabelField name="СтрокКомплекс" id="17">
+					<DataPath>Объект.СтрокКомплекс</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Комплекс</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="СтрокКомплексКонтекстноеМеню" id="18"/>
+					<ExtendedTooltip name="СтрокКомплексРасширеннаяПодсказка" id="19"/>
+				</LabelField>
+				<LabelField name="СтрокНовыеТД" id="20">
+					<DataPath>Объект.СтрокНовыеТД</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Новые ТД</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="СтрокНовыеТДКонтекстноеМеню" id="21"/>
+					<ExtendedTooltip name="СтрокНовыеТДРасширеннаяПодсказка" id="22"/>
+				</LabelField>
+				<LabelField name="СтрокПроблемы" id="23">
+					<DataPath>Объект.СтрокПроблемы</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Проблемы</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="СтрокПроблемыКонтекстноеМеню" id="24"/>
+					<ExtendedTooltip name="СтрокПроблемыРасширеннаяПодсказка" id="25"/>
+				</LabelField>
+				<LabelField name="СтрокТолькоОбеспечение" id="26">
+					<DataPath>Объект.СтрокТолькоОбеспечение</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Только обеспечение</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="СтрокТолькоОбеспечениеКонтекстноеМеню" id="27"/>
+					<ExtendedTooltip name="СтрокТолькоОбеспечениеРасширеннаяПодсказка" id="28"/>
+				</LabelField>
+			</ChildItems>
+		</UsualGroup>
+		<Table name="Предложения" id="29">
+			<DataPath>Объект.ПредложенияКлассификации</DataPath>
+			<HeightInTableRows>20</HeightInTableRows>
+			<ContextMenu name="ПредложенияКонтекстноеМеню" id="30"/>
+			<AutoCommandBar name="ПредложенияКоманднаяПанель" id="31"/>
+			<SearchStringAddition name="ПредложенияСтрокаПоиска" id="32"/>
+			<ViewStatusAddition name="ПредложенияСостояниеПросмотра" id="33"/>
+			<SearchControlAddition name="ПредложенияУправлениеПоиском" id="34"/>
+			<ChildItems>
+				<CheckBoxField name="ПредложенияВыбрать" id="35">
+					<DataPath>Объект.ПредложенияКлассификации.Выбрать</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>✓</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияВыбратьКонтекстноеМеню" id="36"/>
+					<ExtendedTooltip name="ПредложенияВыбратьРасширеннаяПодсказка" id="37"/>
+				</CheckBoxField>
+				<InputField name="ПредложенияКатегория" id="38">
+					<DataPath>Объект.ПредложенияКлассификации.Категория</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Категория</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ContextMenu name="ПредложенияКатегорияКонтекстноеМеню" id="39"/>
+					<ExtendedTooltip name="ПредложенияКатегорияРасширеннаяПодсказка" id="40"/>
+				</InputField>
+				<InputField name="ПредложенияРегНомерТД" id="41">
+					<DataPath>Объект.ПредложенияКлассификации.РегНомерТД</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Рег.№ ТД</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияРегНомерТДКонтекстноеМеню" id="42"/>
+					<ExtendedTooltip name="ПредложенияРегНомерТДРасширеннаяПодсказка" id="43"/>
+				</InputField>
+				<InputField name="ПредложенияНомерДДПТД" id="44">
+					<DataPath>Объект.ПредложенияКлассификации.НомерДДПТД</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Номер ДДП</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияНомерДДПТДКонтекстноеМеню" id="45"/>
+					<ExtendedTooltip name="ПредложенияНомерДДПТДРасширеннаяПодсказка" id="46"/>
+				</InputField>
+				<InputField name="ПредложенияПодразделение" id="47">
+					<DataPath>Объект.ПредложенияКлассификации.Подразделение</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Подразделение</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияПодразделениеКонтекстноеМеню" id="48"/>
+					<ExtendedTooltip name="ПредложенияПодразделениеРасширеннаяПодсказка" id="49"/>
+				</InputField>
+				<InputField name="ПредложенияДекларант" id="50">
+					<DataPath>Объект.ПредложенияКлассификации.Декларант</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Декларант</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияДекларантКонтекстноеМеню" id="51"/>
+					<ExtendedTooltip name="ПредложенияДекларантРасширеннаяПодсказка" id="52"/>
+				</InputField>
+				<InputField name="ПредложенияДатаВыпуска" id="53">
+					<DataPath>Объект.ПредложенияКлассификации.ДатаВыпуска</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Дата выпуска</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияДатаВыпускаКонтекстноеМеню" id="54"/>
+					<ExtendedTooltip name="ПредложенияДатаВыпускаРасширеннаяПодсказка" id="55"/>
+				</InputField>
+				<InputField name="ПредложенияКоличествоКодовТНВЭД" id="56">
+					<DataPath>Объект.ПредложенияКлассификации.КоличествоКодовТНВЭД</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Кодов ТНВЭД</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияКоличествоКодовТНВЭДКонтекстноеМеню" id="57"/>
+					<ExtendedTooltip name="ПредложенияКоличествоКодовТНВЭДРасширеннаяПодсказка" id="58"/>
+				</InputField>
+				<InputField name="ПредложенияСсылкаДокумент" id="59">
+					<DataPath>Объект.ПредложенияКлассификации.СсылкаДокумент</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Документ</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияСсылкаДокументКонтекстноеМеню" id="60"/>
+					<ExtendedTooltip name="ПредложенияСсылкаДокументРасширеннаяПодсказка" id="61"/>
+				</InputField>
+				<InputField name="ПредложенияИННПолучателя" id="62">
+					<DataPath>Объект.ПредложенияКлассификации.ИННПолучателя</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>ИНН</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияИННПолучателяКонтекстноеМеню" id="63"/>
+					<ExtendedTooltip name="ПредложенияИННПолучателяРасширеннаяПодсказка" id="64"/>
+				</InputField>
+				<InputField name="ПредложенияПримечание" id="65">
+					<DataPath>Объект.ПредложенияКлассификации.Примечание</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Примечание</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияПримечаниеКонтекстноеМеню" id="66"/>
+					<ExtendedTooltip name="ПредложенияПримечаниеРасширеннаяПодсказка" id="67"/>
+				</InputField>
+			</ChildItems>
+		</Table>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="68">
+			<Type>
+				<v8:Type>cfg:DataProcessorObject.ЗагрузкаРееструТД</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+		</Attribute>
+	</Attributes>
+	<Commands>
+		<Command name="ПрочитатьCSV" id="69">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Прочитать CSV</v8:content>
+				</v8:item>
+			</Title>
+			<Action>ПрочитатьCSV</Action>
+		</Command>
+		<Command name="Применить" id="70">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Применить выбранные</v8:content>
+				</v8:item>
+			</Title>
+			<Action>Применить</Action>
+		</Command>
+	</Commands>
+</Form>

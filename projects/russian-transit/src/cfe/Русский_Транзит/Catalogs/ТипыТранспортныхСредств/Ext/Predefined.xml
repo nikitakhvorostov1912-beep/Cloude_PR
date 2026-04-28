@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<PredefinedData xmlns="http://v8.1c.ru/8.3/xcf/predef" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CatalogPredefinedItems" version="2.20">
+	<Item id="755e70f0-c89d-4cb7-b6d4-019e0fad0b2e">
+		<Name>АвтодорожныйТранспорт</Name>
+		<Code>31</Code>
+		<Description>Автодорожный транспорт</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="8f68a3d9-23bc-4c5c-887f-69726c3a48e9">
+		<Name>ВнутреннийВодный</Name>
+		<Code/>
+		<Description>Внутренний водный</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="d0783e77-aa46-4822-866e-b05f5c6b2942">
+		<Name>ВоздушныйТранспорт</Name>
+		<Code/>
+		<Description>Воздушный транспорт</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="bd8ca075-f408-43db-81aa-4710fee4a5d6">
+		<Name>ЖДТранспорт</Name>
+		<Code/>
+		<Description>Железнодорожный транспорт</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="ec686dbb-4859-4727-a9d1-18607af0f5e2">
+		<Name>ЛинииЭлектропередачи</Name>
+		<Code/>
+		<Description>Линии электропередачи</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="e8eeef7d-6e6c-4765-93d3-8f4b46a9e3cf">
+		<Name>МорскойРечнойТранспорт</Name>
+		<Code/>
+		<Description>морской/речной транспорт</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="e970e0f8-dc54-44d2-934e-f632b52cc278">
+		<Name>ПочтовоеОтправление</Name>
+		<Code/>
+		<Description>Почтовое отправление</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="6c725bd3-d2d9-425c-b3da-7a021f704eb4">
+		<Name>Прицеп</Name>
+		<Code>32 </Code>
+		<Description>Прицеп/Полуприцеп</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="9e70efb4-e26c-4a5a-b6d3-844b878d86c3">
+		<Name>Прочие</Name>
+		<Code/>
+		<Description>Прочие</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="e154cee9-f011-407c-a05c-0f00314af9fc">
+		<Name>СамоходноеТС</Name>
+		<Code>90</Code>
+		<Description>Самоходное ТС</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="13869bbe-6241-415c-a4c3-31ec5fb86983">
+		<Name>СоставТранспортныхСредств</Name>
+		<Code/>
+		<Description>состав т/с</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="f17ea85a-c328-41ea-bc17-be60f7d63df5">
+		<Name>Товар</Name>
+		<Code/>
+		<Description>Товар</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+	<Item id="e7fe63ef-f8b8-4117-bf3c-7306147ac9ae">
+		<Name>ТрубопроводныйТранспорт</Name>
+		<Code/>
+		<Description>Трубопроводный транспорт</Description>
+		<IsFolder>false</IsFolder>
+		<ExtensionState>Native</ExtensionState>
+	</Item>
+</PredefinedData>

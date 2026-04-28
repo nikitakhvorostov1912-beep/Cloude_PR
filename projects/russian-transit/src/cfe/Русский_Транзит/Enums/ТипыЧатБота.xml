@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Enum uuid="d6747ed0-04fa-424f-bfe1-030a6c309910">
+		<InternalInfo>
+			<xr:GeneratedType name="EnumRef.ТипыЧатБота" category="Ref">
+				<xr:TypeId>b7dfad6a-7718-4a0c-a000-ae6526851214</xr:TypeId>
+				<xr:ValueId>453e7dcd-b0f9-43fe-addb-c48a317c7f63</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumManager.ТипыЧатБота" category="Manager">
+				<xr:TypeId>20d07460-d98e-43cd-8780-bfa9cf447782</xr:TypeId>
+				<xr:ValueId>0120c266-bf1d-4ae3-8e25-da5ca7f537ce</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumList.ТипыЧатБота" category="List">
+				<xr:TypeId>2ee8f6a3-0d4c-4bb2-9d3f-3d4fde838793</xr:TypeId>
+				<xr:ValueId>a9465c3a-129c-4d3a-beeb-0f8f151f2fe1</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<Name>ТипыЧатБота</Name>
+			<Synonym>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Типы чат бота</v8:content>
+				</v8:item>
+			</Synonym>
+			<Comment/>
+			<UseStandardCommands>false</UseStandardCommands>
+			<Characteristics/>
+			<QuickChoice>true</QuickChoice>
+			<ChoiceMode>BothWays</ChoiceMode>
+			<DefaultListForm/>
+			<DefaultChoiceForm/>
+			<AuxiliaryListForm/>
+			<AuxiliaryChoiceForm/>
+			<ListPresentation/>
+			<ExtendedListPresentation/>
+			<Explanation/>
+			<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+		</Properties>
+		<ChildObjects>
+			<EnumValue uuid="6d3dfeb8-31a8-4b3c-bda4-00ac75f7a3a2">
+				<Properties>
+					<Name>Telegram</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: Telegram</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Чат бот: Telegram</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="c42a8dd8-d45b-483b-816e-e4892d3414e1">
+				<Properties>
+					<Name>Viber</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: Viber</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Чат бот: Viber</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="4eef2313-c290-4d9b-8793-5f466490a43b">
+				<Properties>
+					<Name>Facebook</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: Facebook</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Чат бот: Facebook</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="468fcf05-cde6-49ae-bc4f-a2a055c92220">
+				<Properties>
+					<Name>VKontakte</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: VKontakte</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Чат бот: VKontakte</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="594f76e3-d548-4cd7-9b23-f1e032751a7f">
+				<Properties>
+					<Name>Skype</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: Skype</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="065975ef-01db-4491-805a-97cb48635ecc">
+				<Properties>
+					<Name>Odnoklassniki</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: Одноклассники</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="50e808c3-3829-4795-aec7-96cdfbb9d999">
+				<Properties>
+					<Name>YandexAlisa</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: Яндекс 'Алиса'</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Чат бот: Яндекс 'Алиса'</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="cfc2a34e-c4c1-4ac4-88bd-43f59f51b7d1">
+				<Properties>
+					<Name>WhatsApp</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Чат бот: WhatsApp</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Чат бот: WhatsApp</Comment>
+				</Properties>
+			</EnumValue>
+		</ChildObjects>
+	</Enum>
+</MetaDataObject>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<DocumentJournal uuid="91f39200-e445-440e-a81c-64e8768bf557">
+		<InternalInfo>
+			<xr:GeneratedType name="DocumentJournalSelection.Взаимодействия" category="Selection">
+				<xr:TypeId>e370e77e-afef-49e5-92bf-dc4373b35257</xr:TypeId>
+				<xr:ValueId>0f9683a2-d8d5-4612-a2fe-dfc704e7dcb6</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="DocumentJournalList.Взаимодействия" category="List">
+				<xr:TypeId>4b0bff2a-cb83-4f34-9b2b-8e0e44aee37a</xr:TypeId>
+				<xr:ValueId>b32226b3-40b1-487f-b9ba-37ccc65a789a</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="DocumentJournalManager.Взаимодействия" category="Manager">
+				<xr:TypeId>52973411-07e5-4e97-bb00-e6c79a909976</xr:TypeId>
+				<xr:ValueId>6ce22692-8cc4-4169-8a93-b3a9dfe40734</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<ObjectBelonging>Adopted</ObjectBelonging>
+			<Name>Взаимодействия</Name>
+			<Comment/>
+			<ExtendedConfigurationObject>7da57c89-af2c-445a-96f7-39250f70306f</ExtendedConfigurationObject>
+		</Properties>
+		<ChildObjects>
+			<Form>ФормаСписка</Form>
+		</ChildObjects>
+	</DocumentJournal>
+</MetaDataObject>

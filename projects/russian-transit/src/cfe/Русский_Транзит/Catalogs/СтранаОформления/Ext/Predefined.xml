@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<PredefinedData xmlns="http://v8.1c.ru/8.3/xcf/predef" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CatalogPredefinedItems" version="2.20">
+	<Item id="74706c21-cefd-4e2a-ab56-9ffda57cb70b">
+		<Name>Беларусь</Name>
+		<Code>000000002</Code>
+		<Description>Беларусь</Description>
+		<IsFolder>false</IsFolder>
+	</Item>
+	<Item id="5cdaf704-5f75-4dd2-8e0f-126218943684">
+		<Name>Евросоюз</Name>
+		<Code>000000003</Code>
+		<Description>Евросоюз</Description>
+		<IsFolder>false</IsFolder>
+	</Item>
+	<Item id="61504433-c5a9-49c0-8f28-49ef732ed1f0">
+		<Name>Россия</Name>
+		<Code>000000001</Code>
+		<Description>Россия</Description>
+		<IsFolder>false</IsFolder>
+	</Item>
+	<Item id="150f6f18-49d7-4164-b44b-a0fc32abdb16">
+		<Name>Украина</Name>
+		<Code>000000004</Code>
+		<Description>Украина</Description>
+		<IsFolder>false</IsFolder>
+	</Item>
+</PredefinedData>

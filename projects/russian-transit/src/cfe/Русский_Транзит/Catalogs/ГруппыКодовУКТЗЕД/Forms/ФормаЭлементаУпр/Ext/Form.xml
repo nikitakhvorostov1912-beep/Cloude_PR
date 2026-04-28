@@ -1,0 +1,508 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<WindowOpeningMode>LockOwnerWindow</WindowOpeningMode>
+	<UseForFoldersAndItems>Items</UseForFoldersAndItems>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1"/>
+	<Events>
+		<Event name="OnOpen">ПриОткрытии</Event>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+		<Event name="BeforeWriteAtServer">ПередЗаписьюНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<UsualGroup name="ГруппаШапкаГоризонт" id="45">
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа шапка горизонт</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Group>AlwaysHorizontal</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаШапкаГоризонтРасширеннаяПодсказка" id="46"/>
+			<ChildItems>
+				<UsualGroup name="ГруппаШапкаГоризонтЛево" id="47">
+					<Group>Vertical</Group>
+					<Behavior>Usual</Behavior>
+					<Representation>None</Representation>
+					<ShowTitle>false</ShowTitle>
+					<ExtendedTooltip name="ГруппаШапкаГоризонтЛевоРасширеннаяПодсказка" id="48"/>
+					<ChildItems>
+						<UsualGroup name="ГруппаНаименованиеКод" id="29">
+							<Group>Vertical</Group>
+							<Behavior>Usual</Behavior>
+							<Representation>None</Representation>
+							<ShowTitle>false</ShowTitle>
+							<ExtendedTooltip name="ГруппаНаименованиеКодРасширеннаяПодсказка" id="30"/>
+							<ChildItems>
+								<InputField name="Код" id="1">
+									<DataPath>Объект.Code</DataPath>
+									<ReadOnly>true</ReadOnly>
+									<SkipOnInput>true</SkipOnInput>
+									<EditMode>EnterOnInput</EditMode>
+									<Width>9</Width>
+									<ContextMenu name="КодКонтекстноеМеню" id="2"/>
+									<ExtendedTooltip name="КодРасширеннаяПодсказка" id="3"/>
+								</InputField>
+								<InputField name="Наименование" id="4">
+									<DataPath>Объект.Description</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<ContextMenu name="НаименованиеКонтекстноеМеню" id="5"/>
+									<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="6"/>
+								</InputField>
+								<InputField name="НаименованиеДляОтчетов" id="127">
+									<DataPath>Объект.НаименованиеДляОтчетов</DataPath>
+									<TitleHeight>2</TitleHeight>
+									<ContextMenu name="НаименованиеДляОтчетовКонтекстноеМеню" id="128"/>
+									<ExtendedTooltip name="НаименованиеДляОтчетовРасширеннаяПодсказка" id="129"/>
+								</InputField>
+							</ChildItems>
+						</UsualGroup>
+						<InputField name="ЦеноваяГруппаМашины" id="42">
+							<ContextMenu name="ЦеноваяГруппаМашиныКонтекстноеМеню" id="43"/>
+							<ExtendedTooltip name="ЦеноваяГруппаМашиныРасширеннаяПодсказка" id="44"/>
+						</InputField>
+					</ChildItems>
+				</UsualGroup>
+				<LabelDecoration name="Декорация1" id="31">
+					<HorizontalStretch>false</HorizontalStretch>
+					<ContextMenu name="Декорация1КонтекстноеМеню" id="32"/>
+					<ExtendedTooltip name="Декорация1РасширеннаяПодсказка" id="33"/>
+				</LabelDecoration>
+				<UsualGroup name="ГруппаШапкаГоризонтПраво" id="49">
+					<Group>Vertical</Group>
+					<Behavior>Usual</Behavior>
+					<Representation>None</Representation>
+					<ShowTitle>false</ShowTitle>
+					<ExtendedTooltip name="ГруппаШапкаГоризонтПравоРасширеннаяПодсказка" id="50"/>
+				</UsualGroup>
+			</ChildItems>
+		</UsualGroup>
+		<Pages name="СтраницыСправочника" id="84">
+			<PagesRepresentation>TabsOnTop</PagesRepresentation>
+			<ExtendedTooltip name="СтраницыСправочникаРасширеннаяПодсказка" id="85"/>
+			<ChildItems>
+				<Page name="СтраницаКодыУКТЗЕД" id="86">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Коды УКТЗЕД</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Коды УКТЗЕД</v8:content>
+						</v8:item>
+					</Title>
+					<TitleDataPath>Объект.СписокКодов.RowsCount</TitleDataPath>
+					<ExtendedTooltip name="СтраницаКодыУКТЗЕДРасширеннаяПодсказка" id="87"/>
+					<ChildItems>
+						<Table name="СписокКодов" id="10">
+							<Representation>List</Representation>
+							<AutoInsertNewRow>true</AutoInsertNewRow>
+							<EnableStartDrag>true</EnableStartDrag>
+							<EnableDrag>true</EnableDrag>
+							<FileDragMode>AsFile</FileDragMode>
+							<DataPath>Объект.СписокКодов</DataPath>
+							<RowFilter xsi:nil="true"/>
+							<ContextMenu name="СписокКодовКонтекстноеМеню" id="11"/>
+							<AutoCommandBar name="СписокКодовКоманднаяПанель" id="12"/>
+							<ExtendedTooltip name="СписокКодовРасширеннаяПодсказка" id="13"/>
+							<SearchStringAddition name="СписокКодовСтрокаПоиска" id="14">
+								<AdditionSource>
+									<Item>СписокКодов</Item>
+									<Type>SearchStringRepresentation</Type>
+								</AdditionSource>
+								<ContextMenu name="СписокКодовСтрокаПоискаКонтекстноеМеню" id="15"/>
+								<ExtendedTooltip name="СписокКодовСтрокаПоискаРасширеннаяПодсказка" id="16"/>
+							</SearchStringAddition>
+							<ViewStatusAddition name="СписокКодовСостояниеПросмотра" id="17">
+								<AdditionSource>
+									<Item>СписокКодов</Item>
+									<Type>ViewStatusRepresentation</Type>
+								</AdditionSource>
+								<ContextMenu name="СписокКодовСостояниеПросмотраКонтекстноеМеню" id="18"/>
+								<ExtendedTooltip name="СписокКодовСостояниеПросмотраРасширеннаяПодсказка" id="19"/>
+							</ViewStatusAddition>
+							<SearchControlAddition name="СписокКодовУправлениеПоиском" id="20">
+								<AdditionSource>
+									<Item>СписокКодов</Item>
+									<Type>SearchControl</Type>
+								</AdditionSource>
+								<ContextMenu name="СписокКодовУправлениеПоискомКонтекстноеМеню" id="21"/>
+								<ExtendedTooltip name="СписокКодовУправлениеПоискомРасширеннаяПодсказка" id="22"/>
+							</SearchControlAddition>
+							<ChildItems>
+								<LabelField name="СписокКодовНомерСтроки" id="23">
+									<DataPath>Объект.СписокКодов.LineNumber</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<Width>3</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<ContextMenu name="СписокКодовНомерСтрокиКонтекстноеМеню" id="24"/>
+									<ExtendedTooltip name="СписокКодовНомерСтрокиРасширеннаяПодсказка" id="25"/>
+								</LabelField>
+								<InputField name="СписокКодовКод" id="39">
+									<DataPath>Объект.СписокКодов.Код</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<ContextMenu name="СписокКодовКодКонтекстноеМеню" id="40"/>
+									<ExtendedTooltip name="СписокКодовКодРасширеннаяПодсказка" id="41"/>
+								</InputField>
+								<InputField name="СписокКодовКодУКТЗЕД" id="26">
+									<DataPath>Объект.СписокКодов.КодУКТЗЕД</DataPath>
+									<UserVisible>
+										<xr:Common>false</xr:Common>
+									</UserVisible>
+									<EditMode>EnterOnInput</EditMode>
+									<ContextMenu name="СписокКодовКодУКТЗЕДКонтекстноеМеню" id="27"/>
+									<ExtendedTooltip name="СписокКодовКодУКТЗЕДРасширеннаяПодсказка" id="28"/>
+								</InputField>
+							</ChildItems>
+						</Table>
+					</ChildItems>
+				</Page>
+				<Page name="СтраницаЦеновыеРежимы" id="88">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Ценовые режимы</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Ценовые режимы</v8:content>
+						</v8:item>
+					</Title>
+					<Group>AlwaysHorizontal</Group>
+					<ExtendedTooltip name="СтраницаЦеновыеРежимыРасширеннаяПодсказка" id="89"/>
+					<ChildItems>
+						<UsualGroup name="ГруппаРежимыОформления" id="113">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Режимы оформления</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>uk</v8:lang>
+									<v8:content>Режимы оформления</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Vertical</Group>
+							<Behavior>Usual</Behavior>
+							<Representation>None</Representation>
+							<ShowTitle>false</ShowTitle>
+							<ExtendedTooltip name="ГруппаРежимыОформленияРасширеннаяПодсказка" id="114"/>
+							<ChildItems>
+								<CheckBoxField name="УчитыватьРежимыОформления" id="81">
+									<DataPath>Объект.УчитыватьРежимыОформления</DataPath>
+									<TitleLocation>Right</TitleLocation>
+									<CheckBoxType>Auto</CheckBoxType>
+									<ContextMenu name="УчитыватьРежимыОформленияКонтекстноеМеню" id="82"/>
+									<ExtendedTooltip name="УчитыватьРежимыОформленияРасширеннаяПодсказка" id="83"/>
+									<Events>
+										<Event name="OnChange">УчитыватьРежимыОформленияПриИзменении</Event>
+									</Events>
+								</CheckBoxField>
+								<LabelDecoration name="Декорация2" id="115">
+									<ContextMenu name="Декорация2КонтекстноеМеню" id="116"/>
+									<ExtendedTooltip name="Декорация2РасширеннаяПодсказка" id="117"/>
+								</LabelDecoration>
+								<CommandBar name="ГруппаКоманднаяПанельСписокРежимов" id="75">
+									<Width>6</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<HorizontalLocation>Right</HorizontalLocation>
+									<ExtendedTooltip name="ГруппаКоманднаяПанельСписокРежимовРасширеннаяПодсказка" id="76"/>
+									<ChildItems>
+										<Button name="УстановитьВсеРежимы" id="77">
+											<Type>CommandBarButton</Type>
+											<Representation>Picture</Representation>
+											<CommandName>Form.Command.УстановитьВсеРежимы</CommandName>
+											<Picture>
+												<xr:Ref>StdPicture.CheckAll</xr:Ref>
+												<xr:LoadTransparent>true</xr:LoadTransparent>
+											</Picture>
+											<ExtendedTooltip name="УстановитьВсеРежимыРасширеннаяПодсказка" id="78"/>
+										</Button>
+										<Button name="ОтменитьВсеРежимы" id="79">
+											<Type>CommandBarButton</Type>
+											<Representation>Picture</Representation>
+											<CommandName>Form.Command.ОтменитьВсеРежимы</CommandName>
+											<Picture>
+												<xr:Ref>StdPicture.UncheckAll</xr:Ref>
+												<xr:LoadTransparent>true</xr:LoadTransparent>
+											</Picture>
+											<ExtendedTooltip name="ОтменитьВсеРежимыРасширеннаяПодсказка" id="80"/>
+										</Button>
+									</ChildItems>
+								</CommandBar>
+								<Table name="СписокРежимовОформления" id="51">
+									<Representation>List</Representation>
+									<Width>23</Width>
+									<AutoMaxWidth>false</AutoMaxWidth>
+									<HeightControlVariant>UseContentHeight</HeightControlVariant>
+									<Header>false</Header>
+									<HorizontalScrollBar>DontUse</HorizontalScrollBar>
+									<VerticalScrollBar>DontUse</VerticalScrollBar>
+									<HorizontalLines>false</HorizontalLines>
+									<VerticalLines>false</VerticalLines>
+									<AutoInsertNewRow>true</AutoInsertNewRow>
+									<HorizontalStretch>false</HorizontalStretch>
+									<DataPath>СписокРежимовОформления</DataPath>
+									<RowPictureDataPath>СписокРежимовОформления.Picture</RowPictureDataPath>
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Режимы оформления</v8:content>
+										</v8:item>
+									</Title>
+									<SearchStringLocation>None</SearchStringLocation>
+									<ViewStatusLocation>None</ViewStatusLocation>
+									<SearchControlLocation>None</SearchControlLocation>
+									<ContextMenu name="СписокРежимовОформленияКонтекстноеМеню" id="52">
+										<Autofill>false</Autofill>
+									</ContextMenu>
+									<AutoCommandBar name="СписокРежимовОформленияКоманднаяПанель" id="53">
+										<Autofill>false</Autofill>
+									</AutoCommandBar>
+									<ExtendedTooltip name="СписокРежимовОформленияРасширеннаяПодсказка" id="54"/>
+									<SearchStringAddition name="СписокРежимовОформленияСтрокаПоиска" id="55">
+										<AdditionSource>
+											<Item>СписокРежимовОформления</Item>
+											<Type>SearchStringRepresentation</Type>
+										</AdditionSource>
+										<ContextMenu name="СписокРежимовОформленияСтрокаПоискаКонтекстноеМеню" id="56"/>
+										<ExtendedTooltip name="СписокРежимовОформленияСтрокаПоискаРасширеннаяПодсказка" id="57"/>
+									</SearchStringAddition>
+									<ViewStatusAddition name="СписокРежимовОформленияСостояниеПросмотра" id="58">
+										<AdditionSource>
+											<Item>СписокРежимовОформления</Item>
+											<Type>ViewStatusRepresentation</Type>
+										</AdditionSource>
+										<ContextMenu name="СписокРежимовОформленияСостояниеПросмотраКонтекстноеМеню" id="59"/>
+										<ExtendedTooltip name="СписокРежимовОформленияСостояниеПросмотраРасширеннаяПодсказка" id="60"/>
+									</ViewStatusAddition>
+									<SearchControlAddition name="СписокРежимовОформленияУправлениеПоиском" id="61">
+										<AdditionSource>
+											<Item>СписокРежимовОформления</Item>
+											<Type>SearchControl</Type>
+										</AdditionSource>
+										<ContextMenu name="СписокРежимовОформленияУправлениеПоискомКонтекстноеМеню" id="62"/>
+										<ExtendedTooltip name="СписокРежимовОформленияУправлениеПоискомРасширеннаяПодсказка" id="63"/>
+									</SearchControlAddition>
+									<ChildItems>
+										<CheckBoxField name="СписокРежимовОформленияПометка" id="67">
+											<DataPath>СписокРежимовОформления.Check</DataPath>
+											<Title>
+												<v8:item>
+													<v8:lang>ru</v8:lang>
+													<v8:content> </v8:content>
+												</v8:item>
+											</Title>
+											<EditMode>EnterOnInput</EditMode>
+											<CheckBoxType>Auto</CheckBoxType>
+											<ContextMenu name="СписокРежимовОформленияПометкаКонтекстноеМеню" id="68"/>
+											<ExtendedTooltip name="СписокРежимовОформленияПометкаРасширеннаяПодсказка" id="69"/>
+											<Events>
+												<Event name="OnChange">СписокРежимовОформленияПометкаПриИзменении</Event>
+											</Events>
+										</CheckBoxField>
+										<InputField name="СписокРежимовОформленияЗначение" id="64">
+											<DataPath>СписокРежимовОформления.Value</DataPath>
+											<ReadOnly>true</ReadOnly>
+											<Title>
+												<v8:item>
+													<v8:lang>ru</v8:lang>
+													<v8:content>Режим оформления</v8:content>
+												</v8:item>
+											</Title>
+											<EditMode>EnterOnInput</EditMode>
+											<HeaderHorizontalAlign>Center</HeaderHorizontalAlign>
+											<ContextMenu name="СписокРежимовОформленияЗначениеКонтекстноеМеню" id="65"/>
+											<ExtendedTooltip name="СписокРежимовОформленияЗначениеРасширеннаяПодсказка" id="66"/>
+										</InputField>
+									</ChildItems>
+								</Table>
+							</ChildItems>
+						</UsualGroup>
+						<LabelDecoration name="Декорация4" id="124">
+							<Width>2</Width>
+							<ContextMenu name="Декорация4КонтекстноеМеню" id="125"/>
+							<ExtendedTooltip name="Декорация4РасширеннаяПодсказка" id="126"/>
+						</LabelDecoration>
+						<UsualGroup name="ГруппаЦеновыеГруппы" id="111">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Ценовые группы</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Vertical</Group>
+							<Behavior>Usual</Behavior>
+							<Representation>None</Representation>
+							<ShowTitle>false</ShowTitle>
+							<ExtendedTooltip name="ГруппаЦеновыеГруппыРасширеннаяПодсказка" id="112"/>
+							<ChildItems>
+								<CheckBoxField name="УчитыватьЦеновыеГруппы" id="118">
+									<DataPath>Объект.УчитыватьЦеновыеГруппы</DataPath>
+									<TitleLocation>Right</TitleLocation>
+									<CheckBoxType>Auto</CheckBoxType>
+									<ContextMenu name="УчитыватьЦеновыеГруппыКонтекстноеМеню" id="119"/>
+									<ExtendedTooltip name="УчитыватьЦеновыеГруппыРасширеннаяПодсказка" id="120"/>
+									<Events>
+										<Event name="OnChange">УчитыватьЦеновыеГруппыПриИзменении</Event>
+									</Events>
+								</CheckBoxField>
+								<LabelDecoration name="Декорация3" id="121">
+									<ContextMenu name="Декорация3КонтекстноеМеню" id="122"/>
+									<ExtendedTooltip name="Декорация3РасширеннаяПодсказка" id="123"/>
+								</LabelDecoration>
+								<Table name="ЦеновыеГруппыМашин" id="90">
+									<Width>10</Width>
+									<HeightControlVariant>UseContentHeight</HeightControlVariant>
+									<AutoInsertNewRow>true</AutoInsertNewRow>
+									<EnableStartDrag>true</EnableStartDrag>
+									<EnableDrag>true</EnableDrag>
+									<DataPath>Объект.ЦеновыеГруппыМашин</DataPath>
+									<SearchStringLocation>None</SearchStringLocation>
+									<ViewStatusLocation>None</ViewStatusLocation>
+									<SearchControlLocation>None</SearchControlLocation>
+									<RowFilter xsi:nil="true"/>
+									<ContextMenu name="ЦеновыеГруппыМашинКонтекстноеМеню" id="91"/>
+									<AutoCommandBar name="ЦеновыеГруппыМашинКоманднаяПанель" id="92"/>
+									<ExtendedTooltip name="ЦеновыеГруппыМашинРасширеннаяПодсказка" id="93"/>
+									<SearchStringAddition name="ЦеновыеГруппыМашинСтрокаПоиска" id="94">
+										<AdditionSource>
+											<Item>ЦеновыеГруппыМашин</Item>
+											<Type>SearchStringRepresentation</Type>
+										</AdditionSource>
+										<ContextMenu name="ЦеновыеГруппыМашинСтрокаПоискаКонтекстноеМеню" id="95"/>
+										<ExtendedTooltip name="ЦеновыеГруппыМашинСтрокаПоискаРасширеннаяПодсказка" id="96"/>
+									</SearchStringAddition>
+									<ViewStatusAddition name="ЦеновыеГруппыМашинСостояниеПросмотра" id="97">
+										<AdditionSource>
+											<Item>ЦеновыеГруппыМашин</Item>
+											<Type>ViewStatusRepresentation</Type>
+										</AdditionSource>
+										<ContextMenu name="ЦеновыеГруппыМашинСостояниеПросмотраКонтекстноеМеню" id="98"/>
+										<ExtendedTooltip name="ЦеновыеГруппыМашинСостояниеПросмотраРасширеннаяПодсказка" id="99"/>
+									</ViewStatusAddition>
+									<SearchControlAddition name="ЦеновыеГруппыМашинУправлениеПоиском" id="100">
+										<AdditionSource>
+											<Item>ЦеновыеГруппыМашин</Item>
+											<Type>SearchControl</Type>
+										</AdditionSource>
+										<ContextMenu name="ЦеновыеГруппыМашинУправлениеПоискомКонтекстноеМеню" id="101"/>
+										<ExtendedTooltip name="ЦеновыеГруппыМашинУправлениеПоискомРасширеннаяПодсказка" id="102"/>
+									</SearchControlAddition>
+									<ChildItems>
+										<LabelField name="ЦеновыеГруппыМашинНомерСтроки" id="103">
+											<DataPath>Объект.ЦеновыеГруппыМашин.LineNumber</DataPath>
+											<EditMode>EnterOnInput</EditMode>
+											<Width>1</Width>
+											<HorizontalStretch>false</HorizontalStretch>
+											<ContextMenu name="ЦеновыеГруппыМашинНомерСтрокиКонтекстноеМеню" id="104"/>
+											<ExtendedTooltip name="ЦеновыеГруппыМашинНомерСтрокиРасширеннаяПодсказка" id="105"/>
+										</LabelField>
+										<InputField name="ЦеновыеГруппыМашинЦеноваяГруппаМашины" id="106">
+											<DataPath>Объект.ЦеновыеГруппыМашин.ЦеноваяГруппаМашины</DataPath>
+											<EditMode>EnterOnInput</EditMode>
+											<ContextMenu name="ЦеновыеГруппыМашинЦеноваяГруппаМашиныКонтекстноеМеню" id="107"/>
+											<ExtendedTooltip name="ЦеновыеГруппыМашинЦеноваяГруппаМашиныРасширеннаяПодсказка" id="108"/>
+										</InputField>
+									</ChildItems>
+								</Table>
+							</ChildItems>
+						</UsualGroup>
+					</ChildItems>
+				</Page>
+				<Page name="СтраницаРежимыОформления" id="109">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Режимы оформления</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Режимы оформления</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Страница режимы оформления</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ExtendedTooltip name="СтраницаРежимыОформленияРасширеннаяПодсказка" id="110"/>
+				</Page>
+			</ChildItems>
+		</Pages>
+		<InputField name="Комментарий" id="36">
+			<DataPath>Объект.Комментарий</DataPath>
+			<TitleLocation>None</TitleLocation>
+			<AutoMaxWidth>false</AutoMaxWidth>
+			<VerticalStretch>false</VerticalStretch>
+			<MultiLine>true</MultiLine>
+			<InputHint>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Комментарий</v8:content>
+				</v8:item>
+			</InputHint>
+			<ContextMenu name="КомментарийКонтекстноеМеню" id="37"/>
+			<ExtendedTooltip name="КомментарийРасширеннаяПодсказка" id="38"/>
+		</InputField>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="1">
+			<Type>
+				<v8:Type>cfg:CatalogObject.ГруппыКодовУКТЗЕД</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+			<SavedData>true</SavedData>
+		</Attribute>
+		<Attribute name="СписокРежимовОформления" id="2">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Список режимов оформления</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>v8:ValueListType</v8:Type>
+			</Type>
+			<Settings xsi:type="v8:TypeDescription">
+				<v8:Type>cfg:EnumRef.РежимыОформления</v8:Type>
+			</Settings>
+		</Attribute>
+	</Attributes>
+	<Commands>
+		<Command name="УстановитьВсеРежимы" id="1">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Установить все режимы</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Установить все режимы</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>УстановитьВсеРежимы</Action>
+		</Command>
+		<Command name="ОтменитьВсеРежимы" id="2">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отменить все режимы</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Отменить все режимы</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>ОтменитьВсеРежимы</Action>
+		</Command>
+	</Commands>
+</Form>

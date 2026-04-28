@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Enum uuid="9f46acbc-b917-4ea7-ab68-3fba4ce65dbf">
+		<InternalInfo>
+			<xr:GeneratedType name="EnumRef.ТипыДополнительныхУслугОрганизации" category="Ref">
+				<xr:TypeId>1daaf885-b796-44b1-b04c-f22ce632cd52</xr:TypeId>
+				<xr:ValueId>2cbe60d4-665d-4024-ad94-2ea6292b4e5a</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumManager.ТипыДополнительныхУслугОрганизации" category="Manager">
+				<xr:TypeId>0b4f8a19-e2df-43ff-9372-79ebf5e3b99f</xr:TypeId>
+				<xr:ValueId>c53d5554-0138-42bb-ad8a-d78cbe3ca166</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumList.ТипыДополнительныхУслугОрганизации" category="List">
+				<xr:TypeId>f611bee0-be18-4c47-a037-93082d474e2a</xr:TypeId>
+				<xr:ValueId>5090ad98-76fc-4bb2-bae0-861f5c81c970</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<Name>ТипыДополнительныхУслугОрганизации</Name>
+			<Synonym>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Типы дополнительных услуг организации</v8:content>
+				</v8:item>
+			</Synonym>
+			<Comment/>
+			<UseStandardCommands>false</UseStandardCommands>
+			<Characteristics/>
+			<QuickChoice>true</QuickChoice>
+			<ChoiceMode>BothWays</ChoiceMode>
+			<DefaultListForm/>
+			<DefaultChoiceForm/>
+			<AuxiliaryListForm/>
+			<AuxiliaryChoiceForm/>
+			<ListPresentation/>
+			<ExtendedListPresentation/>
+			<Explanation/>
+			<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+		</Properties>
+		<ChildObjects>
+			<EnumValue uuid="150b02e8-e50c-4632-9534-360b564503a4">
+				<Properties>
+					<Name>ПредварительнаяТ1</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Предварительная Т1</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Предварительная Т1</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="afc7e0d0-8a83-458a-9e17-6e84a61ed89c">
+				<Properties>
+					<Name>CHEDDPP</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>CHEDDPP</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>CHEDDPP</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="1ce9c2e1-aa39-42f3-88e5-20f36941a8b7">
+				<Properties>
+					<Name>CED</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>CHEDD (CED)</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>CHEDD (CED)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="45ee31e3-b47d-47de-b10e-2d13cb6b0b5c">
+				<Properties>
+					<Name>CHEDDPP_CED</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>CHEDDPP + CED</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>CHEDDPP + CED</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="985cc76a-4c83-4817-9415-005e8d0269cb">
+				<Properties>
+					<Name>ОплатаГосНадзораИКонтроля</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Оплата гос. надзора и контроля</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Оплата гос. надзора и контроля</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="e785d964-5924-4c34-817b-07e84a1521f7">
+				<Properties>
+					<Name>КорректировкаЦены</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Корректировка цены</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Корректировка цены</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="df0189f1-7b08-497e-b9bd-9e677cf9b36c">
+				<Properties>
+					<Name>ПодготовкаДокументов1</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Подготовка документов 1</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="a4099da4-0eac-46df-8be0-a23ce63eb6fe">
+				<Properties>
+					<Name>ПодготовкаДокументов2</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Подготовка документов 2</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="9bb0eafd-ff50-458c-b24e-0f8ba6d82db2">
+				<Properties>
+					<Name>ДополнительныеКодыLRN</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Дополнительные коды LRN</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="d7179c4c-5ed7-4813-8845-e4724a3e5df0">
+				<Properties>
+					<Name>Конвой</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Конвой</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="8a83cc5a-c099-4cd7-bb7c-9bb64a60eb1e">
+				<Properties>
+					<Name>КорректировкаЭПИ</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Корректировка ЭПИ</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Корректировка ЭПИ</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="ea3ec309-eec3-4a99-bfae-7dc7938ca7ba">
+				<Properties>
+					<Name>КорректировкаЭПИ_СЕРТ</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Корректировка ЭПИ + СЕРТ</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Корректировка ЭПИ + СЕРТ</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="eaa44b52-4786-4e35-83cd-14007ec16cb8">
+				<Properties>
+					<Name>ИнвойсыОт6До15</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Инвойсы 6-15</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Инвойсы 6-15</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>от 6 до 15 дней</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="825db761-4930-4148-8fe6-97c6db60247f">
+				<Properties>
+					<Name>ИнвойсыОт16До30</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Инвойсы 16-30</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Инвойсы 16-30</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>от 16 до 30 дней</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="357deb82-a751-4c9c-9429-ff55a2ee12fe">
+				<Properties>
+					<Name>ИнвойсыСвыше31</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Инвойсы от 31</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Инвойсы от 31</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>от 31 дня и выше</Comment>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="cb81b5dc-611c-4bec-a1cc-c1ca049b5be8">
+				<Properties>
+					<Name>ПерецепкаПерегруз</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Перецепка/перегруз</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Перецепка/перегруз</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="40bd3043-b098-4bed-983f-0d02a5279083">
+				<Properties>
+					<Name>ВременныйВвоз</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Временный ввоз</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>Временный ввоз</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+		</ChildObjects>
+	</Enum>
+</MetaDataObject>

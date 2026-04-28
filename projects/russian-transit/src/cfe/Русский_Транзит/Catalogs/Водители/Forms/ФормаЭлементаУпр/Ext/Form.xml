@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<WindowOpeningMode>LockOwnerWindow</WindowOpeningMode>
+	<VerticalScroll>useIfNecessary</VerticalScroll>
+	<UseForFoldersAndItems>Items</UseForFoldersAndItems>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1"/>
+	<Events>
+		<Event name="AfterWrite">ПослеЗаписи</Event>
+		<Event name="AfterWriteAtServer">ПослеЗаписиНаСервере</Event>
+		<Event name="NotificationProcessing">ОбработкаОповещения</Event>
+		<Event name="OnOpen">ПриОткрытии</Event>
+		<Event name="BeforeWrite">ПередЗаписью</Event>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<UsualGroup name="ГруппаФИО" id="46">
+			<Group>AlwaysHorizontal</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаФИОРасширеннаяПодсказка" id="47"/>
+			<ChildItems>
+				<InputField name="Фамилия" id="48">
+					<DataPath>Объект.Фамилия</DataPath>
+					<TitleLocation>Top</TitleLocation>
+					<Width>20</Width>
+					<AutoMarkIncomplete>true</AutoMarkIncomplete>
+					<ContextMenu name="ФамилияКонтекстноеМеню" id="49"/>
+					<ExtendedTooltip name="ФамилияРасширеннаяПодсказка" id="50"/>
+					<Events>
+						<Event name="OnChange">ФамилияПриИзменении</Event>
+					</Events>
+				</InputField>
+				<InputField name="Имя" id="51">
+					<DataPath>Объект.Имя</DataPath>
+					<TitleLocation>Top</TitleLocation>
+					<Width>17</Width>
+					<AutoMarkIncomplete>true</AutoMarkIncomplete>
+					<ContextMenu name="ИмяКонтекстноеМеню" id="52"/>
+					<ExtendedTooltip name="ИмяРасширеннаяПодсказка" id="53"/>
+					<Events>
+						<Event name="OnChange">ИмяПриИзменении</Event>
+					</Events>
+				</InputField>
+				<InputField name="Отчество" id="54">
+					<DataPath>Объект.Отчество</DataPath>
+					<TitleLocation>Top</TitleLocation>
+					<Width>17</Width>
+					<ContextMenu name="ОтчествоКонтекстноеМеню" id="55"/>
+					<ExtendedTooltip name="ОтчествоРасширеннаяПодсказка" id="56"/>
+					<Events>
+						<Event name="OnChange">ОтчествоПриИзменении</Event>
+					</Events>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+		<UsualGroup name="ГруппаНаименование" id="35">
+			<Group>Horizontal</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ThroughAlign>DontUse</ThroughAlign>
+			<ExtendedTooltip name="ГруппаНаименованиеРасширеннаяПодсказка" id="36"/>
+			<ChildItems>
+				<InputField name="Наименование" id="3">
+					<DataPath>Объект.Description</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>ФИО</v8:content>
+						</v8:item>
+					</Title>
+					<EditMode>EnterOnInput</EditMode>
+					<AutoMaxWidth>false</AutoMaxWidth>
+					<ContextMenu name="НаименованиеКонтекстноеМеню" id="4"/>
+					<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="24"/>
+				</InputField>
+				<InputField name="Код" id="1">
+					<DataPath>Объект.Code</DataPath>
+					<Visible>false</Visible>
+					<EditMode>EnterOnInput</EditMode>
+					<ContextMenu name="КодКонтекстноеМеню" id="2"/>
+					<ExtendedTooltip name="КодРасширеннаяПодсказка" id="23"/>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+		<InputField name="Владелец" id="11">
+			<SkipOnInput>true</SkipOnInput>
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Перевозчик</v8:content>
+				</v8:item>
+			</Title>
+			<ContextMenu name="ВладелецКонтекстноеМеню" id="12"/>
+			<ExtendedTooltip name="ВладелецРасширеннаяПодсказка" id="33"/>
+		</InputField>
+		<InputField name="СтранаРегистрации" id="57">
+			<DataPath>Объект.СтранаРегистрации</DataPath>
+			<AutoMarkIncomplete>true</AutoMarkIncomplete>
+			<ContextMenu name="СтранаРегистрацииКонтекстноеМеню" id="58"/>
+			<ExtendedTooltip name="СтранаРегистрацииРасширеннаяПодсказка" id="59"/>
+		</InputField>
+		<InputField name="ДатаРождения" id="37">
+			<DataPath>Объект.ДатаРождения</DataPath>
+			<Width>10</Width>
+			<HorizontalStretch>false</HorizontalStretch>
+			<AutoMarkIncomplete>true</AutoMarkIncomplete>
+			<ContextMenu name="ДатаРожденияКонтекстноеМеню" id="38"/>
+			<ExtendedTooltip name="ДатаРожденияРасширеннаяПодсказка" id="39"/>
+		</InputField>
+		<UsualGroup name="ГруппаГоризонт" id="42">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа горизонт</v8:content>
+				</v8:item>
+			</Title>
+			<Group>AlwaysHorizontal</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаГоризонтРасширеннаяПодсказка" id="43"/>
+			<ChildItems>
+				<UsualGroup name="ГруппаЛево" id="40">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Телефоны</v8:content>
+						</v8:item>
+					</Title>
+					<Group>Vertical</Group>
+					<Behavior>Usual</Behavior>
+					<Representation>StrongSeparation</Representation>
+					<ExtendedTooltip name="ГруппаЛевоРасширеннаяПодсказка" id="41"/>
+					<ChildItems>
+						<InputField name="НомерТелефона" id="7">
+							<DataPath>Объект.НомерТелефона</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>для SMS</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>uk</v8:lang>
+									<v8:content>для SMS</v8:content>
+								</v8:item>
+							</Title>
+							<Width>20</Width>
+							<ContextMenu name="НомерТелефонаКонтекстноеМеню" id="8"/>
+							<ExtendedTooltip name="НомерТелефонаРасширеннаяПодсказка" id="26"/>
+						</InputField>
+						<InputField name="ТелЗагр1" id="13">
+							<DataPath>Объект.ТелЗагр1</DataPath>
+							<Width>20</Width>
+							<ContextMenu name="ТелЗагр1КонтекстноеМеню" id="14"/>
+							<ExtendedTooltip name="ТелЗагр1РасширеннаяПодсказка" id="27"/>
+						</InputField>
+						<InputField name="ТелЗагр2" id="15">
+							<DataPath>Объект.ТелЗагр2</DataPath>
+							<Width>20</Width>
+							<ContextMenu name="ТелЗагр2КонтекстноеМеню" id="16"/>
+							<ExtendedTooltip name="ТелЗагр2РасширеннаяПодсказка" id="28"/>
+						</InputField>
+					</ChildItems>
+				</UsualGroup>
+				<UsualGroup name="ГруппаПраво" id="44">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Паспорт</v8:content>
+						</v8:item>
+					</Title>
+					<Group>Vertical</Group>
+					<Behavior>Usual</Behavior>
+					<Representation>StrongSeparation</Representation>
+					<ExtendedTooltip name="ГруппаПравоРасширеннаяПодсказка" id="45"/>
+					<ChildItems>
+						<InputField name="ТипДокумента" id="18">
+							<DataPath>Объект.ТипДокумента</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Тип паспорта</v8:content>
+								</v8:item>
+							</Title>
+							<AutoMarkIncomplete>true</AutoMarkIncomplete>
+							<ContextMenu name="ТипДокументаКонтекстноеМеню" id="19"/>
+							<ExtendedTooltip name="ТипДокументаРасширеннаяПодсказка" id="30"/>
+						</InputField>
+						<InputField name="РеквизитыПаспорта" id="9">
+							<DataPath>Объект.РеквизитыПаспорта</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Серия/Номер</v8:content>
+								</v8:item>
+							</Title>
+							<AutoMarkIncomplete>true</AutoMarkIncomplete>
+							<ContextMenu name="РеквизитыПаспортаКонтекстноеМеню" id="10"/>
+							<ExtendedTooltip name="РеквизитыПаспортаРасширеннаяПодсказка" id="31"/>
+							<Events>
+								<Event name="TextEditEnd">РеквизитыПаспортаОкончаниеВводаТекста</Event>
+							</Events>
+						</InputField>
+						<InputField name="ДатаВыдачи" id="20">
+							<DataPath>Объект.ДатаВыдачи</DataPath>
+							<Width>10</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<AutoMarkIncomplete>true</AutoMarkIncomplete>
+							<ContextMenu name="ДатаВыдачиКонтекстноеМеню" id="21"/>
+							<ExtendedTooltip name="ДатаВыдачиРасширеннаяПодсказка" id="32"/>
+						</InputField>
+					</ChildItems>
+				</UsualGroup>
+			</ChildItems>
+		</UsualGroup>
+		<InputField name="Родитель" id="5">
+			<Visible>false</Visible>
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа</v8:content>
+				</v8:item>
+			</Title>
+			<EditMode>EnterOnInput</EditMode>
+			<ContextMenu name="РодительКонтекстноеМеню" id="6"/>
+			<ExtendedTooltip name="РодительРасширеннаяПодсказка" id="34"/>
+		</InputField>
+		<UsualGroup name="ГруппаМессенджеры" id="60">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Мессенджеры</v8:content>
+				</v8:item>
+			</Title>
+			<Group>Vertical</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>StrongSeparation</Representation>
+			<ExtendedTooltip name="ГруппаМессенджерыРасширеннаяПодсказка" id="61"/>
+			<ChildItems>
+				<InputField name="ОсновнойМессенджер" id="84">
+					<SkipOnInput>true</SkipOnInput>
+					<OpenButton>true</OpenButton>
+					<ContextMenu name="ОсновнойМессенджерКонтекстноеМеню" id="85"/>
+					<ExtendedTooltip name="ОсновнойМессенджерРасширеннаяПодсказка" id="86"/>
+				</InputField>
+				<Table name="МессенджерыВодителя" id="62">
+					<Height>7</Height>
+					<HeightControlVariant>UseContentHeight</HeightControlVariant>
+					<UseAlternationRowColor>true</UseAlternationRowColor>
+					<EnableStartDrag>true</EnableStartDrag>
+					<DataPath>МессенджерыВодителя</DataPath>
+					<RowPictureDataPath>~МессенджерыВодителя.DefaultPicture</RowPictureDataPath>
+					<SearchStringLocation>None</SearchStringLocation>
+					<ViewStatusLocation>None</ViewStatusLocation>
+					<SearchControlLocation>None</SearchControlLocation>
+					<AutoRefresh>false</AutoRefresh>
+					<AutoRefreshPeriod>60</AutoRefreshPeriod>
+					<Period>
+						<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+						<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+						<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+					</Period>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<RestoreCurrentRow>false</RestoreCurrentRow>
+					<TopLevelParent xsi:nil="true"/>
+					<ShowRoot>true</ShowRoot>
+					<AllowRootChoice>false</AllowRootChoice>
+					<UpdateOnDataChange>Auto</UpdateOnDataChange>
+					<AllowGettingCurrentRowURL>true</AllowGettingCurrentRowURL>
+					<ContextMenu name="МессенджерыВодителяКонтекстноеМеню" id="63"/>
+					<AutoCommandBar name="МессенджерыВодителяКоманднаяПанель" id="64"/>
+					<ExtendedTooltip name="МессенджерыВодителяРасширеннаяПодсказка" id="65"/>
+					<SearchStringAddition name="МессенджерыВодителяСтрокаПоиска" id="66">
+						<AdditionSource>
+							<Item>МессенджерыВодителя</Item>
+							<Type>SearchStringRepresentation</Type>
+						</AdditionSource>
+						<ContextMenu name="МессенджерыВодителяСтрокаПоискаКонтекстноеМеню" id="67"/>
+						<ExtendedTooltip name="МессенджерыВодителяСтрокаПоискаРасширеннаяПодсказка" id="68"/>
+					</SearchStringAddition>
+					<ViewStatusAddition name="МессенджерыВодителяСостояниеПросмотра" id="69">
+						<AdditionSource>
+							<Item>МессенджерыВодителя</Item>
+							<Type>ViewStatusRepresentation</Type>
+						</AdditionSource>
+						<ContextMenu name="МессенджерыВодителяСостояниеПросмотраКонтекстноеМеню" id="70"/>
+						<ExtendedTooltip name="МессенджерыВодителяСостояниеПросмотраРасширеннаяПодсказка" id="71"/>
+					</ViewStatusAddition>
+					<SearchControlAddition name="МессенджерыВодителяУправлениеПоиском" id="72">
+						<AdditionSource>
+							<Item>МессенджерыВодителя</Item>
+							<Type>SearchControl</Type>
+						</AdditionSource>
+						<ContextMenu name="МессенджерыВодителяУправлениеПоискомКонтекстноеМеню" id="73"/>
+						<ExtendedTooltip name="МессенджерыВодителяУправлениеПоискомРасширеннаяПодсказка" id="74"/>
+					</SearchControlAddition>
+					<ChildItems>
+						<LabelField name="МессенджерыВодителяВладелец" id="75">
+							<DataPath>~МессенджерыВодителя.Owner~МессенджерыВодителя.Владелец</DataPath>
+							<Visible>false</Visible>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Водитель</v8:content>
+								</v8:item>
+							</Title>
+							<ContextMenu name="МессенджерыВодителяВладелецКонтекстноеМеню" id="76"/>
+							<ExtendedTooltip name="МессенджерыВодителяВладелецРасширеннаяПодсказка" id="77"/>
+						</LabelField>
+						<LabelField name="МессенджерыВодителяМессенджер" id="78">
+							<DataPath>~МессенджерыВодителя.Мессенджер</DataPath>
+							<ContextMenu name="МессенджерыВодителяМессенджерКонтекстноеМеню" id="79"/>
+							<ExtendedTooltip name="МессенджерыВодителяМессенджерРасширеннаяПодсказка" id="80"/>
+						</LabelField>
+						<LabelField name="МессенджерыВодителяНаименование" id="81">
+							<DataPath>~МессенджерыВодителя.Description~МессенджерыВодителя.Наименование</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Логин</v8:content>
+								</v8:item>
+							</Title>
+							<ContextMenu name="МессенджерыВодителяНаименованиеКонтекстноеМеню" id="82"/>
+							<ExtendedTooltip name="МессенджерыВодителяНаименованиеРасширеннаяПодсказка" id="83"/>
+						</LabelField>
+					</ChildItems>
+				</Table>
+			</ChildItems>
+		</UsualGroup>
+		<InputField name="Комментарий" id="87">
+			<DataPath>Объект.Комментарий</DataPath>
+			<TitleLocation>None</TitleLocation>
+			<AutoMaxWidth>false</AutoMaxWidth>
+			<VerticalStretch>false</VerticalStretch>
+			<MultiLine>true</MultiLine>
+			<InputHint>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Комментарий</v8:content>
+				</v8:item>
+			</InputHint>
+			<ContextMenu name="КомментарийКонтекстноеМеню" id="88"/>
+			<ExtendedTooltip name="КомментарийРасширеннаяПодсказка" id="89"/>
+		</InputField>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="1">
+			<Type>
+				<v8:Type>cfg:CatalogObject.Водители</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+			<SavedData>true</SavedData>
+		</Attribute>
+		<Attribute name="ТекОтчество" id="2">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Тек отчество</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>50</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ТекИмя" id="3">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Тек имя</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>50</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="ТекФамилия" id="4">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Тек фамилия</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>50</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="МессенджерыВодителя" id="5">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Мессенджеры</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:DynamicList</v8:Type>
+			</Type>
+			<UseAlways>
+				<Field>~МессенджерыВодителя.Ref~МессенджерыВодителя.Ссылка</Field>
+			</UseAlways>
+			<Settings xsi:type="DynamicList">
+				<ManualQuery>false</ManualQuery>
+				<DynamicDataRead>true</DynamicDataRead>
+				<MainTable>1:b8774f65-d4bd-477b-8459-6e135dfbc287</MainTable>
+				<ListSettings>
+					<dcsset:filter>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>dfcece9d-5077-440b-b6b3-45a5cb4538eb</dcsset:userSettingID>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>88619765-ccb3-46c6-ac52-38e9c992ebd4</dcsset:userSettingID>
+					</dcsset:order>
+					<dcsset:conditionalAppearance>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>b75fecce-942b-4aed-abc9-e6a02e460fb3</dcsset:userSettingID>
+					</dcsset:conditionalAppearance>
+					<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+					<dcsset:itemsUserSettingID>911b6018-f537-43e8-a417-da56b22f9aec</dcsset:itemsUserSettingID>
+				</ListSettings>
+			</Settings>
+		</Attribute>
+		<ConditionalAppearance>
+			<dcsset:item>
+				<dcsset:selection>
+					<dcsset:item>
+						<dcsset:field>МессенджерыВодителя</dcsset:field>
+					</dcsset:item>
+				</dcsset:selection>
+				<dcsset:filter>
+					<dcsset:item xsi:type="dcsset:FilterItemComparison">
+						<dcsset:left xsi:type="dcscor:Field">МессенджерыВодителя.Ссылка</dcsset:left>
+						<dcsset:comparisonType>Equal</dcsset:comparisonType>
+						<dcsset:right xsi:type="dcscor:Field">Объект.ОсновнойМессенджер</dcsset:right>
+					</dcsset:item>
+				</dcsset:filter>
+				<dcsset:appearance>
+					<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+						<dcscor:parameter>Шрифт</dcscor:parameter>
+						<dcscor:value xsi:type="v8ui:Font" ref="sys:DefaultGUIFont" bold="true" italic="false" underline="false" strikeout="false" kind="WindowsFont"/>
+					</dcscor:item>
+				</dcsset:appearance>
+			</dcsset:item>
+		</ConditionalAppearance>
+	</Attributes>
+	<CommandInterface>
+		<NavigationPanel>
+			<Item>
+				<Command>0</Command>
+				<Type>Auto</Type>
+				<DefaultVisible>false</DefaultVisible>
+				<Visible>
+					<xr:Common>false</xr:Common>
+				</Visible>
+			</Item>
+		</NavigationPanel>
+	</CommandInterface>
+</Form>

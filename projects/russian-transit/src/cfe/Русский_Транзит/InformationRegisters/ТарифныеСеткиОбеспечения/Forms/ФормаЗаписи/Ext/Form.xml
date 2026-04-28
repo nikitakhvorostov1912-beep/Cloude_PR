@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<WindowOpeningMode>LockOwnerWindow</WindowOpeningMode>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1"/>
+	<Events>
+		<Event name="OnOpen">ПриОткрытии</Event>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+		<Event name="BeforeWriteAtServer">ПередЗаписьюНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<InputField name="Период" id="1">
+			<DataPath>Запись.Period</DataPath>
+			<Width>9</Width>
+			<ContextMenu name="ПериодКонтекстноеМеню" id="2"/>
+			<ExtendedTooltip name="ПериодРасширеннаяПодсказка" id="3"/>
+		</InputField>
+		<InputField name="Контрагент" id="4">
+			<DataPath>Запись.Контрагент</DataPath>
+			<ContextMenu name="КонтрагентКонтекстноеМеню" id="5"/>
+			<ExtendedTooltip name="КонтрагентРасширеннаяПодсказка" id="6"/>
+		</InputField>
+		<InputField name="КлючАналитик" id="7">
+			<DataPath>Запись.КлючАналитик</DataPath>
+			<ContextMenu name="КлючАналитикКонтекстноеМеню" id="8"/>
+			<ExtendedTooltip name="КлючАналитикРасширеннаяПодсказка" id="9"/>
+			<Events>
+				<Event name="OnChange">КлючАналитикПриИзменении</Event>
+			</Events>
+		</InputField>
+		<InputField name="АналитикаСумм" id="10">
+			<DataPath>Запись.АналитикаСумм</DataPath>
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сумма обеспечения</v8:content>
+				</v8:item>
+			</Title>
+			<ChoiceParameterLinks>
+				<xr:Link>
+					<xr:Name>Отбор.Владелец</xr:Name>
+					<xr:DataPath xsi:type="xs:string">1/0:f85e19be-9926-4410-bc89-54d79f21f114</xr:DataPath>
+					<xr:ValueChange>Clear</xr:ValueChange>
+				</xr:Link>
+			</ChoiceParameterLinks>
+			<ChoiceParameters>
+				<app:item name="Отбор.ПометкаУдаления">
+					<app:value xsi:type="FormChoiceListDesTimeValue">
+						<Presentation/>
+						<Value xsi:type="xs:boolean">false</Value>
+					</app:value>
+				</app:item>
+			</ChoiceParameters>
+			<ContextMenu name="АналитикаСуммКонтекстноеМеню" id="11"/>
+			<ExtendedTooltip name="АналитикаСуммРасширеннаяПодсказка" id="12"/>
+		</InputField>
+		<InputField name="ДополнительнаяАналитика" id="13">
+			<DataPath>Запись.ДополнительнаяАналитика</DataPath>
+			<TitleLocation>Left</TitleLocation>
+			<TitleHeight>2</TitleHeight>
+			<ChoiceParameterLinks>
+				<xr:Link>
+					<xr:Name>Отбор.Владелец</xr:Name>
+					<xr:DataPath xsi:type="xs:string">1/0:f85e19be-9926-4410-bc89-54d79f21f114</xr:DataPath>
+					<xr:ValueChange>Clear</xr:ValueChange>
+				</xr:Link>
+			</ChoiceParameterLinks>
+			<ChoiceParameters>
+				<app:item name="Отбор.ПометкаУдаления">
+					<app:value xsi:type="FormChoiceListDesTimeValue">
+						<Presentation/>
+						<Value xsi:type="xs:boolean">false</Value>
+					</app:value>
+				</app:item>
+			</ChoiceParameters>
+			<ContextMenu name="ДополнительнаяАналитикаКонтекстноеМеню" id="14"/>
+			<ExtendedTooltip name="ДополнительнаяАналитикаРасширеннаяПодсказка" id="15"/>
+		</InputField>
+		<UsualGroup name="ГруппаРасчет" id="59">
+			<Group>AlwaysHorizontal</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаРасчетРасширеннаяПодсказка" id="60"/>
+			<ChildItems>
+				<LabelDecoration name="Декорация1" id="64">
+					<HorizontalStretch>true</HorizontalStretch>
+					<ContextMenu name="Декорация1КонтекстноеМеню" id="65"/>
+					<ExtendedTooltip name="Декорация1РасширеннаяПодсказка" id="66"/>
+				</LabelDecoration>
+				<CheckBoxField name="СпецЦены" id="61">
+					<DataPath>Запись.СпецЦены</DataPath>
+					<CheckBoxType>Auto</CheckBoxType>
+					<ContextMenu name="СпецЦеныКонтекстноеМеню" id="62"/>
+					<ExtendedTooltip name="СпецЦеныРасширеннаяПодсказка" id="63"/>
+				</CheckBoxField>
+				<InputField name="ПунктОтправления" id="67">
+					<DataPath>Запись.СубконтоСпецЦены</DataPath>
+					<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+					<ContextMenu name="ПунктОтправленияКонтекстноеМеню" id="68"/>
+					<ExtendedTooltip name="ПунктОтправленияРасширеннаяПодсказка" id="69"/>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+		<UsualGroup name="ГруппаЦенаВалюта" id="45">
+			<Group>Horizontal</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаЦенаВалютаРасширеннаяПодсказка" id="46"/>
+			<ChildItems>
+				<InputField name="Цена" id="16">
+					<DataPath>Запись.Цена</DataPath>
+					<Width>10</Width>
+					<ContextMenu name="ЦенаКонтекстноеМеню" id="17"/>
+					<ExtendedTooltip name="ЦенаРасширеннаяПодсказка" id="18"/>
+				</InputField>
+				<InputField name="Валюта" id="47">
+					<DataPath>Запись.Валюта</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>в валюте</v8:content>
+						</v8:item>
+					</Title>
+					<Width>7</Width>
+					<OpenButton>false</OpenButton>
+					<QuickChoice>true</QuickChoice>
+					<ContextMenu name="ВалютаКонтекстноеМеню" id="48"/>
+					<ExtendedTooltip name="ВалютаРасширеннаяПодсказка" id="49"/>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+		<InputField name="ВидРасчета" id="19">
+			<DataPath>Запись.ВидРасчета</DataPath>
+			<Width>16</Width>
+			<HorizontalStretch>false</HorizontalStretch>
+			<ContextMenu name="ВидРасчетаКонтекстноеМеню" id="20"/>
+			<ExtendedTooltip name="ВидРасчетаРасширеннаяПодсказка" id="21"/>
+		</InputField>
+		<UsualGroup name="ГруппаОтветстввенный" id="28">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Регистрация</v8:content>
+				</v8:item>
+			</Title>
+			<Group>Vertical</Group>
+			<Behavior>Usual</Behavior>
+			<ExtendedTooltip name="ГруппаОтветстввенныйРасширеннаяПодсказка" id="29"/>
+			<ChildItems>
+				<InputField name="Ответственный" id="30">
+					<DataPath>Запись.Ответственный</DataPath>
+					<ReadOnly>true</ReadOnly>
+					<ContextMenu name="ОтветственныйКонтекстноеМеню" id="31"/>
+					<ExtendedTooltip name="ОтветственныйРасширеннаяПодсказка" id="32"/>
+				</InputField>
+				<InputField name="ДатаУстановки" id="33">
+					<DataPath>Запись.ДатаУстановки</DataPath>
+					<ReadOnly>true</ReadOnly>
+					<Width>13</Width>
+					<ContextMenu name="ДатаУстановкиКонтекстноеМеню" id="34"/>
+					<ExtendedTooltip name="ДатаУстановкиРасширеннаяПодсказка" id="35"/>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Запись" id="1">
+			<Type>
+				<v8:Type>cfg:InformationRegisterRecordManager.ТарифныеСеткиОбеспечения</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+			<SavedData>true</SavedData>
+		</Attribute>
+	</Attributes>
+</Form>

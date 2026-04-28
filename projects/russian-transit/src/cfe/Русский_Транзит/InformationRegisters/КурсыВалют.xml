@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<InformationRegister uuid="c20594ad-34ea-42ba-b9c0-5711b878ce43">
+		<InternalInfo>
+			<xr:GeneratedType name="InformationRegisterRecord.КурсыВалют" category="Record">
+				<xr:TypeId>e96e76a2-bd9d-4004-ac7b-8de140d87f62</xr:TypeId>
+				<xr:ValueId>4c413d30-f3c9-476a-b0fe-6291d6f131d4</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="InformationRegisterManager.КурсыВалют" category="Manager">
+				<xr:TypeId>af2d9b6b-2a12-4844-a0aa-1fa8757f7239</xr:TypeId>
+				<xr:ValueId>e5046cb4-c826-4b4e-9dce-9aa55c081433</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="InformationRegisterSelection.КурсыВалют" category="Selection">
+				<xr:TypeId>a36833d7-02b7-4dc1-a6c4-85e970dfceb7</xr:TypeId>
+				<xr:ValueId>c6de2f00-454a-48b8-b47e-01a0fd7d941d</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="InformationRegisterList.КурсыВалют" category="List">
+				<xr:TypeId>d836c5b7-51e3-4620-9e47-e0a63df09668</xr:TypeId>
+				<xr:ValueId>064d6afd-56e6-4670-845d-d30c39958b46</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="InformationRegisterRecordSet.КурсыВалют" category="RecordSet">
+				<xr:TypeId>1f247743-8095-4fc1-83f1-88fd4ed5e0ba</xr:TypeId>
+				<xr:ValueId>71b1756c-6aea-412c-a6b4-7bb34e103e2c</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="InformationRegisterRecordKey.КурсыВалют" category="RecordKey">
+				<xr:TypeId>a048c6d3-2d24-4fc6-8e79-77a07b7bdac4</xr:TypeId>
+				<xr:ValueId>318f2026-8d95-4abc-b151-6b9c34fa8d47</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="InformationRegisterRecordManager.КурсыВалют" category="RecordManager">
+				<xr:TypeId>79124334-ee6d-4f2d-9eec-657d67aa391d</xr:TypeId>
+				<xr:ValueId>70e99c89-a964-4335-8902-7aba35c3b1bc</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<ObjectBelonging>Adopted</ObjectBelonging>
+			<Name>КурсыВалют</Name>
+			<Comment/>
+			<ExtendedConfigurationObject>3f842be4-21d7-4994-8a2a-a29cc92b649c</ExtendedConfigurationObject>
+			<InformationRegisterPeriodicity>Day</InformationRegisterPeriodicity>
+			<WriteMode>Independent</WriteMode>
+		</Properties>
+		<ChildObjects/>
+	</InformationRegister>
+</MetaDataObject>

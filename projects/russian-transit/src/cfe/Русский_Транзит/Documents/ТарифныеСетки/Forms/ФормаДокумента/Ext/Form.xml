@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<AutoTime>CurrentOrLast</AutoTime>
+	<UsePostingMode>Auto</UsePostingMode>
+	<RepostOnWrite>true</RepostOnWrite>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1"/>
+	<Events>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<InputField name="Номер" id="1">
+			<DataPath>Объект.Number</DataPath>
+			<EditMode>EnterOnInput</EditMode>
+			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+			<ContextMenu name="НомерКонтекстноеМеню" id="2"/>
+			<ExtendedTooltip name="НомерРасширеннаяПодсказка" id="3"/>
+		</InputField>
+		<InputField name="Дата" id="4">
+			<DataPath>Объект.Date</DataPath>
+			<EditMode>EnterOnInput</EditMode>
+			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+			<ContextMenu name="ДатаКонтекстноеМеню" id="5"/>
+			<ExtendedTooltip name="ДатаРасширеннаяПодсказка" id="6"/>
+		</InputField>
+		<InputField name="Контрагент" id="10">
+			<DataPath>Объект.Контрагент</DataPath>
+			<EditMode>EnterOnInput</EditMode>
+			<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+			<ContextMenu name="КонтрагентКонтекстноеМеню" id="11"/>
+			<ExtendedTooltip name="КонтрагентРасширеннаяПодсказка" id="12"/>
+		</InputField>
+		<Pages name="ТарифыУслуг" id="47">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Тарифы услуг</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Тарифы услуг</v8:content>
+				</v8:item>
+			</ToolTip>
+			<ExtendedTooltip name="ТарифыУслугРасширеннаяПодсказка" id="48"/>
+			<ChildItems>
+				<Page name="ОсновныеТарифы" id="49">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Основные тарифы</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Основные тарифы</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ExtendedTooltip name="ОсновныеТарифыРасширеннаяПодсказка" id="50"/>
+					<ChildItems>
+						<Table name="Тариф" id="13">
+							<Representation>List</Representation>
+							<AutoInsertNewRow>true</AutoInsertNewRow>
+							<EnableStartDrag>true</EnableStartDrag>
+							<EnableDrag>true</EnableDrag>
+							<DataPath>Объект.Тариф</DataPath>
+							<RowFilter xsi:nil="true"/>
+							<ContextMenu name="ТарифКонтекстноеМеню" id="14"/>
+							<AutoCommandBar name="ТарифКоманднаяПанель" id="15"/>
+							<ExtendedTooltip name="ТарифРасширеннаяПодсказка" id="16"/>
+							<SearchStringAddition name="ТарифСтрокаПоиска" id="17">
+								<AdditionSource>
+									<Item>Тариф</Item>
+									<Type>SearchStringRepresentation</Type>
+								</AdditionSource>
+								<ContextMenu name="ТарифСтрокаПоискаКонтекстноеМеню" id="18"/>
+								<ExtendedTooltip name="ТарифСтрокаПоискаРасширеннаяПодсказка" id="19"/>
+							</SearchStringAddition>
+							<ViewStatusAddition name="ТарифСостояниеПросмотра" id="20">
+								<AdditionSource>
+									<Item>Тариф</Item>
+									<Type>ViewStatusRepresentation</Type>
+								</AdditionSource>
+								<ContextMenu name="ТарифСостояниеПросмотраКонтекстноеМеню" id="21"/>
+								<ExtendedTooltip name="ТарифСостояниеПросмотраРасширеннаяПодсказка" id="22"/>
+							</ViewStatusAddition>
+							<SearchControlAddition name="ТарифУправлениеПоиском" id="23">
+								<AdditionSource>
+									<Item>Тариф</Item>
+									<Type>SearchControl</Type>
+								</AdditionSource>
+								<ContextMenu name="ТарифУправлениеПоискомКонтекстноеМеню" id="24"/>
+								<ExtendedTooltip name="ТарифУправлениеПоискомРасширеннаяПодсказка" id="25"/>
+							</SearchControlAddition>
+							<ChildItems>
+								<LabelField name="ТарифНомерСтроки" id="26">
+									<DataPath>Объект.Тариф.LineNumber</DataPath>
+									<Visible>false</Visible>
+									<EditMode>EnterOnInput</EditMode>
+									<ContextMenu name="ТарифНомерСтрокиКонтекстноеМеню" id="27"/>
+									<ExtendedTooltip name="ТарифНомерСтрокиРасширеннаяПодсказка" id="28"/>
+								</LabelField>
+								<InputField name="ТарифСуммаОбеспечениеОт" id="29">
+									<DataPath>Объект.Тариф.СуммаОбеспечениеОт</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ТарифСуммаОбеспечениеОтКонтекстноеМеню" id="30"/>
+									<ExtendedTooltip name="ТарифСуммаОбеспечениеОтРасширеннаяПодсказка" id="31"/>
+								</InputField>
+								<InputField name="ТарифСуммаОбеспечениеДо" id="32">
+									<DataPath>Объект.Тариф.СуммаОбеспечениеДо</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ТарифСуммаОбеспечениеДоКонтекстноеМеню" id="33"/>
+									<ExtendedTooltip name="ТарифСуммаОбеспечениеДоРасширеннаяПодсказка" id="34"/>
+								</InputField>
+								<InputField name="ТарифРасстояниеОт" id="35">
+									<DataPath>Объект.Тариф.РасстояниеОт</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ТарифРасстояниеОтКонтекстноеМеню" id="36"/>
+									<ExtendedTooltip name="ТарифРасстояниеОтРасширеннаяПодсказка" id="37"/>
+								</InputField>
+								<InputField name="ТарифРасстояниеДо" id="38">
+									<DataPath>Объект.Тариф.РасстояниеДо</DataPath>
+									<EditMode>EnterOnInput</EditMode>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ТарифРасстояниеДоКонтекстноеМеню" id="39"/>
+									<ExtendedTooltip name="ТарифРасстояниеДоРасширеннаяПодсказка" id="40"/>
+								</InputField>
+								<InputField name="ТарифСтавкаФиксированная" id="41">
+									<DataPath>Объект.Тариф.СтавкаФиксированная</DataPath>
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Ставка фикс.</v8:content>
+										</v8:item>
+									</Title>
+									<EditMode>EnterOnInput</EditMode>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ТарифСтавкаФиксированнаяКонтекстноеМеню" id="42"/>
+									<ExtendedTooltip name="ТарифСтавкаФиксированнаяРасширеннаяПодсказка" id="43"/>
+								</InputField>
+								<InputField name="ТарифПроцентОтСуммы" id="44">
+									<DataPath>Объект.Тариф.ПроцентОтСуммы</DataPath>
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Процент</v8:content>
+										</v8:item>
+									</Title>
+									<EditMode>EnterOnInput</EditMode>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ТарифПроцентОтСуммыКонтекстноеМеню" id="45"/>
+									<ExtendedTooltip name="ТарифПроцентОтСуммыРасширеннаяПодсказка" id="46"/>
+								</InputField>
+							</ChildItems>
+						</Table>
+					</ChildItems>
+				</Page>
+				<Page name="КодыCMR" id="51">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Коды CMR</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Коды CMR</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ExtendedTooltip name="КодыCMRРасширеннаяПодсказка" id="52"/>
+					<ChildItems>
+						<UsualGroup name="Группа1" id="68">
+							<Width>35</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<Representation>StrongSeparation</Representation>
+							<ShowTitle>false</ShowTitle>
+							<ExtendedTooltip name="Группа1РасширеннаяПодсказка" id="69"/>
+							<ChildItems>
+								<InputField name="ЦенаУслуги" id="70">
+									<DataPath>Объект.ЦенаУслуги</DataPath>
+									<HorizontalStretch>true</HorizontalStretch>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ЦенаУслугиКонтекстноеМеню" id="71"/>
+									<ExtendedTooltip name="ЦенаУслугиРасширеннаяПодсказка" id="72"/>
+								</InputField>
+								<InputField name="ЦенаЗаПервуюCMR" id="73">
+									<DataPath>Объект.ЦенаЗаПервуюCMR</DataPath>
+									<HorizontalStretch>true</HorizontalStretch>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ЦенаЗаПервуюCMRКонтекстноеМеню" id="74"/>
+									<ExtendedTooltip name="ЦенаЗаПервуюCMRРасширеннаяПодсказка" id="75"/>
+								</InputField>
+								<InputField name="ЦенаЗаДополнительнуюCMR" id="76">
+									<DataPath>Объект.ЦенаЗаДополнительнуюCMR</DataPath>
+									<HorizontalStretch>true</HorizontalStretch>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ЦенаЗаДополнительнуюCMRКонтекстноеМеню" id="77"/>
+									<ExtendedTooltip name="ЦенаЗаДополнительнуюCMRРасширеннаяПодсказка" id="78"/>
+								</InputField>
+								<InputField name="ЦенаЗаДополнительныйКод" id="79">
+									<DataPath>Объект.ЦенаЗаДополнительныйКод</DataPath>
+									<HorizontalStretch>true</HorizontalStretch>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ЦенаЗаДополнительныйКодКонтекстноеМеню" id="80"/>
+									<ExtendedTooltip name="ЦенаЗаДополнительныйКодРасширеннаяПодсказка" id="81"/>
+								</InputField>
+								<InputField name="КоличествоБесплатныхКодов" id="82">
+									<DataPath>Объект.КоличествоБесплатныхКодов</DataPath>
+									<HorizontalStretch>true</HorizontalStretch>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="КоличествоБесплатныхКодовКонтекстноеМеню" id="83"/>
+									<ExtendedTooltip name="КоличествоБесплатныхКодовРасширеннаяПодсказка" id="84"/>
+								</InputField>
+								<InputField name="Валюта" id="85">
+									<DataPath>Объект.Валюта</DataPath>
+									<HorizontalStretch>true</HorizontalStretch>
+									<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
+									<ContextMenu name="ВалютаКонтекстноеМеню" id="86"/>
+									<ExtendedTooltip name="ВалютаРасширеннаяПодсказка" id="87"/>
+								</InputField>
+							</ChildItems>
+						</UsualGroup>
+					</ChildItems>
+				</Page>
+			</ChildItems>
+		</Pages>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="1">
+			<Type>
+				<v8:Type>cfg:DocumentObject.ТарифныеСетки</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+			<SavedData>true</SavedData>
+			<UseAlways>
+				<Field>Объект.RegisterRecords</Field>
+			</UseAlways>
+		</Attribute>
+		<Attribute name="ЦенаЗаПервуюCMR" id="2">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Цена за первую CMR</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>2</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<SavedData>true</SavedData>
+		</Attribute>
+		<Attribute name="ЦенаЗаДополнительнуюCMR" id="3">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Цена за дополнительную CMR</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>2</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<SavedData>true</SavedData>
+		</Attribute>
+		<Attribute name="ЦенаЗаДополнительныйКод" id="4">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Цена за дополнительный код</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>2</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<SavedData>true</SavedData>
+		</Attribute>
+		<Attribute name="КоличествоБесплатныхКодов" id="5">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Количество бесплатных кодов</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>xs:decimal</v8:Type>
+				<v8:NumberQualifiers>
+					<v8:Digits>10</v8:Digits>
+					<v8:FractionDigits>2</v8:FractionDigits>
+					<v8:AllowedSign>Nonnegative</v8:AllowedSign>
+				</v8:NumberQualifiers>
+			</Type>
+			<SavedData>true</SavedData>
+		</Attribute>
+		<Attribute name="Валюта" id="6">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Валюта</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:CatalogRef.Валюты</v8:Type>
+			</Type>
+		</Attribute>
+	</Attributes>
+	<Parameters>
+		<Parameter name="Контрагент">
+			<Type>
+				<v8:Type>cfg:CatalogRef.Контрагенты</v8:Type>
+			</Type>
+		</Parameter>
+	</Parameters>
+</Form>

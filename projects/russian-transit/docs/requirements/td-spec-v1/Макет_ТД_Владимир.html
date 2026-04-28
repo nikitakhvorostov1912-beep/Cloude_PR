@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Логика Владимира: документ ТД из Сигмы → 1С</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --bg-elev: #171d26;
+    --bg-card: #1d2430;
+    --bg-hover: #252d3b;
+    --border: #2d3648;
+    --text: #e0e6ef;
+    --text-dim: #8b95a8;
+    --text-muted: #5a6478;
+    --accent: #4a9eff;
+    --accent-dim: #2f6fb8;
+    --good: #7ec699;
+    --good-dim: #3f6648;
+    --bad: #e06c75;
+    --bad-dim: #6b343a;
+    --warn: #e5c07b;
+    --warn-dim: #6b5b3a;
+    --purple: #c678dd;
+    --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    scroll-behavior: smooth;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  header.hero {
+    padding: 40px 32px;
+    background: linear-gradient(135deg, #1a2233, #0f1419);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+  }
+  header.hero h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  header.hero .sub {
+    color: var(--text-dim);
+    font-size: 16px;
+    margin: 0;
+  }
+  header.hero .tags {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+  }
+  .tag.warn { color: var(--warn); border-color: var(--warn-dim); }
+  .tag.good { color: var(--good); border-color: var(--good-dim); }
+  .tag.bad  { color: var(--bad);  border-color: var(--bad-dim); }
+
+  nav.toc {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+    z-index: 10;
+  }
+  nav.toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  nav.toc a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: all .15s;
+  }
+  nav.toc a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  section { margin-bottom: 48px; }
+
+  h2 {
+    color: var(--text);
+    font-size: 24px;
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h2 .n {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-weight: 400;
+    margin-right: 8px;
+  }
+
+  h3 {
+    color: var(--text);
+    font-size: 18px;
+    margin: 24px 0 12px;
+  }
+
+  p { margin: 0 0 12px; }
+  p.lead { color: var(--text-dim); font-size: 16px; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card.good   { border-left: 4px solid var(--good); }
+  .card.bad    { border-left: 4px solid var(--bad); }
+  .card.warn   { border-left: 4px solid var(--warn); }
+  .card.accent { border-left: 4px solid var(--accent); }
+
+  .grid { display: grid; gap: 16px; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 900px) {
+    .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  code, .mono { font-family: var(--mono); font-size: 13px; }
+  code.inline {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--purple);
+  }
+
+  pre.code {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    margin: 8px 0 16px;
+  }
+  pre.code .kw    { color: var(--accent); }
+  pre.code .str   { color: var(--good); }
+  pre.code .num   { color: var(--warn); }
+  pre.code .cmt   { color: var(--text-muted); }
+  pre.code .type  { color: var(--purple); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-elev);
+    color: var(--text-dim);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:hover td { background: var(--bg-hover); }
+
+  table.data td.mono { font-family: var(--mono); font-size: 12px; }
+  table.data .hl-a { background: rgba(74, 158, 255, 0.08) !important; }
+  table.data .hl-b { background: rgba(198, 120, 221, 0.08) !important; }
+
+  .flow {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+  .flow-step {
+    flex: 1 1 0;
+    min-width: 180px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+    position: relative;
+  }
+  .flow-step .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .flow-step .title {
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .flow-step .desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .flow-step::after {
+    content: "→";
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    font-size: 20px;
+    z-index: 2;
+  }
+  .flow-step:last-child::after { display: none; }
+  @media (max-width: 900px) {
+    .flow { flex-direction: column; }
+    .flow-step::after { content: "↓"; right: 50%; top: auto; bottom: -18px; transform: translateX(50%); }
+  }
+
+  .kv {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 4px 16px;
+    font-size: 13px;
+    margin: 8px 0;
+  }
+  .kv .k { color: var(--text-dim); font-family: var(--mono); }
+  .kv .v { color: var(--text); }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-family: var(--mono);
+    margin-right: 4px;
+  }
+  .badge.ok   { background: var(--good-dim); color: var(--good); }
+  .badge.no   { background: var(--bad-dim);  color: var(--bad); }
+  .badge.new  { background: var(--accent-dim); color: var(--accent); }
+  .badge.phase2 { background: var(--warn-dim); color: var(--warn); }
+
+  /* ==== Calculator ==== */
+  .calc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .calc .controls {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .calc .control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .calc label {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .calc input[type="number"] {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 6px 8px;
+    font-family: var(--mono);
+    font-size: 14px;
+    width: 100px;
+  }
+  .calc input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .calc .results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) {
+    .calc .results { grid-template-columns: 1fr; }
+  }
+  .calc .result-box {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .calc .result-box.bad  { border-left: 3px solid var(--bad); }
+  .calc .result-box.good { border-left: 3px solid var(--good); }
+  .calc .result-box h4 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .calc .result-box h4 .tag-inline {
+    float: right;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .calc .bad h4 .tag-inline  { background: var(--bad-dim);  color: var(--bad); }
+  .calc .good h4 .tag-inline { background: var(--good-dim); color: var(--good); }
+  .calc .formula {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .calc .formula .hl { color: var(--warn); }
+  .calc .total {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .calc .total.bad  { color: var(--bad); }
+  .calc .total.good { color: var(--good); }
+  .calc .diff {
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--warn);
+  }
+
+  /* ==== Master-detail mockup ==== */
+  .form-mockup {
+    background: #1a1d24;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .form-mockup .titlebar {
+    background: #232832;
+    padding: 8px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+  }
+  .form-mockup .titlebar .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bad);
+    margin-right: 6px;
+  }
+  .form-mockup .titlebar .dot.y { background: var(--warn); }
+  .form-mockup .titlebar .dot.g { background: var(--good); }
+  .form-mockup .body { padding: 12px; }
+
+  .mockup-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-elev);
+    padding: 2px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .mockup-tab {
+    padding: 6px 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    font-family: var(--sans);
+  }
+  .mockup-tab.active {
+    background: var(--bg-card);
+    color: var(--text);
+  }
+
+  .row-selected td { background: rgba(74, 158, 255, 0.15) !important; }
+  .cmr-row.hidden { opacity: 0.25; }
+
+  .click-hint {
+    background: rgba(74, 158, 255, 0.08);
+    border: 1px dashed var(--accent-dim);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .three-cases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 900px) { .three-cases { grid-template-columns: 1fr; } }
+  .case {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    border-top: 3px solid var(--accent);
+  }
+  .case.komplex { border-top-color: var(--good); }
+  .case.oboz    { border-top-color: var(--warn); }
+  .case.td      { border-top-color: var(--purple); }
+  .case h4 { margin: 0 0 4px; font-size: 15px; color: var(--text); }
+  .case .enum {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .case ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-dim); }
+  .case ul li { margin-bottom: 4px; }
+
+  /* ==== Status list ==== */
+  .status-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) { .status-list { grid-template-columns: 1fr; } }
+  .status-item {
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-item .chip {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .status-item.incl .chip { background: var(--good-dim); color: var(--good); }
+  .status-item.excl .chip { background: var(--bad-dim); color: var(--bad); }
+  .status-item.new-status { border-color: var(--accent); }
+  .status-item.new-status::after {
+    content: "NEW";
+    margin-left: auto;
+    font-size: 10px;
+    padding: 1px 6px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border-radius: 10px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .legend .a::before { background: rgba(74, 158, 255, 0.6); }
+  .legend .b::before { background: rgba(198, 120, 221, 0.6); }
+
+  footer {
+    margin-top: 64px;
+    padding: 24px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  footer .path {
+    font-family: var(--mono);
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  hr.thin {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="hero">
+  <h1>Логика Владимира по документу ТД</h1>
+  <p class="sub">Как транзитная декларация из Сигмы попадает в 1С и влияет на расчёт обеспечения.</p>
+  <div class="tags">
+    <span class="tag">1С:УТ 11 + CFE Русский_Транзит</span>
+    <span class="tag">Документ «ОперацияПоПоручительству»</span>
+    <span class="tag">Сигма edapi.sigma-soft.ru</span>
+    <span class="tag good">Phase 1 — готов к реализации</span>
+    <span class="tag warn">Phase 2 — ждёт клиента 16.04</span>
+    <span class="tag bad">Phase 3 — ждёт API Сигмы</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <ul>
+    <li><a href="#chto-takoe-td">1. Что такое ТД</a></li>
+    <li><a href="#put">2. Путь ТД в 1С</a></li>
+    <li><a href="#materializatsiya">3. ТД в документе</a></li>
+    <li><a href="#kejsy">4. Три кейса учёта</a></li>
+    <li><a href="#status">5. Статусы ТД</a></li>
+    <li><a href="#vliyanie">6. Влияние на расчёт</a></li>
+    <li><a href="#mapping">7. Схема → код</a></li>
+    <li><a href="#todo">8. Что отсутствует</a></li>
+  </ul>
+</nav>
+
+<!-- ========================================== -->
+<!-- SECTION 1 -->
+<!-- ========================================== -->
+<section id="chto-takoe-td">
+  <h2><span class="n">§1</span> Что такое ТД глазами Владимира</h2>
+  <p class="lead">ТД (транзитная декларация) — это реальный таможенный документ. Для Владимира это <b>единица учёта обеспечения</b>: один ТД = один «договор поручительства» с набором кодов ТН ВЭД и собственным состоянием.</p>
+
+  <div class="grid grid-3">
+    <div class="card accent">
+      <h3 style="margin-top:0">🛰 В Сигме</h3>
+      <p>Это <b>одна строка CSV</b> (или строка в XML через <code class="inline">getControlTransitOperationList</code>), где ключевые поля:</p>
+      <div class="kv">
+        <span class="k">[38] TDOC_NUMBER</span><span class="v">номер CMR</span>
+        <span class="k">[75] MSS_GUARANTEEREGNUM</span><span class="v">рег. № обеспечения</span>
+        <span class="k">[76] MSS_DECLREGNUM</span><span class="v">рег. № ЭТД</span>
+        <span class="k">[59] STATUS</span><span class="v">статус транзита</span>
+        <span class="k">[60] TRANSITOPENDATE</span><span class="v">дата оформления</span>
+        <span class="k">[98] GOODSNUMERIC</span><span class="v">код ТН ВЭД</span>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <h3 style="margin-top:0">📄 В 1С</h3>
+      <p>Это <b>строка ТЧ <code class="inline">ДанныеДокументов</code></b> документа <code class="inline">ОперацияПоПоручительству</code>, к которой привязано N строк ТЧ <code class="inline">КодыCMR</code> с кодами ТН ВЭД.</p>
+      <div class="kv">
+        <span class="k">НомерГТД</span><span class="v">номер ТД (ДДП-ключ)</span>
+        <span class="k">СтатусТранзита</span><span class="v">статус на уровне ТД</span>
+        <span class="k">ТипУчета</span><span class="v">Комплекс / ТолькоОбеспечение / ТолькоТД</span>
+        <span class="k">ЦенаОбеспечения</span><span class="v">базовая цена за ТД</span>
+        <span class="k">Подразделение</span><span class="v">Центральный офис / Трейд Солюшнс / ТАРГА</span>
+        <span class="k">ДатаВыпуска</span><span class="v">из CSV-реестра Владимира (сверяем по ней)</span>
+      </div>
+    </div>
+
+    <div class="card good">
+      <h3 style="margin-top:0">💰 В расчёте</h3>
+      <p>Каждая активная ТД даёт вклад в итоговую цену обеспечения по формуле:</p>
+      <pre class="code"><span class="cmt">// Per-ТД Schema 4</span>
+ЦенаПоТД =
+    <span class="hl">Цена × 1</span>             <span class="cmt">// базовая</span>
+  + <span class="hl">max(0, uniqКодов − 5)</span>
+      <span class="hl">× 0.2 × Цена</span>;       <span class="cmt">// штраф за коды >5</span>
+
+Итого = Σ ЦенаПоТД
+       + Σ ОплатаУслуг
+       + Σ ДопУслуги;</pre>
+      <p style="color:var(--text-dim);font-size:13px;margin:0">Ключевое правило: <b>штраф считается независимо для каждой ТД</b>, а не по всему документу сразу (сейчас это Schema 4 bug).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 2 -->
+<!-- ========================================== -->
+<section id="put">
+  <h2><span class="n">§2</span> Путь ТД: Сигма → 1С</h2>
+  <p class="lead">Одна ТД проходит 4 стадии. Первые 2 — автоматические, последние 2 — ручные (пока клиент не пришлёт точные правила группировки).</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="label">1. Источник</div>
+      <div class="title">Сигма API</div>
+      <div class="desc">HTTP GET с <code class="inline">participantcode</code> в query, получаем CSV-поток (или XML). <b>Каждая строка = один CMR / одна ТД.</b></div>
+    </div>
+    <div class="flow-step">
+      <div class="label">2. Загрузка</div>
+      <div class="title">EPF «APIСигма»</div>
+      <div class="desc">Обработка парсит CSV, пишет в ТЧ <code class="inline">КодыCMR</code> формы. Поля [38] → НомераCMR, [76] → НомерЭТД (<span class="badge ok">П-04 fix 2026-04-07</span>).</div>
+    </div>
+    <div class="flow-step">
+      <div class="label">3. Перенос в документ</div>
+      <div class="title">ОперацияПоПоручительству</div>
+      <div class="desc">Оператор выбирает нужные строки из EPF и переносит их в ТЧ <code class="inline">КодыCMR</code> документа. Параллельно заполняет <code class="inline">ДанныеДокументов</code> (1 строка ДД = 1 ТД).</div>
+    </div>
+    <div class="flow-step">
+      <div class="label">4. Расчёт</div>
+      <div class="title">исРасчет.ОбновитьЦены</div>
+      <div class="desc">При <code class="inline">ПередЗаписью</code> пересчитывается цена обеспечения по каждой ТД отдельно (Schema 4 per-ТД).</div>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h3 style="margin-top:0">⚠ Узкое место: связь кода ↔ ТД</h3>
+    <p>Сейчас в ТЧ <code class="inline">КодыCMR</code> нет прямого FK на строку ДД. Связь строится по совпадению <code class="inline">НомерДополнения</code> (код) ↔ <code class="inline">НомерГТД</code> (ДД). Если оператор неправильно привязал — коды «утекут» в соседнюю ТД.</p>
+    <p style="margin:0">В <b>Phase 1.5</b> решается ежедневным реестром выпущенных ТД от Владимира (CSV): если <code class="inline">№ ТД из ДДП</code> совпадает с <code class="inline">РегистрационныйНомер ТД</code> в реестре — это <b>Комплекс</b>; если не совпадает — fallback по <code class="inline">ТС + Декларант + Дата</code>; если и это не дало — <b>ТолькоОбеспечение</b>.</p>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 3: HTML MOCKUP FORM -->
+<!-- ========================================== -->
+<section id="materializatsiya">
+  <h2><span class="n">§3</span> ТД в форме документа «ОперацияПоПоручительству»</h2>
+  <p class="lead">Макет того, как ТД выглядит глазами Владимира в интерфейсе 1С. Master-detail: <b>кликните строку ТД сверху</b> — снизу отфильтруются только её коды ТН ВЭД.</p>
+
+  <div class="form-mockup">
+    <div class="titlebar">
+      <span><span class="dot"></span><span class="dot y"></span><span class="dot g"></span> ОперацияПоПоручительству: № ОП-00142 от 23.04.2026 — Контрагент «ООО Брокер-Плюс»</span>
+      <span>ТипУчета = <b style="color:var(--good)">Комплекс</b></span>
+    </div>
+    <div class="body">
+      <div class="mockup-tabs">
+        <button class="mockup-tab active">ДанныеДокументов</button>
+        <button class="mockup-tab">КодыCMR</button>
+        <button class="mockup-tab">ОплатыУслуг</button>
+        <button class="mockup-tab">ДополнительныеУслуги</button>
+        <button class="mockup-tab">КодыУКТЗЕД</button>
+      </div>
+
+      <div class="click-hint">💡 Кликните строку ТД — ниже автоматически отфильтруются только её коды ТН ВЭД (event <code>ДанныеДокументовПриАктивизацииСтроки</code>).</div>
+
+      <!-- MASTER: ДанныеДокументов -->
+      <h4 style="margin:12px 0 6px;font-size:13px;color:var(--text-dim);text-transform:uppercase">ТЧ «ДанныеДокументов» (master — 1 строка = 1 ТД)</h4>
+      <table class="data" id="tbl-dd">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>НомерГТД <small>(ДДП)</small></th>
+            <th>Контрагент</th>
+            <th>СтатусТранзита</th>
+            <th>ТипУчета</th>
+            <th style="text-align:right">СуммаОбеспечения</th>
+            <th style="text-align:right">Расстояние</th>
+            <th style="text-align:right">Цена</th>
+            <th style="text-align:right">Расчётная Цена</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="dd-row row-selected" data-key="ЭТД-001">
+            <td>1</td>
+            <td class="mono">ЭТД-001</td>
+            <td>ООО Импорт-Сервис</td>
+            <td><span class="badge ok">ТранзитРазрешен</span></td>
+            <td><b style="color:var(--good)">Комплекс</b></td>
+            <td style="text-align:right" class="mono">5 000 000</td>
+            <td style="text-align:right" class="mono">450 км</td>
+            <td style="text-align:right" class="mono">1 000</td>
+            <td style="text-align:right" class="mono"><b style="color:var(--good)">1 200</b></td>
+          </tr>
+          <tr class="dd-row" data-key="ЭТД-002">
+            <td>2</td>
+            <td class="mono">ЭТД-002</td>
+            <td>ООО Импорт-Сервис</td>
+            <td><span class="badge ok">ДополнениеЗаключено</span></td>
+            <td><b style="color:var(--good)">Комплекс</b></td>
+            <td style="text-align:right" class="mono">2 500 000</td>
+            <td style="text-align:right" class="mono">450 км</td>
+            <td style="text-align:right" class="mono">1 000</td>
+            <td style="text-align:right" class="mono"><b style="color:var(--good)">1 000</b></td>
+          </tr>
+          <tr class="dd-row" data-key="ЭТД-003">
+            <td>3</td>
+            <td class="mono">ЭТД-003</td>
+            <td>ООО Импорт-Сервис</td>
+            <td><span class="badge no">ТаможенныйДосмотр</span></td>
+            <td><b style="color:var(--warn)">ТолькоТД</b></td>
+            <td style="text-align:right" class="mono">1 800 000</td>
+            <td style="text-align:right" class="mono">450 км</td>
+            <td style="text-align:right" class="mono">1 000</td>
+            <td style="text-align:right" class="mono"><b style="color:var(--bad)">исключено</b></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="legend">
+        <span class="a">строка ТД активна — её коды подсвечены ниже</span>
+        <span>💡 новая колонка «СтатусТранзита» добавлена 2026-04-10 (per-row)</span>
+      </div>
+
+      <!-- DETAIL: КодыCMR -->
+      <h4 style="margin:20px 0 6px;font-size:13px;color:var(--text-dim);text-transform:uppercase">ТЧ «КодыCMR» (detail — фильтр по активной ТД)</h4>
+      <table class="data" id="tbl-cmr">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>НомерДополнения</th>
+            <th>НомерCMR</th>
+            <th>НомерЭТД</th>
+            <th>КодТНВЭД <span class="badge new">NEW</span></th>
+            <th>КоличествоКодов</th>
+            <th style="text-align:right">Цена</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-cmr-body">
+          <!-- ЭТД-001: 6 codes -->
+          <tr class="cmr-row" data-dd="ЭТД-001"><td>1</td><td class="mono">ЭТД-001</td><td class="mono">CMR-1001</td><td class="mono">76-ET-0001</td><td class="mono">8703.21.10</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <tr class="cmr-row" data-dd="ЭТД-001"><td>2</td><td class="mono">ЭТД-001</td><td class="mono">CMR-1002</td><td class="mono">76-ET-0001</td><td class="mono">8703.22.20</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <tr class="cmr-row" data-dd="ЭТД-001"><td>3</td><td class="mono">ЭТД-001</td><td class="mono">CMR-1003</td><td class="mono">76-ET-0001</td><td class="mono">8703.23.30</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <tr class="cmr-row" data-dd="ЭТД-001"><td>4</td><td class="mono">ЭТД-001</td><td class="mono">CMR-1004</td><td class="mono">76-ET-0001</td><td class="mono">8703.24.40</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <tr class="cmr-row" data-dd="ЭТД-001"><td>5</td><td class="mono">ЭТД-001</td><td class="mono">CMR-1005</td><td class="mono">76-ET-0001</td><td class="mono">8703.25.50</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <tr class="cmr-row" data-dd="ЭТД-001"><td>6</td><td class="mono">ЭТД-001</td><td class="mono">CMR-1006</td><td class="mono">76-ET-0001</td><td class="mono">8703.26.60</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <!-- ЭТД-002: 2 codes -->
+          <tr class="cmr-row" data-dd="ЭТД-002"><td>7</td><td class="mono">ЭТД-002</td><td class="mono">CMR-2001</td><td class="mono">76-ET-0002</td><td class="mono">8703.21.10</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <tr class="cmr-row" data-dd="ЭТД-002"><td>8</td><td class="mono">ЭТД-002</td><td class="mono">CMR-2002</td><td class="mono">76-ET-0002</td><td class="mono">8703.27.70</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+          <!-- ЭТД-003: 1 code (but status = ТаможенныйДосмотр = excluded) -->
+          <tr class="cmr-row" data-dd="ЭТД-003"><td>9</td><td class="mono">ЭТД-003</td><td class="mono">CMR-3001</td><td class="mono">76-ET-0003</td><td class="mono">8703.28.80</td><td>1</td><td style="text-align:right" class="mono">1 000</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Agg summary -->
+      <div class="card accent" style="margin-top:12px">
+        <h4 style="margin:0 0 8px">📊 Сводка по активной ТД <span class="mono" id="active-td-name">ЭТД-001</span></h4>
+        <div class="kv">
+          <span class="k">Уникальных кодов ТН ВЭД</span><span class="v"><b id="agg-uniq">6</b></span>
+          <span class="k">Строк CMR</span><span class="v"><b id="agg-count">6</b></span>
+          <span class="k">Превышение (>5 кодов)</span><span class="v" id="agg-over">1 код → штраф 200 руб</span>
+          <span class="k">Итоговая цена по этой ТД</span><span class="v" id="agg-price"><b style="color:var(--good)">1 200 руб</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 4: three cases -->
+<!-- ========================================== -->
+<section id="kejsy">
+  <h2><span class="n">§4</span> Три кейса учёта ТД (enum <code class="inline">ТипыУчетаПоПоручительству</code>)</h2>
+  <p class="lead">Владимир различает три сценария. <b>Тип учёта — per-row</b>, т.е. один документ может смешивать разные кейсы в разных строках ДД.</p>
+
+  <div class="three-cases">
+    <div class="case komplex">
+      <h4>🔵 Комплекс</h4>
+      <div class="enum">ТипыУчетаПоПоручительству.Комплекс</div>
+      <p style="font-size:13px;color:var(--text-dim)">Полный цикл: обеспечение + оформление ТД с кодами ТН ВЭД.</p>
+      <ul>
+        <li>Базовая цена за ТД</li>
+        <li>+ штраф за коды >5 (per-ТД)</li>
+        <li>+ расстояние (если превышено)</li>
+        <li>+ доп. услуги CMR</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0">Самый частый случай. Требует все связанные ТЧ.</p>
+    </div>
+
+    <div class="case oboz">
+      <h4>🟡 ТолькоОбеспечение</h4>
+      <div class="enum">ТипыУчетаПоПоручительству.ТолькоОбеспечение</div>
+      <p style="font-size:13px;color:var(--text-dim)">Клиент уже оформил ТД сам — нам нужно только обеспечение.</p>
+      <ul>
+        <li>Базовая цена за ТД</li>
+        <li>+ расстояние</li>
+        <li style="color:var(--text-muted)">— без штрафа за коды</li>
+        <li style="color:var(--text-muted)">— без доп. услуг</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0">ТЧ КодыCMR может быть пустой.</p>
+    </div>
+
+    <div class="case td">
+      <h4>🟣 ТолькоТД</h4>
+      <div class="enum">ТипыУчетаПоПоручительству.ТолькоТД</div>
+      <p style="font-size:13px;color:var(--text-dim)">Клиент пришёл за оформлением ТД без нашего обеспечения.</p>
+      <ul>
+        <li style="color:var(--text-muted)">— без базовой цены обеспечения</li>
+        <li>Штраф за коды >5 (per-ТД)</li>
+        <li>Доп. услуги CMR</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text-muted);margin:8px 0 0">ТЧ ДополнительныеУслуги обязательна.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 5: statuses -->
+<!-- ========================================== -->
+<section id="status">
+  <h2><span class="n">§5</span> Статусы ТД — какие идут в расчёт, какие нет</h2>
+  <p class="lead">В перечислении <code class="inline">СтатусыТранзита</code> сейчас 13 значений. Нужно <b>добавить 14-е: <code class="inline">ТаможенныйДосмотр</code></b>. Фильтр статусов применяется в функции <code class="inline">ПостроитьДопускТД(Объект)</code>.</p>
+
+  <div class="status-list">
+    <div class="status-item incl"><span class="chip">✓</span><span>ТранзитРазрешен</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>ДополнениеЗаключено</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>ДополнениеЗарегистрировано</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>СредстваРазрезервированы</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>ТоварВыпущен</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>ТранзитЗавершен</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>ТранзитЗавершенСОговорками</span></div>
+    <div class="status-item incl"><span class="chip">✓</span><span>ДополнениеОтправлено</span></div>
+    <div class="status-item excl"><span class="chip">✗</span><span>АннулированоСпециалистом</span></div>
+    <div class="status-item excl"><span class="chip">✗</span><span>ВЗаключенииДополненияОтказано</span></div>
+    <div class="status-item excl"><span class="chip">✗</span><span>ОтказаноВПриемеДополнения</span></div>
+    <div class="status-item excl"><span class="chip">✗</span><span>ТоварНеВыпущен</span></div>
+    <div class="status-item excl new-status"><span class="chip">✗</span><span>ТаможенныйДосмотр</span></div>
+  </div>
+
+  <div class="card warn" style="margin-top:16px">
+    <h3 style="margin-top:0">⚠ Почему ТаможенныйДосмотр → ✗ исключить?</h3>
+    <p style="margin:0">В случае таможенного досмотра ТД ещё не разрешён к транзиту, обеспечение не сработало → клиент не должен платить по этой ТД до получения окончательного статуса. Владимир: <i>«на досмотре — не считаем, пусть доедет».</i></p>
+  </div>
+
+  <pre class="code"><span class="cmt">// CommonModules/исРасчет/Ext/Module.bsl — новая функция</span>
+<span class="kw">Функция</span> ПостроитьДопускТД(Объект) <span class="kw">Экспорт</span>
+    Допуск = <span class="kw">Новый</span> <span class="type">Соответствие</span>;
+    ИсключаемыеСтатусы = <span class="kw">Новый</span> <span class="type">Массив</span>;
+    ИсключаемыеСтатусы.Добавить(Перечисления.СтатусыТранзита.АннулированоСпециалистом);
+    ИсключаемыеСтатусы.Добавить(Перечисления.СтатусыТранзита.ВЗаключенииДополненияОтказано);
+    ИсключаемыеСтатусы.Добавить(Перечисления.СтатусыТранзита.ОтказаноВПриемеДополнения);
+    ИсключаемыеСтатусы.Добавить(Перечисления.СтатусыТранзита.ТоварНеВыпущен);
+    ИсключаемыеСтатусы.Добавить(Перечисления.СтатусыТранзита.ТаможенныйДосмотр); <span class="cmt">// NEW</span>
+
+    <span class="kw">Для Каждого</span> СтрокаДД <span class="kw">Из</span> Объект.ДанныеДокументов <span class="kw">Цикл</span>
+        <span class="kw">Если</span> ИсключаемыеСтатусы.Найти(СтрокаДД.СтатусТранзита) = <span class="kw">Неопределено</span>
+           <span class="kw">И</span> <span class="kw">Не</span> ПустаяСтрока(СтрокаДД.НомерГТД) <span class="kw">Тогда</span>
+            Допуск.Вставить(СтрокаДД.НомерГТД, СтрокаДД);
+        <span class="kw">КонецЕсли</span>;
+    <span class="kw">КонецЦикла</span>;
+    <span class="kw">Возврат</span> Допуск;
+<span class="kw">КонецФункции</span></pre>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 6: CALCULATOR -->
+<!-- ========================================== -->
+<section id="vliyanie">
+  <h2><span class="n">§6</span> Как ТД влияет на расчёт — интерактивный калькулятор</h2>
+  <p class="lead">Основное отличие: <b>сейчас штраф считается на весь документ сразу</b> (Schema 4 bug), а <b>должен считаться per-ТД</b>. Подвигайте ползунки — видно разницу.</p>
+
+  <div class="calc">
+    <div class="controls">
+      <div class="control">
+        <label>Цена базовая, руб</label>
+        <input type="number" id="i-cena" value="1000" step="100">
+      </div>
+      <div class="control">
+        <label>ТД A: уник. кодов</label>
+        <input type="number" id="i-a" value="6" min="1" max="50">
+      </div>
+      <div class="control">
+        <label>ТД B: уник. кодов</label>
+        <input type="number" id="i-b" value="2" min="1" max="50">
+      </div>
+      <div class="control">
+        <label>Дубликатов A∩B</label>
+        <input type="number" id="i-dup" value="1" min="0" max="50">
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="result-box bad">
+        <h4>❌ СЕЙЧАС (Schema 4 bug) <span class="tag-inline">WRONG</span></h4>
+        <div class="formula">uniq_all = A + B − Dup</div>
+        <div class="formula">штраф = max(0, uniq_all − 5) × 0.2 × Цена <span class="hl">(один раз)</span></div>
+        <div class="formula">base = Цена × КоличествоТД</div>
+        <hr class="thin" style="margin:8px 0">
+        <div class="mono" id="wrong-calc"></div>
+        <div class="total bad" id="wrong-total"></div>
+      </div>
+
+      <div class="result-box good">
+        <h4>✓ ВЛАДИМИР (Schema 4 правильная) <span class="tag-inline">RIGHT</span></h4>
+        <div class="formula">Для каждой ТД <b>отдельно</b>:</div>
+        <div class="formula">штраф_i = max(0, uniq_i − 5) × 0.2 × Цена</div>
+        <div class="formula">base = Цена × КоличествоТД</div>
+        <hr class="thin" style="margin:8px 0">
+        <div class="mono" id="right-calc"></div>
+        <div class="total good" id="right-total"></div>
+      </div>
+    </div>
+
+    <div class="diff" id="diff-box"></div>
+  </div>
+
+  <h3 style="margin-top:24px">Что меняется в коде</h3>
+  <pre class="code"><span class="cmt">// CommonModules/исРасчет/Ext/Module.bsl</span>
+
+<span class="cmt">// ===== БЫЛО (bug): считаем уникальные по всему документу =====</span>
+<span class="kw">Функция</span> РассчитатьОформлениеТД(Объект, Цена) <span class="kw">Экспорт</span>
+    <span class="kw">Если</span> Цена = <span class="num">0</span> <span class="kw">Тогда</span> <span class="kw">Возврат</span> <span class="num">0</span>; <span class="kw">КонецЕсли</span>;
+    Уник = <span class="kw">Новый</span> <span class="type">Соответствие</span>;
+    <span class="kw">Для Каждого</span> СтрокаКодов <span class="kw">Из</span> Объект.КодыУКТЗЕД <span class="kw">Цикл</span>
+        Уник.Вставить(СтрокаКодов.КодУКТЗЕД, <span class="kw">Истина</span>);
+    <span class="kw">КонецЦикла</span>;
+    КоличествоТД = Объект.ДанныеДокументов.Количество();
+    Результат = Цена × КоличествоТД;
+    <span class="kw">Если</span> Уник.Количество() > <span class="num">5</span> <span class="kw">Тогда</span>           <span class="cmt">// ❌ один раз на документ</span>
+        Результат = Результат + (Уник.Количество() − <span class="num">5</span>) × <span class="num">0.2</span> × Цена;
+    <span class="kw">КонецЕсли</span>;
+    <span class="kw">Возврат</span> Результат;
+<span class="kw">КонецФункции</span>
+
+<span class="cmt">// ===== СТАЛО (per-ТД): каждой ТД свой штраф =====</span>
+<span class="kw">Функция</span> РассчитатьОформлениеТД(Объект, Цена) <span class="kw">Экспорт</span>
+    <span class="kw">Если</span> Цена = <span class="num">0</span> <span class="kw">Тогда</span> <span class="kw">Возврат</span> <span class="num">0</span>; <span class="kw">КонецЕсли</span>;
+
+    ДопускТД = ПостроитьДопускТД(Объект);  <span class="cmt">// только активные статусы</span>
+    КодыПоТД = <span class="kw">Новый</span> <span class="type">Соответствие</span>;
+
+    <span class="kw">Для Каждого</span> КлючЗн <span class="kw">Из</span> ДопускТД <span class="kw">Цикл</span>
+        КодыПоТД.Вставить(КлючЗн.Ключ, <span class="kw">Новый</span> <span class="type">Соответствие</span>);
+    <span class="kw">КонецЦикла</span>;
+
+    <span class="kw">Для Каждого</span> СтрокаКодов <span class="kw">Из</span> Объект.КодыCMR <span class="kw">Цикл</span>
+        НомерТД = СтрокаКодов.НомерДополнения;
+        <span class="kw">Если</span> КодыПоТД[НомерТД] &lt;&gt; <span class="kw">Неопределено</span> <span class="kw">И</span> <span class="kw">Не</span> ПустаяСтрока(СтрокаКодов.КодТНВЭД) <span class="kw">Тогда</span>
+            КодыПоТД[НомерТД].Вставить(СтрокаКодов.КодТНВЭД, <span class="kw">Истина</span>);
+        <span class="kw">КонецЕсли</span>;
+    <span class="kw">КонецЦикла</span>;
+
+    Результат = Цена × ДопускТД.Количество();
+
+    <span class="kw">Для Каждого</span> ЭлементТД <span class="kw">Из</span> КодыПоТД <span class="kw">Цикл</span>   <span class="cmt">// ✓ для каждой ТД</span>
+        Превышение = <span class="type">Макс</span>(<span class="num">0</span>, ЭлементТД.Значение.Количество() − <span class="num">5</span>);
+        Результат = Результат + Превышение × <span class="num">0.2</span> × Цена;
+    <span class="kw">КонецЦикла</span>;
+
+    <span class="kw">Возврат</span> Результат;
+<span class="kw">КонецФункции</span></pre>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 7: mapping -->
+<!-- ========================================== -->
+<section id="mapping">
+  <h2><span class="n">§7</span> Маппинг: схема Владимира → код 1С</h2>
+  <p class="lead">Восемь схем из <code class="inline">docs/requirements/Логика_ТД_Схемы.md</code> → конкретные объекты метаданных и функции.</p>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>Схема Владимира</th><th>Что меняется в 1С</th><th>Phase</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">1</td>
+        <td>ТД как единица учёта с уник. идентификатором</td>
+        <td>Реквизит <code class="inline">НомерГТД</code> (ДДП-ключ) в ТЧ ДанныеДокументов — <b>уже есть</b></td>
+        <td><span class="badge ok">done</span></td>
+      </tr>
+      <tr>
+        <td class="mono">2</td>
+        <td>Три кейса учёта: Комплекс / ТолькоОбеспечение / ТолькоТД</td>
+        <td>Enum <code class="inline">ТипыУчетаПоПоручительству</code> (3 значения) + поле <code class="inline">ТипУчета</code> per-row</td>
+        <td><span class="badge ok">done</span></td>
+      </tr>
+      <tr>
+        <td class="mono">3</td>
+        <td>Статусы определяют попадание ТД в расчёт</td>
+        <td>Новая функция <code class="inline">исРасчет.ПостроитьДопускТД(Объект)</code> + добавить <code class="inline">ТаможенныйДосмотр</code> в enum</td>
+        <td><span class="badge new">P1</span></td>
+      </tr>
+      <tr>
+        <td class="mono" style="color:var(--bad)"><b>4</b></td>
+        <td><b>Штраф за коды считается per-ТД, не на весь документ</b></td>
+        <td>Переписать <code class="inline">РассчитатьОформлениеТД</code> + <code class="inline">РассчитатьКоличествоДопCMR</code>, добавить реквизит <code class="inline">КодТНВЭД</code> в ТЧ КодыCMR</td>
+        <td><span class="badge new">P1</span></td>
+      </tr>
+      <tr>
+        <td class="mono">5</td>
+        <td>Связь код CMR ↔ ТД через НомерДополнения = НомерГТД</td>
+        <td>Функция <code class="inline">ПостроитьДопускCMR</code> — фильтрует коды по допуску ТД</td>
+        <td><span class="badge new">P1</span></td>
+      </tr>
+      <tr>
+        <td class="mono">6</td>
+        <td>Master-detail UI: клик ТД → фильтр кодов</td>
+        <td>Процедура <code class="inline">ДанныеДокументовПриАктивизацииСтроки</code> в модуле формы</td>
+        <td><span class="badge new">P1</span></td>
+      </tr>
+      <tr>
+        <td class="mono">7</td>
+        <td>Регистр сведений <code class="inline">ВыпущенныеТД</code> + EPF загрузки ежедневного CSV Владимира</td>
+        <td>Источник: CSV «Реестр выпущенных ТД» (ежедневно, CP1251, 105 колонок). Ключ поиска: РегистрационныйНомер ТД, fallback: ТС + Декларант + ДатаВыпуска</td>
+        <td><span class="badge new">P1.5</span></td>
+      </tr>
+      <tr>
+        <td class="mono">8</td>
+        <td>Функция <code class="inline">КлассифицироватьТипУчета(Объект)</code> + кнопка формы «Классифицировать»</td>
+        <td>Для каждой строки ДД: ищем в регистре ВыпущенныеТД → Комплекс / ТолькоОбеспечение. ТолькоТД (нет обеспечения) — ручной ввод</td>
+        <td><span class="badge new">P1.5</span></td>
+      </tr>
+      <tr>
+        <td class="mono">9</td>
+        <td>Автозагрузка ТД напрямую из Sigma PISrv (<code class="inline">TDTRANSITDECLARATION</code> R.048, 972 записи уже выгружены)</td>
+        <td>Скрипт <code class="inline">data/pisrv_get_all_td.py</code> уже работает. Осталось: маппинг в регистр + регламентное задание. Ограничения: 10-15 сек между запросами, макс 10-15 SQL/сессию, только ночью</td>
+        <td><span class="badge phase2">P3 — оптимизация</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Итог по файлам</h3>
+  <div class="kv">
+    <span class="k">Enums/СтатусыТранзита.xml</span><span class="v">+ value ТаможенныйДосмотр</span>
+    <span class="k">Documents/ОперацияПоПоручительству.xml</span><span class="v">+ Attribute КодТНВЭД в ТЧ КодыCMR</span>
+    <span class="k">Documents/.../Forms/ФормаДокумента/Ext/Form.xml</span><span class="v">+ Event OnActivateRow на таблице ДанныеДокументов</span>
+    <span class="k">CommonModules/исРасчет/Ext/Module.bsl</span><span class="v">+ ПостроитьДопускТД, переписать ПостроитьДопускCMR / РассчитатьОформлениеТД / РассчитатьКоличествоДопCMR</span>
+    <span class="k">Documents/.../Forms/ФормаДокумента/Ext/Form/Module.bsl</span><span class="v">+ ДанныеДокументовПриАктивизацииСтроки + helpers</span>
+    <span class="k" style="color:var(--good)">epf/APIСигма/.../Module.bsl</span><span class="v" style="color:var(--good)">уже зафиксен (П-04, 2026-04-07) — не трогаем</span>
+  </div>
+
+  <p style="margin-top:16px"><a href="./../td_architecture.md" style="color:var(--accent)">→ Полный архитектурный план в <code class="inline">docs/td_architecture.md</code> (654 строки)</a></p>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 8: todo -->
+<!-- ========================================== -->
+<section id="todo">
+  <h2><span class="n">§8</span> Что пока отсутствует и требует клиента</h2>
+
+  <div class="grid grid-2">
+    <div class="card good">
+      <h3 style="margin-top:0"><span class="badge new">Phase 1.5</span> Ежедневный CSV-реестр от Владимира</h3>
+      <p>Владимир присылает <b>ежедневно</b> CSV-файл «Реестр выпущенных ТД» (пример: <code class="inline">1-7 марто ЭТД (2).csv</code>, 437 строк, 105 колонок, CP1251). Это внутренний реестр РТ — там все ТД с нашим участием и без.</p>
+      <p><b>Алгоритм сверки Владимира (3 шага):</b></p>
+      <ol style="margin:6px 0 0">
+        <li>Ищем № ТД из обеспечения в колонке <code class="inline">Регистрационный номер ТД</code> → совпадение = <b style="color:var(--good)">Комплекс</b></li>
+        <li>Не нашли по номеру? → ищем по <code class="inline">Номера ТС + Декларант + Дата выпуска</code></li>
+        <li>Не нашли вообще → <b style="color:var(--warn)">ТолькоОбеспечение</b> (ТД делал другой брокер или клиент сам)</li>
+      </ol>
+      <p style="margin:12px 0 0;font-size:13px;color:var(--text-dim)"><b>Цитата Владимира:</b> «Изначально соответствие номера ТД из обеспечения с номером из этой таблицы. Если всё ок, то проблемы нет. Если нет, то те, что не удалось идентифицировать — уже по номеру авто и остальным графам».</p>
+    </div>
+
+    <div class="card warn">
+      <h3 style="margin-top:0"><span class="badge phase2">Phase 3</span> Прямая автозагрузка из Sigma PISrv</h3>
+      <p>Сейчас EPF «APIСигма» загружает только <b>ДДП-поручительства</b> (ModuleId=999000 через REST API <code class="inline">edapi.sigma-soft.ru/getreportggi</code>). Сами ТД доступны только через бинарный протокол PISrv — уже обратно разобран (<code class="inline">docs/pisrv-protocol.md</code>), <b>972 записи R.048 выгружены скриптом</b> <code class="inline">data/pisrv_get_all_td.py</code>.</p>
+      <p style="margin:0;font-size:13px"><b>Ограничения сервера:</b> 10-15 сек между запросами, макс 10-15 SQL/сессию, работа только ночью (после инцидента 2026-04-08). Пока фазы 1-1.5 достаточно CSV-реестра.</p>
+    </div>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Чеклист реализации Phase 1 (готов к выполнению)</h3>
+  <pre class="code">[ ] 1. Enum СтатусыТранзита: + ТаможенныйДосмотр (UUID d5c3e2a1-...)
+[ ] 2. ОперацияПоПоручительству: + Attribute КодТНВЭД в ТЧ КодыCMR
+[ ] 3. ФормаДокумента.xml: + Event OnActivateRow таблицы ДанныеДокументов
+[ ] 4. исРасчет/Module.bsl:
+       - новая Функция ПостроитьДопускТД(Объект)
+       - rewrite ПостроитьДопускCMR (использует допуск ТД)
+       - rewrite РассчитатьОформлениеТД (per-ТД формула)
+       - rewrite РассчитатьКоличествоДопCMR (per-ТД)
+[ ] 5. Модуль формы: + ДанныеДокументовПриАктивизацииСтроки + helpers
+[ ] 6. BSL Lint (tools/bsl-lint.bat) → 0 BLOCKER, 0 CRITICAL
+[ ] 7. scripts/load-extension.ps1 → InfoBase5
+[ ] 8. MCP Toolkit (port 6003) → run tests/verification/run-all-tests.bsl
+[ ] 9. YAxUnit через METR → Тесты_РасчетЦены
+[ ] 10. Git commit: "feat(td): Schema 4 per-ТД + enum ТаможенныйДосмотр"</pre>
+</section>
+
+<!-- ========================================== -->
+<!-- SECTION 9: CONCEPT — RESULT OF LIVE MCP INSPECTION (2026-04-23) -->
+<!-- ========================================== -->
+<section id="koncept">
+  <h2><span class="n">§9</span> Как это будет работать — пошаговый сценарий для людей</h2>
+
+  <p style="color:var(--text-dim);font-size:14px;margin-top:-8px">
+    Секция описывает путь двух источников данных через 1С: ДДП из API Сигмы, ТД из CSV Владимира — и как они сходятся в документе <code class="inline">ОперацияПоПоручительству</code> с per-ТД классификацией в ТЧ <code class="inline">ДанныеДокументов</code>. Все цифры — из живой InfoBase5 (MCP порт 6003, 23.04.2026).
+  </p>
+
+  <h3 style="margin-top:28px">TL;DR в одном предложении</h3>
+  <div class="card" style="border-left:4px solid var(--good);padding:16px;margin-bottom:24px">
+    <p style="margin:0 0 10px;font-size:15px;line-height:1.6">
+      У нас <b>два источника данных, и оба пишут в документ</b> <code class="inline">ОперацияПоПоручительству</code>: API Сигмы грузит <b>ДДП</b> (то, за что мы получили деньги), CSV Владимира грузит <b>ТД</b> (сами декларации). Сопоставление делается <b>построчно в ТЧ ДанныеДокументов</b>: если у ТД есть пара-ДДП → строка помечается <code class="inline">Комплекс</code>; если ТД есть, а ДДП нет → <code class="inline">ТолькоТД</code> (создаётся новый документ); если ДДП есть, а ТД нет → <code class="inline">ТолькоОбеспечение</code>. Модуль <code class="inline">исРасчет</code> считает каждую строку по её ТипУчета.
+    </p>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:var(--text-dim)">
+      Тип документа <b>один</b> (<code class="inline">ОперацияПоПоручительству</code>), но в шапке появляется реквизит <b>ВидОперации</b> с двумя значениями: <b>🌐 ДДП-авто</b> (автозагрузка из Сигмы — то что сейчас делает «Чтение деклараций» / EPF APIСигма) и <b>📑 ТД-файл</b> (ручная загрузка реестра ТД Владимира через новую обработку). Это позволяет в журнале фильтровать и сразу видеть откуда документ пришёл.
+    </p>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Два источника данных — как они работают сегодня</h3>
+
+  <div class="grid grid-2" style="margin-bottom:24px">
+    <div class="card" style="border-top:3px solid #4a9eff">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="badge" style="background:#4a9eff;color:#fff">ПОТОК 1</span>
+        <h4 style="margin:0">ДДП (поручительства) — <b>API Сигмы</b></h4>
+      </div>
+      <p style="margin:8px 0;font-size:13px"><b>Источник:</b> <code class="inline">edapi.sigma-soft.ru/api/v1/report/getreportggi</code> (REST, HTTP GET)</p>
+      <p style="margin:8px 0;font-size:13px"><b>Кто грузит:</b> EPF <code class="inline">APIСигма</code> (ОбновитьОперации в АРМ)</p>
+      <p style="margin:8px 0;font-size:13px"><b>Что именно приходит:</b> поручительства ДДП (ModuleId=999000) — для каждого клиента, у которого Сигма-Софт нам является контрагентом</p>
+      <p style="margin:8px 0;font-size:13px"><b>Автоматизация:</b> ✅ ежедневно, без участия человека (при желании — по кнопке)</p>
+      <p style="margin:8px 0 0;font-size:13px;color:#f5a623"><b>Ограничение:</b> API <b>не видит</b> клиентов типа «ТолькоТД» (им мы обеспечение не даём → у Сигмы с нами на них договора нет → в выдачу не попадают)</p>
+    </div>
+
+    <div class="card" style="border-top:3px solid var(--good)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="badge" style="background:var(--good);color:#fff">ПОТОК 2</span>
+        <h4 style="margin:0">ТД (транзитные декларации) — <b>CSV-файл Владимира</b></h4>
+      </div>
+      <p style="margin:8px 0;font-size:13px"><b>Источник:</b> внутренний реестр РТ (пример: <code class="inline">1-7 марто ЭТД (2).csv</code>, CP1251, 105 колонок)</p>
+      <p style="margin:8px 0;font-size:13px"><b>Кто готовит:</b> Владимир, вручную/полуавтоматом из своего источника</p>
+      <p style="margin:8px 0;font-size:13px"><b>Куда пишется:</b> в <b>тот же документ</b> <code class="inline">ОперацияПоПоручительству</code> — дозаполняет ТЧ <code class="inline">ДанныеДокументов</code> (НомерГТД, ТС, Декларант, Дата выпуска, Подразделение). Для ТолькоТД-клиентов <b>создаёт новые документы</b></p>
+      <p style="margin:8px 0;font-size:13px"><b>Автоматизация:</b> ❌ вручную (Phase 1). В Phase 3 возможна прямая загрузка через Sigma PISrv (сейчас на паузе после инцидента 2026-04-08)</p>
+      <p style="margin:8px 0 0;font-size:13px;color:var(--good)"><b>Преимущество:</b> видит <b>всех</b> клиентов, включая ТолькоТД (которых API не отдаёт)</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px;background:#25252f">
+    <h4 style="margin-top:0">Как два потока встречаются — оба пишут в один документ</h4>
+    <pre class="code" style="margin:0;line-height:1.5">  API Сигмы                               CSV Владимира
+  (поток ДДП)                             (поток ТД)
+      │                                       │
+      │ EPF APIСигма                          │ Обработка «Загрузка реестра ТД» (новая)
+      │ (кнопка ОбновитьОперации)             │ (кнопки Прочитать → Сопоставить → Применить)
+      ▼                                       ▼
+  ┌─────────────────────────────────────────────────────┐
+  │         Документ.ОперацияПоПоручительству           │
+  │                                                     │
+  │  ТЧ КодыCMR            ← API пишет коды/суммы CMR   │
+  │  ТЧ ДанныеДокументов   ← ОБА потока пишут сюда:     │
+  │                         • API: ДДП-номер, Контрагент│
+  │                         • CSV: НомерГТД, ТС,        │
+  │                                Декларант, Дата,     │
+  │                                Подразделение,       │
+  │                                ТипУчета ← ключевое! │
+  │                                                     │
+  │  Реквизит СтрокаТЧ.ТипУчета (per-ТД):               │
+  │    Комплекс          — нашли пару ДДП+ТД            │
+  │    ТолькоТД          — ТД есть, ДДП нет             │
+  │    ТолькоОбеспечение — ДДП есть, ТД не нашли        │
+  └────────────────────────┬────────────────────────────┘
+                           │
+                           ▼ АРМ → Пересобрать → Рассчитать
+              исРасчет читает per-row ТипУчета:
+                • каждая строка считается по своему режиму
+                • пусто → fallback на реквизит контрагента
+                           │
+                           ▼
+                  Правильная итоговая сумма</pre>
+  </div>
+
+  <hr class="thin">
+
+  <h3>В чём сейчас проблема</h3>
+  <div class="card warn" style="margin-bottom:24px">
+    <p style="margin:0 0 10px"><b>ТолькоТД-клиентов в системе сейчас 0</b>. Их документов в базе <b>нет вообще</b> — API Сигмы их не отдаёт, а ручная загрузка ТД из CSV пока не реализована. При этом Владимир видит эти ТД в своём реестре ежедневно: мы везём декларации, но обеспечение даёт другой брокер → нам «платят только за ТД».</p>
+
+    <p style="margin:10px 0">В существующих 1572 документах ТЧ <code class="inline">ДанныеДокументов</code> содержит 1868 строк, из которых <b>1864 (99.8%) имеют пустой ТипУчета</b>. Модуль <code class="inline">исРасчет</code> при пустом значении уходит в fallback на реквизит контрагента, а он заполнен только у 3 из 2068 контрагентов — итого почти весь расчёт идёт по умолчанию как Комплекс.</p>
+
+    <table style="width:100%;font-size:13px;margin-top:8px">
+      <tr style="background:var(--surface-2)"><th style="text-align:left;padding:6px">Реальная ситуация по ТД</th><th style="text-align:left;padding:6px">Сейчас в 1С</th><th style="text-align:left;padding:6px">Нужно</th></tr>
+      <tr><td style="padding:6px">Мы везём ТД + даём обеспечение (Комплекс)</td><td style="padding:6px">Строка в <code class="inline">ДанныеДокументов</code> с пустым ТипУчета → fallback → считается как Комплекс (случайно правильно)</td><td style="padding:6px;color:var(--good)">Явно <code class="inline">Комплекс</code></td></tr>
+      <tr><td style="padding:6px">Мы везём <b>только ТД</b> (обеспечение чужое)</td><td style="padding:6px;color:var(--bad)"><b>Документа нет</b> (API не видит)</td><td style="padding:6px;color:var(--good)">Создать документ, строка = <code class="inline">ТолькоТД</code></td></tr>
+      <tr><td style="padding:6px">Мы даём <b>только обеспечение</b> (ТД чужая)</td><td style="padding:6px">Строка есть (пришла из API), но считается как Комплекс → лишний расчёт ТД/CMR</td><td style="padding:6px;color:var(--good)">Явно <code class="inline">ТолькоОбеспечение</code> в строке</td></tr>
+    </table>
+
+    <p style="margin:10px 0 0;font-size:13px;color:var(--text-dim)">CSV Владимира — единственный источник, который связывает конкретную ТД с конкретным ДДП. Сопоставление работает не в голове и не по контрагенту, а <b>построчно в ТЧ ДанныеДокументов документа</b>.</p>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Где это будет — в новой отдельной обработке</h3>
+  <p>Добавляется одна обработка в расширение «Русский_Транзит»: <b>«Загрузка реестра ТД»</b>. Располагается в меню «НСИ и администрирование» (та же подсистема, что и АРМ).</p>
+
+  <div style="background:#1e1e24;border:1px solid var(--border);border-radius:8px;padding:0;margin:16px 0;font-family:'Segoe UI',sans-serif;overflow:hidden">
+    <div style="background:#2b2b35;padding:8px 14px;font-size:13px;color:var(--text-dim);border-bottom:1px solid var(--border)">
+      🖥️ 1С:Предприятие — Рабочий стол &nbsp;›&nbsp; НСИ и администрирование
+    </div>
+    <div style="padding:16px;display:grid;grid-template-columns:200px 1fr;gap:16px">
+      <div style="background:#2b2b35;border-radius:6px;padding:12px;font-size:13px">
+        <div style="color:var(--text-dim);font-size:11px;margin-bottom:8px">РАЗДЕЛЫ</div>
+        <div style="padding:4px 0">📁 Продажи</div>
+        <div style="padding:4px 0">📁 Закупки</div>
+        <div style="padding:4px 0;background:#3a3a4a;margin:0 -8px;padding-left:8px;border-radius:4px">📁 НСИ и администрирование</div>
+      </div>
+      <div style="font-size:13px">
+        <div style="color:var(--text-dim);font-size:11px;margin-bottom:8px">КОМАНДЫ ПОДСИСТЕМЫ</div>
+        <div style="padding:4px 0">▸ АРМ менеджера</div>
+        <div style="padding:4px 0">▸ Чтение деклараций (XML)</div>
+        <div style="padding:4px 0">▸ Установка цен контрагентов</div>
+        <div style="padding:4px 0;background:rgba(76,175,80,0.1);border-left:3px solid var(--good);padding-left:10px">
+          ▸ <b style="color:var(--good)">Загрузка реестра ТД</b> <span class="badge new" style="margin-left:8px">NEW</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Структура реального CSV — 51 колонка</h3>
+
+  <p>Файл <code class="inline">Отчет по журналу ЭТД от 08.04.2026 11-22-39.csv</code> от Владимира (409 КБ, CP1251, разделитель <code class="inline">;</code>) — <b>485 ТД за ~6 дней</b>. Ключевые колонки для matcher'а:</p>
+
+  <table style="width:100%;font-size:12px;border-collapse:collapse">
+    <thead>
+      <tr style="background:var(--surface-2);color:var(--text-dim)">
+        <th style="text-align:left;padding:6px">#</th>
+        <th style="text-align:left;padding:6px">Колонка CSV</th>
+        <th style="text-align:left;padding:6px">Роль в нашем процессе</th>
+        <th style="text-align:left;padding:6px">Куда пишется в 1С</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">4</td><td style="padding:6px;border-top:1px solid var(--border)">Подразделение</td><td style="padding:6px;border-top:1px solid var(--border)">Наше внутреннее подразделение РТ (справочно)</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ ДанныеДокументов.Подразделение</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">6</td><td style="padding:6px;border-top:1px solid var(--border)">Статус процесса</td><td style="padding:6px;border-top:1px solid var(--border)">«Транзит завершен» / «Выпуск товара»</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ ДанныеДокументов.СтатусТранзита (маппинг)</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">12</td><td style="padding:6px;border-top:1px solid var(--border)"><b>Регистрационный номер ТД</b></td><td style="padding:6px;border-top:1px solid var(--border)">Сам номер ТД (это ТД, которую везли)</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ КодыCMR.ПТД + ТЧ ДанныеДокументов</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">13</td><td style="padding:6px;border-top:1px solid var(--border)">Номера ТС</td><td style="padding:6px;border-top:1px solid var(--border)">Транспортные средства</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ ДанныеДокументов.ТС</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">15</td><td style="padding:6px;border-top:1px solid var(--border)">Наименование декларанта</td><td style="padding:6px;border-top:1px solid var(--border)">Декларант</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ ДанныеДокументов.Декларант</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">28</td><td style="padding:6px;border-top:1px solid var(--border)">Дата выпуска</td><td style="padding:6px;border-top:1px solid var(--border)">Когда ТД прошла таможню</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ ДанныеДокументов.ДатаОформления</td></tr>
+      <tr style="background:rgba(76,175,80,0.12)"><td style="padding:6px;border-top:1px solid var(--border)">33</td><td style="padding:6px;border-top:1px solid var(--border)"><b>Номер ДДП ТД</b> 🎯</td><td style="padding:6px;border-top:1px solid var(--border)"><b>FK к существующему документу ОППоручительству в 1С</b> — прямая связь ТД↔ДДП!</td><td style="padding:6px;border-top:1px solid var(--border)">Поиск: WHERE НомерГТД в ДанныеДокументов = :csv_номерДДП</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">45</td><td style="padding:6px;border-top:1px solid var(--border)"><b>Количество уникальных кодов ТН ВЭД</b> 🎯</td><td style="padding:6px;border-top:1px solid var(--border)">Готовое значение для Schema 4 (штраф за коды сверх 5)</td><td style="padding:6px;border-top:1px solid var(--border)">ТЧ КодыCMR.КоличествоКодов (per-ТД)</td></tr>
+      <tr><td style="padding:6px;border-top:1px solid var(--border)">47</td><td style="padding:6px;border-top:1px solid var(--border)">ИНН получателя</td><td style="padding:6px;border-top:1px solid var(--border)">Для сопоставления Контрагента в УТ</td><td style="padding:6px;border-top:1px solid var(--border)">Lookup по Справочник.Контрагенты.ИНН</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="thin">
+
+  <h3>Упрощённый matcher — одно правило вместо трёх</h3>
+
+  <p>Колонка <b>«Номер ДДП ТД»</b> (#33 в CSV) уже содержит прямую связь: у 478 из 485 строк (98.6%) указан номер ДДП, к которой относится эта ТД. Значит <b>не нужны эвристики</b> по ТС+Декларанту+Дате — сопоставление строго детерминированное:</p>
+
+  <div class="card" style="background:#25252f;margin:12px 0">
+    <pre class="code" style="margin:0;line-height:1.5">ВХОД: строка CSV с полем [Номер ДДП ТД]
+
+┌─ ВАРИАНТ А: поле «Номер ДДП ТД» заполнено (478 из 485) ──────┐
+│                                                              │
+│  Ищем в 1С:                                                  │
+│    ОперацияПоПоручительству.ДанныеДокументов                 │
+│    WHERE НомерГТД = :csv_НомерДДПТД                          │
+│                                                              │
+│  НАШЛИ (ожидаемо)                                            │
+│    → строка.ТипУчета := Комплекс                             │
+│    → дозалить ТС, Декларант, Подразделение,                  │
+│      ДатаВыпуска, КоличествоКодовТНВЭД из CSV                │
+│    → строка.НомерТД := csv_РегистрационныйНомерТД            │
+│                                                              │
+│  НЕ НАШЛИ (такого быть не должно — но если да,               │
+│    значит CSV за период, которого у нас в 1С нет):           │
+│    → показать Владимиру на вкладке «Нужно проверить»         │
+└──────────────────────────────────────────────────────────────┘
+
+┌─ ВАРИАНТ Б: «Номер ДДП ТД» пусто (7 из 485) ─────────────────┐
+│                                                              │
+│  Это ТолькоТД: мы везли декларацию, но ДДП не наша.          │
+│                                                              │
+│  СОЗДАЁМ новый Документ.ОперацияПоПоручительству:            │
+│    ВидОперации := ТДФайл                                     │
+│    СуммаОбеспечения := 0                                     │
+│    ТЧ ДанныеДокументов (1 строка):                           │
+│      ТипУчета := ТолькоТД                                    │
+│      НомерГТД := csv_РегистрационныйНомерТД                  │
+│      Декларант, ТС, Дата, Подразделение из CSV               │
+│      КолКодовТНВЭД из CSV                                    │
+└──────────────────────────────────────────────────────────────┘
+
+── ОТДЕЛЬНО: ДДП в 1С, которых не подтверждает CSV ──
+После прохода ищем строки ДанныеДокументов, у которых НомерГТД
+НЕ встречается в колонке «Номер ДДП ТД» CSV за покрываемый
+период → строка.ТипУчета := ТолькоОбеспечение (ТД делал
+другой брокер, а мы только обеспечение выдали).</pre>
+  </div>
+
+  <div class="card warn" style="margin-top:12px">
+    <h4 style="margin-top:0">Что оказалось неожиданным</h4>
+    <p style="margin:0 0 8px;font-size:13px">Я изначально думал, что «Подразделение» = признак типа учёта (ЦО→Комплекс, ТрейдСолюшнс→ТолькоТД, ТАРГА→ТолькоОбеспечение). <b>Это неверно</b>. По реальному CSV:</p>
+    <table style="width:100%;font-size:13px;border-collapse:collapse">
+      <thead><tr style="background:var(--surface-2);color:var(--text-dim)"><th style="text-align:left;padding:6px">Подразделение</th><th style="text-align:right;padding:6px">Всего ТД</th><th style="text-align:right;padding:6px">С «Номер ДДП ТД»</th><th style="text-align:right;padding:6px">Без</th></tr></thead>
+      <tbody>
+        <tr><td style="padding:6px;border-top:1px solid var(--border)">Центральный офис</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right">352</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right;color:var(--good)">345</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right;color:#f5a623">7</td></tr>
+        <tr><td style="padding:6px;border-top:1px solid var(--border)"><b>Трейд Солюшнс</b></td><td style="padding:6px;border-top:1px solid var(--border);text-align:right">132</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right;color:var(--good)"><b>132 (все!)</b></td><td style="padding:6px;border-top:1px solid var(--border);text-align:right">0</td></tr>
+        <tr><td style="padding:6px;border-top:1px solid var(--border)">ТАРГА</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right">1</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right">0</td><td style="padding:6px;border-top:1px solid var(--border);text-align:right;color:#f5a623">1</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:10px 0 0;font-size:13px"><b>Вывод:</b> Подразделение — это <b>наш внутренний отдел РТ</b> (кто из сотрудников-специалистов вёл эту ТД), а <b>не тип клиента</b>. Все три подразделения могут вести и Комплекс, и ТолькоТД — определяется только наличием ДДП-номера. Колонку «Подразделение» сохраняем в ТЧ как справочный атрибут для группировки в отчётах.</p>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Как выглядит обработка — мокап</h3>
+
+  <div style="background:#1e1e24;border:1px solid var(--border);border-radius:8px;padding:0;margin:16px 0;overflow:hidden">
+    <div style="background:#2b2b35;padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+      <span><b>Загрузка реестра ТД</b></span>
+      <span style="color:var(--text-dim)">— □ ✕</span>
+    </div>
+
+    <div style="padding:16px;font-size:13px">
+      <div style="background:#25252f;padding:12px;border-radius:6px;margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span style="color:var(--text-dim)">Файл:</span>
+        <span style="background:#1a1a22;padding:4px 10px;border-radius:4px;border:1px solid var(--border)">1-7 марто ЭТД (2).csv</span>
+        <button style="background:var(--primary,#4a9eff);border:none;color:#fff;padding:6px 14px;border-radius:4px">📁 Выбрать...</button>
+        <button style="background:#444;border:none;color:#fff;padding:6px 14px;border-radius:4px">▶ Прочитать CSV</button>
+        <span style="color:var(--text-dim);margin-left:auto">Период документов 1С: <b>01.03.26 — 07.03.26</b> · Строк CSV: <b>437</b></span>
+      </div>
+
+      <div style="color:var(--text-dim);font-size:11px;margin:16px 0 4px">РЕЗУЛЬТАТ СОПОСТАВЛЕНИЯ — 3 ВКЛАДКИ</div>
+
+      <div style="display:flex;gap:2px;margin-bottom:8px;flex-wrap:wrap">
+        <div style="background:var(--good);padding:6px 14px;border-radius:4px 4px 0 0;font-weight:bold;color:#fff">✅ Комплекс (дозалить ТЧ) <span style="background:rgba(0,0,0,0.25);padding:1px 6px;border-radius:8px;margin-left:6px">478</span></div>
+        <div style="background:#3a3a4a;padding:6px 14px;border-radius:4px 4px 0 0;color:var(--text-dim)">➕ Новые ТолькоТД <span style="background:rgba(0,0,0,0.25);padding:1px 6px;border-radius:8px;margin-left:6px">7</span></div>
+        <div style="background:#3a3a4a;padding:6px 14px;border-radius:4px 4px 0 0;color:var(--text-dim)">⚠ Без пары → ТолькоОбесп. <span style="background:rgba(0,0,0,0.25);padding:1px 6px;border-radius:8px;margin-left:6px">?</span></div>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="background:#2b2b35;color:var(--text-dim)">
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">✓</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Рег. № ТД</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Номер ДДП ТД</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Подразделение</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Дата</th>
+            <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border)">Кодов ТНВЭД</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Документ 1С</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:6px 8px">☑</td><td style="padding:6px 8px;font-family:monospace">10326050/020326/5005479</td><td style="padding:6px 8px;font-family:monospace">10000000/270226/0119685</td><td style="padding:6px 8px">Центральный офис</td><td style="padding:6px 8px">02.03.26</td><td style="padding:6px 8px;text-align:right">15</td><td style="padding:6px 8px"><a style="color:#4a9eff">✓ найден</a></td></tr>
+          <tr style="background:#25252f"><td style="padding:6px 8px">☑</td><td style="padding:6px 8px;font-family:monospace">10326050/280226/5005298</td><td style="padding:6px 8px;font-family:monospace">10000000/170226/0099033</td><td style="padding:6px 8px">Центральный офис</td><td style="padding:6px 8px">01.03.26</td><td style="padding:6px 8px;text-align:right">26</td><td style="padding:6px 8px"><a style="color:#4a9eff">✓ найден</a></td></tr>
+          <tr><td style="padding:6px 8px">☑</td><td style="padding:6px 8px;font-family:monospace">10719110/060326/5036132</td><td style="padding:6px 8px;font-family:monospace">10000/0562Б</td><td style="padding:6px 8px">Трейд Солюшнс</td><td style="padding:6px 8px">06.03.26</td><td style="padding:6px 8px;text-align:right">3</td><td style="padding:6px 8px"><a style="color:#4a9eff">✓ найден</a></td></tr>
+          <tr style="background:#25252f"><td style="padding:6px 8px">☑</td><td style="padding:6px 8px;font-family:monospace">10209050/040326/5005839</td><td style="padding:6px 8px;font-family:monospace">10000000/250226/0115515</td><td style="padding:6px 8px">Трейд Солюшнс</td><td style="padding:6px 8px">04.03.26</td><td style="padding:6px 8px;text-align:right">1</td><td style="padding:6px 8px"><a style="color:#4a9eff">✓ найден</a></td></tr>
+          <tr><td style="padding:6px 8px;color:var(--text-dim)" colspan="7">... ещё 474 строки, все успешно сопоставлены по колонке «Номер ДДП ТД» ...</td></tr>
+        </tbody>
+      </table>
+
+      <div style="background:#1a1a22;padding:10px 14px;border-radius:4px;margin-top:12px;border-left:3px solid var(--good);font-size:12px">
+        <b>На активной вкладке (Комплекс, 478 строк):</b> CSV содержит прямую связь ТД↔ДДП в колонке «Номер ДДП ТД». Matcher ищет документ в 1С по этому полю, находит существующую строку в ТЧ ДанныеДокументов (её создал API Сигмы) и дозаливает: Рег.№ТД, Подразделение, ТС, Декларант, ДатаВыпуска, КоличествоКодовТНВЭД. Ставит ТипУчета = Комплекс.
+      </div>
+
+      <div style="background:#25252f;padding:12px;border-radius:6px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <span>
+          К применению: <b>478 строк → Комплекс</b> (обогащение существующих ДанныеДокументов) · <b>7 новых документов → ТолькоТД</b> · строки без пары в CSV будут помечены <b>ТолькоОбеспечение</b>.<br>
+          <span style="color:var(--text-dim)">После «Применить» все 485 ТД из CSV связаны с 1С. исРасчет пересчитает суммы корректно.</span>
+        </span>
+        <button style="background:var(--good,#4caf50);border:none;color:#fff;padding:10px 24px;border-radius:4px;font-weight:bold">💾 Применить</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Что происходит после «Применить» — путь одной ТД</h3>
+
+  <div style="background:#1e1e24;border:1px solid var(--border);border-radius:8px;padding:16px;margin:16px 0">
+    <p style="margin:0 0 12px;color:var(--text-dim);font-size:13px">Кейс 1 (основной, 478 из 485) — ТД Рег.№ <code class="inline">10326050/020326/5005479</code>, её ДДП <code class="inline">10000000/270226/0119685</code> уже в 1С</p>
+
+    <div style="display:grid;grid-template-columns:1fr 30px 1fr;gap:12px;align-items:center">
+      <div class="card" style="margin:0">
+        <div style="color:var(--text-dim);font-size:11px">БЫЛО</div>
+        <div style="font-size:13px;margin-top:8px">
+          <b>Документ ОПП (пришёл из API Сигмы)</b><br>
+          ТЧ ДанныеДокументов, строка:<br>
+          НомерГТД = <code class="inline">10000000/270226/0119685</code><br>
+          Рег.№ТД = <code class="inline">&lt;пусто&gt;</code><br>
+          Подразделение = <code class="inline">&lt;пусто&gt;</code><br>
+          ТипУчета = <code class="inline">&lt;пусто&gt;</code>, КолКодовТНВЭД = 0
+        </div>
+        <hr class="thin">
+        <div style="font-size:13px">
+          Schema 4 не может считать штраф (0 кодов)<br>
+          <span style="color:#f5a623">Итог: информация о ТД неполная</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:24px;color:var(--good)">→</div>
+
+      <div class="card" style="margin:0;border-left:3px solid var(--good)">
+        <div style="color:var(--good);font-size:11px">СТАЛО</div>
+        <div style="font-size:13px;margin-top:8px">
+          <b>Та же строка, дозалита из CSV</b><br>
+          НомерГТД = <code class="inline">10000000/270226/0119685</code> (не меняется)<br>
+          Рег.№ТД = <code class="inline">10326050/020326/5005479</code> ✨<br>
+          Подразделение = <code class="inline">Центральный офис</code> ✨<br>
+          ТипУчета = <code class="inline">Комплекс</code> ✨<br>
+          КолКодовТНВЭД = 15 ✨
+        </div>
+        <hr class="thin">
+        <div style="font-size:13px">
+          Schema 4 считает штраф: max(0, 15-5) × 0.2 × цена<br>
+          <span style="color:var(--good)">Итог: полная информация + правильная сумма</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#1e1e24;border:1px solid var(--border);border-radius:8px;padding:16px;margin:16px 0">
+    <p style="margin:0 0 12px;color:var(--text-dim);font-size:13px">Кейс 2 (7 из 485) — ТД из ТАРГА, колонка «Номер ДДП ТД» пустая</p>
+
+    <div style="display:grid;grid-template-columns:1fr 30px 1fr;gap:12px;align-items:center">
+      <div class="card" style="margin:0">
+        <div style="color:var(--text-dim);font-size:11px">БЫЛО</div>
+        <div style="font-size:13px;margin-top:8px">
+          <b>В 1С документа нет</b><br>
+          API Сигмы эту ТД не вернул (обеспечение не наше)<br>
+          В CSV Владимира она есть<br>
+          Рег.№ТД = <code class="inline">10605100/020326/5000601</code>
+        </div>
+        <hr class="thin">
+        <div style="font-size:13px">
+          В отчётах РТ ТД «выпала»<br>
+          <span style="color:var(--bad)">Итог: мы её возили, но за неё не выставили счёт</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:24px;color:var(--good)">→</div>
+
+      <div class="card" style="margin:0;border-left:3px solid var(--good)">
+        <div style="color:var(--good);font-size:11px">СТАЛО</div>
+        <div style="font-size:13px;margin-top:8px">
+          <b>Создаётся новый документ ОПП</b><br>
+          ВидОперации = <code class="inline">ТДФайл</code><br>
+          СуммаОбеспечения = 0<br>
+          ТЧ ДанныеДокументов (1 строка):<br>
+          ТипУчета = <code class="inline">ТолькоТД</code><br>
+          НомерГТД = <code class="inline">10605100/020326/5000601</code><br>
+          Подразделение = <code class="inline">ТАРГА</code>, КолКодовТНВЭД = 33
+        </div>
+        <hr class="thin">
+        <div style="font-size:13px">
+          исРасчет: ТолькоТД → обеспечение пропускается, цена ТД + штраф за 33 кода считаются<br>
+          <span style="color:var(--good)">Итог: за ТД выставлен счёт</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#1e1e24;border:1px solid var(--border);border-radius:8px;padding:16px;margin:16px 0">
+    <p style="margin:0 0 12px;color:var(--text-dim);font-size:13px">Кейс 3 — существующая строка ДанныеДокументов, её НомерГТД отсутствует в колонке «Номер ДДП ТД» ни одной строки CSV</p>
+
+    <div style="display:grid;grid-template-columns:1fr 30px 1fr;gap:12px;align-items:center">
+      <div class="card" style="margin:0">
+        <div style="color:var(--text-dim);font-size:11px">БЫЛО</div>
+        <div style="font-size:13px;margin-top:8px">
+          <b>ОПП (из API) → ТЧ ДанныеДокументов</b><br>
+          строка с НомерГТД = <code class="inline">10000000/.../0000999</code><br>
+          ТипУчета = <code class="inline">&lt;пусто&gt;</code><br>
+          В CSV такого номера в колонке «Номер ДДП ТД» нет
+        </div>
+        <hr class="thin">
+        <div style="font-size:13px">
+          fallback → Комплекс → считаются CMR/ТД<br>
+          <span style="color:var(--bad)">Итог: лишние суммы (мы ТД не делали)</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:24px;color:var(--good)">→</div>
+
+      <div class="card" style="margin:0;border-left:3px solid var(--good)">
+        <div style="color:var(--good);font-size:11px">СТАЛО</div>
+        <div style="font-size:13px;margin-top:8px">
+          <b>Та же строка, помечена по результату прохода</b><br>
+          ТипУчета = <code class="inline">ТолькоОбеспечение</code><br>
+          (только если CSV покрывает период этой строки — иначе пропустить до следующего прохода с более полным CSV)
+        </div>
+        <hr class="thin">
+        <div style="font-size:13px">
+          исРасчет стр. 924: ТолькоОбеспечение → CMR/ТД = 0<br>
+          <span style="color:var(--good)">Итог: только обеспечение</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Как это меняется для бухгалтера</h3>
+  <div class="card good" style="margin-bottom:24px">
+    <p style="margin:0;font-size:14px"><b>Никак</b>. Бухгалтер продолжает работать в АРМ как и раньше: выбирает период → загружает операции → жмёт <b>Рассчитать</b>. Единственная разница — сумма теперь правильная (в т.ч. появились ранее отсутствовавшие документы ТолькоТД-клиентов). Никаких новых кнопок, никакого обучения.</p>
+  </div>
+
+  <h3>Как это меняется для Владимира</h3>
+  <div class="card" style="margin-bottom:24px">
+    <p style="margin:0 0 10px"><b>День 1 (первая массовая загрузка исторического CSV — по аналогии с присланным файлом 08.04.2026, 485 ТД за ~6 дней):</b></p>
+    <ol style="margin:0;font-size:14px;line-height:1.7">
+      <li>Владимир экспортирует ЭТД-журнал за 4–6 недель (покрыть период существующих документов)</li>
+      <li>Обработка раскладывает по 3 ведрам: <b>~2000 строк → Комплекс</b> (обогащение существующих), <b>~30-50 строк → новые ТолькоТД</b>, <b>~50-100 строк существующих → ТолькоОбеспечение</b></li>
+      <li>Просматривает «ТолькоОбеспечение» (там могут быть сюрпризы), применяет</li>
+      <li>Итог: все ДанныеДокументов получили Рег.№ТД, Подразделение, КолКодовТНВЭД. В базе появились новые ОПП типа ТолькоТД. АРМ → Рассчитать пересчитывает суммы правильно с учётом Schema 4</li>
+    </ol>
+    <hr class="thin" style="margin:16px 0">
+    <p style="margin:0 0 10px"><b>День N (ежедневная рутина, ~3 минуты):</b></p>
+    <ol style="margin:0;font-size:14px;line-height:1.7">
+      <li>Утром экспортирует свежий ЭТД-журнал за сутки (~80 строк)</li>
+      <li>Открывает обработку → «Прочитать CSV» → 3 вкладки с маленькими числами</li>
+      <li>Быстрая проверка «Новые ТолькоТД» (0–3 строки), применяет</li>
+      <li>Бухгалтер жмёт Рассчитать в АРМ — всё актуально</li>
+    </ol>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Итоговая схема данных (data flow) — оба потока пишут в документ</h3>
+  <pre class="code" style="line-height:1.55">┌───────────────────────┐              ┌───────────────────────┐
+│ ПОТОК 1: API СИГМЫ    │              │ ПОТОК 2: CSV ВЛАДИМИРА│
+│ edapi.sigma-soft.ru   │              │ "1-7 марто ЭТД.csv"   │
+│ /getreportggi         │              │ 105 колонок, CP1251   │
+│ ДДП (поручительства)  │              │ Сами ТД (декларации)  │
+│ не видит ТолькоТД-кл. │              │ видит всех клиентов   │
+└───────────┬───────────┘              └───────────┬───────────┘
+            │                                      │
+            │ EPF APIСигма                         │ Обработка.ЗагрузкаРееструТД (NEW)
+            │ (ОбновитьОперации в АРМ)             │ прямой matcher по «Номер ДДП ТД»
+            │ создаёт/обновляет                    │ ┌─────────────────────────────┐
+            │ документы, заполняет                 │ │ CSV.«Номер ДДП ТД» заполнен │
+            │ ТЧ КодыCMR и часть                   │ │  → ищем ДД.НомерГТД = ↑     │
+            │ ТЧ ДанныеДокументов                  │ │  → найдено (478/485)        │
+            │                                      │ │  → дозалить поля, Комплекс  │
+            │                                      │ │                             │
+            │                                      │ │ CSV.«Номер ДДП ТД» пусто    │
+            │                                      │ │  → создать новый ОПП        │
+            │                                      │ │  → ТипУчета = ТолькоТД      │
+            │                                      │ │                             │
+            │                                      │ │ Строки ДД без пары в CSV    │
+            │                                      │ │  → ТипУчета = ТолькоОбесп.  │
+            │                                      │ └─────────────────────────────┘
+            │                                      │
+            └──────────────┬───────────────────────┘
+                           │ оба пишут в ОДИН ДОКУМЕНТ
+                           ▼
+         ┌─────────────────────────────────────────────────┐
+         │ Документ.ОперацияПоПоручительству               │
+         │                                                 │
+         │ ТЧ КодыCMR ............ (коды + суммы из API)   │
+         │ ТЧ ДанныеДокументов                             │
+         │   ├─ НомерГТД ......... из API + дозалив из CSV │
+         │   ├─ Контрагент ....... из API                  │
+         │   ├─ Декларант ........ из API + дозалив из CSV │
+         │   ├─ Подразделение .... только из CSV           │
+         │   ├─ ТС / Дата ........ из API + дозалив из CSV │
+         │   ├─ СуммаОбеспечения . из API (или 0 для ТолТД)│
+         │   └─ ТипУчета ←── КЛЮЧЕВОЕ, ставится matcher'ом │
+         │       (Комплекс/ТолькоТД/ТолькоОбеспечение)     │
+         └──────────────────────┬──────────────────────────┘
+                                │
+                                ▼ АРМ → Пересобрать → Рассчитать
+                  ┌───────────────────────────────────────┐
+                  │ CommonModule исРасчет.Module.bsl      │
+                  │   стр.  41: per-row ТипУчета строки   │
+                  │   стр.  48: если пусто → fallback     │
+                  │             на Контрагент.ТипУчета    │
+                  │   стр.  64: ТолькоТД → обесп.=0       │
+                  │   стр. 924: ТолькоОбесп. → CMR/ТД=0   │
+                  └──────────────────┬────────────────────┘
+                                     ▼
+           ИТОГОВАЯ СУММА — правильная для каждой строки ТД
+
+─────────────────────────────────────────────────────────────────
+ЧТО ДЕЛАЕТ КАЖДЫЙ ПОТОК:
+  API    — «ЧТО мы обслужили по обеспечению, какие коды CMR»
+  CSV    — «КАКИЕ ТД реально прошли, и как связать их с ДДП»
+Вместе  — полная картина per-ТД, правильный расчёт без fallback.</pre>
+
+  <hr class="thin">
+
+  <h3>Различение видов операции в журнале документов</h3>
+
+  <p>В 1С-типовых документах (Реализация, Поступление и т.д.) вариант контекста создания хранится в реквизите шапки <b>«Вид операции»</b> — один тип документа, но для пользователя визуально различимые записи. Применяем тот же паттерн, <b>с двумя значениями</b>:</p>
+
+  <div class="card" style="margin-bottom:16px">
+    <h4 style="margin-top:0">Новое перечисление <code class="inline">Перечисление.ВидыОперацийПоручительства</code></h4>
+    <table style="width:100%;font-size:13px;border-collapse:collapse">
+      <thead>
+        <tr style="background:var(--surface-2);color:var(--text-dim)">
+          <th style="text-align:left;padding:6px">Значение</th>
+          <th style="text-align:left;padding:6px">Синоним (видит пользователь)</th>
+          <th style="text-align:left;padding:6px">Иконка</th>
+          <th style="text-align:left;padding:6px">Как попадает в документ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:6px;border-top:1px solid var(--border)"><code class="inline">ДДПАвто</code></td>
+          <td style="padding:6px;border-top:1px solid var(--border)">ДДП — автозагрузка</td>
+          <td style="padding:6px;border-top:1px solid var(--border);font-size:16px">🌐</td>
+          <td style="padding:6px;border-top:1px solid var(--border)">
+            Автоматически при загрузке из Сигмы:<br>
+            • Обработка <code class="inline">ЧтениеДеклараций</code> (кнопка «Сформировать» → «Создать документы»)<br>
+            • EPF <code class="inline">APIСигма</code> (кнопка ОбновитьОперации в АРМ)<br>
+            Также — при ручном создании с обеспечением (≠0)
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:6px;border-top:1px solid var(--border)"><code class="inline">ТДФайл</code></td>
+          <td style="padding:6px;border-top:1px solid var(--border)">ТД — ручная загрузка</td>
+          <td style="padding:6px;border-top:1px solid var(--border);font-size:16px">📑</td>
+          <td style="padding:6px;border-top:1px solid var(--border)">
+            Вручную через новую обработку <b>«Загрузка реестра ТД»</b>:<br>
+            Владимир выбирает CSV → matcher создаёт документы для ТолькоТД-клиентов<br>
+            Также — при ручном создании без обеспечения (СуммаОбеспечения = 0)
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin:10px 0 0;font-size:12px;color:var(--text-dim)">
+      Плюс реквизит шапки <code class="inline">Документ.ОперацияПоПоручительству.ВидОперации</code> типа <code class="inline">ПеречислениеСсылка.ВидыОперацийПоручительства</code>. Заполняется автоматически обработкой-источником. При ручном создании дефолт по логике: если в шапке указана <code class="inline">СуммаОбеспечения &gt; 0</code> → <code class="inline">ДДПАвто</code>, иначе → <code class="inline">ТДФайл</code>. Пользователь может переопределить вручную в шапке.
+    </p>
+  </div>
+
+  <h4>Как это выглядит в журнале документов</h4>
+
+  <div style="background:#1e1e24;border:1px solid var(--border);border-radius:8px;padding:0;margin:16px 0;overflow:hidden">
+    <div style="background:#2b2b35;padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+      <span><b>Операции по поручительству</b> (список документов)</span>
+      <span style="color:var(--text-dim)">— □ ✕</span>
+    </div>
+    <div style="padding:12px;font-size:13px">
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+        <span style="color:var(--text-dim);font-size:12px">ВИД ОПЕРАЦИИ:</span>
+        <button style="background:var(--primary,#4a9eff);border:none;color:#fff;padding:4px 14px;border-radius:16px;font-size:12px">Все (1678)</button>
+        <button style="background:#3a3a4a;border:none;color:#fff;padding:4px 14px;border-radius:16px;font-size:12px">🌐 ДДП — автозагрузка (1572)</button>
+        <button style="background:#3a3a4a;border:none;color:#fff;padding:4px 14px;border-radius:16px;font-size:12px">📑 ТД — ручная загрузка (0 → 106)</button>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="background:#2b2b35;color:var(--text-dim)">
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Дата</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Номер</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">Контрагент</th>
+            <th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)">№ ГТД</th>
+            <th style="text-align:center;padding:6px 8px;border-bottom:1px solid var(--border)">Вид операции</th>
+            <th style="text-align:right;padding:6px 8px;border-bottom:1px solid var(--border)">Обеспечение</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-left:3px solid #4a9eff"><td style="padding:6px 8px">10.04.26</td><td style="padding:6px 8px;font-family:monospace">ОПП-000142</td><td style="padding:6px 8px">Трейд Солюшнс</td><td style="padding:6px 8px;font-family:monospace">10216170/.../1234</td><td style="padding:6px 8px;text-align:center">🌐 ДДП авто</td><td style="padding:6px 8px;text-align:right">300 000</td></tr>
+          <tr style="background:#25252f;border-left:3px solid var(--good)"><td style="padding:6px 8px">10.04.26</td><td style="padding:6px 8px;font-family:monospace">ОПП-000291</td><td style="padding:6px 8px">ООО «Логист+»</td><td style="padding:6px 8px;font-family:monospace">10719110/.../7890</td><td style="padding:6px 8px;text-align:center">📑 ТД файл</td><td style="padding:6px 8px;text-align:right;color:var(--text-dim)">0</td></tr>
+          <tr style="border-left:3px solid #4a9eff"><td style="padding:6px 8px">09.04.26</td><td style="padding:6px 8px;font-family:monospace">ОПП-000141</td><td style="padding:6px 8px">Рене-Логистика</td><td style="padding:6px 8px;font-family:monospace">10216170/.../1230</td><td style="padding:6px 8px;text-align:center">🌐 ДДП авто</td><td style="padding:6px 8px;text-align:right">1 700 000</td></tr>
+          <tr style="background:#25252f;border-left:3px solid var(--good)"><td style="padding:6px 8px">09.04.26</td><td style="padding:6px 8px;font-family:monospace">ОПП-000292</td><td style="padding:6px 8px">ООО «Карго-Экспресс»</td><td style="padding:6px 8px;font-family:monospace">10719110/.../7891</td><td style="padding:6px 8px;text-align:center">📑 ТД файл</td><td style="padding:6px 8px;text-align:right;color:var(--text-dim)">0</td></tr>
+          <tr style="border-left:3px solid #4a9eff"><td style="padding:6px 8px">08.04.26</td><td style="padding:6px 8px;font-family:monospace">ОПП-000140</td><td style="padding:6px 8px">Транс Атлантик</td><td style="padding:6px 8px;font-family:monospace">10216170/.../1228</td><td style="padding:6px 8px;text-align:center">🌐 ДДП авто</td><td style="padding:6px 8px;text-align:right">2 950 000</td></tr>
+        </tbody>
+      </table>
+
+      <div style="background:#1a1a22;padding:10px 14px;border-radius:4px;margin-top:12px;font-size:12px;color:var(--text-dim)">
+        <b>Цветная полоса слева</b> (условное оформление по <code class="inline">ВидОперации</code>): синий = ДДП авто, зелёный = ТД файл. Колонка «Вид операции» с иконкой дублирует для однозначности. Быстрый фильтр сверху — одним кликом переключает отображение.
+      </div>
+    </div>
+  </div>
+
+  <h4>Миграция существующих 1572 документов</h4>
+  <p style="margin:0 0 8px">Один раз при первом развёртывании: у <b>всех существующих документов</b> проставляется <code class="inline">ВидОперации = ДДПАвто</code>. Это корректно, потому что все они были созданы через «Чтение деклараций» / APIСигма — ни один документ ТолькоТД-клиента в базу ещё не попадал (0 в статистике). Документы с <code class="inline">ВидОперации = ТДФайл</code> появятся только после первого запуска Владимиром новой обработки «Загрузка реестра ТД».</p>
+  <div style="background:#25252f;padding:10px 14px;border-radius:4px;margin-top:8px;font-size:12px;color:var(--text-dim)">
+    <b>Технически:</b> при установке расширения хук <code class="inline">ОбновлениеИнформационнойБазы</code> выполняет <code class="inline">UPDATE Документ.ОперацияПоПоручительству SET ВидОперации = &ДДПАвто WHERE ВидОперации IS NULL</code>. Занимает ~1-2 сек на базу.
+  </div>
+
+  <hr class="thin">
+
+  <h3>Что ещё в Phase 1 (параллельно, не блокирует загрузку реестра)</h3>
+  <div class="grid grid-2">
+    <div class="card">
+      <h4 style="margin-top:0">В Перечисление.СтатусыТранзита</h4>
+      <p style="margin:0;font-size:13px">Добавляем значение <b>ТаможенныйДосмотр</b> (в списке сейчас 12 статусов, этого нет). Используется операторами при появлении особого статуса ТД на границе.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">В ТЧ КодыCMR документа ОперацияПоПоручительству</h4>
+      <p style="margin:0;font-size:13px">Добавляем реквизит <b>КодТНВЭД</b> (Строка 10). В ТЧ обработок АРМ/ЧтениеДеклараций он уже есть — переносим на сам документ, чтобы Schema 4 считал штраф за коды <b>per-ТД</b>, а не суммарно.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h4 style="margin-top:0">Опционально: реквизит <code class="inline">Контрагенты.ТипУчета</code> как fallback</h4>
+    <p style="margin:0;font-size:13px">Обработка может одновременно «обучать» реквизит на справочнике: если у клиента все строки получили один и тот же ТипУчета — выставить его и на карточку контрагента. Это нужно только для <b>ручно созданных новых документов</b>, где нет CSV-строки — тогда сработает fallback (стр. 41-48 исРасчет). Для документов из API+CSV это не нужно, у них уже есть per-row ТипУчета.</p>
+  </div>
+
+  <hr class="thin">
+
+  <h3>Что НЕ делаем (и почему)</h3>
+  <table style="width:100%;font-size:13px;border-collapse:collapse">
+    <thead>
+      <tr style="background:var(--surface-2);color:var(--text-dim)"><th style="text-align:left;padding:8px">Что НЕ делаем</th><th style="text-align:left;padding:8px">Причина</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:8px;border-top:1px solid var(--border)">Отдельный регистр сведений «ВыпущенныеТД» с копией всех строк CSV</td><td style="padding:8px;border-top:1px solid var(--border)">Избыточно — после сопоставления данные ТД живут в ТЧ ДанныеДокументов нужного документа. Регистр добавил бы двойной источник истины</td></tr>
+      <tr><td style="padding:8px;border-top:1px solid var(--border)">Классификацию только на уровне контрагента</td><td style="padding:8px;border-top:1px solid var(--border)">Неточно: один клиент может иметь и комплексные, и только-ТД, и только-обеспечение рейсы. Точность достигается per-ТД в ТЧ ДанныеДокументов</td></tr>
+      <tr><td style="padding:8px;border-top:1px solid var(--border)">Прямая загрузка из Sigma PISrv</td><td style="padding:8px;border-top:1px solid var(--border)">После инцидента 2026-04-08 сервер Sigma под ограничениями (10-15 сек между запросами, только ночью). CSV Владимира полностью покрывает Phase 1</td></tr>
+      <tr><td style="padding:8px;border-top:1px solid var(--border)">Новые режимы в <code class="inline">исРасчет</code></td><td style="padding:8px;border-top:1px solid var(--border)">Вся логика трёх типов учёта уже написана (per-row + fallback). Работает, как только ТипУчета в ТЧ заполнен</td></tr>
+      <tr><td style="padding:8px;border-top:1px solid var(--border)">Трогать АРМ или ЧтениеДеклараций</td><td style="padding:8px;border-top:1px solid var(--border)">АРМ пересчитывает, ЧтениеДеклараций парсит XML. Новая обработка — отдельный инструмент для CSV-реестра Владимира</td></tr>
+    </tbody>
+  </table>
+
+  <hr class="thin">
+
+  <h3>Проверочные точки (как поймём, что работает)</h3>
+  <pre class="code">[ ] ТЧ ДанныеДокументов.ТипУчета IS NULL: было 1864 → стало &lt; 200 (покрытие CSV за период)
+[ ] Документов типа ТолькоТД: было 0 → создано ~30-50 (за 4-6 недель истории, 7 за 6 дней по факту)
+[ ] Строк ТолькоОбеспечение: было 3 → стало ~50-100 (ДДП без пары в CSV)
+[ ] В обогащённых строках ДанныеДокументов: Рег.№ТД, Подразделение, КоличествоКодовТНВЭД заполнены
+[ ] 98%+ CSV-строк сопоставлены автоматически (по реальным данным: 478 из 485 = 98.6%)
+[ ] На 10 документах ТолькоТД: СуммаОбеспечения=0, цена ТД считается
+[ ] На 10 строках ТолькоОбеспечение: штраф за коды CMR=0, обеспечение считается
+[ ] На 10 строках Комплекс: считается и обеспечение, и CMR, и ТД
+[ ] Миграция: у 100% существующих 1572 документов ВидОперации = ДДПАвто
+[ ] Новые документы из «Загрузка реестра ТД»: ВидОперации = ТДФайл, СуммаОбеспечения = 0
+[ ] Форма списка: переключение чипов «ДДП авто / ТД файл / Все» работает &lt; 1 сек
+[ ] Форма списка: цветная полоса слева (синяя/зелёная) видна
+[ ] BSL Lint новой обработки: 0 BLOCKER
+[ ] YAxUnit: тесты 3-шагового matcher (точное совпадение, альт.ключ, создание нового, маркировка "без пары")
+[ ] YAxUnit: тесты автоматического выставления ВидОперации (через ЧтениеДеклараций → ДДПАвто, через ЗагрузкаРееструТД → ТДФайл)</pre>
+</section>
+
+<footer>
+  <b>Источники:</b>
+  <div class="path">
+    • docs/requirements/Логика_ТД_Схемы.md — 8 ASCII-схем от Владимира<br>
+    • docs/requirements/Анализ_Логики_ТД.md — разбор гипотез A/B/Hybrid<br>
+    • docs/td_architecture.md — полный план реализации (654 строки)<br>
+    • src/cfe/Русский_Транзит/Documents/ОперацияПоПоручительству.xml — структура ТЧ<br>
+    • src/cfe/Русский_Транзит/CommonModules/исРасчет/Ext/Module.bsl — точка входа расчёта<br>
+    • epf/APIСигма/Forms/Форма/Ext/Form/Module.bsl — парсер CSV Сигмы (П-04 fix 2026-04-07)
+  </div>
+  <p style="margin-top:12px;color:var(--text-muted);font-size:12px">
+    Макет сгенерирован 23.04.2026 для встречи по Phase 1 ТД-логики. Тема — тёмная, язык — русский, интерфейс — интерактивный (master-detail + калькулятор).
+  </p>
+</footer>
+
+</div>
+
+<script>
+// ==== Master-detail: click ТД row → filter КодыCMR ====
+(function(){
+  const ddRows = document.querySelectorAll('#tbl-dd tr.dd-row');
+  const cmrRows = document.querySelectorAll('#tbl-cmr tr.cmr-row');
+  const activeLabel = document.getElementById('active-td-name');
+  const aggUniq = document.getElementById('agg-uniq');
+  const aggCount = document.getElementById('agg-count');
+  const aggOver = document.getElementById('agg-over');
+  const aggPrice = document.getElementById('agg-price');
+  const BASE = 1000;
+
+  function applyFilter(key){
+    ddRows.forEach(r => r.classList.toggle('row-selected', r.dataset.key === key));
+    let count = 0;
+    const uniqSet = new Set();
+    cmrRows.forEach(r => {
+      const match = r.dataset.dd === key;
+      r.classList.toggle('hidden', !match);
+      if (match) {
+        count++;
+        uniqSet.add(r.cells[4].textContent.trim());
+      }
+    });
+    const uniq = uniqSet.size;
+    const over = Math.max(0, uniq - 5);
+    const penalty = over * 0.2 * BASE;
+    const total = BASE + penalty;
+    activeLabel.textContent = key;
+    aggUniq.textContent = uniq;
+    aggCount.textContent = count;
+    aggOver.textContent = over > 0 ? (over + ' код' + (over === 1 ? '' : 'а') + ' → штраф ' + penalty.toLocaleString('ru-RU') + ' руб') : 'нет превышения';
+    aggPrice.innerHTML = '<b style="color:var(--good)">' + total.toLocaleString('ru-RU') + ' руб</b>';
+  }
+
+  ddRows.forEach(r => {
+    r.style.cursor = 'pointer';
+    r.addEventListener('click', () => applyFilter(r.dataset.key));
+  });
+
+  // initial
+  applyFilter('ЭТД-001');
+})();
+
+// ==== Calculator: WRONG vs RIGHT Schema 4 ====
+(function(){
+  const iCena = document.getElementById('i-cena');
+  const iA = document.getElementById('i-a');
+  const iB = document.getElementById('i-b');
+  const iDup = document.getElementById('i-dup');
+  const wrongCalc = document.getElementById('wrong-calc');
+  const rightCalc = document.getElementById('right-calc');
+  const wrongTotal = document.getElementById('wrong-total');
+  const rightTotal = document.getElementById('right-total');
+  const diffBox = document.getElementById('diff-box');
+
+  function fmt(n){ return Math.round(n).toLocaleString('ru-RU'); }
+
+  function recalc(){
+    const P = Number(iCena.value) || 0;
+    const A = Number(iA.value) || 0;
+    const B = Number(iB.value) || 0;
+    const D = Math.min(Number(iDup.value) || 0, Math.min(A, B));
+    const KOL = 2;
+
+    const uniqAll = A + B - D;
+    const baseW = P * KOL;
+    const overW = Math.max(0, uniqAll - 5);
+    const penaltyW = overW * 0.2 * P;
+    const totalW = baseW + penaltyW;
+
+    const baseR = P * KOL;
+    const overA = Math.max(0, A - 5);
+    const overB = Math.max(0, B - 5);
+    const penaltyA = overA * 0.2 * P;
+    const penaltyB = overB * 0.2 * P;
+    const totalR = baseR + penaltyA + penaltyB;
+
+    wrongCalc.innerHTML =
+      'uniq_all = ' + A + ' + ' + B + ' − ' + D + ' = <b>' + uniqAll + '</b><br>' +
+      'base = ' + fmt(P) + ' × ' + KOL + ' = <b>' + fmt(baseW) + '</b><br>' +
+      'штраф = max(0, ' + uniqAll + ' − 5) × 0.2 × ' + fmt(P) + ' = <b>' + fmt(penaltyW) + '</b>';
+
+    rightCalc.innerHTML =
+      'base = ' + fmt(P) + ' × ' + KOL + ' = <b>' + fmt(baseR) + '</b><br>' +
+      'штраф_A = max(0, ' + A + ' − 5) × 0.2 × ' + fmt(P) + ' = <b>' + fmt(penaltyA) + '</b><br>' +
+      'штраф_B = max(0, ' + B + ' − 5) × 0.2 × ' + fmt(P) + ' = <b>' + fmt(penaltyB) + '</b>';
+
+    wrongTotal.textContent = fmt(totalW) + ' руб';
+    rightTotal.textContent = fmt(totalR) + ' руб';
+
+    const diff = totalR - totalW;
+    const sign = diff > 0 ? '+' : '';
+    const color = diff === 0 ? 'var(--text-dim)' : (diff > 0 ? 'var(--warn)' : 'var(--good)');
+    const msg = diff === 0
+      ? 'Разницы нет — все ТД в пределах 5 кодов'
+      : (diff > 0
+        ? 'Правильная логика даёт БОЛЬШЕ на ' + fmt(Math.abs(diff)) + ' руб — клиенты с равномерными ТД платят по-честному (штраф не "размазан")'
+        : 'Правильная логика даёт МЕНЬШЕ на ' + fmt(Math.abs(diff)) + ' руб — клиенты с одной большой ТД и мелкими получали незаслуженный штраф'
+        );
+    diffBox.innerHTML = '<span style="color:' + color + '">Δ (RIGHT − WRONG) = ' + sign + fmt(diff) + ' руб</span> — ' + msg;
+  }
+
+  [iCena, iA, iB, iDup].forEach(i => i.addEventListener('input', recalc));
+  recalc();
+})();
+
+// ==== Tabs (visual only, not functional) ====
+document.querySelectorAll('.mockup-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.mockup-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

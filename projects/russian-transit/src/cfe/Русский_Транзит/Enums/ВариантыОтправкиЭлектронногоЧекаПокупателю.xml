@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Enum uuid="d1fd5901-bd64-47f4-a5c5-c2a0a34204a3">
+		<InternalInfo>
+			<xr:GeneratedType name="EnumRef.ВариантыОтправкиЭлектронногоЧекаПокупателю" category="Ref">
+				<xr:TypeId>41469758-1413-4484-9e3f-c40616c4f9a1</xr:TypeId>
+				<xr:ValueId>b130b5f5-ed1d-4cef-8b3c-8ba76eba449d</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumManager.ВариантыОтправкиЭлектронногоЧекаПокупателю" category="Manager">
+				<xr:TypeId>fb74db09-cf26-4ce6-b491-38e757e6a996</xr:TypeId>
+				<xr:ValueId>61e67ebd-0019-4e28-8426-a52dd7525262</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumList.ВариантыОтправкиЭлектронногоЧекаПокупателю" category="List">
+				<xr:TypeId>fd7bee34-637e-4f4d-b7e8-a59e95d0672b</xr:TypeId>
+				<xr:ValueId>33b38c56-e608-4b47-9bec-8140e2da8527</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<ObjectBelonging>Adopted</ObjectBelonging>
+			<Name>ВариантыОтправкиЭлектронногоЧекаПокупателю</Name>
+			<Comment/>
+			<ExtendedConfigurationObject>71d57a20-9031-4a04-8a86-5b804bdbd447</ExtendedConfigurationObject>
+		</Properties>
+		<ChildObjects>
+			<EnumValue uuid="24c0e4b2-1da7-4328-a3ea-142aec6d8bba">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>ОтправитьSMS</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>029160b2-bc59-496d-a50d-d878f982ab8b</ExtendedConfigurationObject>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="a9be5f66-3c35-45a0-8550-7de2b02a9f56">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>НеОтправлять</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>2a25576d-70fc-4fee-90c6-dd09006387fe</ExtendedConfigurationObject>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="99d964ce-76a3-4bce-8c25-c377577d101f">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>ОтправитьEmail</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>6fa4e77c-7687-4da7-9aa7-9d69998b5d65</ExtendedConfigurationObject>
+				</Properties>
+			</EnumValue>
+		</ChildObjects>
+	</Enum>
+</MetaDataObject>

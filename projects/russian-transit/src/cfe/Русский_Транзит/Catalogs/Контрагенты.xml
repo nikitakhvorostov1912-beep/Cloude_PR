@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Catalog uuid="99a58597-5fac-438a-8106-ec963b30340d">
+		<InternalInfo>
+			<xr:GeneratedType name="CatalogObject.Контрагенты" category="Object">
+				<xr:TypeId>3f61f8ac-a94d-45c1-93c1-a0aa7b4c696f</xr:TypeId>
+				<xr:ValueId>7d65143d-cffe-4cbe-9b6d-b610e176d949</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogRef.Контрагенты" category="Ref">
+				<xr:TypeId>9782e7ba-38af-4532-b0c1-430aecfe11bc</xr:TypeId>
+				<xr:ValueId>eb9951ac-f8b2-4d19-a4fc-0d3a5d7c28b9</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogSelection.Контрагенты" category="Selection">
+				<xr:TypeId>629dabdc-7ed0-4ac7-8d27-3b11525818da</xr:TypeId>
+				<xr:ValueId>068e8bad-4ff2-44e1-9f19-b9762d6128f8</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogList.Контрагенты" category="List">
+				<xr:TypeId>2c392cd2-fdf8-4e77-8721-88b46e62d8eb</xr:TypeId>
+				<xr:ValueId>442c20ec-2f1f-4645-b7c3-d7105ec87e30</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogManager.Контрагенты" category="Manager">
+				<xr:TypeId>b286c8ee-c3b2-4b71-a84d-3d8de96a9d7e</xr:TypeId>
+				<xr:ValueId>7235061d-a1f9-439b-a9b2-7ff45e5751ec</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<ObjectBelonging>Adopted</ObjectBelonging>
+			<Name>Контрагенты</Name>
+			<Comment/>
+			<ExtendedConfigurationObject>4259c461-12b1-4f3e-8283-5927c75afdb6</ExtendedConfigurationObject>
+			<DescriptionLength>100</DescriptionLength>
+		</Properties>
+		<ChildObjects>
+			<Attribute uuid="d9beb211-9683-41ab-ba15-89e51622ea57">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>КодПоОКПО</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>b1a31a19-7fc9-47b2-a081-acbc8a017520</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>10</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="8c1ace66-d5aa-445d-928a-5bde14344ceb">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>ГоловнойКонтрагент</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>9a4dd8c0-cb11-49ac-a82d-7239dd0e26a5</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>cfg:CatalogRef.Контрагенты</v8:Type>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="8548fa83-c6d4-4632-b162-0652a770717d">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>НДСПоСтавкам4и2</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>0692e59d-2816-44e5-9ea7-1e7fb8f0b391</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:boolean</v8:Type>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="5ea57d51-193b-41bd-a992-b4126710b94b">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>ИНН</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>489feb46-8450-495a-ab9b-547fdd55c2bc</ExtendedConfigurationObject>
+					<Type>
+						<v8:TypeSet>cfg:DefinedType.ИНН</v8:TypeSet>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="e13dd4a5-0f46-4a41-b923-13bcf39ef37b">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>КПП</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>ea256d8b-5500-4819-9668-837744212add</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>9</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="901dace1-b069-4cfe-9fc4-28951f821ea2">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>РегистрационныйНомер</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>21ab9d4e-9a58-4fbf-9e95-84a659b869e9</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>50</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="37e3e83b-7892-4063-a5d5-849fcb969d43">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>СтранаРегистрации</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>a963e108-31e6-44d8-9094-7db33fdcb410</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>cfg:CatalogRef.СтраныМира</v8:Type>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="087a39e2-0c2f-49d8-b9d7-a06a943a4f99">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>НалоговыйНомер</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>d0800e2e-b103-41a7-a887-ca049af6677e</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>50</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="2c6753dd-1926-4056-bdfe-70c4bc6bc550">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>НаименованиеПолное</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>be19691e-3e4a-44a7-96c2-ce843902e27e</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>250</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="23dc0842-524c-4f3b-9a39-a046154ab929">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>НаименованиеМеждународное</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>b5729a90-7b03-4912-9990-210602af51f1</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>250</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="78d596aa-5785-4dce-9623-3a6d222d06c8">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>НаименованиеВТранскрипции</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>55f1acc9-be56-4eaa-91eb-b8b7595993ab</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>550</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="91f1a407-c850-4130-b3f5-847dd7a3a031">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>Партнер</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>ce59e7d4-ce32-4e73-8b06-cda594aec2b3</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>cfg:CatalogRef.Партнеры</v8:Type>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="ded5d8fb-d973-4ba0-ae2b-da09ec45ac40">
+				<InternalInfo/>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>ДополнительнаяИнформация</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>c5da63fe-ed72-43e0-8894-96a84443478c</ExtendedConfigurationObject>
+					<Type>
+						<v8:Type>xs:string</v8:Type>
+						<v8:StringQualifiers>
+							<v8:Length>0</v8:Length>
+							<v8:AllowedLength>Variable</v8:AllowedLength>
+						</v8:StringQualifiers>
+					</Type>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="ee063221-b9b7-4c5d-af33-f2342210baea">
+				<Properties>
+					<Name>Заказчик</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Заказчик</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+					<Type>
+						<v8:Type>cfg:CatalogRef.Контрагенты</v8:Type>
+					</Type>
+					<PasswordMode>false</PasswordMode>
+					<Format/>
+					<EditFormat/>
+					<ToolTip/>
+					<MarkNegatives>false</MarkNegatives>
+					<Mask/>
+					<MultiLine>false</MultiLine>
+					<ExtendedEdit>false</ExtendedEdit>
+					<MinValue xsi:nil="true"/>
+					<MaxValue xsi:nil="true"/>
+					<FillFromFillingValue>false</FillFromFillingValue>
+					<FillValue xsi:nil="true"/>
+					<FillChecking>DontCheck</FillChecking>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<ChoiceParameterLinks/>
+					<ChoiceParameters/>
+					<QuickChoice>Auto</QuickChoice>
+					<CreateOnInput>Auto</CreateOnInput>
+					<ChoiceForm/>
+					<LinkByType/>
+					<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+					<Use>ForItem</Use>
+					<Indexing>DontIndex</Indexing>
+					<FullTextSearch>Use</FullTextSearch>
+					<DataHistory>Use</DataHistory>
+				</Properties>
+			</Attribute>
+			<TabularSection uuid="1879a8b4-6a9e-41fb-9aa7-a50e017fb67a">
+				<InternalInfo>
+					<xr:GeneratedType name="CatalogTabularSection.Контрагенты.КонтактнаяИнформация" category="TabularSection">
+						<xr:TypeId>68ca6c2a-e612-4938-8b53-8d6c78e2ffce</xr:TypeId>
+						<xr:ValueId>6f71f9b3-37b1-4770-bd68-e2a73e2cdf34</xr:ValueId>
+					</xr:GeneratedType>
+					<xr:GeneratedType name="CatalogTabularSectionRow.Контрагенты.КонтактнаяИнформация" category="TabularSectionRow">
+						<xr:TypeId>c3980af2-36fd-4171-9683-363cac3db8ef</xr:TypeId>
+						<xr:ValueId>d9e6934f-e29a-4221-a663-d1f7f14ed581</xr:ValueId>
+					</xr:GeneratedType>
+				</InternalInfo>
+				<Properties>
+					<ObjectBelonging>Adopted</ObjectBelonging>
+					<Name>КонтактнаяИнформация</Name>
+					<Comment/>
+					<ExtendedConfigurationObject>2629d638-1c9b-4112-b68e-0560bb2d997b</ExtendedConfigurationObject>
+				</Properties>
+				<ChildObjects>
+					<Attribute uuid="0ddf5a18-4718-485a-8d38-34aecbf6287d">
+						<InternalInfo/>
+						<Properties>
+							<ObjectBelonging>Adopted</ObjectBelonging>
+							<Name>АдресЭП</Name>
+							<Comment/>
+							<ExtendedConfigurationObject>7ceb314a-6d3d-4eb9-927d-ec92d5e2ffd3</ExtendedConfigurationObject>
+							<Type>
+								<v8:Type>xs:string</v8:Type>
+								<v8:StringQualifiers>
+									<v8:Length>100</v8:Length>
+									<v8:AllowedLength>Variable</v8:AllowedLength>
+								</v8:StringQualifiers>
+							</Type>
+						</Properties>
+					</Attribute>
+				</ChildObjects>
+			</TabularSection>
+			<Attribute uuid="7f6f2e88-e08a-45da-b08c-a4ec1bfcbbda">
+				<Properties>
+					<Name>ТипУчета</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Тип учета</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Определяет какие услуги рассчитывать: Комплекс / Только обеспечение / Только ТД</Comment>
+					<Type>
+						<v8:Type>cfg:EnumRef.ТипыУчетаКлиентов</v8:Type>
+					</Type>
+					<PasswordMode>false</PasswordMode>
+					<Format/>
+					<EditFormat/>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Комплекс = ТД + Обеспечение + ПИ, Только обеспечение = без расчёта ТД, Только ТД = без расчёта обеспечения</v8:content>
+						</v8:item>
+					</ToolTip>
+					<MarkNegatives>false</MarkNegatives>
+					<Mask/>
+					<MultiLine>false</MultiLine>
+					<ExtendedEdit>false</ExtendedEdit>
+					<MinValue xsi:nil="true"/>
+					<MaxValue xsi:nil="true"/>
+					<FillFromFillingValue>false</FillFromFillingValue>
+					<FillValue xsi:type="xs:string"/>
+					<FillChecking>DontCheck</FillChecking>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<ChoiceParameterLinks/>
+					<ChoiceParameters/>
+					<QuickChoice>Auto</QuickChoice>
+					<CreateOnInput>Auto</CreateOnInput>
+					<ChoiceForm/>
+					<LinkByType/>
+					<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+					<Indexing>DontIndex</Indexing>
+					<FullTextSearch>Use</FullTextSearch>
+					<DataHistory>Use</DataHistory>
+				</Properties>
+			</Attribute>
+			<Form>ФормаЭлемента</Form>
+		</ChildObjects>
+	</Catalog>
+</MetaDataObject>

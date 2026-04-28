@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Enum uuid="60cd3d5c-fbcd-4bc1-ba2e-ed12706e558b">
+		<InternalInfo>
+			<xr:GeneratedType name="EnumRef.ИнтервалыФормированияСчетовПоМашинам" category="Ref">
+				<xr:TypeId>a3eada1c-c9dc-4c67-bc75-d7c10f7f5cf2</xr:TypeId>
+				<xr:ValueId>1e54e70d-cf7f-4933-9b48-c2b33c333a13</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumManager.ИнтервалыФормированияСчетовПоМашинам" category="Manager">
+				<xr:TypeId>ff5e3ebf-7ea1-40f2-893a-14277586f74b</xr:TypeId>
+				<xr:ValueId>e3477dbb-21d8-42fb-989e-484033a3d179</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumList.ИнтервалыФормированияСчетовПоМашинам" category="List">
+				<xr:TypeId>e35e2913-251a-463b-8960-42f71de1743c</xr:TypeId>
+				<xr:ValueId>caf0757e-05b7-40a7-83a0-107f7a040b0e</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<Name>ИнтервалыФормированияСчетовПоМашинам</Name>
+			<Synonym>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Интервалы формирования счетов по машинам</v8:content>
+				</v8:item>
+			</Synonym>
+			<Comment/>
+			<UseStandardCommands>false</UseStandardCommands>
+			<Characteristics/>
+			<QuickChoice>true</QuickChoice>
+			<ChoiceMode>BothWays</ChoiceMode>
+			<DefaultListForm/>
+			<DefaultChoiceForm/>
+			<AuxiliaryListForm/>
+			<AuxiliaryChoiceForm/>
+			<ListPresentation/>
+			<ExtendedListPresentation/>
+			<Explanation/>
+			<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+		</Properties>
+		<ChildObjects>
+			<EnumValue uuid="50563f5a-6858-4c29-86f1-e22160479230">
+				<Properties>
+					<Name>Ежедневно</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Ежедневно</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="d4dbbe60-6334-4322-badc-0d8d0cf39faf">
+				<Properties>
+					<Name>Понедельник</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Понедельник (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="ac6aa626-31ad-40b3-9fae-a5c392c698f4">
+				<Properties>
+					<Name>Вторник</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Вторник (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="cd711c39-60b4-4d51-b43c-8fa522465838">
+				<Properties>
+					<Name>Среда</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Среда (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="af14a5f1-dc5a-49d5-9227-afa9de979ddc">
+				<Properties>
+					<Name>Четверг</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Четверг (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="271081e7-6915-484f-8ee0-908420eec2e6">
+				<Properties>
+					<Name>Пятница</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Пятница (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="97c80cdd-f60c-440b-9e9b-7d3bbf5eb7a2">
+				<Properties>
+					<Name>Суббота</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Суббота (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="0f3ba2da-1551-4c96-9f12-db649f66d410">
+				<Properties>
+					<Name>Воскресенье</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Воскресенье (еженедельно)</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="a7168d65-1559-49b4-939e-361a0fc45845">
+				<Properties>
+					<Name>ПервоеЧислоМесяца</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Первое число каждого месяца</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="a1fa5b4c-81d5-474f-a590-377c35470340">
+				<Properties>
+					<Name>ШестнадцатоеЧислоМесяца</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>16-е число каждого месяца</v8:content>
+						</v8:item>
+						<v8:item>
+							<v8:lang>uk</v8:lang>
+							<v8:content>16-е число каждого месяца</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+		</ChildObjects>
+	</Enum>
+</MetaDataObject>

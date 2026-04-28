@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Enum uuid="266c02d7-306d-47ad-9a0b-5d39729cae71">
+		<InternalInfo>
+			<xr:GeneratedType name="EnumRef.СтатусыТранзита" category="Ref">
+				<xr:TypeId>a7447fc3-4356-4755-885f-5eab0866a77c</xr:TypeId>
+				<xr:ValueId>9ee74255-5e71-4ec9-9a8f-9a965a877de2</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumManager.СтатусыТранзита" category="Manager">
+				<xr:TypeId>46a484b3-c9dc-48ea-9dbc-ba9fc2fe3526</xr:TypeId>
+				<xr:ValueId>1272a51c-235d-499b-bd8a-e733462e5f53</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="EnumList.СтатусыТранзита" category="List">
+				<xr:TypeId>77bc6242-78b9-41d2-bc24-22fc2161f7a4</xr:TypeId>
+				<xr:ValueId>8f40d157-814e-4c90-9e89-10c007d598d4</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<Name>СтатусыТранзита</Name>
+			<Synonym>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Статусы транзита</v8:content>
+				</v8:item>
+			</Synonym>
+			<Comment/>
+			<UseStandardCommands>false</UseStandardCommands>
+			<Characteristics/>
+			<QuickChoice>true</QuickChoice>
+			<ChoiceMode>BothWays</ChoiceMode>
+			<DefaultListForm/>
+			<DefaultChoiceForm/>
+			<AuxiliaryListForm/>
+			<AuxiliaryChoiceForm/>
+			<ListPresentation/>
+			<ExtendedListPresentation/>
+			<Explanation/>
+			<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+		</Properties>
+		<ChildObjects>
+			<EnumValue uuid="04ab5fc2-9cd8-44bc-9dfd-07213d6c0780">
+				<Properties>
+					<Name>ТранзитРазрешен</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Транзит разрешен</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="cfb29934-e41e-4ac0-8e6e-c9c9c5051d21">
+				<Properties>
+					<Name>АннулированоСпециалистом</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Аннулировано специалистом</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="1dbb3f79-ceaf-497d-ae18-156652c7acac">
+				<Properties>
+					<Name>ДополнениеЗаключено</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Дополнение заключено</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="22621b61-a88b-43a7-8292-6150dd194164">
+				<Properties>
+					<Name>ДополнениеЗарегистрировано</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Дополнение зарегистрировано</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="8fbd215d-527f-49ab-9972-8bc01bab9659">
+				<Properties>
+					<Name>СредстваРазрезервированы</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Средства разрезервированы</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="454fbdf8-c1ff-4cb6-b5b4-9bcb0735d45c">
+				<Properties>
+					<Name>ТоварНеВыпущен</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Товар не выпущен</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="dee0c368-dabf-407e-a808-de22d2f1925f">
+				<Properties>
+					<Name>ТоварВыпущен</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Товар выпущен</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="6150d17b-2c87-420a-856e-897dcec29c5b">
+				<Properties>
+					<Name>ТранзитЗавершенСОговорками</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Транзит завершен с оговорками</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="2725166f-deee-4a4b-b6c7-80890a4173d2">
+				<Properties>
+					<Name>ВЗаключенииДополненияОтказано</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>В заключении дополнения отказано</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="230d0276-a42a-48c8-993c-13d15e0b312a">
+				<Properties>
+					<Name>ДополнениеОтправлено</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Дополнение отправлено</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="c7dbedf6-a0e7-4194-a145-20d2e9e48965">
+				<Properties>
+					<Name>ТранзитЗавершен</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Транзит завершен</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="432b3f85-b255-47e8-b689-fd027e48a9af">
+				<Properties>
+					<Name>ОтказаноВПриемеДополнения</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Отказано в приеме дополнения</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment/>
+				</Properties>
+			</EnumValue>
+			<EnumValue uuid="e1f2a3b4-c5d6-47e8-89f0-a1b2c3d4e5f6">
+				<Properties>
+					<Name>ТаможенныйДосмотр</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Таможенный досмотр</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Машина остановлена на досмотр — расчёт срока транзита не применяется, ожидание</Comment>
+				</Properties>
+			</EnumValue>
+		</ChildObjects>
+	</Enum>
+</MetaDataObject>

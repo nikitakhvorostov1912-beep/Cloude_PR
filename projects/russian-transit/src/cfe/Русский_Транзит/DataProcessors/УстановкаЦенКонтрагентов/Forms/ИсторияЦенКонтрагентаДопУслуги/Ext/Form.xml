@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Title>
+		<v8:item>
+			<v8:lang>ru</v8:lang>
+			<v8:content>История цен контрагента</v8:content>
+		</v8:item>
+	</Title>
+	<Width>50</Width>
+	<AutoTitle>false</AutoTitle>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
+		<ChildItems>
+			<Button name="ФормаОбновитьДанные" id="33">
+				<Type>CommandBarButton</Type>
+				<DefaultButton>true</DefaultButton>
+				<CommandName>Form.Command.ОбновитьДанные</CommandName>
+				<ExtendedTooltip name="ФормаОбновитьДанныеРасширеннаяПодсказка" id="34"/>
+			</Button>
+			<Button name="ФормаЗакрыть" id="35">
+				<Type>CommandBarButton</Type>
+				<Representation>PictureAndText</Representation>
+				<CommandName>Form.StandardCommand.Close</CommandName>
+				<ExtendedTooltip name="ФормаЗакрытьРасширеннаяПодсказка" id="36"/>
+			</Button>
+		</ChildItems>
+	</AutoCommandBar>
+	<Events>
+		<Event name="OnOpen">ПриОткрытии</Event>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<UsualGroup name="ГруппаИсторияЦен" id="37">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>История цен</v8:content>
+				</v8:item>
+			</Title>
+			<Group>Vertical</Group>
+			<Behavior>Usual</Behavior>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаИсторияЦенРасширеннаяПодсказка" id="38"/>
+			<ChildItems>
+				<Table name="ИсторияЦенУслуг" id="39">
+					<CommandBarLocation>None</CommandBarLocation>
+					<ReadOnly>true</ReadOnly>
+					<UseAlternationRowColor>true</UseAlternationRowColor>
+					<EnableStartDrag>true</EnableStartDrag>
+					<FileDragMode>AsFile</FileDragMode>
+					<DataPath>ИсторияЦенУслуг</DataPath>
+					<RowPictureDataPath>~ИсторияЦенУслуг.DefaultPicture</RowPictureDataPath>
+					<SearchStringLocation>None</SearchStringLocation>
+					<ViewStatusLocation>None</ViewStatusLocation>
+					<SearchControlLocation>None</SearchControlLocation>
+					<AutoRefresh>false</AutoRefresh>
+					<AutoRefreshPeriod>60</AutoRefreshPeriod>
+					<Period>
+						<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+						<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+						<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+					</Period>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<RestoreCurrentRow>false</RestoreCurrentRow>
+					<TopLevelParent xsi:nil="true"/>
+					<ShowRoot>true</ShowRoot>
+					<AllowRootChoice>false</AllowRootChoice>
+					<UpdateOnDataChange>Auto</UpdateOnDataChange>
+					<AllowGettingCurrentRowURL>true</AllowGettingCurrentRowURL>
+					<ContextMenu name="ИсторияЦенУслугКонтекстноеМеню" id="40">
+						<Autofill>false</Autofill>
+					</ContextMenu>
+					<AutoCommandBar name="ИсторияЦенУслугКоманднаяПанель" id="41"/>
+					<ExtendedTooltip name="ИсторияЦенУслугРасширеннаяПодсказка" id="42"/>
+					<SearchStringAddition name="ИсторияЦенУслугСтрокаПоиска" id="43">
+						<AdditionSource>
+							<Item>ИсторияЦенУслуг</Item>
+							<Type>SearchStringRepresentation</Type>
+						</AdditionSource>
+						<ContextMenu name="ИсторияЦенУслугСтрокаПоискаКонтекстноеМеню" id="44"/>
+						<ExtendedTooltip name="ИсторияЦенУслугСтрокаПоискаРасширеннаяПодсказка" id="45"/>
+					</SearchStringAddition>
+					<ViewStatusAddition name="ИсторияЦенУслугСостояниеПросмотра" id="46">
+						<AdditionSource>
+							<Item>ИсторияЦенУслуг</Item>
+							<Type>ViewStatusRepresentation</Type>
+						</AdditionSource>
+						<ContextMenu name="ИсторияЦенУслугСостояниеПросмотраКонтекстноеМеню" id="47"/>
+						<ExtendedTooltip name="ИсторияЦенУслугСостояниеПросмотраРасширеннаяПодсказка" id="48"/>
+					</ViewStatusAddition>
+					<SearchControlAddition name="ИсторияЦенУслугУправлениеПоиском" id="49">
+						<AdditionSource>
+							<Item>ИсторияЦенУслуг</Item>
+							<Type>SearchControl</Type>
+						</AdditionSource>
+						<ContextMenu name="ИсторияЦенУслугУправлениеПоискомКонтекстноеМеню" id="50"/>
+						<ExtendedTooltip name="ИсторияЦенУслугУправлениеПоискомРасширеннаяПодсказка" id="51"/>
+					</SearchControlAddition>
+					<ChildItems>
+						<LabelField name="ИсторияЦенУслугПериод" id="52">
+							<DataPath>~ИсторияЦенУслуг.Period</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Дата установки</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>uk</v8:lang>
+									<v8:content>Дата установки</v8:content>
+								</v8:item>
+							</Title>
+							<Width>8</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<ContextMenu name="ИсторияЦенУслугПериодКонтекстноеМеню" id="53"/>
+							<ExtendedTooltip name="ИсторияЦенУслугПериодРасширеннаяПодсказка" id="54"/>
+						</LabelField>
+						<LabelField name="ИсторияЦенУслугВалюта" id="88">
+							<DataPath>~ИсторияЦенУслуг.Валюта</DataPath>
+							<HeaderHorizontalAlign>Center</HeaderHorizontalAlign>
+							<Width>5</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<ContextMenu name="ИсторияЦенУслугВалютаКонтекстноеМеню" id="89"/>
+							<ExtendedTooltip name="ИсторияЦенУслугВалютаРасширеннаяПодсказка" id="90"/>
+						</LabelField>
+						<LabelField name="ИсторияЦенУслугЦенаУслуги" id="82">
+							<DataPath>~ИсторияЦенУслуг.ЦенаУслуги</DataPath>
+							<HeaderHorizontalAlign>Center</HeaderHorizontalAlign>
+							<Width>10</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<ContextMenu name="ИсторияЦенУслугЦенаУслугиКонтекстноеМеню" id="83"/>
+							<ExtendedTooltip name="ИсторияЦенУслугЦенаУслугиРасширеннаяПодсказка" id="84"/>
+						</LabelField>
+						<LabelField name="ИсторияЦенУслугКоличествоБесплатныхКодов" id="85">
+							<DataPath>~ИсторияЦенУслуг.КоличествоБесплатныхКодов</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Кол-во б/п кодов</v8:content>
+								</v8:item>
+								<v8:item>
+									<v8:lang>uk</v8:lang>
+									<v8:content>Кол-во б/п кодов</v8:content>
+								</v8:item>
+							</Title>
+							<HeaderHorizontalAlign>Center</HeaderHorizontalAlign>
+							<Width>10</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<ContextMenu name="ИсторияЦенУслугКоличествоБесплатныхКодовКонтекстноеМеню" id="86"/>
+							<ExtendedTooltip name="ИсторияЦенУслугКоличествоБесплатныхКодовРасширеннаяПодсказка" id="87"/>
+						</LabelField>
+					</ChildItems>
+				</Table>
+			</ChildItems>
+		</UsualGroup>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Объект" id="1">
+			<Type>
+				<v8:Type>cfg:DataProcessorObject.УстановкаЦенКонтрагентов</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+		</Attribute>
+		<Attribute name="Контрагент" id="4">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Контрагент</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:CatalogRef.Контрагенты</v8:Type>
+			</Type>
+		</Attribute>
+		<Attribute name="Принципал" id="5">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Принципал</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:CatalogRef.ПринципалыУстановкиЦен</v8:Type>
+			</Type>
+		</Attribute>
+		<Attribute name="УслугаОрганизации" id="6">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Услуга организации</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:EnumRef.ТипыДополнительныхУслугОрганизации</v8:Type>
+			</Type>
+		</Attribute>
+		<Attribute name="ИсторияЦенУслуг" id="7">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>История цен услуг</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:DynamicList</v8:Type>
+			</Type>
+			<Settings xsi:type="DynamicList">
+				<ManualQuery>true</ManualQuery>
+				<DynamicDataRead>true</DynamicDataRead>
+				<QueryText>ВЫБРАТЬ
+	ЦенообразованиеДополнительныеУслуги.Период,
+	ЦенообразованиеДополнительныеУслуги.Контрагент,
+	ЦенообразованиеДополнительныеУслуги.Принципал,
+	ЦенообразованиеДополнительныеУслуги.УслугаОрганизации,
+	ЦенообразованиеДополнительныеУслуги.ЦенаУслуги,
+	ЦенообразованиеДополнительныеУслуги.Валюта,
+	ЦенообразованиеДополнительныеУслуги.Ответственный,
+	ЦенообразованиеДополнительныеУслуги.ДатаУстановки
+ИЗ
+	РегистрСведений.ЦенообразованиеДополнительныеУслуги КАК ЦенообразованиеДополнительныеУслуги
+ГДЕ
+	ВЫБОР
+			КОГДА &amp;Контрагент = НЕОПРЕДЕЛЕНО
+				ТОГДА ЛОЖЬ
+			КОГДА &amp;Контрагент = ЗНАЧЕНИЕ(Справочник.Контрагенты.ПустаяСсылка)
+				ТОГДА ЛОЖЬ
+			ИНАЧЕ ЦенообразованиеДополнительныеУслуги.Контрагент = &amp;Контрагент
+		КОНЕЦ
+	И ЦенообразованиеДополнительныеУслуги.Принципал = &amp;Принципал
+	И ЦенообразованиеДополнительныеУслуги.УслугаОрганизации = &amp;УслугаОрганизации</QueryText>
+				<MainTable>1:6b3540a9-6ae7-429c-a2d2-b5c8de1510fc</MainTable>
+				<ListSettings>
+					<dcsset:filter>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>dfcece9d-5077-440b-b6b3-45a5cb4538eb</dcsset:userSettingID>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>Период</dcsset:field>
+							<dcsset:orderType>Desc</dcsset:orderType>
+						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>88619765-ccb3-46c6-ac52-38e9c992ebd4</dcsset:userSettingID>
+					</dcsset:order>
+					<dcsset:conditionalAppearance>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>b75fecce-942b-4aed-abc9-e6a02e460fb3</dcsset:userSettingID>
+					</dcsset:conditionalAppearance>
+					<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+					<dcsset:itemsUserSettingID>911b6018-f537-43e8-a417-da56b22f9aec</dcsset:itemsUserSettingID>
+				</ListSettings>
+			</Settings>
+		</Attribute>
+	</Attributes>
+	<Commands>
+		<Command name="ОбновитьДанные" id="1">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Обновить</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Обновить данные</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Picture>
+				<xr:Ref>StdPicture.Refresh</xr:Ref>
+				<xr:LoadTransparent>true</xr:LoadTransparent>
+			</Picture>
+			<Action>ОбновитьДанные</Action>
+			<Representation>TextPicture</Representation>
+			<CurrentRowUse>DontUse</CurrentRowUse>
+		</Command>
+	</Commands>
+</Form>

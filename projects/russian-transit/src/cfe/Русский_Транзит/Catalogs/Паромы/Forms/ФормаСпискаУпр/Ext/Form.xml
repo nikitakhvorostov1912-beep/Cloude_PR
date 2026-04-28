@@ -1,0 +1,546 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
+	<Width>80</Width>
+	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1"/>
+	<Events>
+		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
+	</Events>
+	<ChildItems>
+		<UsualGroup name="СписокКомпоновщикНастроекПользовательскиеНастройки" id="1">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа пользовательских настроек</v8:content>
+				</v8:item>
+			</Title>
+			<VerticalStretch>false</VerticalStretch>
+			<Group>Vertical</Group>
+			<Behavior>Usual</Behavior>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="СписокКомпоновщикНастроекПользовательскиеНастройкиРасширеннаяПодсказка" id="2"/>
+		</UsualGroup>
+		<Table name="Список" id="3">
+			<Representation>List</Representation>
+			<CommandBarLocation>None</CommandBarLocation>
+			<DefaultItem>true</DefaultItem>
+			<Height>11</Height>
+			<UseAlternationRowColor>true</UseAlternationRowColor>
+			<InitialListView>Beginning</InitialListView>
+			<InitialTreeView>ExpandTopLevel</InitialTreeView>
+			<EnableStartDrag>true</EnableStartDrag>
+			<DataPath>Список</DataPath>
+			<RowPictureDataPath>Список.DefaultPicture</RowPictureDataPath>
+			<AutoRefresh>false</AutoRefresh>
+			<AutoRefreshPeriod>60</AutoRefreshPeriod>
+			<Period>
+				<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+				<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+				<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+			</Period>
+			<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+			<RestoreCurrentRow>false</RestoreCurrentRow>
+			<TopLevelParent xsi:nil="true"/>
+			<ShowRoot>true</ShowRoot>
+			<AllowRootChoice>false</AllowRootChoice>
+			<UpdateOnDataChange>Auto</UpdateOnDataChange>
+			<UserSettingsGroup>СписокКомпоновщикНастроекПользовательскиеНастройки</UserSettingsGroup>
+			<AllowGettingCurrentRowURL>true</AllowGettingCurrentRowURL>
+			<ContextMenu name="СписокКонтекстноеМеню" id="4"/>
+			<AutoCommandBar name="СписокКоманднаяПанель" id="5">
+				<Autofill>false</Autofill>
+			</AutoCommandBar>
+			<ExtendedTooltip name="СписокРасширеннаяПодсказка" id="6"/>
+			<SearchStringAddition name="СписокСтрокаПоиска" id="7">
+				<AdditionSource>
+					<Item>Список</Item>
+					<Type>SearchStringRepresentation</Type>
+				</AdditionSource>
+				<ContextMenu name="СписокСтрокаПоискаКонтекстноеМеню" id="8"/>
+				<ExtendedTooltip name="СписокСтрокаПоискаРасширеннаяПодсказка" id="9"/>
+			</SearchStringAddition>
+			<ViewStatusAddition name="СписокСостояниеПросмотра" id="10">
+				<AdditionSource>
+					<Item>Список</Item>
+					<Type>ViewStatusRepresentation</Type>
+				</AdditionSource>
+				<ContextMenu name="СписокСостояниеПросмотраКонтекстноеМеню" id="11"/>
+				<ExtendedTooltip name="СписокСостояниеПросмотраРасширеннаяПодсказка" id="12"/>
+			</ViewStatusAddition>
+			<SearchControlAddition name="СписокУправлениеПоиском" id="13">
+				<AdditionSource>
+					<Item>Список</Item>
+					<Type>SearchControl</Type>
+				</AdditionSource>
+				<ContextMenu name="СписокУправлениеПоискомКонтекстноеМеню" id="14"/>
+				<ExtendedTooltip name="СписокУправлениеПоискомРасширеннаяПодсказка" id="15"/>
+			</SearchControlAddition>
+			<Events>
+				<Event name="OnActivateRow">СписокПриАктивизацииСтроки</Event>
+			</Events>
+			<ChildItems>
+				<LabelField name="Наименование" id="16">
+					<DataPath>Список.Description</DataPath>
+					<DefaultItem>true</DefaultItem>
+					<ContextMenu name="НаименованиеКонтекстноеМеню" id="17"/>
+					<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="18"/>
+				</LabelField>
+				<LabelField name="Судно" id="22">
+					<DataPath>Список.Судно</DataPath>
+					<ContextMenu name="СудноКонтекстноеМеню" id="23"/>
+					<ExtendedTooltip name="СудноРасширеннаяПодсказка" id="24"/>
+				</LabelField>
+				<LabelField name="ДатаДобавления" id="25">
+					<DataPath>Список.ДатаДобавления</DataPath>
+					<ContextMenu name="ДатаДобавленияКонтекстноеМеню" id="26"/>
+					<ExtendedTooltip name="ДатаДобавленияРасширеннаяПодсказка" id="27"/>
+				</LabelField>
+				<LabelField name="Код" id="19">
+					<DataPath>Список.Code</DataPath>
+					<ContextMenu name="КодКонтекстноеМеню" id="20"/>
+					<ExtendedTooltip name="КодРасширеннаяПодсказка" id="21"/>
+				</LabelField>
+			</ChildItems>
+		</Table>
+		<UsualGroup name="ГруппаМашиныПарома" id="28">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Машины парома</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Группа машины парома</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Group>Vertical</Group>
+			<Behavior>Usual</Behavior>
+			<ExtendedTooltip name="ГруппаМашиныПаромаРасширеннаяПодсказка" id="29"/>
+			<ChildItems>
+				<Table name="СписокМашинПарома" id="30">
+					<UseAlternationRowColor>true</UseAlternationRowColor>
+					<EnableStartDrag>true</EnableStartDrag>
+					<DataPath>СписокМашинПарома</DataPath>
+					<RowPictureDataPath>~СписокМашинПарома.DefaultPicture</RowPictureDataPath>
+					<SearchStringLocation>None</SearchStringLocation>
+					<ViewStatusLocation>None</ViewStatusLocation>
+					<SearchControlLocation>None</SearchControlLocation>
+					<AutoRefresh>false</AutoRefresh>
+					<AutoRefreshPeriod>60</AutoRefreshPeriod>
+					<Period>
+						<v8:variant xsi:type="v8:StandardPeriodVariant">Custom</v8:variant>
+						<v8:startDate>0001-01-01T00:00:00</v8:startDate>
+						<v8:endDate>0001-01-01T00:00:00</v8:endDate>
+					</Period>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<RestoreCurrentRow>false</RestoreCurrentRow>
+					<TopLevelParent xsi:nil="true"/>
+					<ShowRoot>true</ShowRoot>
+					<AllowRootChoice>false</AllowRootChoice>
+					<UpdateOnDataChange>Auto</UpdateOnDataChange>
+					<AllowGettingCurrentRowURL>true</AllowGettingCurrentRowURL>
+					<ContextMenu name="СписокМашинПаромаКонтекстноеМеню" id="31">
+						<Autofill>false</Autofill>
+					</ContextMenu>
+					<AutoCommandBar name="СписокМашинПаромаКоманднаяПанель" id="32">
+						<Autofill>false</Autofill>
+						<ChildItems>
+							<SearchStringAddition name="ДополнениеСтрокаПоиска" id="92">
+								<AdditionSource>
+									<Item>СписокМашинПарома</Item>
+									<Type>SearchStringRepresentation</Type>
+								</AdditionSource>
+								<Title>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Дополнение строка поиска</v8:content>
+									</v8:item>
+								</Title>
+								<ContextMenu name="ДополнениеСтрокаПоискаКонтекстноеМеню" id="93"/>
+								<ExtendedTooltip name="ДополнениеСтрокаПоискаРасширеннаяПодсказка" id="94"/>
+							</SearchStringAddition>
+							<SearchControlAddition name="ДополнениеУправлениеПоиском" id="95">
+								<AdditionSource>
+									<Item>СписокМашинПарома</Item>
+									<Type>SearchControl</Type>
+								</AdditionSource>
+								<Title>
+									<v8:item>
+										<v8:lang>ru</v8:lang>
+										<v8:content>Дополнение управление поиском</v8:content>
+									</v8:item>
+								</Title>
+								<ContextMenu name="ДополнениеУправлениеПоискомКонтекстноеМеню" id="96"/>
+								<ExtendedTooltip name="ДополнениеУправлениеПоискомРасширеннаяПодсказка" id="97"/>
+							</SearchControlAddition>
+						</ChildItems>
+					</AutoCommandBar>
+					<ExtendedTooltip name="СписокМашинПаромаРасширеннаяПодсказка" id="33"/>
+					<SearchStringAddition name="СписокМашинПаромаСтрокаПоиска" id="34">
+						<AdditionSource>
+							<Item>СписокМашинПарома</Item>
+							<Type>SearchStringRepresentation</Type>
+						</AdditionSource>
+						<ContextMenu name="СписокМашинПаромаСтрокаПоискаКонтекстноеМеню" id="35"/>
+						<ExtendedTooltip name="СписокМашинПаромаСтрокаПоискаРасширеннаяПодсказка" id="36"/>
+					</SearchStringAddition>
+					<ViewStatusAddition name="СписокМашинПаромаСостояниеПросмотра" id="37">
+						<AdditionSource>
+							<Item>СписокМашинПарома</Item>
+							<Type>ViewStatusRepresentation</Type>
+						</AdditionSource>
+						<ContextMenu name="СписокМашинПаромаСостояниеПросмотраКонтекстноеМеню" id="38"/>
+						<ExtendedTooltip name="СписокМашинПаромаСостояниеПросмотраРасширеннаяПодсказка" id="39"/>
+					</ViewStatusAddition>
+					<SearchControlAddition name="СписокМашинПаромаУправлениеПоиском" id="40">
+						<AdditionSource>
+							<Item>СписокМашинПарома</Item>
+							<Type>SearchControl</Type>
+						</AdditionSource>
+						<ContextMenu name="СписокМашинПаромаУправлениеПоискомКонтекстноеМеню" id="41"/>
+						<ExtendedTooltip name="СписокМашинПаромаУправлениеПоискомРасширеннаяПодсказка" id="42"/>
+					</SearchControlAddition>
+					<ChildItems>
+						<LabelField name="СписокМашинПаромаДата" id="43">
+							<DataPath>~СписокМашинПарома.Дата</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Дата документа</v8:content>
+								</v8:item>
+							</Title>
+							<Width>13</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<ContextMenu name="СписокМашинПаромаДатаКонтекстноеМеню" id="44"/>
+							<ExtendedTooltip name="СписокМашинПаромаДатаРасширеннаяПодсказка" id="45"/>
+						</LabelField>
+						<LabelField name="СписокМашинПаромаНомер" id="46">
+							<DataPath>~СписокМашинПарома.Номер</DataPath>
+							<Width>13</Width>
+							<ContextMenu name="СписокМашинПаромаНомерКонтекстноеМеню" id="47"/>
+							<ExtendedTooltip name="СписокМашинПаромаНомерРасширеннаяПодсказка" id="48"/>
+						</LabelField>
+						<ColumnGroup name="СписокМашинПаромаГруппаКолонокКонтрагент" id="63">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Контрагент</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Horizontal</Group>
+							<ShowInHeader>true</ShowInHeader>
+							<ExtendedTooltip name="СписокМашинПаромаГруппаКолонокКонтрагентРасширеннаяПодсказка" id="64"/>
+							<ChildItems>
+								<LabelField name="СписокМашинПаромаКонтрагент" id="49">
+									<DataPath>~СписокМашинПарома.Контрагент</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<ContextMenu name="СписокМашинПаромаКонтрагентКонтекстноеМеню" id="50"/>
+									<ExtendedTooltip name="СписокМашинПаромаКонтрагентРасширеннаяПодсказка" id="51"/>
+								</LabelField>
+								<LabelField name="СписокМашинПаромаКонтрагентСтранаКонтрагентаМеждународныйКод" id="65">
+									<DataPath>~СписокМашинПарома.Контрагент.СтранаКонтрагента.МеждународныйКод</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<Width>2</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<ContextMenu name="СписокМашинПаромаКонтрагентСтранаКонтрагентаМеждународныйКодКонтекстноеМеню" id="66"/>
+									<ExtendedTooltip name="СписокМашинПаромаКонтрагентСтранаКонтрагентаМеждународныйКодРасширеннаяПодсказка" id="67"/>
+								</LabelField>
+							</ChildItems>
+						</ColumnGroup>
+						<LabelField name="СписокМашинПаромаУслугаОрганизации" id="52">
+							<DataPath>~СписокМашинПарома.УслугаОрганизации</DataPath>
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Услуга</v8:content>
+								</v8:item>
+							</Title>
+							<Width>20</Width>
+							<HorizontalStretch>false</HorizontalStretch>
+							<ContextMenu name="СписокМашинПаромаУслугаОрганизацииКонтекстноеМеню" id="53"/>
+							<ExtendedTooltip name="СписокМашинПаромаУслугаОрганизацииРасширеннаяПодсказка" id="54"/>
+						</LabelField>
+						<ColumnGroup name="СписокМашинПаромаГруппаКолонокТС" id="55">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Транспортное средство</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Horizontal</Group>
+							<ShowInHeader>true</ShowInHeader>
+							<HeaderHorizontalAlign>Center</HeaderHorizontalAlign>
+							<ExtendedTooltip name="СписокМашинПаромаГруппаКолонокТСРасширеннаяПодсказка" id="56"/>
+							<ChildItems>
+								<LabelField name="СписокМашинПаромаНоменклатура" id="57">
+									<DataPath>~СписокМашинПарома.Номенклатура</DataPath>
+									<Title>
+										<v8:item>
+											<v8:lang>ru</v8:lang>
+											<v8:content>Основное</v8:content>
+										</v8:item>
+									</Title>
+									<ContextMenu name="СписокМашинПаромаНоменклатураКонтекстноеМеню" id="58"/>
+									<ExtendedTooltip name="СписокМашинПаромаНоменклатураРасширеннаяПодсказка" id="59"/>
+								</LabelField>
+								<LabelField name="СписокМашинПаромаДополнительноеТС" id="60">
+									<DataPath>~СписокМашинПарома.ДополнительноеТС</DataPath>
+									<ContextMenu name="СписокМашинПаромаДополнительноеТСКонтекстноеМеню" id="61"/>
+									<ExtendedTooltip name="СписокМашинПаромаДополнительноеТСРасширеннаяПодсказка" id="62"/>
+								</LabelField>
+							</ChildItems>
+						</ColumnGroup>
+						<ColumnGroup name="СписокМашинПаромаГруппаКолонокПунктОтправления" id="68">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Пункт отправления</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Horizontal</Group>
+							<ShowInHeader>true</ShowInHeader>
+							<ExtendedTooltip name="СписокМашинПаромаГруппаКолонокПунктОтправленияРасширеннаяПодсказка" id="69"/>
+							<ChildItems>
+								<LabelField name="СписокМашинПаромаПунктОтправления" id="70">
+									<DataPath>~СписокМашинПарома.ПунктОтправления</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<ContextMenu name="СписокМашинПаромаПунктОтправленияКонтекстноеМеню" id="71"/>
+									<ExtendedTooltip name="СписокМашинПаромаПунктОтправленияРасширеннаяПодсказка" id="72"/>
+								</LabelField>
+								<LabelField name="СписокМашинПаромаСтранаПунктаОтправления" id="73">
+									<DataPath>~СписокМашинПарома.СтранаПунктаОтправления</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<Width>2</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<ContextMenu name="СписокМашинПаромаСтранаПунктаОтправленияКонтекстноеМеню" id="74"/>
+									<ExtendedTooltip name="СписокМашинПаромаСтранаПунктаОтправленияРасширеннаяПодсказка" id="75"/>
+								</LabelField>
+							</ChildItems>
+						</ColumnGroup>
+						<ColumnGroup name="СписокМашинПаромаГруппаКолонокПунктНазначения" id="76">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>Пункт назначения</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Horizontal</Group>
+							<ShowInHeader>true</ShowInHeader>
+							<ExtendedTooltip name="СписокМашинПаромаГруппаКолонокПунктНазначенияРасширеннаяПодсказка" id="77"/>
+							<ChildItems>
+								<LabelField name="СписокМашинПаромаПунктНазначения" id="81">
+									<DataPath>~СписокМашинПарома.ПунктНазначения</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<ContextMenu name="СписокМашинПаромаПунктНазначенияКонтекстноеМеню" id="82"/>
+									<ExtendedTooltip name="СписокМашинПаромаПунктНазначенияРасширеннаяПодсказка" id="83"/>
+								</LabelField>
+								<LabelField name="СписокМашинПаромаСтранаПунктаНазначения" id="78">
+									<DataPath>~СписокМашинПарома.СтранаПунктаНазначения</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<Width>2</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<ContextMenu name="СписокМашинПаромаСтранаПунктаНазначенияКонтекстноеМеню" id="79"/>
+									<ExtendedTooltip name="СписокМашинПаромаСтранаПунктаНазначенияРасширеннаяПодсказка" id="80"/>
+								</LabelField>
+							</ChildItems>
+						</ColumnGroup>
+						<ColumnGroup name="СписокМашинПаромаГруппаКолонокКОплате" id="84">
+							<Title>
+								<v8:item>
+									<v8:lang>ru</v8:lang>
+									<v8:content>К оплате</v8:content>
+								</v8:item>
+							</Title>
+							<Group>Horizontal</Group>
+							<ShowInHeader>true</ShowInHeader>
+							<ExtendedTooltip name="СписокМашинПаромаГруппаКолонокКОплатеРасширеннаяПодсказка" id="85"/>
+							<ChildItems>
+								<LabelField name="СписокМашинПаромаОплата" id="86">
+									<DataPath>~СписокМашинПарома.Оплата</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<Width>10</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<ContextMenu name="СписокМашинПаромаОплатаКонтекстноеМеню" id="87"/>
+									<ExtendedTooltip name="СписокМашинПаромаОплатаРасширеннаяПодсказка" id="88"/>
+								</LabelField>
+								<LabelField name="СписокМашинПаромаВалютаОплаты" id="89">
+									<DataPath>~СписокМашинПарома.ВалютаОплаты</DataPath>
+									<ShowInHeader>false</ShowInHeader>
+									<Width>4</Width>
+									<HorizontalStretch>false</HorizontalStretch>
+									<ContextMenu name="СписокМашинПаромаВалютаОплатыКонтекстноеМеню" id="90"/>
+									<ExtendedTooltip name="СписокМашинПаромаВалютаОплатыРасширеннаяПодсказка" id="91"/>
+								</LabelField>
+							</ChildItems>
+						</ColumnGroup>
+					</ChildItems>
+				</Table>
+			</ChildItems>
+		</UsualGroup>
+	</ChildItems>
+	<Attributes>
+		<Attribute name="Список" id="1">
+			<Type>
+				<v8:Type>cfg:DynamicList</v8:Type>
+			</Type>
+			<MainAttribute>true</MainAttribute>
+			<UseAlways>
+				<Field>Список.Ref</Field>
+			</UseAlways>
+			<Settings xsi:type="DynamicList">
+				<ManualQuery>false</ManualQuery>
+				<DynamicDataRead>true</DynamicDataRead>
+				<MainTable>Catalog.Паромы</MainTable>
+				<ListSettings>
+					<dcsset:filter>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>dfcece9d-5077-440b-b6b3-45a5cb4538eb</dcsset:userSettingID>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:item xsi:type="dcsset:OrderItemField">
+							<dcsset:field>ДатаДобавления</dcsset:field>
+							<dcsset:orderType>Desc</dcsset:orderType>
+						</dcsset:item>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>88619765-ccb3-46c6-ac52-38e9c992ebd4</dcsset:userSettingID>
+					</dcsset:order>
+					<dcsset:conditionalAppearance>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>b75fecce-942b-4aed-abc9-e6a02e460fb3</dcsset:userSettingID>
+					</dcsset:conditionalAppearance>
+					<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+					<dcsset:itemsUserSettingID>911b6018-f537-43e8-a417-da56b22f9aec</dcsset:itemsUserSettingID>
+				</ListSettings>
+			</Settings>
+		</Attribute>
+		<Attribute name="СписокМашинПарома" id="2">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Список машин парома</v8:content>
+				</v8:item>
+			</Title>
+			<Type>
+				<v8:Type>cfg:DynamicList</v8:Type>
+			</Type>
+			<UseAlways>
+				<Field>~СписокМашинПарома.Паром</Field>
+				<Field>~СписокМашинПарома.Ссылка</Field>
+			</UseAlways>
+			<Settings xsi:type="DynamicList">
+				<ManualQuery>true</ManualQuery>
+				<DynamicDataRead>true</DynamicDataRead>
+				<QueryText>ВЫБРАТЬ РАЗРЕШЕННЫЕ
+	ДокументМашина.Ссылка КАК Ссылка,
+	ДокументМашина.ПометкаУдаления КАК ПометкаУдаления,
+	ДокументМашина.Номер КАК Номер,
+	ДокументМашина.Дата КАК Дата,
+	ДокументМашина.Проведен КАК Проведен,
+	ДокументМашина.EETG КАК EETG,
+	ДокументМашина.Акт КАК Акт,
+	ДокументМашина.ВалютаДокумента КАК ВалютаДокумента,
+	ДокументМашина.ВалютаОбеспечения КАК ВалютаОбеспечения,
+	ДокументМашина.ВалютаОплаты КАК ВалютаОплаты,
+	ДокументМашина.Водитель КАК Водитель,
+	ДокументМашина.ВремяОтправкиСМС КАК ВремяОтправкиСМС,
+	ДокументМашина.ВремяФактОтправкиСМС КАК ВремяФактОтправкиСМС,
+	ДокументМашина.ДатаОформления КАК ДатаОформления,
+	ДокументМашина.ДатаПоследнегоОформления КАК ДатаПоследнегоОформления,
+	ДокументМашина.ДатаСоздания КАК ДатаСоздания,
+	ДокументМашина.ДоговорКонтрагента КАК ДоговорКонтрагента,
+	ДокументМашина.ЕС КАК ЕС,
+	ДокументМашина.КодОшибки КАК КодОшибки,
+	ДокументМашина.Комментарий КАК Комментарий,
+	ДокументМашина.Контрагент КАК Контрагент,
+	ДокументМашина.КратностьВзаиморасчетов КАК КратностьВзаиморасчетов,
+	ДокументМашина.КурсВзаиморасчетов КАК КурсВзаиморасчетов,
+	ДокументМашина.КурсНБУ КАК КурсНБУ,
+	ДокументМашина.Номенклатура КАК Номенклатура,
+	ДокументМашина.ДополнительноеТС КАК ДополнительноеТС,
+	ДокументМашина.НомерДополнения КАК НомерДополнения,
+	ДокументМашина.НомерТелефонаВодителя КАК НомерТелефонаВодителя,
+	ДокументМашина.НомерЭТД КАК НомерЭТД,
+	ДокументМашина.Оплата КАК Оплата,
+	ДокументМашина.Организация КАК Организация,
+	ДокументМашина.Ответственный КАК Ответственный,
+	ДокументМашина.Перевозчик КАК Перевозчик,
+	ДокументМашина.ПеревозчикНоменклатура КАК ПеревозчикНоменклатура,
+	ДокументМашина.Принципал КАК Принципал,
+	ДокументМашина.ПунктНазначения КАК ПунктНазначения,
+	ДокументМашина.ПунктОтправления КАК ПунктОтправления,
+	ДокументМашина.РБ КАК РБ,
+	ДокументМашина.РФ КАК РФ,
+	ДокументМашина.СлужебныйРеквизит КАК СлужебныйРеквизит,
+	ДокументМашина.СМСОтправлено КАК СМСОтправлено,
+	ДокументМашина.Содержание КАК Содержание,
+	ДокументМашина.Статус КАК Статус,
+	ДокументМашина.СтатусСМС КАК СтатусСМС,
+	ДокументМашина.СтранаОформления КАК СтранаОформления,
+	ДокументМашина.СтруктурнаяЕдиница КАК СтруктурнаяЕдиница,
+	ДокументМашина.СуммаДокумента КАК СуммаДокумента,
+	ДокументМашина.СуммаОбеспечения КАК СуммаОбеспечения,
+	ДокументМашина.Счет КАК Счет,
+	ДокументМашина.ФормаОплаты КАК ФормаОплаты,
+	ДокументМашина.ЭПИ КАК ЭПИ,
+	ДокументМашина.ЭТД КАК ЭТД,
+	ДокументМашина.LRN КАК LRN,
+	ДокументМашина.ФитосанитарныйСертификат КАК ФитосанитарныйСертификат,
+	ДокументМашина.ПапкаДокумента КАК ПапкаДокумента,
+	ДокументМашина.КатегорияМашины КАК КатегорияМашины,
+	ДокументМашина.КоличествоCMR КАК КоличествоCMR,
+	ДокументМашина.КоличествоКодов КАК КоличествоКодов,
+	ДокументМашина.УслугаОрганизации КАК УслугаОрганизации,
+	ДокументМашина.Менеджер КАК Менеджер,
+	ДокументМашина.Расстояние КАК Расстояние,
+	ДокументМашина.АдминистративныйОкруг КАК АдминистративныйОкруг,
+	ДокументМашина.Груз КАК Груз,
+	ДокументМашина.СтранаНачалаТранзита КАК СтранаНачалаТранзита,
+	ДокументМашина.КоличествоТаможенныхПунктов КАК КоличествоТаможенныхПунктов,
+	ДокументМашина.ИсправитьНеточности КАК ИсправитьНеточности,
+	ДокументМашина.ИндивидуальныйРасчет КАК ИндивидуальныйРасчет,
+	ДокументМашина.СуммаПринципала КАК СуммаПринципала,
+	ДокументМашина.НомераCMR КАК НомераCMR,
+	ДокументМашина.Декларант КАК Декларант,
+	ДокументМашина.ЕстьИзмененияКлючевыхПараметровДляОтправкиСМС КАК ЕстьИзмененияКлючевыхПараметровДляОтправкиСМС,
+	ДокументМашина.РежимОформления КАК РежимОформления,
+	ДокументМашина.КатегорияУслуги КАК КатегорияУслуги,
+	ДокументМашина.МашинаОтменена КАК МашинаОтменена,
+	ДокументМашина.СпецКомментарий КАК СпецКомментарий,
+	ДокументМашина.ЦеноваяГруппаМашины КАК ЦеноваяГруппаМашины,
+	ДокументМашина.ГруппаКодовУКТВЭД_Принципала КАК ГруппаКодовУКТВЭД_Принципала,
+	ДокументМашина.ГруппаКодовУКТВЭД_Контрагента КАК ГруппаКодовУКТВЭД_Контрагента,
+	ДокументМашина.СпецЦены КАК СпецЦены,
+	ДокументМашина.ПунктОтправления.Страна.МеждународныйКод КАК СтранаПунктаОтправления,
+	ДокументМашина.ПунктНазначения.Страна.МеждународныйКод КАК СтранаПунктаНазначения,
+	ДокументМашина.Паром КАК Паром,
+	ДокументМашина.МоментВремени КАК МоментВремени
+ИЗ
+	Документ.Машина КАК ДокументМашина
+ГДЕ
+	ВЫБОР
+			КОГДА &amp;ЕстьОтборПоПарому
+				ТОГДА ДокументМашина.Паром = &amp;Паром
+			ИНАЧЕ ЛОЖЬ
+		КОНЕЦ</QueryText>
+				<MainTable>1:4e7898d6-552a-4568-b257-87c27aff3e92</MainTable>
+				<ListSettings>
+					<dcsset:filter>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>dfcece9d-5077-440b-b6b3-45a5cb4538eb</dcsset:userSettingID>
+					</dcsset:filter>
+					<dcsset:order>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>88619765-ccb3-46c6-ac52-38e9c992ebd4</dcsset:userSettingID>
+					</dcsset:order>
+					<dcsset:conditionalAppearance>
+						<dcsset:viewMode>Normal</dcsset:viewMode>
+						<dcsset:userSettingID>b75fecce-942b-4aed-abc9-e6a02e460fb3</dcsset:userSettingID>
+					</dcsset:conditionalAppearance>
+					<dcsset:itemsViewMode>Normal</dcsset:itemsViewMode>
+					<dcsset:itemsUserSettingID>911b6018-f537-43e8-a417-da56b22f9aec</dcsset:itemsUserSettingID>
+				</ListSettings>
+			</Settings>
+		</Attribute>
+	</Attributes>
+</Form>
