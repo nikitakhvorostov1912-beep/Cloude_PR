@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
 	<Title>
 		<v8:item>
@@ -12,16 +12,25 @@
 		<Autofill>false</Autofill>
 	</AutoCommandBar>
 	<ChildItems>
-		<LabelDecoration name="ДекорацияИнструкция" id="1">
-			<Title formatted="false">
-				<v8:item>
-					<v8:lang>ru</v8:lang>
-					<v8:content>Загрузка реестра ТД от Владимира. Шаг 1: выбрать CSV-файл и нажать «Прочитать CSV». Шаг 2: отметить галочками строки и нажать «Применить выбранные». Файл должен быть в кодировке windows-1251.</v8:content>
-				</v8:item>
-			</Title>
-			<ContextMenu name="ДекорацияИнструкцияКонтекстноеМеню" id="2"/>
-			<ExtendedTooltip name="ДекорацияИнструкцияРасширеннаяПодсказка" id="3"/>
-		</LabelDecoration>
+		<UsualGroup name="ГруппаБаннер" id="300">
+			<Group>Vertical</Group>
+			<Representation>WeakSeparation</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаБаннерРасширеннаяПодсказка" id="301"/>
+			<ChildItems>
+				<Decoration name="НадписьОписание" id="304">
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Загрузка реестра ТД из Сигмы. Сравнивает CSV «Отчёт по журналу ЭТД» с документами «Операция по поручительству» в 1С. Существующие документы помечает «Комплекс» и обогащает (контрагент, статус, коды ТНВЭД). Для ТД без пары создаёт новые документы как «Только ТД» (черновики, без проведения).</v8:content>
+						</v8:item>
+					</Title>
+					<Type>Label</Type>
+					<HorizontalStretch>true</HorizontalStretch>
+					<ExtendedTooltip name="НадписьОписаниеРасширеннаяПодсказка" id="305"/>
+				</Decoration>
+			</ChildItems>
+		</UsualGroup>
 		<UsualGroup name="ГруппаФайл" id="4">
 			<Group>Horizontal</Group>
 			<ExtendedTooltip name="ГруппаФайлРасширеннаяПодсказка" id="5"/>
@@ -35,17 +44,67 @@
 						</v8:item>
 					</Title>
 					<HorizontalStretch>true</HorizontalStretch>
+					<ChoiceButton>true</ChoiceButton>
+					<ClearButton>true</ClearButton>
 					<InputHint>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Нажмите кнопку справа, чтобы выбрать CSV-файл</v8:content>
 						</v8:item>
 					</InputHint>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>CSV-файл «Отчёт по журналу ЭТД» из Сигмы. Кодировка cp1251, разделитель «;», 105 колонок.</v8:content>
+						</v8:item>
+					</ToolTip>
 					<ContextMenu name="ФайлCSVКонтекстноеМеню" id="7"/>
 					<ExtendedTooltip name="ФайлCSVРасширеннаяПодсказка" id="8"/>
 					<Events>
 						<Event name="StartChoice">ФайлCSVНачалоВыбора</Event>
 					</Events>
+				</InputField>
+			</ChildItems>
+		</UsualGroup>
+		<UsualGroup name="ГруппаПериод" id="100">
+			<Group>Horizontal</Group>
+			<ExtendedTooltip name="ГруппаПериодРасширеннаяПодсказка" id="101"/>
+			<ChildItems>
+				<InputField name="ПериодС" id="102">
+					<DataPath>Объект.ПериодС</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Период с</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Минимальная дата выпуска в загруженном CSV (только информация).</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПериодСКонтекстноеМеню" id="103"/>
+					<ExtendedTooltip name="ПериодСРасширеннаяПодсказка" id="104"/>
+				</InputField>
+				<InputField name="ПериодПо" id="105">
+					<DataPath>Объект.ПериодПо</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Период по</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Максимальная дата выпуска в загруженном CSV (только информация).</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПериодПоКонтекстноеМеню" id="106"/>
+					<ExtendedTooltip name="ПериодПоРасширеннаяПодсказка" id="107"/>
 				</InputField>
 			</ChildItems>
 		</UsualGroup>
@@ -63,6 +122,11 @@
 					<CommandName>Form.Command.Применить</CommandName>
 					<Representation>PictureAndText</Representation>
 					<ExtendedTooltip name="КнопкаПрименитьРасширеннаяПодсказка" id="14"/>
+				</Button>
+				<Button name="КнопкаИнструкция" id="200">
+					<CommandName>Form.Command.ПоказатьИнструкцию</CommandName>
+					<Representation>Text</Representation>
+					<ExtendedTooltip name="КнопкаИнструкцияРасширеннаяПодсказка" id="201"/>
 				</Button>
 			</ChildItems>
 		</UsualGroup>
@@ -91,6 +155,12 @@
 							<v8:content>Комплекс</v8:content>
 						</v8:item>
 					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Существующие документы ОПП, которые получат метку «Комплекс» (мы оформляли и обеспечение, и ТД).</v8:content>
+						</v8:item>
+					</ToolTip>
 					<ContextMenu name="СтрокКомплексКонтекстноеМеню" id="21"/>
 					<ExtendedTooltip name="СтрокКомплексРасширеннаяПодсказка" id="22"/>
 				</LabelField>
@@ -102,31 +172,39 @@
 							<v8:content>Новые ТД</v8:content>
 						</v8:item>
 					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>ТД, которых нет в 1С — будут созданы новые документы как «Только ТД» (обеспечение давал другой брокер).</v8:content>
+						</v8:item>
+					</ToolTip>
 					<ContextMenu name="СтрокНовыеТДКонтекстноеМеню" id="24"/>
 					<ExtendedTooltip name="СтрокНовыеТДРасширеннаяПодсказка" id="25"/>
 				</LabelField>
-				<LabelField name="СтрокПроблемы" id="26">
-					<DataPath>Объект.СтрокПроблемы</DataPath>
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Проблемы</v8:content>
-						</v8:item>
-					</Title>
-					<ContextMenu name="СтрокПроблемыКонтекстноеМеню" id="27"/>
-					<ExtendedTooltip name="СтрокПроблемыРасширеннаяПодсказка" id="28"/>
-				</LabelField>
-				<LabelField name="СтрокТолькоОбеспечение" id="29">
-					<DataPath>Объект.СтрокТолькоОбеспечение</DataPath>
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Только обеспечение</v8:content>
-						</v8:item>
-					</Title>
-					<ContextMenu name="СтрокТолькоОбеспечениеКонтекстноеМеню" id="30"/>
-					<ExtendedTooltip name="СтрокТолькоОбеспечениеРасширеннаяПодсказка" id="31"/>
-				</LabelField>
+			</ChildItems>
+		</UsualGroup>
+		<UsualGroup name="ГруппаФильтры" id="120">
+			<Group>Horizontal</Group>
+			<Representation>None</Representation>
+			<ShowTitle>false</ShowTitle>
+			<ExtendedTooltip name="ГруппаФильтрыРасширеннаяПодсказка" id="121"/>
+			<ChildItems>
+				<Button name="КнопкаФильтрВсе" id="122">
+					<CommandName>Form.Command.ФильтрВсе</CommandName>
+					<Representation>Text</Representation>
+					<DefaultButton>false</DefaultButton>
+					<ExtendedTooltip name="КнопкаФильтрВсеРасширеннаяПодсказка" id="123"/>
+				</Button>
+				<Button name="КнопкаФильтрКомплекс" id="124">
+					<CommandName>Form.Command.ФильтрКомплекс</CommandName>
+					<Representation>Text</Representation>
+					<ExtendedTooltip name="КнопкаФильтрКомплексРасширеннаяПодсказка" id="125"/>
+				</Button>
+				<Button name="КнопкаФильтрНоваяТД" id="126">
+					<CommandName>Form.Command.ФильтрНоваяТД</CommandName>
+					<Representation>Text</Representation>
+					<ExtendedTooltip name="КнопкаФильтрНоваяТДРасширеннаяПодсказка" id="127"/>
+				</Button>
 			</ChildItems>
 		</UsualGroup>
 		<Table name="Предложения" id="32">
@@ -216,6 +294,24 @@
 					<ContextMenu name="ПредложенияДатаВыпускаКонтекстноеМеню" id="57"/>
 					<ExtendedTooltip name="ПредложенияДатаВыпускаРасширеннаяПодсказка" id="58"/>
 				</InputField>
+				<InputField name="ПредложенияСтатусПроцесса" id="180">
+					<DataPath>Объект.ПредложенияКлассификации.СтатусПроцесса</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Статус</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Статус процесса из CSV (col #12). Маппится на СтатусыТранзита 1С при применении.</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПредложенияСтатусПроцессаКонтекстноеМеню" id="181"/>
+					<ExtendedTooltip name="ПредложенияСтатусПроцессаРасширеннаяПодсказка" id="182"/>
+				</InputField>
 				<InputField name="ПредложенияКоличествоКодовТНВЭД" id="59">
 					<DataPath>Объект.ПредложенияКлассификации.КоличествоКодовТНВЭД</DataPath>
 					<Title>
@@ -235,6 +331,12 @@
 							<v8:content>Документ</v8:content>
 						</v8:item>
 					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Найденный документ ОПП в 1С (для категории Комплекс). Кликните чтобы открыть.</v8:content>
+						</v8:item>
+					</ToolTip>
 					<ContextMenu name="ПредложенияСсылкаДокументКонтекстноеМеню" id="63"/>
 					<ExtendedTooltip name="ПредложенияСсылкаДокументРасширеннаяПодсказка" id="64"/>
 				</InputField>
@@ -248,6 +350,54 @@
 					</Title>
 					<ContextMenu name="ПредложенияИННПолучателяКонтекстноеМеню" id="66"/>
 					<ExtendedTooltip name="ПредложенияИННПолучателяРасширеннаяПодсказка" id="67"/>
+				</InputField>
+				<InputField name="ПредложенияКонтрагент" id="160">
+					<DataPath>Объект.ПредложенияКлассификации.Контрагент</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Контрагент</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Найденный контрагент. Если пусто — не сопоставлен (см. колонку «Источник»).</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПредложенияКонтрагентКонтекстноеМеню" id="161"/>
+					<ExtendedTooltip name="ПредложенияКонтрагентРасширеннаяПодсказка" id="162"/>
+				</InputField>
+				<InputField name="ПредложенияИсточникКонтрагента" id="190">
+					<DataPath>Объект.ПредложенияКлассификации.ИсточникКонтрагента</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Источник</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Как контрагент был найден: Email / ИНН / Подразделение / Из БД / пусто.</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПредложенияИсточникКонтрагентаКонтекстноеМеню" id="191"/>
+					<ExtendedTooltip name="ПредложенияИсточникКонтрагентаРасширеннаяПодсказка" id="192"/>
+				</InputField>
+				<InputField name="ПредложенияКомментарий" id="170">
+					<DataPath>Объект.ПредложенияКлассификации.Комментарий</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Комментарий</v8:content>
+						</v8:item>
+					</Title>
+					<ReadOnly>true</ReadOnly>
+					<ContextMenu name="ПредложенияКомментарийКонтекстноеМеню" id="171"/>
+					<ExtendedTooltip name="ПредложенияКомментарийРасширеннаяПодсказка" id="172"/>
 				</InputField>
 				<InputField name="ПредложенияПримечание" id="68">
 					<DataPath>Объект.ПредложенияКлассификации.Примечание</DataPath>
@@ -270,6 +420,24 @@
 			</Type>
 			<MainAttribute>true</MainAttribute>
 		</Attribute>
+		<Attribute name="ТекущийФильтрКатегории" id="150">
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>20</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
+		<Attribute name="СводкаСтатистики" id="310">
+			<Type>
+				<v8:Type>xs:string</v8:Type>
+				<v8:StringQualifiers>
+					<v8:Length>500</v8:Length>
+					<v8:AllowedLength>Variable</v8:AllowedLength>
+				</v8:StringQualifiers>
+			</Type>
+		</Attribute>
 	</Attributes>
 	<Commands>
 		<Command name="ПрочитатьCSV" id="72">
@@ -279,6 +447,12 @@
 					<v8:content>Прочитать CSV</v8:content>
 				</v8:item>
 			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Прочитать выбранный CSV-файл и сопоставить с документами 1С</v8:content>
+				</v8:item>
+			</ToolTip>
 			<Action>ПрочитатьCSV</Action>
 		</Command>
 		<Command name="Применить" id="73">
@@ -288,7 +462,55 @@
 					<v8:content>Применить выбранные</v8:content>
 				</v8:item>
 			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Обогатить существующие документы и создать новые ТД-черновики (только отмеченные)</v8:content>
+				</v8:item>
+			</ToolTip>
 			<Action>Применить</Action>
+		</Command>
+		<Command name="ФильтрВсе" id="140">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Все</v8:content>
+				</v8:item>
+			</Title>
+			<Action>ФильтрВсе</Action>
+		</Command>
+		<Command name="ФильтрКомплекс" id="141">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Комплекс</v8:content>
+				</v8:item>
+			</Title>
+			<Action>ФильтрКомплекс</Action>
+		</Command>
+		<Command name="ФильтрНоваяТД" id="142">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Новые ТД</v8:content>
+				</v8:item>
+			</Title>
+			<Action>ФильтрНоваяТД</Action>
+		</Command>
+		<Command name="ПоказатьИнструкцию" id="202">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Инструкция</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Открыть подробное руководство по работе с обработкой</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>ПоказатьИнструкцию</Action>
 		</Command>
 	</Commands>
 </Form>

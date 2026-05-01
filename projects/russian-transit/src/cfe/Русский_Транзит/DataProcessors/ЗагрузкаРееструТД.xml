@@ -19,7 +19,7 @@
 					<v8:content>Загрузка реестра ТД</v8:content>
 				</v8:item>
 			</Synonym>
-			<Comment>Загрузка транзитных деклараций из CSV-файла Владимира. Matcher по колонке «Номер ДДП ТД».</Comment>
+			<Comment>Загрузка транзитных деклараций из CSV-файла «Отчёт по журналу ЭТД». Matcher по колонке «Номер ДДП ТД».</Comment>
 			<UseStandardCommands>true</UseStandardCommands>
 			<DefaultForm>DataProcessor.ЗагрузкаРееструТД.Form.Форма</DefaultForm>
 			<AuxiliaryForm/>
@@ -54,6 +54,80 @@
 							<v8:content>Путь к файлу реестра ЭТД (CSV, кодировка windows-1251)</v8:content>
 						</v8:item>
 					</ToolTip>
+					<MarkNegatives>false</MarkNegatives>
+					<Mask/>
+					<MultiLine>false</MultiLine>
+					<ExtendedEdit>false</ExtendedEdit>
+					<MinValue xsi:nil="true"/>
+					<MaxValue xsi:nil="true"/>
+					<FillChecking>DontCheck</FillChecking>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<ChoiceParameterLinks/>
+					<ChoiceParameters/>
+					<QuickChoice>Auto</QuickChoice>
+					<CreateOnInput>Auto</CreateOnInput>
+					<ChoiceForm/>
+					<LinkByType/>
+					<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="11111111-2222-3333-4444-555555555501">
+				<Properties>
+					<Name>ПериодС</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Период с</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Минимальная Дата выпуска для фильтра отображения</Comment>
+					<Type>
+						<v8:Type>xs:dateTime</v8:Type>
+						<v8:DateQualifiers>
+							<v8:DateFractions>Date</v8:DateFractions>
+						</v8:DateQualifiers>
+					</Type>
+					<PasswordMode>false</PasswordMode>
+					<Format/>
+					<EditFormat/>
+					<ToolTip/>
+					<MarkNegatives>false</MarkNegatives>
+					<Mask/>
+					<MultiLine>false</MultiLine>
+					<ExtendedEdit>false</ExtendedEdit>
+					<MinValue xsi:nil="true"/>
+					<MaxValue xsi:nil="true"/>
+					<FillChecking>DontCheck</FillChecking>
+					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+					<ChoiceParameterLinks/>
+					<ChoiceParameters/>
+					<QuickChoice>Auto</QuickChoice>
+					<CreateOnInput>Auto</CreateOnInput>
+					<ChoiceForm/>
+					<LinkByType/>
+					<ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+				</Properties>
+			</Attribute>
+			<Attribute uuid="11111111-2222-3333-4444-555555555502">
+				<Properties>
+					<Name>ПериодПо</Name>
+					<Synonym>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Период по</v8:content>
+						</v8:item>
+					</Synonym>
+					<Comment>Максимальная Дата выпуска для фильтра отображения</Comment>
+					<Type>
+						<v8:Type>xs:dateTime</v8:Type>
+						<v8:DateQualifiers>
+							<v8:DateFractions>Date</v8:DateFractions>
+						</v8:DateQualifiers>
+					</Type>
+					<PasswordMode>false</PasswordMode>
+					<Format/>
+					<EditFormat/>
+					<ToolTip/>
 					<MarkNegatives>false</MarkNegatives>
 					<Mask/>
 					<MultiLine>false</MultiLine>
@@ -558,6 +632,42 @@
 							<Synonym><v8:item><v8:lang>ru</v8:lang><v8:content>ТС</v8:content></v8:item></Synonym>
 							<Comment>CSV col #13</Comment>
 							<Type><v8:Type>xs:string</v8:Type><v8:StringQualifiers><v8:Length>250</v8:Length><v8:AllowedLength>Variable</v8:AllowedLength></v8:StringQualifiers></Type>
+							<PasswordMode>false</PasswordMode>
+							<Format/><EditFormat/><ToolTip/>
+							<MarkNegatives>false</MarkNegatives><Mask/>
+							<MultiLine>false</MultiLine><ExtendedEdit>false</ExtendedEdit>
+							<MinValue xsi:nil="true"/><MaxValue xsi:nil="true"/>
+							<FillChecking>DontCheck</FillChecking>
+							<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+							<ChoiceParameterLinks/><ChoiceParameters/>
+							<QuickChoice>Auto</QuickChoice><CreateOnInput>Auto</CreateOnInput>
+							<ChoiceForm/><LinkByType/><ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+						</Properties>
+					</Attribute>
+					<Attribute uuid="22222222-3333-4444-5555-666666666601">
+						<Properties>
+							<Name>Комментарий</Name>
+							<Synonym><v8:item><v8:lang>ru</v8:lang><v8:content>Комментарий</v8:content></v8:item></Synonym>
+							<Comment>CSV col #84 — комментарии к документу, источник email для связки контрагента</Comment>
+							<Type><v8:Type>xs:string</v8:Type><v8:StringQualifiers><v8:Length>500</v8:Length><v8:AllowedLength>Variable</v8:AllowedLength></v8:StringQualifiers></Type>
+							<PasswordMode>false</PasswordMode>
+							<Format/><EditFormat/><ToolTip/>
+							<MarkNegatives>false</MarkNegatives><Mask/>
+							<MultiLine>false</MultiLine><ExtendedEdit>false</ExtendedEdit>
+							<MinValue xsi:nil="true"/><MaxValue xsi:nil="true"/>
+							<FillChecking>DontCheck</FillChecking>
+							<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
+							<ChoiceParameterLinks/><ChoiceParameters/>
+							<QuickChoice>Auto</QuickChoice><CreateOnInput>Auto</CreateOnInput>
+							<ChoiceForm/><LinkByType/><ChoiceHistoryOnInput>Auto</ChoiceHistoryOnInput>
+						</Properties>
+					</Attribute>
+					<Attribute uuid="22222222-3333-4444-5555-666666666602">
+						<Properties>
+							<Name>Контрагент</Name>
+							<Synonym><v8:item><v8:lang>ru</v8:lang><v8:content>Контрагент</v8:content></v8:item></Synonym>
+							<Comment>Найден через ВернутьКонтрагента (Email из Комментария → РС СоответствияПодразделенийКонтрагентам)</Comment>
+							<Type><v8:Type>cfg:CatalogRef.Контрагенты</v8:Type></Type>
 							<PasswordMode>false</PasswordMode>
 							<Format/><EditFormat/><ToolTip/>
 							<MarkNegatives>false</MarkNegatives><Mask/>
