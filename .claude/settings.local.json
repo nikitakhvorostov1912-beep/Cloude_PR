@@ -2,6 +2,18 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "autoMode": {
+    "hard_deny": [
+      "Bash(*1cv8.exe*)",
+      "Bash(*DESIGNER*)",
+      "Bash(*LoadConfigFromFiles*)",
+      "Edit(**/upload/**)",
+      "Edit(**/ut-ext/**)",
+      "Write(**/upload/**)",
+      "Write(**/ut-ext/**)"
+    ],
+    "_comment": "Защита проекта Русский_Транзит: правило #3 EDT-only (DESIGNER запрещён) + правило #4 (редактировать только src/cfe/, не upload/ и не ut-ext/). См. CLAUDE.md."
+  },
   "permissions": {
     "allow": [
       "Read",
@@ -33,7 +45,64 @@
       "Bash(git clone:*)",
       "Bash(powershell -Command \"Get-PnpDevice -Class AudioEndpoint -Status OK | Select-Object FriendlyName, Status, InstanceId | Format-Table -AutoSize\")",
       "Bash(powershell -Command \"Get-PnpDevice | Where-Object {$_Class -eq ''AudioEndpoint''} | Select-Object FriendlyName, Status | Format-Table -AutoSize\")",
-      "Bash(powershell -Command \"Get-CimInstance Win32_SoundDevice | Select-Object Name, Status, StatusInfo | Format-Table -AutoSize\")"
+      "Bash(powershell -Command \"Get-CimInstance Win32_SoundDevice | Select-Object Name, Status, StatusInfo | Format-Table -AutoSize\")",
+      "Bash(mkdir -p \"C:/Users/Khvorostov/.claude/plans\")",
+      "Read(//c/Users/Khvorostov/.claude/plans/**)",
+      "Bash(docker --version)",
+      "PowerShell(node \"C:\\\\CLOUDE_PR\\\\gen_infocom_letter.js\")",
+      "PowerShell($global = npm root -g; Write-Output \"Global: $global\"; Test-Path \"$global\\\\docx\")",
+      "PowerShell($env:NODE_PATH = \"C:\\\\tools\\\\nodejs\\\\node-v22.14.0-win-x64\\\\node_modules\"; node \"C:\\\\CLOUDE_PR\\\\gen_infocom_letter.js\")",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "mcp__Claude_in_Chrome__read_page",
+      "mcp__Claude_in_Chrome__find",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_run_code_unsafe",
+      "mcp__playwright__browser_take_screenshot",
+      "PowerShell(. \"C:\\\\Users\\\\Khvorostov\\\\.claude\\\\hooks-handlers\\\\session-stop-notify.ps1\" 2>&1)",
+      "mcp__playwright__browser_evaluate",
+      "Bash(bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/post-bsl-edit.sh)",
+      "Bash(bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/post-form-edit.sh)",
+      "PowerShell(. \"C:\\\\CLOUDE_PR\\\\scripts\\\\precompact-hook.ps1\" 2>&1)",
+      "Bash(mkdir -p \"C:/CLOUDE_PR/.claude/routines\" 2>/dev/null; echo \"done\")",
+      "Bash(docker info *)",
+      "PowerShell(Get-Command docker -ErrorAction SilentlyContinue)",
+      "PowerShell(docker --version 2>&1)",
+      "Bash(gh search *)",
+      "Bash(where.exe gh *)",
+      "Bash(\"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" --version)",
+      "Bash(curl -s https://api.github.com/repos/SteelMorgan/1c-log-checker)",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\('name:', d.get\\('name'\\)\\); print\\('desc:', d.get\\('description'\\)\\); print\\('default_branch:', d.get\\('default_branch'\\)\\); print\\('msg:', d.get\\('message','OK'\\)\\)\")",
+      "Bash(curl -s \"https://api.github.com/search/repositories?q=vanessa+mcp+1c\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); [print\\(r['full_name'], '-', r.get\\('description',''\\)[:100]\\) for r in d.get\\('items',[]\\)[:8]]\")",
+      "Bash(curl -s \"https://api.github.com/repos/SteelMorgan/1c-log-checker/contents?ref=master\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); [print\\(f['name'], '|', f['type'], '|', f.get\\('size',''\\), '|', f.get\\('download_url',''\\)\\) for f in d if isinstance\\(d,list\\)] if isinstance\\(d,list\\) else print\\(d\\)\")",
+      "Bash(curl -s \"https://api.github.com/search/repositories?q=spremotely+OR+vanessa-app-mcp\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); [print\\(r['full_name'], '|', r['html_url']\\) for r in d.get\\('items',[]\\)[:10]]\")",
+      "Bash(curl -s \"https://api.github.com/users/spremotely/repos\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\(d\\) if isinstance\\(d,dict\\) else [print\\(r['name'],'|',r.get\\('description',''\\)[:80]\\) for r in d[:15]]\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/SteelMorgan/1c-log-checker/master/README.md\" -o /tmp/lc_readme.md)",
+      "Read(//tmp/**)",
+      "Bash(curl -s \"https://api.github.com/repos/SteelMorgan/1c-log-checker/contents/deploy?ref=master\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); [print\\(f['name'],'|',f['type']\\) for f in d]\")",
+      "Bash(curl -s \"https://api.github.com/repos/sovetnikoffice/vanessa-app-mcp\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\('name:',d.get\\('name'\\)\\); print\\('desc:',d.get\\('description'\\)\\); print\\('lang:',d.get\\('language'\\)\\); print\\('default_branch:',d.get\\('default_branch'\\)\\); print\\('updated:',d.get\\('pushed_at'\\)\\)\")",
+      "Bash(curl -s \"https://api.github.com/repos/sovetnikoffice/vanessa-app-mcp/contents\")",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); [print\\(f['name'],'|',f['type'],'|',f.get\\('size',''\\)\\) for f in d]\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/sovetnikoffice/vanessa-app-mcp/main/package.json\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/sovetnikoffice/vanessa-app-mcp/main/README.md\")",
+      "Bash(curl -s \"https://api.github.com/repos/SteelMorgan/1c-log-checker/contents/deploy/docker?ref=master\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/SteelMorgan/1c-log-checker/master/deploy/docker/docker-compose.yml\")",
+      "Bash(cat > *)",
+      "Bash(mkdir -p \"C:/Users/Khvorostov/.claude/skills/erf-init\")",
+      "Bash(mkdir -p \"C:/Users/Khvorostov/.claude/skills/erf-build\")",
+      "Bash(mkdir -p \"C:/Users/Khvorostov/.claude/skills/erf-dump\")",
+      "Bash(mkdir -p \"C:/Users/Khvorostov/.claude/skills/erf-validate\")",
+      "Bash(mkdir -p \"C:/Users/Khvorostov/.claude/skills/form-add\")"
     ]
   },
   "hooks": {
@@ -43,7 +112,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash D:/Cloude_PR/.claude/hooks-handlers/session-boot.sh",
+            "command": "bash C:/CLOUDE_PR/.claude/hooks-handlers/session-boot.sh",
             "timeout": 10
           }
         ]
@@ -53,8 +122,110 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash D:/Cloude_PR/.claude/hooks-handlers/session-resume.sh",
+            "command": "bash C:/CLOUDE_PR/.claude/hooks-handlers/session-resume.sh",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/post-bsl-edit.sh",
+            "timeout": 12
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/post-form-edit.sh",
+            "timeout": 8
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/tdad-trigger.sh",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:/CLOUDE_PR/scripts/precompact-hook.ps1",
+            "timeout": 8
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "_comment": "Восстанавливает контекст после /compact для Русского_Транзита (ветка, EDT-статус, критические правила). Поддерживается Claude Code 2026.04+.",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/post-compact.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "_comment": "При неудаче Edit/Write на .bsl — запускает bsl-lint и возвращает диагностику. Поддерживается Claude Code 2026.04+.",
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/post-tool-failure-bsl.sh",
+            "timeout": 12
+          }
+        ]
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "_comment": "Копирует .dev.env и CLAUDE.md в новый worktree. Поддерживается Claude Code 2026.04+.",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash C:/Users/Khvorostov/.claude/hooks-handlers-1c/worktree-create.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/Khvorostov/.claude/hooks-handlers/claude-design-detect.ps1",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:/Users/Khvorostov/.claude/hooks-handlers/session-stop-notify.ps1",
+            "timeout": 6
           }
         ]
       }
