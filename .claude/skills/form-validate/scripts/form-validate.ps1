@@ -1,14 +1,38 @@
-﻿# form-validate v1.0 — Validate 1C managed form
+﻿# form-validate v1.6 — Validate 1C managed form
 # Source: https://github.com/Nikolay-Shirokov/cc-1c-skills
 param(
 	[Parameter(Mandatory)]
+	[Alias('Path')]
 	[string]$FormPath,
+
+	[switch]$Detailed,
 
 	[int]$MaxErrors = 30
 )
 
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+# --- Resolve path ---
+# A: Directory → Ext/Form.xml
+if (Test-Path $FormPath -PathType Container) {
+	$FormPath = Join-Path (Join-Path $FormPath "Ext") "Form.xml"
+}
+# B1: Missing Ext/ (e.g. Forms/Форма/Form.xml → Forms/Форма/Ext/Form.xml)
+if (-not (Test-Path $FormPath)) {
+	$fn = [System.IO.Path]::GetFileName($FormPath)
+	if ($fn -eq "Form.xml") {
+		$c = Join-Path (Join-Path (Split-Path $FormPath) "Ext") $fn
+		if (Test-Path $c) { $FormPath = $c }
+	}
+}
+# B2: Descriptor (Forms/Форма.xml → Forms/Форма/Ext/Form.xml)
+if (-not (Test-Path $FormPath) -and $FormPath.EndsWith(".xml")) {
+	$stem = [System.IO.Path]::GetFileNameWithoutExtension($FormPath)
+	$dir = Split-Path $FormPath
+	$c = Join-Path (Join-Path (Join-Path $dir $stem) "Ext") "Form.xml"
+	if (Test-Path $c) { $FormPath = $c }
+}
 
 # --- Load XML ---
 
@@ -35,15 +59,31 @@ $nsMgr.AddNamespace("v8", "http://v8.1c.ru/8.1/data/core")
 
 $root = $xmlDoc.DocumentElement
 
+# --- Detect context: config vs EPF/ERF ---
+# Walk up from FormPath looking for Configuration.xml → config context
+# No Configuration.xml → external data processor / report (EPF/ERF)
+$script:isConfigContext = $false
+$walkDir = Split-Path (Resolve-Path $FormPath) -Parent
+for ($i = 0; $i -lt 15; $i++) {
+	if (-not $walkDir -or $walkDir -eq (Split-Path $walkDir)) { break }
+	if (Test-Path (Join-Path $walkDir "Configuration.xml")) {
+		$script:isConfigContext = $true
+		break
+	}
+	$walkDir = Split-Path $walkDir
+}
+
 # --- Counters ---
 
 $errors = 0
 $warnings = 0
 $stopped = $false
+$script:okCount = 0
 
 function Report-OK {
 	param([string]$msg)
-	Write-Host "[OK]    $msg"
+	$script:okCount++
+	if ($Detailed) { Write-Host "[OK]    $msg" }
 }
 
 function Report-Error {
@@ -73,8 +113,10 @@ if ($parentDir) {
 	}
 }
 
-Write-Host "=== Validation: $formName ==="
-Write-Host ""
+if ($Detailed) {
+	Write-Host "=== Validation: $formName ==="
+	Write-Host ""
+}
 
 # Early BaseForm detection (used in Check 5 to skip base element DataPath validation)
 $hasBaseForm = ($root.SelectSingleNode("f:BaseForm", $nsMgr) -ne $null)
@@ -85,10 +127,10 @@ if ($root.LocalName -ne "Form") {
 	Report-Error "Root element is '$($root.LocalName)', expected 'Form'"
 } else {
 	$version = $root.GetAttribute("version")
-	if ($version -eq "2.17") {
+	if ($version -eq "2.17" -or $version -eq "2.20") {
 		Report-OK "Root element: Form version=$version"
 	} elseif ($version) {
-		Report-Warn "Form version='$version' (expected 2.17)"
+		Report-Warn "Form version='$version' (expected 2.17 or 2.20)"
 	} else {
 		Report-Warn "Form version attribute missing"
 	}
@@ -324,12 +366,50 @@ if (-not $stopped) {
 		$dataPath = $dpNode.InnerText.Trim()
 		if (-not $dataPath) { continue }
 
+		# Opaque platform-internal DataPath shapes — not validatable from Form.xml alone:
+		#   - bare numeric (e.g. "10", "1000003") — internal index
+		#   - "N/M:<uuid>" — metadata reference by UUID
+		if ($dataPath -match '^\d+$' -or $dataPath -match '^\d+/\d+:[0-9a-fA-F-]+$') {
+			continue
+		}
+
 		$pathChecked++
 
 		# Extract root segment of path, strip array indices like [0]
 		$cleanPath = $dataPath -replace '\[\d+\]', ''
+		# Strip leading '~' (current row of DynamicList: ~Список.Поле)
+		if ($cleanPath.StartsWith('~')) { $cleanPath = $cleanPath.Substring(1) }
 		$segments = $cleanPath -split '\.'
 		$rootAttr = $segments[0]
+
+		# Resolve Items.<TableName>.CurrentData.<Field>... — table element, not attribute
+		if ($rootAttr -eq 'Items') {
+			if ($segments.Count -lt 3 -or $segments[2] -ne 'CurrentData') {
+				Report-Warn "[$tag] '$elName': DataPath='$dataPath' — unknown Items.* shape, expected Items.<Table>.CurrentData.*"
+				continue
+			}
+			$tableName = $segments[1]
+			$tableEl = $null
+			foreach ($candidate in $allElements) {
+				if ($candidate.Tag -eq 'Table' -and $candidate.Name -eq $tableName) {
+					$tableEl = $candidate
+					break
+				}
+			}
+			if (-not $tableEl) {
+				Report-Error "[$tag] '$elName': DataPath='$dataPath' — table element '$tableName' not found"
+				$pathErrors++
+				continue
+			}
+			$tableDpNode = $tableEl.Node.SelectSingleNode("f:DataPath", $nsMgr)
+			if (-not $tableDpNode -or -not $tableDpNode.InnerText.Trim()) {
+				# Table without DataPath — can't resolve further, accept silently
+				continue
+			}
+			$tableDp = $tableDpNode.InnerText.Trim() -replace '\[\d+\]', ''
+			if ($tableDp.StartsWith('~')) { $tableDp = $tableDp.Substring(1) }
+			$rootAttr = ($tableDp -split '\.')[0]
+		}
 
 		if (-not $attrMap.ContainsKey($rootAttr)) {
 			Report-Error "[$tag] '$elName': DataPath='$dataPath' — attribute '$rootAttr' not found"
@@ -640,20 +720,102 @@ if (-not $stopped -and -not $isExtension) {
 	}
 }
 
-# --- Summary ---
+# --- Check 12: Type values validation ---
 
-Write-Host ""
-Write-Host "---"
-Write-Host "Total: $($allElements.Count) elements, $($attrNodes.Count) attributes, $($cmdNodes.Count) commands"
+$knownInvalidTypes = @(
+	"FormDataStructure","FormDataCollection","FormDataTree","FormDataTreeItem","FormDataCollectionItem"
+	"FormGroup","FormField","FormButton","FormDecoration","FormTable"
+)
+$validClosedTypes = @(
+	"xs:boolean","xs:string","xs:decimal","xs:dateTime","xs:binary"
+	"v8:FillChecking","v8:Null","v8:StandardPeriod","v8:StandardBeginningDate","v8:Type"
+	"v8:TypeDescription","v8:UUID","v8:ValueListType","v8:ValueTable","v8:ValueTree"
+	"v8:Universal","v8:FixedArray","v8:FixedStructure"
+	"v8ui:Color","v8ui:Font","v8ui:FormattedString","v8ui:HorizontalAlign"
+	"v8ui:Picture","v8ui:SizeChangeMode","v8ui:VerticalAlign"
+	"dcsset:DataCompositionComparisonType","dcsset:DataCompositionFieldPlacement"
+	"dcsset:Filter","dcsset:SettingsComposer","dcsset:DataCompositionSettings"
+	"dcssch:DataCompositionSchema"
+	"dcscor:DataCompositionComparisonType","dcscor:DataCompositionGroupType"
+	"dcscor:DataCompositionPeriodAdditionType","dcscor:DataCompositionSortDirection","dcscor:Field"
+	"ent:AccountType","ent:AccumulationRecordType","ent:AccountingRecordType"
+)
+$validCfgPrefixes = @(
+	"AccountingRegisterRecordSet","AccumulationRegisterRecordSet"
+	"BusinessProcessObject","BusinessProcessRef"
+	"CatalogObject","CatalogRef"
+	"ChartOfAccountsObject","ChartOfAccountsRef"
+	"ChartOfCalculationTypesObject","ChartOfCalculationTypesRef"
+	"ChartOfCharacteristicTypesObject","ChartOfCharacteristicTypesRef"
+	"ConstantsSet","DataProcessorObject","DocumentObject","DocumentRef"
+	"DynamicList","EnumRef","ExchangePlanObject","ExchangePlanRef"
+	"ExternalDataProcessorObject","ExternalReportObject"
+	"InformationRegisterRecordManager","InformationRegisterRecordSet"
+	"ReportObject","TaskObject","TaskRef"
+)
 
-if ($stopped) {
-	Write-Host "Stopped after $MaxErrors errors. Fix and re-run."
+if (-not $stopped) {
+	$typeNodes = $root.SelectNodes("//v8:Type", $nsMgr)
+	$typeOk = $true
+	$typeChecked = 0
+	$typeInvalid = 0
+	foreach ($tn in $typeNodes) {
+		$tv = $tn.InnerText.Trim()
+		if (-not $tv) { continue }
+		$typeChecked++
+		if ($tv -in $knownInvalidTypes) {
+			Report-Error "12. Type '$tv': invalid runtime/UI type (not valid in XDTO schema)"
+			$typeOk = $false; $typeInvalid++
+			continue
+		}
+		if ($tv -in $validClosedTypes) { continue }
+		if ($tv -match '^cfg:(.+)$') {
+			$cfgVal = $Matches[1]
+			if ($cfgVal -eq "DynamicList") { continue }
+			if ($cfgVal -match '^([^.]+)\.') {
+				$pfx = $Matches[1]
+				if ($pfx -in $validCfgPrefixes) {
+					# ExternalDataProcessorObject/ExternalReportObject valid only for EPF/ERF, not config
+					if ($script:isConfigContext -and ($pfx -eq "ExternalDataProcessorObject" -or $pfx -eq "ExternalReportObject")) {
+						Report-Error "12. Type '$tv': External* type in configuration context (use DataProcessorObject/ReportObject instead)"
+						$typeOk = $false; $typeInvalid++
+					}
+					continue
+				}
+			}
+			Report-Warn "12. Type '$tv': unrecognized cfg prefix"
+			$typeOk = $false
+			continue
+		}
+		if ($tv -match ':') { continue }
+		Report-Warn "12. Type '$tv': bare type without namespace prefix"
+		$typeOk = $false
+	}
+	if ($typeChecked -eq 0) {
+		Report-OK "12. Types: no type values to check"
+	} elseif ($typeOk) {
+		Report-OK "12. Types: $typeChecked values, all valid"
+	}
 }
 
-if ($errors -eq 0 -and $warnings -eq 0) {
-	Write-Host "All checks passed."
+# --- Summary ---
+
+$checks = $script:okCount + $errors + $warnings
+
+if ($errors -eq 0 -and $warnings -eq 0 -and -not $Detailed) {
+	Write-Host "=== Validation OK: Form.$formName ($checks checks) ==="
 } else {
-	Write-Host "Errors: $errors, Warnings: $warnings"
+	Write-Host ""
+	if ($Detailed) {
+		Write-Host "---"
+		Write-Host "Total: $($allElements.Count) elements, $($attrNodes.Count) attributes, $($cmdNodes.Count) commands"
+	}
+
+	if ($stopped) {
+		Write-Host "Stopped after $MaxErrors errors. Fix and re-run."
+	}
+
+	Write-Host "=== Result: $errors errors, $warnings warnings ($checks checks) ==="
 }
 
 if ($errors -gt 0) {

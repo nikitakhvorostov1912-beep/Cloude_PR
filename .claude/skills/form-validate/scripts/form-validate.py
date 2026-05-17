@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# form-validate v1.0 — Validate 1C managed form
+# form-validate v1.6 — Validate 1C managed form
 # Source: https://github.com/Nikolay-Shirokov/cc-1c-skills
 
 import argparse
@@ -13,6 +13,41 @@ V8_NS = "http://v8.1c.ru/8.1/data/core"
 
 NSMAP = {"f": F_NS, "v8": V8_NS}
 
+KNOWN_INVALID_TYPES = {
+    'FormDataStructure', 'FormDataCollection', 'FormDataTree',
+    'FormDataTreeItem', 'FormDataCollectionItem',
+    'FormGroup', 'FormField', 'FormButton', 'FormDecoration', 'FormTable',
+}
+
+VALID_CLOSED_TYPES = {
+    'xs:boolean', 'xs:string', 'xs:decimal', 'xs:dateTime', 'xs:binary',
+    'v8:FillChecking', 'v8:Null', 'v8:StandardPeriod', 'v8:StandardBeginningDate', 'v8:Type',
+    'v8:TypeDescription', 'v8:UUID', 'v8:ValueListType', 'v8:ValueTable', 'v8:ValueTree',
+    'v8:Universal', 'v8:FixedArray', 'v8:FixedStructure',
+    'v8ui:Color', 'v8ui:Font', 'v8ui:FormattedString', 'v8ui:HorizontalAlign',
+    'v8ui:Picture', 'v8ui:SizeChangeMode', 'v8ui:VerticalAlign',
+    'dcsset:DataCompositionComparisonType', 'dcsset:DataCompositionFieldPlacement',
+    'dcsset:Filter', 'dcsset:SettingsComposer', 'dcsset:DataCompositionSettings',
+    'dcssch:DataCompositionSchema',
+    'dcscor:DataCompositionComparisonType', 'dcscor:DataCompositionGroupType',
+    'dcscor:DataCompositionPeriodAdditionType', 'dcscor:DataCompositionSortDirection', 'dcscor:Field',
+    'ent:AccountType', 'ent:AccumulationRecordType', 'ent:AccountingRecordType',
+}
+
+VALID_CFG_PREFIXES = {
+    'AccountingRegisterRecordSet', 'AccumulationRegisterRecordSet',
+    'BusinessProcessObject', 'BusinessProcessRef',
+    'CatalogObject', 'CatalogRef',
+    'ChartOfAccountsObject', 'ChartOfAccountsRef',
+    'ChartOfCalculationTypesObject', 'ChartOfCalculationTypesRef',
+    'ChartOfCharacteristicTypesObject', 'ChartOfCharacteristicTypesRef',
+    'ConstantsSet', 'DataProcessorObject', 'DocumentObject', 'DocumentRef',
+    'DynamicList', 'EnumRef', 'ExchangePlanObject', 'ExchangePlanRef',
+    'ExternalDataProcessorObject', 'ExternalReportObject',
+    'InformationRegisterRecordManager', 'InformationRegisterRecordSet',
+    'ReportObject', 'TaskObject', 'TaskRef',
+}
+
 
 def localname(el):
     return etree.QName(el.tag).localname
@@ -22,12 +57,35 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="Validate 1C managed form", allow_abbrev=False)
-    parser.add_argument("-FormPath", required=True)
+    parser.add_argument("-FormPath", "-Path", required=True)
+    parser.add_argument("-Detailed", action="store_true")
     parser.add_argument("-MaxErrors", type=int, default=30)
     args = parser.parse_args()
 
     form_path = args.FormPath
+    detailed = args.Detailed
     max_errors = args.MaxErrors
+
+    if not os.path.isabs(form_path):
+        form_path = os.path.join(os.getcwd(), form_path)
+
+    # A: Directory → Ext/Form.xml
+    if os.path.isdir(form_path):
+        form_path = os.path.join(form_path, 'Ext', 'Form.xml')
+    # B1: Missing Ext/ (e.g. Forms/Форма/Form.xml → Forms/Форма/Ext/Form.xml)
+    if not os.path.exists(form_path):
+        fn = os.path.basename(form_path)
+        if fn == 'Form.xml':
+            c = os.path.join(os.path.dirname(form_path), 'Ext', fn)
+            if os.path.exists(c):
+                form_path = c
+    # B2: Descriptor (Forms/Форма.xml → Forms/Форма/Ext/Form.xml)
+    if not os.path.exists(form_path) and form_path.endswith('.xml'):
+        stem = os.path.splitext(os.path.basename(form_path))[0]
+        parent = os.path.dirname(form_path)
+        c = os.path.join(parent, stem, 'Ext', 'Form.xml')
+        if os.path.exists(c):
+            form_path = c
 
     if not os.path.isfile(form_path):
         print(f"File not found: {form_path}", file=sys.stderr)
@@ -46,24 +104,41 @@ def main():
 
     root = tree.getroot()
 
+    # Detect context: config vs EPF/ERF
+    is_config_context = False
+    walk_dir = os.path.dirname(os.path.abspath(form_path))
+    for _ in range(15):
+        parent = os.path.dirname(walk_dir)
+        if parent == walk_dir:
+            break
+        if os.path.isfile(os.path.join(walk_dir, 'Configuration.xml')):
+            is_config_context = True
+            break
+        walk_dir = parent
+
     errors = 0
     warnings = 0
+    ok_count = 0
     stopped = False
+    output_lines = []
 
     def report_ok(msg):
-        print(f"[OK]    {msg}")
+        nonlocal ok_count
+        ok_count += 1
+        if detailed:
+            output_lines.append(f"[OK]    {msg}")
 
     def report_error(msg):
         nonlocal errors, stopped
         errors += 1
-        print(f"[ERROR] {msg}")
+        output_lines.append(f"[ERROR] {msg}")
         if errors >= max_errors:
             stopped = True
 
     def report_warn(msg):
         nonlocal warnings
         warnings += 1
-        print(f"[WARN]  {msg}")
+        output_lines.append(f"[WARN]  {msg}")
 
     # --- Form name from path ---
     form_name = os.path.splitext(os.path.basename(form_path))[0]
@@ -75,8 +150,8 @@ def main():
             if form_dir:
                 form_name = os.path.basename(form_dir)
 
-    print(f"=== Validation: {form_name} ===")
-    print()
+    output_lines.append(f"=== Validation: Form.{form_name} ===")
+    output_lines.append("")
 
     # Early BaseForm detection
     has_base_form = root.find(f"{{{F_NS}}}BaseForm") is not None
@@ -86,10 +161,10 @@ def main():
         report_error(f"Root element is '{localname(root)}', expected 'Form'")
     else:
         version = root.get("version", "")
-        if version == "2.17":
+        if version in ("2.17", "2.20"):
             report_ok(f"Root element: Form version={version}")
         elif version:
-            report_warn(f"Form version='{version}' (expected 2.17)")
+            report_warn(f"Form version='{version}' (expected 2.17 or 2.20)")
         else:
             report_warn("Form version attribute missing")
 
@@ -301,11 +376,43 @@ def main():
             if not data_path:
                 continue
 
+            # Opaque platform-internal DataPath shapes — not validatable from Form.xml alone:
+            #   - bare numeric (e.g. "10", "1000003") — internal index
+            #   - "N/M:<uuid>" — metadata reference by UUID
+            if re.match(r'^\d+$', data_path) or re.match(r'^\d+/\d+:[0-9a-fA-F-]+$', data_path):
+                continue
+
             path_checked += 1
 
             clean_path = re.sub(r'\[\d+\]', '', data_path)
+            # Strip leading '~' (current row of DynamicList: ~\u0421\u043f\u0438\u0441\u043e\u043a.\u041f\u043e\u043b\u0435)
+            if clean_path.startswith('~'):
+                clean_path = clean_path[1:]
             segments = clean_path.split(".")
             root_attr = segments[0]
+
+            # Resolve Items.<TableName>.CurrentData.<Field>... \u2014 table element, not attribute
+            if root_attr == 'Items':
+                if len(segments) < 3 or segments[2] != 'CurrentData':
+                    report_warn(f"[{tag}] '{el_name}': DataPath='{data_path}' \u2014 unknown Items.* shape, expected Items.<Table>.CurrentData.*")
+                    continue
+                table_name = segments[1]
+                table_el = None
+                for candidate in all_elements:
+                    if candidate["Tag"] == 'Table' and candidate["Name"] == table_name:
+                        table_el = candidate
+                        break
+                if table_el is None:
+                    report_error(f"[{tag}] '{el_name}': DataPath='{data_path}' \u2014 table element '{table_name}' not found")
+                    path_errors += 1
+                    continue
+                table_dp_node = table_el["Node"].find(f"{{{F_NS}}}DataPath")
+                if table_dp_node is None or not (table_dp_node.text or "").strip():
+                    continue
+                table_dp = re.sub(r'\[\d+\]', '', (table_dp_node.text or "").strip())
+                if table_dp.startswith('~'):
+                    table_dp = table_dp[1:]
+                root_attr = table_dp.split(".")[0]
 
             if root_attr not in attr_map:
                 report_error(f"[{tag}] '{el_name}': DataPath='{data_path}' \u2014 attribute '{root_attr}' not found")
@@ -319,8 +426,6 @@ def main():
             path_msg = f"{path_msg}, {skip_note}" if path_msg else skip_note
         if path_errors == 0 and path_msg:
             report_ok(f"DataPath references: {path_msg}")
-        elif path_errors == 0:
-            report_ok("DataPath references: none")
 
     # --- Check 6: Button command references ---
     if not stopped:
@@ -355,8 +460,6 @@ def main():
 
         if cmd_errors == 0 and cmd_checked > 0:
             report_ok(f"Command references: {cmd_checked} buttons checked")
-        elif cmd_checked == 0:
-            report_ok("Command references: none")
 
     # --- Check 7: Events have handler names ---
     if not stopped:
@@ -396,8 +499,6 @@ def main():
 
         if event_errors == 0 and event_checked > 0:
             report_ok(f"Event handlers: {event_checked} events checked")
-        elif event_checked == 0:
-            report_ok("Event handlers: none")
 
     # --- Check 8: Command actions ---
     if not stopped:
@@ -416,8 +517,6 @@ def main():
 
         if action_errors == 0 and action_checked > 0:
             report_ok(f"Command actions: {action_checked} commands checked")
-        elif action_checked == 0:
-            report_ok("Command actions: none")
 
     # --- Check 9: MainAttribute count ---
     if not stopped:
@@ -568,18 +667,58 @@ def main():
         if call_type_without_base:
             report_warn("callType attributes found but no BaseForm \u2014 possible incorrect structure")
 
-    # --- Summary ---
-    print()
-    print("---")
-    print(f"Total: {len(all_elements)} elements, {len(attr_nodes)} attributes, {len(cmd_nodes)} commands")
+    # --- Check 12: Type validation ---
+    if not stopped:
+        type_nodes = root.xpath('//v8:Type', namespaces={'v8': V8_NS})
+        type_error_count = 0
+        type_warn_count = 0
+        type_count = len(type_nodes)
 
-    if stopped:
-        print(f"Stopped after {max_errors} errors. Fix and re-run.")
+        for tn in type_nodes:
+            if stopped:
+                break
+            tv = (tn.text or "").strip()
+            if not tv:
+                continue
 
-    if errors == 0 and warnings == 0:
-        print("All checks passed.")
+            if tv in KNOWN_INVALID_TYPES:
+                report_error(f'12. Type "{tv}": invalid runtime/UI type (not valid in XDTO schema)')
+                type_error_count += 1
+            elif tv in VALID_CLOSED_TYPES:
+                pass  # OK
+            elif tv.startswith("cfg:"):
+                suffix = tv[4:]  # after "cfg:"
+                prefix = suffix.split(".")[0]
+                if prefix in VALID_CFG_PREFIXES or suffix == "DynamicList":
+                    # ExternalDataProcessorObject/ExternalReportObject valid only in EPF/ERF context
+                    if is_config_context and prefix in ('ExternalDataProcessorObject', 'ExternalReportObject'):
+                        report_error(f'12. Type "{tv}": External* type in configuration context (use DataProcessorObject/ReportObject instead)')
+                        type_invalid += 1
+                else:
+                    report_warn(f'12. Type "{tv}": unrecognized cfg prefix')
+                    type_warn_count += 1
+            elif ":" in tv:
+                pass  # unknown namespace, pass through
+            else:
+                report_warn(f'12. Type "{tv}": bare type without namespace prefix')
+                type_warn_count += 1
+
+        if type_error_count == 0 and type_warn_count == 0:
+            if type_count > 0:
+                report_ok(f'12. Types: {type_count} values, all valid')
+            else:
+                report_ok('12. Types: no type values to check')
+
+    # --- Finalize ---
+    checks = ok_count + errors + warnings
+    if errors == 0 and warnings == 0 and not detailed:
+        result = f"=== Validation OK: Form.{form_name} ({checks} checks) ==="
     else:
-        print(f"Errors: {errors}, Warnings: {warnings}")
+        output_lines.append("")
+        output_lines.append(f"=== Result: {errors} errors, {warnings} warnings ({checks} checks) ===")
+        result = "\n".join(output_lines)
+
+    print(result)
 
     if errors > 0:
         sys.exit(1)

@@ -65,6 +65,9 @@ logs/
 # Tools (cloned reference repos, not our code)
 tools/
 
+# Temporary refresh workspace (upstream clones, backups, archived junk)
+_refresh/
+
 # Voice agent local files
 voice-agent-1c/venv/
 voice-agent-1c/.env
@@ -97,3 +100,4 @@ projects/survey-automation/verify_*.ps1
 projects/survey-automation/start_debug.bat
 projects/survey-automation/test_run.bat
 projects/survey-automation/regenerate_all.py
+node_modules

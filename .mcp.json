@@ -34,6 +34,46 @@
         "DISABLE_CONSOLE_OUTPUT": "true"
       },
       "description": "n8n workflow automation documentation — 1239 nodes, properties, operations. Use when designing automation workflows. Add N8N_API_URL + N8N_API_KEY env vars to enable live workflow management."
+    },
+    "edt-mcp": {
+      "type": "http",
+      "url": "http://localhost:8770/mcp",
+      "description": "1C:EDT MCP plugin (port 8770). Provides 34 tools for working with EDT project: get_metadata_objects, read_module_source, write_module_source, update_database, debug_launch, get_form_screenshot, validate_query and more. Requires EDT running with MCP plugin enabled."
+    },
+    "1c-transit": {
+      "type": "http",
+      "url": "http://127.0.0.1:6010/mcp",
+      "description": "MCP Toolkit embedded server (port 6010). Runs INSIDE thin client on ut_rt_copy: открыть tools/MCP_Toolkit_v1.7.0.epf → Подключение → Запустить сервер. Provides execute_query, execute_code, get_metadata and more for live database access. Format: TOON."
+    },
+    "bsl-context": {
+      "type": "stdio",
+      "command": "C:/CLOUDE_PR/tools/jdk-17/bin/java.exe",
+      "args": [
+        "-Dfile.encoding=UTF-8",
+        "-jar",
+        "C:/CLOUDE_PR/tools/mcp-bsl-context-0.3.2.jar",
+        "--platform-path",
+        "C:/Program Files/1cv8/8.3.27.1989",
+        "--mode",
+        "stdio"
+      ],
+      "description": "1C Platform syntax assistant (alkoleft/mcp-bsl-platform-context v0.3.2). 5 tools: search (нечёткий поиск), info (детали), getMember, getMembers, getConstructors. Использовать ПЕРЕД написанием BSL кода чтобы проверить имена методов платформы. MCP-First Rule."
+    },
+    "metr": {
+      "type": "stdio",
+      "command": "C:/CLOUDE_PR/tools/jdk-17/bin/java.exe",
+      "args": [
+        "-jar",
+        "C:/CLOUDE_PR/tools/mcp-onec-test-runner.jar",
+        "--spring.config.location=file:C:/CLOUDE_PR/tools/application-metr-v2.yml"
+      ],
+      "description": "METR — MCP 1С YAxUnit Test Runner (alkoleft v0.5.2). 11 tools: run_all_tests, run_module_tests, build_project, dump_config, launch_app, list_modules, get_configuration, check_platform, check_syntax_edt, check_syntax_designer_config, check_syntax_designer_modules. CheckConfig/CheckModules дают валидацию глубже чем BSL LS — видят метаданные."
+    },
+    "mcp-1c-readonly": {
+      "type": "stdio",
+      "command": "C:/CLOUDE_PR/tools/mcp-1c-windows-amd64.v1.6.5.exe",
+      "args": [],
+      "description": "feenlace/mcp-1c v1.6.5 — READ-ONLY MCP для live 1С базы InfoBase5. 9 tools: get_metadata_tree, get_object_structure, get_form_structure (XCF любой глубины + обработчики событий), get_configuration_info, search_code (BM25+BSL синонимы), bsl_syntax_help (180 функций), execute_query (SELECT only), validate_query, get_event_log. Безопаснее 1c-transit для боевой базы (write-операции заблокированы платформой). Установлен в InfoBase5 2026-05-17. Документация: .claude/research/ecosystem-deep-revision-2026-05-17/03-RESEARCH.md"
     }
   }
 }

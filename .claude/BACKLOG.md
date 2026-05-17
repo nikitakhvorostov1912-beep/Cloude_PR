@@ -5,6 +5,10 @@
 
 ---
 
+## Связанные документы
+
+- **`.claude/research/ecosystem-deep-revision-2026-05-17/`** — полный отчёт ревизии экосистемы (2026-05-17, 6 файлов, 116 KB). README.md — навигация. См. `05-ROADMAP.md` для приоритетов P0/P1/P2/P3.
+
 ## К установке / интеграции
 
 ### 1. AIChat — Универсальный CLI для LLM
@@ -24,13 +28,13 @@
 - **Приоритет:** 🟡 Средний (нужна реальная конфигурация)
 - **Статус:** ⏳ Ожидает
 
-### 3. METR — MCP Test Runner для 1С
+### 3. METR — MCP Test Runner для 1С ✅ УСТАНОВЛЕНО
 - **Репо:** https://github.com/alkoleft/mcp-onec-test-runner
 - **Что:** MCP-сервер для запуска YaXUnit тестов, сборки проектов и проверки синтаксиса через AI
 - **Зачем:** Автотесты из Claude Code -> написал код -> запустил тесты -> получил результат. Усилит Phase 7 в 1c-feature-dev
 - **Стек:** Kotlin, JDK 17+, 1С 8.3.10+, YaXUnit, 76 звёзд, GPL-3.0
 - **Приоритет:** 🟡 Средний (нужен YaXUnit в проекте)
-- **Статус:** ⏳ Ожидает
+- **Статус:** ✅ v0.5.2 (последняя), JAR в `tools/mcp-onec-test-runner.jar`, config — `application-metr-v2.yml`
 
 ### 4. 1c_mcp — MCP-сервер для доступа к живой базе 1С
 - **Репо:** https://github.com/vladimir-kharin/1c_mcp
@@ -39,16 +43,62 @@
 - **Зачем:** Дополняет bsl-context (синтаксис) и MCP RAQ (поиск метаданных) — этот даёт доступ к реальным данным базы
 - **Стек:** 1C Enterprise + Python, 296 звёзд, MIT
 - **Приоритет:** 🟡 Средний (нужна опубликованная база с HTTP-сервисом)
-- **Статус:** ⏳ Ожидает
+- **Статус:** ⏳ Ожидает (заменён в roadmap на feenlace/mcp-1c v1.6.5 — см. ниже)
 
-### 5. mcp-bsl-platform-context v0.3.2 — Обновление синтакс-помощника 1С
+### 4.1. feenlace/mcp-1c v1.6.5 — Read-only MCP для живой базы ⭐ HIGH PRIORITY
+- **Репо:** https://github.com/feenlace/mcp-1c
+- **Что:** Go-бинарник, MCP-сервер для живой 1С базы. 9 tools: метадерево, структура объектов/форм, search_code (BM25+BSL-синонимы), bsl_syntax_help (180 функций), execute_query (SELECT only), validate_query, get_event_log
+- **Чем превосходит 1c-transit:** READ-ONLY (только SELECT, никаких write-операций — безопаснее для боевой базы); Go-бинарь, ноль зависимостей; один установщик `mcp-1c --install`
+- **Версия 1.6.5 (2026-05-15):** новый парсер форм XCF (любая глубина вложенности + обработчики событий). НЕ требует переустановки расширения при обновлении (решено в v1.6.5)
+- **Pro $25/мес:** семантический поиск, dependency graphs, аудиты — НЕ обязательно
+- **Стек:** Go, ⭐98, активная разработка
+- **Бинарь:** скачан в `C:/CLOUDE_PR/tools/mcp-1c-windows-amd64.v1.6.5.exe`
+- **Установка:** `mcp-1c-windows-amd64.v1.6.5.exe --install "Srvr=is-srv1c-02:5541;Ref=ut_rt_copy" --server --db-user Администратор --db-password 123`, затем добавить в `.mcp.json`
+- **Приоритет:** 🔴 ВЫСОКИЙ
+- **Статус:** ⏳ Бинарь скачан, расширение НЕ установлено
+
+### 4.2. Arman-Kudaibergenov/1c-ai-development-kit — Альтернатива cc-1c-skills
+- **Репо:** https://github.com/Arman-Kudaibergenov/1c-ai-development-kit
+- **Что:** Консолидированная экосистема на 52 skills (вместо 80 granular у cc-1c-skills) + 29 спецификаций + 13 skill-групп
+- **Фишка:** OpenSpec workflow (openspec-proposal/apply/archive), Cursor agents, ребрендинг 5 expert-skills с полным охватом
+- **Развилось из:** cc-1c-skills от Nikolay-Shirokov
+- **Зачем смотреть:** не для миграции, для идей. OpenSpec может зайти в наш `1c-feature-dev`
+- **Приоритет:** 🟡 Средний (изучить идеи, не сливать)
+- **Статус:** ⏳ На заметке
+
+### 4.3. 1c-syntax/claude-code-bsl-lsp — Официальный Claude Code плагин для BSL LS ✅ УСТАНОВЛЕНО
+- **Репо:** https://github.com/1c-syntax/claude-code-bsl-lsp
+- **Что:** Официальный плагин Claude Code от 1c-syntax. Авто-загрузка BSL LS, 180+ диагностик в реальном времени при чтении .bsl, авто-обновление каждые 8 минут
+- **Чем превосходит ручной /bsl-lint skill:** работает автоматически при Read/Edit, не нужно явно вызывать; всегда свежая версия BSL LS
+- **Команды установки:**
+  ```
+  claude /plugin marketplace add 1c-syntax/claude-code-bsl-lsp
+  claude /plugin install bsl-language-server@bsl-language-server
+  ```
+- **Статус:** ✅ Уже работает (видно в session boot — v0.29.0 active, 130+ диагностик)
+
+### 4.4. Untru/1c-mcp — Каталог 40+ MCP-серверов для 1С
+- **Репо:** https://github.com/Untru/1c-mcp
+- **Что:** Куратированный каталог MCP-серверов для экосистемы 1С:Предприятие
+- **Группы:** IDE интеграции (EDT-MCP, CodePilot1C, 1C: Platform Tools MCP), Frameworks (1c_mcp, 1c-mcp-toolkit, http1c), Metadata & Code Analysis (mcp-1c, 1c-mcp-metacode, bsl-graph), Platform Docs (mcp-bsl-platform-context, onec-help-mcp), Testing (bsl-mcp, METR), Business (1c-rest-mcp, ARQA)
+- **Зачем:** справочник при подборе MCP под задачу
+- **Приоритет:** 🔵 Низкий (просто карта)
+- **Статус:** ⏳ На заметке
+
+### 4.5. EDT-MCP v1.31.1 — апгрейд EDT-MCP плагина ⏸️ ЗАБЛОКИРОВАНО
+- **Репо:** https://github.com/DitriXNew/EDT-MCP
+- **Текущая версия:** v1.26.1 (стоит в EDT 2025.2.5)
+- **Upstream:** v1.31.1 — +22 tools (get_form_screenshot, get_form_layout_snapshot, validate_query, find_references, 9 семантических групп, management presets)
+- **БЛОКЕР:** v1.27.0+ требует EDT 2026.1+. У пользователя EDT 2025.2.5 + EDT 2026.1 недоустановлена (см. memory/edt_2026_1_incomplete_install_2026_05_14.md)
+- **Действие:** доустановить EDT 2026.1 → апгрейд EDT-MCP до 1.31.1
+- **Приоритет:** 🟡 Средний (после установки EDT 2026.1)
+- **Статус:** ⏸️ Заблокировано установкой EDT 2026.1
+
+### 5. mcp-bsl-platform-context — Обновление синтакс-помощника 1С ✅ УСТАНОВЛЕНО
 - **Репо:** https://github.com/alkoleft/mcp-bsl-platform-context
 - **Что:** MCP-сервер для проверки синтаксиса 1С (search, info, getMember, getMembers, getConstructors)
-- **Текущая версия:** v0.3.0 (сконфигурирован в bsl-context через Java)
-- **Новое в v0.3.2:** улучшенный поиск, дополнительные методы платформы
-- **Обновление:** скачать новый JAR с https://github.com/alkoleft/mcp-bsl-platform-context/releases/latest, заменить путь в `.claude/settings.json` → bsl-context
-- **Приоритет:** 🟡 Средний (обновить при следующей 1С-сессии)
-- **Статус:** ⏳ Ожидает (нужно скачать JAR вручную)
+- **Текущая версия:** v0.3.2 (актуальная, JAR в `tools/mcp-bsl-context-0.3.2.jar`)
+- **Статус:** ✅ Подключён в `.mcp.json` как `bsl-context`
 
 ### 6. AndreevED/1c-ai-feature-dev-workflow — Методология AI-разработки 1С
 - **Репо:** https://github.com/AndreevED/1c-ai-feature-dev-workflow
