@@ -45,6 +45,12 @@
 						<Event name="StartChoice">ФайлCSVНачалоВыбора</Event>
 					</Events>
 				</InputField>
+				<Button name="КнопкаИнструкция" id="200">
+					<Type>UsualButton</Type>
+					<Representation>Text</Representation>
+					<CommandName>Form.Command.ПоказатьИнструкцию</CommandName>
+					<ExtendedTooltip name="КнопкаИнструкцияРасширеннаяПодсказка" id="201"/>
+				</Button>
 			</ChildItems>
 		</UsualGroup>
 		<UsualGroup name="ГруппаПериод" id="100">
@@ -105,13 +111,7 @@
 					<Representation>PictureAndText</Representation>
 					<CommandName>Form.Command.Применить</CommandName>
 					<ExtendedTooltip name="КнопкаПрименитьРасширеннаяПодсказка" id="14"/>
-				</Button>
-				<Button name="КнопкаИнструкция" id="200">
-					<Type>UsualButton</Type>
-					<Representation>Text</Representation>
-					<CommandName>Form.Command.ПоказатьИнструкцию</CommandName>
-					<ExtendedTooltip name="КнопкаИнструкцияРасширеннаяПодсказка" id="201"/>
-				</Button>
+				</Button>
 				<Button name="КнопкаУдалитьСозданныеТД" id="210">
 					<Type>UsualButton</Type>
 					<Representation>Text</Representation>
@@ -743,7 +743,7 @@
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Сгруппировать дубли</v8:content>
+					<v8:content>Сгруппировать</v8:content>
 				</v8:item>
 			</Title>
 			<ToolTip>
