@@ -118,6 +118,12 @@
 					<CommandName>Form.Command.УдалитьСозданныеТД</CommandName>
 					<ExtendedTooltip name="КнопкаУдалитьСозданныеТДРасширеннаяПодсказка" id="211"/>
 				</Button>
+				<Button name="КнопкаСгруппироватьДубли" id="220">
+					<Type>UsualButton</Type>
+					<Representation>Text</Representation>
+					<CommandName>Form.Command.СгруппироватьДубли</CommandName>
+					<ExtendedTooltip name="КнопкаСгруппироватьДублиРасширеннаяПодсказка" id="221"/>
+				</Button>
 			</ChildItems>
 		</UsualGroup>
 		<UsualGroup name="ГруппаСтатистика" id="15">
@@ -714,6 +720,21 @@
 				</v8:item>
 			</ToolTip>
 			<Action>УдалитьСозданныеТД</Action>
+		</Command>
+		<Command name="СгруппироватьДубли" id="222">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Сгруппировать дубли</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Склеить ОПП с одинаковым ТС + Контрагент + Дата за указанный период в один документ. Запускается вручную после Применить.</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>СгруппироватьДубли</Action>
 		</Command>
 		<Command name="ФильтрНовыйКомплекс" id="1">
 			<Title>
