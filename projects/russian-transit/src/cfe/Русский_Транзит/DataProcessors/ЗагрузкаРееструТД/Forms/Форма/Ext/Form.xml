@@ -248,17 +248,17 @@
 					<CommandName>Form.Command.ФильтрНоваяТД</CommandName>
 					<ExtendedTooltip name="КнопкаФильтрНоваяТДРасширеннаяПодсказка" id="127"/>
 				</Button>
-				<Button name="КнопкаФильтрНовыйКомлекс" id="430">
+				<Button name="КнопкаФильтрНовыйКомплекс" id="430">
 					<Type>UsualButton</Type>
 					<Representation>Text</Representation>
-					<CommandName>Form.Command.ФильтрНовыйКомлекс</CommandName>
+					<CommandName>Form.Command.ФильтрНовыйКомплекс</CommandName>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Новый комплекс</v8:content>
 						</v8:item>
 					</Title>
-					<ExtendedTooltip name="КнопкаФильтрНовыйКомлексРасширеннаяПодсказка" id="431"/>
+					<ExtendedTooltip name="КнопкаФильтрНовыйКомплексРасширеннаяПодсказка" id="431"/>
 				</Button>
 			</ChildItems>
 		</UsualGroup>
@@ -715,7 +715,7 @@
 			</ToolTip>
 			<Action>УдалитьСозданныеТД</Action>
 		</Command>
-		<Command name="ФильтрНовыйКомлекс" id="1">
+		<Command name="ФильтрНовыйКомплекс" id="1">
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
@@ -728,7 +728,7 @@
 					<v8:content>Фильтр новый комлекс</v8:content>
 				</v8:item>
 			</ToolTip>
-			<Action>ФильтрНовыйКомлекс</Action>
+			<Action>ФильтрНовыйКомплекс</Action>
 		</Command>
 	</Commands>
 </Form>
