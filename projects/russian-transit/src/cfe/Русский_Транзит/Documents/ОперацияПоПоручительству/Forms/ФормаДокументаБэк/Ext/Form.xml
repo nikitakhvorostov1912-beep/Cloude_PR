@@ -104,13 +104,13 @@
 						</LabelDecoration>
 						<InputField name="Расш1_ВидОперации" id="9101">
 							<DataPath>Объект.ВидОперации</DataPath>
+							<ReadOnly>true</ReadOnly>
 							<Title>
 								<v8:item>
 									<v8:lang>ru</v8:lang>
 									<v8:content>Вид операции</v8:content>
 								</v8:item>
 							</Title>
-							<ReadOnly>true</ReadOnly>
 							<ContextMenu name="Расш1_ВидОперацииКонтекстноеМеню" id="9102"/>
 							<ExtendedTooltip name="Расш1_ВидОперацииРасширеннаяПодсказка" id="9103"/>
 						</InputField>

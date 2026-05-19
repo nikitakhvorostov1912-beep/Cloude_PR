@@ -2,9 +2,6 @@
 <Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
 	<AutoTitle>false</AutoTitle>
 	<UseForFoldersAndItems>Items</UseForFoldersAndItems>
-	<Events>
-		<Event name="OnCreateAtServer" callType="After"/>
-	</Events>
 	<AutoCommandBar name="ФормаКоманднаяПанель" id="-1">
 		<ChildItems>
 			<Popup name="ПодменюСоздатьНаОсновании" id="337">
@@ -19,7 +16,7 @@
 					<xr:LoadTransparent>false</xr:LoadTransparent>
 				</Picture>
 				<Representation>Picture</Representation>
-				<ExtendedTooltip name="ПодменюСоздатьНаОснованииРасширеннаяПодсказка" id="338" />
+				<ExtendedTooltip name="ПодменюСоздатьНаОснованииРасширеннаяПодсказка" id="338"/>
 				<ChildItems>
 					<ButtonGroup name="ПодменюСоздатьНаОснованииВажное" id="339">
 						<Title>
@@ -28,7 +25,7 @@
 								<v8:content>Создать на основании (Важное)</v8:content>
 							</v8:item>
 						</Title>
-						<ExtendedTooltip name="ПодменюСоздатьНаОснованииВажноеРасширеннаяПодсказка" id="340" />
+						<ExtendedTooltip name="ПодменюСоздатьНаОснованииВажноеРасширеннаяПодсказка" id="340"/>
 					</ButtonGroup>
 					<ButtonGroup name="ПодменюСоздатьНаОснованииОбычное" id="341">
 						<Title>
@@ -37,7 +34,7 @@
 								<v8:content>Создать на основании (Обычное)</v8:content>
 							</v8:item>
 						</Title>
-						<ExtendedTooltip name="ПодменюСоздатьНаОснованииОбычноеРасширеннаяПодсказка" id="342" />
+						<ExtendedTooltip name="ПодменюСоздатьНаОснованииОбычноеРасширеннаяПодсказка" id="342"/>
 					</ButtonGroup>
 					<ButtonGroup name="ПодменюСоздатьНаОснованииСмТакже" id="343">
 						<Title>
@@ -46,7 +43,7 @@
 								<v8:content>Создать на основании (См. также)</v8:content>
 							</v8:item>
 						</Title>
-						<ExtendedTooltip name="ПодменюСоздатьНаОснованииСмТакжеРасширеннаяПодсказка" id="344" />
+						<ExtendedTooltip name="ПодменюСоздатьНаОснованииСмТакжеРасширеннаяПодсказка" id="344"/>
 					</ButtonGroup>
 				</ChildItems>
 			</Popup>
@@ -67,7 +64,7 @@
 					<xr:Ref>CommonPicture.ЗаполнитьФорму</xr:Ref>
 					<xr:LoadTransparent>false</xr:LoadTransparent>
 				</Picture>
-				<ExtendedTooltip name="ПодменюЗаполнитьРасширеннаяПодсказка" id="96" />
+				<ExtendedTooltip name="ПодменюЗаполнитьРасширеннаяПодсказка" id="96"/>
 			</Popup>
 			<Popup name="ПодменюПечать" id="97">
 				<Title>
@@ -86,7 +83,7 @@
 					<xr:Ref>StdPicture.Print</xr:Ref>
 					<xr:LoadTransparent>true</xr:LoadTransparent>
 				</Picture>
-				<ExtendedTooltip name="ПодменюПечатьРасширеннаяПодсказка" id="98" />
+				<ExtendedTooltip name="ПодменюПечатьРасширеннаяПодсказка" id="98"/>
 			</Popup>
 			<Popup name="КомандыЭДО" id="348">
 				<Title>
@@ -95,7 +92,7 @@
 						<v8:content>ЭДО</v8:content>
 					</v8:item>
 				</Title>
-				<ExtendedTooltip name="КомандыЭДОРасширеннаяПодсказка" id="349" />
+				<ExtendedTooltip name="КомандыЭДОРасширеннаяПодсказка" id="349"/>
 			</Popup>
 			<Popup name="ПодменюОтчеты" id="173">
 				<Title>
@@ -109,7 +106,7 @@
 					<xr:LoadTransparent>false</xr:LoadTransparent>
 				</Picture>
 				<Representation>PictureAndText</Representation>
-				<ExtendedTooltip name="ПодменюОтчетыРасширеннаяПодсказка" id="174" />
+				<ExtendedTooltip name="ПодменюОтчетыРасширеннаяПодсказка" id="174"/>
 				<ChildItems>
 					<ButtonGroup name="ПодменюОтчетыВажное" id="175">
 						<Title>
@@ -118,7 +115,7 @@
 								<v8:content>Подменю отчеты важное</v8:content>
 							</v8:item>
 						</Title>
-						<ExtendedTooltip name="ПодменюОтчетыВажноеРасширеннаяПодсказка" id="176" />
+						<ExtendedTooltip name="ПодменюОтчетыВажноеРасширеннаяПодсказка" id="176"/>
 					</ButtonGroup>
 					<ButtonGroup name="ПодменюОтчетыПерейти" id="177">
 						<Title>
@@ -133,7 +130,7 @@
 								<v8:content>Подменю отчеты важное</v8:content>
 							</v8:item>
 						</ToolTip>
-						<ExtendedTooltip name="ПодменюОтчетыПерейтиРасширеннаяПодсказка" id="178" />
+						<ExtendedTooltip name="ПодменюОтчетыПерейтиРасширеннаяПодсказка" id="178"/>
 					</ButtonGroup>
 					<ButtonGroup name="ПодменюОтчетыСмТакже" id="179">
 						<Title>
@@ -148,7 +145,7 @@
 								<v8:content>Подменю отчеты важное</v8:content>
 							</v8:item>
 						</ToolTip>
-						<ExtendedTooltip name="ПодменюОтчетыСмТакжеРасширеннаяПодсказка" id="180" />
+						<ExtendedTooltip name="ПодменюОтчетыСмТакжеРасширеннаяПодсказка" id="180"/>
 					</ButtonGroup>
 				</ChildItems>
 			</Popup>
@@ -159,13 +156,13 @@
 						<v8:content>1СПАРК Риски</v8:content>
 					</v8:item>
 				</Title>
-				<ExtendedTooltip name="ПодменюСПАРКРасширеннаяПодсказка" id="251" />
+				<ExtendedTooltip name="ПодменюСПАРКРасширеннаяПодсказка" id="251"/>
 			</Popup>
 			<Button name="ФормаПроверитьКонтрагента" id="195">
 				<Type>CommandBarButton</Type>
 				<CommandName>0</CommandName>
 				<LocationInCommandBar>InAdditionalSubmenu</LocationInCommandBar>
-				<ExtendedTooltip name="ФормаПроверитьКонтрагентаРасширеннаяПодсказка" id="196" />
+				<ExtendedTooltip name="ФормаПроверитьКонтрагентаРасширеннаяПодсказка" id="196"/>
 			</Button>
 		</ChildItems>
 	</AutoCommandBar>
@@ -178,7 +175,7 @@
 				</v8:item>
 			</Title>
 			<PagesRepresentation>TabsOnTop</PagesRepresentation>
-			<ExtendedTooltip name="СтраницыФормыРасширеннаяПодсказка" id="184" />
+			<ExtendedTooltip name="СтраницыФормыРасширеннаяПодсказка" id="184"/>
 			<ChildItems>
 				<Page name="СтраницаОсновное" id="185">
 					<Title>
@@ -187,7 +184,7 @@
 							<v8:content>Основное</v8:content>
 						</v8:item>
 					</Title>
-					<ExtendedTooltip name="СтраницаОсновноеРасширеннаяПодсказка" id="186" />
+					<ExtendedTooltip name="СтраницаОсновноеРасширеннаяПодсказка" id="186"/>
 					<ChildItems>
 						<UsualGroup name="ГруппаЮрЛицо" id="64">
 							<Title>
@@ -200,7 +197,7 @@
 							<Behavior>Usual</Behavior>
 							<Representation>None</Representation>
 							<ShowTitle>false</ShowTitle>
-							<ExtendedTooltip name="ГруппаЮрЛицоРасширеннаяПодсказка" id="65" />
+							<ExtendedTooltip name="ГруппаЮрЛицоРасширеннаяПодсказка" id="65"/>
 							<ChildItems>
 								<InputField name="ВидКонтрагента" id="5">
 									<ToolTip>
@@ -216,7 +213,7 @@
 									<ListChoiceMode>true</ListChoiceMode>
 									<ChoiceList>
 										<xr:Item>
-											<xr:Presentation />
+											<xr:Presentation/>
 											<xr:CheckState>0</xr:CheckState>
 											<xr:Value xsi:type="FormChoiceListDesTimeValue">
 												<Presentation>
@@ -229,7 +226,7 @@
 											</xr:Value>
 										</xr:Item>
 										<xr:Item>
-											<xr:Presentation />
+											<xr:Presentation/>
 											<xr:CheckState>0</xr:CheckState>
 											<xr:Value xsi:type="FormChoiceListDesTimeValue">
 												<Presentation>
@@ -242,7 +239,7 @@
 											</xr:Value>
 										</xr:Item>
 										<xr:Item>
-											<xr:Presentation />
+											<xr:Presentation/>
 											<xr:CheckState>0</xr:CheckState>
 											<xr:Value xsi:type="FormChoiceListDesTimeValue">
 												<Presentation>
@@ -255,7 +252,7 @@
 											</xr:Value>
 										</xr:Item>
 										<xr:Item>
-											<xr:Presentation />
+											<xr:Presentation/>
 											<xr:CheckState>0</xr:CheckState>
 											<xr:Value xsi:type="FormChoiceListDesTimeValue">
 												<Presentation>
@@ -268,7 +265,7 @@
 											</xr:Value>
 										</xr:Item>
 										<xr:Item>
-											<xr:Presentation />
+											<xr:Presentation/>
 											<xr:CheckState>0</xr:CheckState>
 											<xr:Value xsi:type="FormChoiceListDesTimeValue">
 												<Presentation>
@@ -281,8 +278,8 @@
 											</xr:Value>
 										</xr:Item>
 									</ChoiceList>
-									<ContextMenu name="ВидКонтрагентаКонтекстноеМеню" id="6" />
-									<ExtendedTooltip name="ВидКонтрагентаРасширеннаяПодсказка" id="43" />
+									<ContextMenu name="ВидКонтрагентаКонтекстноеМеню" id="6"/>
+									<ExtendedTooltip name="ВидКонтрагентаРасширеннаяПодсказка" id="43"/>
 								</InputField>
 								<UsualGroup name="ЛокализацияНДСПоСтавкам4и2" id="358">
 									<Title>
@@ -294,15 +291,15 @@
 									<Behavior>Usual</Behavior>
 									<Representation>None</Representation>
 									<ShowTitle>false</ShowTitle>
-									<ExtendedTooltip name="ЛокализацияНДСПоСтавкам4и2РасширеннаяПодсказка" id="359" />
+									<ExtendedTooltip name="ЛокализацияНДСПоСтавкам4и2РасширеннаяПодсказка" id="359"/>
 									<ChildItems>
 										<CheckBoxField name="НДСПоСтавкам4и2" id="61">
 											<DataPath>Объект.НДСПоСтавкам4и2</DataPath>
 											<Enabled>false</Enabled>
 											<TitleLocation>Right</TitleLocation>
 											<CheckBoxType>Auto</CheckBoxType>
-											<ContextMenu name="НДСПоСтавкам4и2КонтекстноеМеню" id="62" />
-											<ExtendedTooltip name="НДСПоСтавкам4и2РасширеннаяПодсказка" id="63" />
+											<ContextMenu name="НДСПоСтавкам4и2КонтекстноеМеню" id="62"/>
+											<ExtendedTooltip name="НДСПоСтавкам4и2РасширеннаяПодсказка" id="63"/>
 										</CheckBoxField>
 									</ChildItems>
 								</UsualGroup>
@@ -318,7 +315,7 @@
 							<Width>85</Width>
 							<HorizontalStretch>false</HorizontalStretch>
 							<PagesRepresentation>None</PagesRepresentation>
-							<ExtendedTooltip name="ГруппаСтраницыДанныхРегистрацииКонтрагентаРасширеннаяПодсказка" id="127" />
+							<ExtendedTooltip name="ГруппаСтраницыДанныхРегистрацииКонтрагентаРасширеннаяПодсказка" id="127"/>
 							<ChildItems>
 								<Page name="ЛокализацияГруппаСтраницаРоссийскогоКонтрагента" id="273">
 									<Title>
@@ -333,7 +330,7 @@
 											<v8:content>Данные регистрации в Российской Федерации</v8:content>
 										</v8:item>
 									</ToolTip>
-									<ExtendedTooltip name="ЛокализацияГруппаСтраницаРоссийскогоКонтрагентаРасширеннаяПодсказка" id="274" />
+									<ExtendedTooltip name="ЛокализацияГруппаСтраницаРоссийскогоКонтрагентаРасширеннаяПодсказка" id="274"/>
 									<ChildItems>
 										<UsualGroup name="ГруппаИННКППОКПО" id="275">
 											<Title>
@@ -348,7 +345,7 @@
 											<Representation>None</Representation>
 											<ShowTitle>false</ShowTitle>
 											<ThroughAlign>Use</ThroughAlign>
-											<ExtendedTooltip name="ГруппаИННКППОКПОРасширеннаяПодсказка" id="276" />
+											<ExtendedTooltip name="ГруппаИННКППОКПОРасширеннаяПодсказка" id="276"/>
 											<ChildItems>
 												<Pages name="СтраницыИНН" id="277">
 													<Title>
@@ -358,7 +355,7 @@
 														</v8:item>
 													</Title>
 													<PagesRepresentation>None</PagesRepresentation>
-													<ExtendedTooltip name="СтраницыИННРасширеннаяПодсказка" id="278" />
+													<ExtendedTooltip name="СтраницыИННРасширеннаяПодсказка" id="278"/>
 													<ChildItems>
 														<Page name="СтраницаИННЮрЛицо" id="279">
 															<Title>
@@ -393,13 +390,13 @@
 																			<v8:content>Введите ИНН 10 цифр</v8:content>
 																		</v8:item>
 																	</InputHint>
-																	<ContextMenu name="ИННКонтекстноеМеню" id="282" />
-																	<ExtendedTooltip name="ИННРасширеннаяПодсказка" id="283" />
+																	<ContextMenu name="ИННКонтекстноеМеню" id="282"/>
+																	<ExtendedTooltip name="ИННРасширеннаяПодсказка" id="283"/>
 																</InputField>
 																<Button name="ЗаполнитьПоИНН" id="284">
 																	<Type>UsualButton</Type>
 																	<CommandName>0</CommandName>
-																	<ExtendedTooltip name="ЗаполнитьПоИННРасширеннаяПодсказка" id="285" />
+																	<ExtendedTooltip name="ЗаполнитьПоИННРасширеннаяПодсказка" id="285"/>
 																</Button>
 																<UsualGroup name="ГруппаКПП" id="326">
 																	<Title>
@@ -411,7 +408,7 @@
 																	<Group>Horizontal</Group>
 																	<Behavior>Usual</Behavior>
 																	<ShowTitle>false</ShowTitle>
-																	<ExtendedTooltip name="ГруппаКППРасширеннаяПодсказка" id="327" />
+																	<ExtendedTooltip name="ГруппаКППРасширеннаяПодсказка" id="327"/>
 																	<ChildItems>
 																		<InputField name="КПП" id="286">
 																			<DataPath>Объект.КПП</DataPath>
@@ -426,16 +423,16 @@
 																					<v8:content>Введите КПП 9 цифр</v8:content>
 																				</v8:item>
 																			</InputHint>
-																			<ContextMenu name="КППКонтекстноеМеню" id="287" />
-																			<ExtendedTooltip name="КППРасширеннаяПодсказка" id="288" />
+																			<ContextMenu name="КППКонтекстноеМеню" id="287"/>
+																			<ExtendedTooltip name="КППРасширеннаяПодсказка" id="288"/>
 																		</InputField>
 																		<LabelField name="ПереходКИсторииКПП" id="331">
 																			<TitleLocation>None</TitleLocation>
 																			<AutoMaxWidth>false</AutoMaxWidth>
 																			<MaxWidth>15</MaxWidth>
 																			<HorizontalStretch>true</HorizontalStretch>
-																			<ContextMenu name="ПереходКИсторииКППКонтекстноеМеню" id="332" />
-																			<ExtendedTooltip name="ПереходКИсторииКППРасширеннаяПодсказка" id="333" />
+																			<ContextMenu name="ПереходКИсторииКППКонтекстноеМеню" id="332"/>
+																			<ExtendedTooltip name="ПереходКИсторииКППРасширеннаяПодсказка" id="333"/>
 																		</LabelField>
 																	</ChildItems>
 																</UsualGroup>
@@ -470,8 +467,8 @@
 																			<v8:content>Введите ИНН 12 цифр</v8:content>
 																		</v8:item>
 																	</InputHint>
-																	<ContextMenu name="ИННФизЛицоКонтекстноеМеню" id="292" />
-																	<ExtendedTooltip name="ИННФизЛицоРасширеннаяПодсказка" id="293" />
+																	<ContextMenu name="ИННФизЛицоКонтекстноеМеню" id="292"/>
+																	<ExtendedTooltip name="ИННФизЛицоРасширеннаяПодсказка" id="293"/>
 																</InputField>
 																<Button name="ЗаполнитьПоИННФизЛицо" id="294">
 																	<Type>UsualButton</Type>
@@ -480,7 +477,7 @@
 																		<xr:Ref>CommonPicture.ЗаполнитьФорму</xr:Ref>
 																		<xr:LoadTransparent>false</xr:LoadTransparent>
 																	</Picture>
-																	<ExtendedTooltip name="ЗаполнитьПоИННФизЛицоРасширеннаяПодсказка" id="295" />
+																	<ExtendedTooltip name="ЗаполнитьПоИННФизЛицоРасширеннаяПодсказка" id="295"/>
 																</Button>
 															</ChildItems>
 														</Page>
@@ -493,8 +490,8 @@
 													<Width>13</Width>
 													<HorizontalStretch>false</HorizontalStretch>
 													<Wrap>false</Wrap>
-													<ContextMenu name="КодПоОКПОКонтекстноеМеню" id="297" />
-													<ExtendedTooltip name="КодПоОКПОРасширеннаяПодсказка" id="298" />
+													<ContextMenu name="КодПоОКПОКонтекстноеМеню" id="297"/>
+													<ExtendedTooltip name="КодПоОКПОРасширеннаяПодсказка" id="298"/>
 												</InputField>
 											</ChildItems>
 										</UsualGroup>
@@ -506,7 +503,7 @@
 												</v8:item>
 											</Title>
 											<PagesRepresentation>None</PagesRepresentation>
-											<ExtendedTooltip name="СтраницыОГРНРасширеннаяПодсказка" id="363" />
+											<ExtendedTooltip name="СтраницыОГРНРасширеннаяПодсказка" id="363"/>
 											<ChildItems>
 												<Page name="СтраницаОГРНЮрЛицо" id="364">
 													<Title>
@@ -515,7 +512,7 @@
 															<v8:content>Страница ОГРН юр. лицо</v8:content>
 														</v8:item>
 													</Title>
-													<ExtendedTooltip name="СтраницаОГРНЮрЛицоРасширеннаяПодсказка" id="365" />
+													<ExtendedTooltip name="СтраницаОГРНЮрЛицоРасширеннаяПодсказка" id="365"/>
 													<ChildItems>
 														<InputField name="ОГРН" id="368">
 															<DataPath>Объект.РегистрационныйНомер</DataPath>
@@ -533,8 +530,8 @@
 																	<v8:content>Введите ОГРН 13 цифр</v8:content>
 																</v8:item>
 															</InputHint>
-															<ContextMenu name="ОГРНКонтекстноеМеню" id="369" />
-															<ExtendedTooltip name="ОГРНРасширеннаяПодсказка" id="370" />
+															<ContextMenu name="ОГРНКонтекстноеМеню" id="369"/>
+															<ExtendedTooltip name="ОГРНРасширеннаяПодсказка" id="370"/>
 														</InputField>
 													</ChildItems>
 												</Page>
@@ -545,7 +542,7 @@
 															<v8:content>Страница ОГРН физ. лицо</v8:content>
 														</v8:item>
 													</Title>
-													<ExtendedTooltip name="СтраницаОГРНФизЛицоРасширеннаяПодсказка" id="367" />
+													<ExtendedTooltip name="СтраницаОГРНФизЛицоРасширеннаяПодсказка" id="367"/>
 													<ChildItems>
 														<InputField name="ОГРНИП" id="371">
 															<DataPath>Объект.РегистрационныйНомер</DataPath>
@@ -563,8 +560,8 @@
 																	<v8:content>Введите ОГРНИП 15 цифр</v8:content>
 																</v8:item>
 															</InputHint>
-															<ContextMenu name="ОГРНИПКонтекстноеМеню" id="372" />
-															<ExtendedTooltip name="ОГРНИПРасширеннаяПодсказка" id="373" />
+															<ContextMenu name="ОГРНИПКонтекстноеМеню" id="372"/>
+															<ExtendedTooltip name="ОГРНИПРасширеннаяПодсказка" id="373"/>
 														</InputField>
 													</ChildItems>
 												</Page>
@@ -581,7 +578,7 @@
 											<Behavior>Usual</Behavior>
 											<Representation>None</Representation>
 											<ShowTitle>false</ShowTitle>
-											<ExtendedTooltip name="ГруппаРезультатПроверкиКонтрагентовРасширеннаяПодсказка" id="300" />
+											<ExtendedTooltip name="ГруппаРезультатПроверкиКонтрагентовРасширеннаяПодсказка" id="300"/>
 											<ChildItems>
 												<Pages name="СтраницыКартинкиРезультатовПроверкиКонтрагента" id="301">
 													<Title>
@@ -591,7 +588,7 @@
 														</v8:item>
 													</Title>
 													<PagesRepresentation>None</PagesRepresentation>
-													<ExtendedTooltip name="СтраницыКартинкиРезультатовПроверкиКонтрагентаРасширеннаяПодсказка" id="302" />
+													<ExtendedTooltip name="СтраницыКартинкиРезультатовПроверкиКонтрагентаРасширеннаяПодсказка" id="302"/>
 													<ChildItems>
 														<Page name="СтраницаКорректныйКонтрагент" id="303">
 															<Title>
@@ -600,14 +597,14 @@
 																	<v8:content>Страница корректный контрагент</v8:content>
 																</v8:item>
 															</Title>
-															<ExtendedTooltip name="СтраницаКорректныйКонтрагентРасширеннаяПодсказка" id="304" />
+															<ExtendedTooltip name="СтраницаКорректныйКонтрагентРасширеннаяПодсказка" id="304"/>
 															<ChildItems>
 																<LabelDecoration name="ДекорацияКорректныйКонтрагент" id="305">
 																	<Width>3</Width>
 																	<Height>1</Height>
 																	<HorizontalStretch>false</HorizontalStretch>
-																	<ContextMenu name="ДекорацияКорректныйКонтрагентКонтекстноеМеню" id="306" />
-																	<ExtendedTooltip name="ДекорацияКорректныйКонтрагентРасширеннаяПодсказка" id="307" />
+																	<ContextMenu name="ДекорацияКорректныйКонтрагентКонтекстноеМеню" id="306"/>
+																	<ExtendedTooltip name="ДекорацияКорректныйКонтрагентРасширеннаяПодсказка" id="307"/>
 																</LabelDecoration>
 															</ChildItems>
 														</Page>
@@ -624,7 +621,7 @@
 																	<v8:content>Страница корректный контрагент</v8:content>
 																</v8:item>
 															</ToolTip>
-															<ExtendedTooltip name="СтраницаНеДействующийКонтрагентРасширеннаяПодсказка" id="309" />
+															<ExtendedTooltip name="СтраницаНеДействующийКонтрагентРасширеннаяПодсказка" id="309"/>
 															<ChildItems>
 																<PictureDecoration name="ДекорацияКартинкаНеДействующийКонтрагент" id="310">
 																	<Width>3</Width>
@@ -636,8 +633,8 @@
 																		</v8:item>
 																	</Title>
 																	<FileDragMode>AsFile</FileDragMode>
-																	<ContextMenu name="ДекорацияКартинкаНеДействующийКонтрагентКонтекстноеМеню" id="311" />
-																	<ExtendedTooltip name="ДекорацияКартинкаНеДействующийКонтрагентРасширеннаяПодсказка" id="312" />
+																	<ContextMenu name="ДекорацияКартинкаНеДействующийКонтрагентКонтекстноеМеню" id="311"/>
+																	<ExtendedTooltip name="ДекорацияКартинкаНеДействующийКонтрагентРасширеннаяПодсказка" id="312"/>
 																</PictureDecoration>
 															</ChildItems>
 														</Page>
@@ -648,7 +645,7 @@
 																	<v8:content>Страница контрагент не достаточно данных</v8:content>
 																</v8:item>
 															</Title>
-															<ExtendedTooltip name="СтраницаКонтрагентНеДостаточноДанныхРасширеннаяПодсказка" id="314" />
+															<ExtendedTooltip name="СтраницаКонтрагентНеДостаточноДанныхРасширеннаяПодсказка" id="314"/>
 															<ChildItems>
 																<PictureDecoration name="ДекорацияКартинкаНедостаточноДанныхКонтрагент" id="315">
 																	<Width>3</Width>
@@ -660,8 +657,8 @@
 																		</v8:item>
 																	</Title>
 																	<FileDragMode>AsFile</FileDragMode>
-																	<ContextMenu name="ДекорацияКартинкаНедостаточноДанныхКонтрагентКонтекстноеМеню" id="316" />
-																	<ExtendedTooltip name="ДекорацияКартинкаНедостаточноДанныхКонтрагентРасширеннаяПодсказка" id="317" />
+																	<ContextMenu name="ДекорацияКартинкаНедостаточноДанныхКонтрагентКонтекстноеМеню" id="316"/>
+																	<ExtendedTooltip name="ДекорацияКартинкаНедостаточноДанныхКонтрагентРасширеннаяПодсказка" id="317"/>
 																</PictureDecoration>
 															</ChildItems>
 														</Page>
@@ -678,7 +675,7 @@
 																	<v8:content>Страница корректный контрагент</v8:content>
 																</v8:item>
 															</ToolTip>
-															<ExtendedTooltip name="СтраницаНеКорректныйКонтрагентРасширеннаяПодсказка" id="319" />
+															<ExtendedTooltip name="СтраницаНеКорректныйКонтрагентРасширеннаяПодсказка" id="319"/>
 															<ChildItems>
 																<PictureDecoration name="ДекорацияКартинкаНеКорректныйКонтрагент" id="320">
 																	<Width>3</Width>
@@ -690,8 +687,8 @@
 																		</v8:item>
 																	</Title>
 																	<FileDragMode>AsFile</FileDragMode>
-																	<ContextMenu name="ДекорацияКартинкаНеКорректныйКонтрагентКонтекстноеМеню" id="321" />
-																	<ExtendedTooltip name="ДекорацияКартинкаНеКорректныйКонтрагентРасширеннаяПодсказка" id="322" />
+																	<ContextMenu name="ДекорацияКартинкаНеКорректныйКонтрагентКонтекстноеМеню" id="321"/>
+																	<ExtendedTooltip name="ДекорацияКартинкаНеКорректныйКонтрагентРасширеннаяПодсказка" id="322"/>
 																</PictureDecoration>
 															</ChildItems>
 														</Page>
@@ -702,8 +699,8 @@
 													<HorizontalAlign>Left</HorizontalAlign>
 													<Width>75</Width>
 													<HorizontalStretch>false</HorizontalStretch>
-													<ContextMenu name="РезультатПроверкиКонтрагентаКонтекстноеМеню" id="324" />
-													<ExtendedTooltip name="РезультатПроверкиКонтрагентаРасширеннаяПодсказка" id="325" />
+													<ContextMenu name="РезультатПроверкиКонтрагентаКонтекстноеМеню" id="324"/>
+													<ExtendedTooltip name="РезультатПроверкиКонтрагентаРасширеннаяПодсказка" id="325"/>
 												</LabelField>
 											</ChildItems>
 										</UsualGroup>
@@ -720,7 +717,7 @@
 									<Group>Horizontal</Group>
 									<ShowTitle>false</ShowTitle>
 									<ExtendedTooltip name="ГруппаСтраницаИностраннойРегистрацииРасширеннаяПодсказка" id="256">
-										<Title formatted="true" />
+										<Title formatted="true"/>
 									</ExtendedTooltip>
 									<ChildItems>
 										<UsualGroup name="ГруппаСтранаРегистрацииНалоговыйНомер" id="257">
@@ -735,7 +732,7 @@
 											<Representation>None</Representation>
 											<United>false</United>
 											<ShowTitle>false</ShowTitle>
-											<ExtendedTooltip name="ГруппаСтранаРегистрацииНалоговыйНомерРасширеннаяПодсказка" id="258" />
+											<ExtendedTooltip name="ГруппаСтранаРегистрацииНалоговыйНомерРасширеннаяПодсказка" id="258"/>
 											<ChildItems>
 												<InputField name="СтранаРегистрации" id="259">
 													<DataPath>Объект.СтранаРегистрации</DataPath>
@@ -747,8 +744,8 @@
 													</Title>
 													<Width>22</Width>
 													<HorizontalStretch>false</HorizontalStretch>
-													<ContextMenu name="СтранаРегистрацииКонтекстноеМеню" id="260" />
-													<ExtendedTooltip name="СтранаРегистрацииРасширеннаяПодсказка" id="261" />
+													<ContextMenu name="СтранаРегистрацииКонтекстноеМеню" id="260"/>
+													<ExtendedTooltip name="СтранаРегистрацииРасширеннаяПодсказка" id="261"/>
 												</InputField>
 												<InputField name="НалоговыйНомер" id="262">
 													<DataPath>Объект.НалоговыйНомер</DataPath>
@@ -773,8 +770,8 @@
 															<v8:content>Налоговый номер в стране регистрации</v8:content>
 														</v8:item>
 													</InputHint>
-													<ContextMenu name="НалоговыйНомерКонтекстноеМеню" id="263" />
-													<ExtendedTooltip name="НалоговыйНомерРасширеннаяПодсказка" id="264" />
+													<ContextMenu name="НалоговыйНомерКонтекстноеМеню" id="263"/>
+													<ExtendedTooltip name="НалоговыйНомерРасширеннаяПодсказка" id="264"/>
 												</InputField>
 											</ChildItems>
 										</UsualGroup>
@@ -790,7 +787,7 @@
 											<Representation>None</Representation>
 											<United>false</United>
 											<ShowTitle>false</ShowTitle>
-											<ExtendedTooltip name="ГруппаРегистрационныйНомерИННКППРасширеннаяПодсказка" id="266" />
+											<ExtendedTooltip name="ГруппаРегистрационныйНомерИННКППРасширеннаяПодсказка" id="266"/>
 											<ChildItems>
 												<InputField name="РегистрационныйНомер" id="267">
 													<DataPath>Объект.РегистрационныйНомер</DataPath>
@@ -816,8 +813,8 @@
 															<v8:content>Регистрационный номер в стране регистрации</v8:content>
 														</v8:item>
 													</InputHint>
-													<ContextMenu name="РегистрационныйНомерКонтекстноеМеню" id="268" />
-													<ExtendedTooltip name="РегистрационныйНомерРасширеннаяПодсказка" id="269" />
+													<ContextMenu name="РегистрационныйНомерКонтекстноеМеню" id="268"/>
+													<ExtendedTooltip name="РегистрационныйНомерРасширеннаяПодсказка" id="269"/>
 												</InputField>
 												<UsualGroup name="ГруппаИНН" id="360">
 													<Title>
@@ -831,14 +828,14 @@
 													<Representation>None</Representation>
 													<ShowTitle>false</ShowTitle>
 													<ThroughAlign>DontUse</ThroughAlign>
-													<ExtendedTooltip name="ГруппаИННРасширеннаяПодсказка" id="361" />
+													<ExtendedTooltip name="ГруппаИННРасширеннаяПодсказка" id="361"/>
 													<ChildItems>
 														<InputField name="ИННИностранногоКонтрагента" id="270">
 															<DataPath>Объект.ИНН</DataPath>
 															<Width>14</Width>
 															<HorizontalStretch>false</HorizontalStretch>
-															<ContextMenu name="ИННИностранногоКонтрагентаКонтекстноеМеню" id="271" />
-															<ExtendedTooltip name="ИННИностранногоКонтрагентаРасширеннаяПодсказка" id="272" />
+															<ContextMenu name="ИННИностранногоКонтрагентаКонтекстноеМеню" id="271"/>
+															<ExtendedTooltip name="ИННИностранногоКонтрагентаРасширеннаяПодсказка" id="272"/>
 														</InputField>
 														<UsualGroup name="ЛокализацияГруппаИННКПП" id="356">
 															<Title>
@@ -851,21 +848,21 @@
 															<Behavior>Usual</Behavior>
 															<Representation>None</Representation>
 															<ShowTitle>false</ShowTitle>
-															<ExtendedTooltip name="ЛокализацияГруппаИННКППРасширеннаяПодсказка" id="357" />
+															<ExtendedTooltip name="ЛокализацияГруппаИННКППРасширеннаяПодсказка" id="357"/>
 															<ChildItems>
 																<InputField name="КППИностранногоКонтрагента" id="350">
 																	<DataPath>Объект.КПП</DataPath>
 																	<AutoMaxWidth>false</AutoMaxWidth>
 																	<MaxWidth>14</MaxWidth>
 																	<HorizontalStretch>false</HorizontalStretch>
-																	<ContextMenu name="КППИностранногоКонтрагентаКонтекстноеМеню" id="351" />
-																	<ExtendedTooltip name="КППИностранногоКонтрагентаРасширеннаяПодсказка" id="352" />
+																	<ContextMenu name="КППИностранногоКонтрагентаКонтекстноеМеню" id="351"/>
+																	<ExtendedTooltip name="КППИностранногоКонтрагентаРасширеннаяПодсказка" id="352"/>
 																</InputField>
 																<LabelField name="ПереходКИсторииКППИностранногоКонтрагента" id="353">
 																	<TitleLocation>None</TitleLocation>
 																	<MaxWidth>15</MaxWidth>
-																	<ContextMenu name="ПереходКИсторииКППИностранногоКонтрагентаКонтекстноеМеню" id="354" />
-																	<ExtendedTooltip name="ПереходКИсторииКППИностранногоКонтрагентаРасширеннаяПодсказка" id="355" />
+																	<ContextMenu name="ПереходКИсторииКППИностранногоКонтрагентаКонтекстноеМеню" id="354"/>
+																	<ExtendedTooltip name="ПереходКИсторииКППИностранногоКонтрагентаРасширеннаяПодсказка" id="355"/>
 																</LabelField>
 															</ChildItems>
 														</UsualGroup>
@@ -889,7 +886,7 @@
 							<Representation>None</Representation>
 							<ShowTitle>false</ShowTitle>
 							<ThroughAlign>Use</ThroughAlign>
-							<ExtendedTooltip name="ГруппаПартнерНаименованиеРасширеннаяПодсказка" id="238" />
+							<ExtendedTooltip name="ГруппаПартнерНаименованиеРасширеннаяПодсказка" id="238"/>
 							<ChildItems>
 								<UsualGroup name="ГруппаНаименованияПартнер" id="197">
 									<Title>
@@ -902,7 +899,7 @@
 									<Behavior>Usual</Behavior>
 									<Representation>None</Representation>
 									<ShowTitle>false</ShowTitle>
-									<ExtendedTooltip name="ГруппаНаименованияПартнерРасширеннаяПодсказка" id="198" />
+									<ExtendedTooltip name="ГруппаНаименованияПартнерРасширеннаяПодсказка" id="198"/>
 									<ChildItems>
 										<UsualGroup name="ГруппаНаименования" id="187">
 											<Title>
@@ -912,11 +909,11 @@
 												</v8:item>
 											</Title>
 											<TitleTextColor>style:FormTextColor</TitleTextColor>
-											<TitleFont ref="style:NormalTextFont" bold="true" italic="false" underline="false" strikeout="false" kind="StyleItem" />
+											<TitleFont ref="style:NormalTextFont" bold="true" italic="false" underline="false" strikeout="false" kind="StyleItem"/>
 											<Group>Vertical</Group>
 											<Behavior>Usual</Behavior>
 											<Representation>None</Representation>
-											<ExtendedTooltip name="ГруппаНаименованияРасширеннаяПодсказка" id="188" />
+											<ExtendedTooltip name="ГруппаНаименованияРасширеннаяПодсказка" id="188"/>
 											<ChildItems>
 												<UsualGroup name="ГруппаНаименованиеЛево" id="189">
 													<Title>
@@ -929,7 +926,7 @@
 													<Behavior>Usual</Behavior>
 													<Representation>None</Representation>
 													<ShowTitle>false</ShowTitle>
-													<ExtendedTooltip name="ГруппаНаименованиеЛевоРасширеннаяПодсказка" id="190" />
+													<ExtendedTooltip name="ГруппаНаименованиеЛевоРасширеннаяПодсказка" id="190"/>
 													<ChildItems>
 														<InputField name="НаименованиеСокращенное" id="18">
 															<DataPath>Объект.НаименованиеПолное</DataPath>
@@ -949,22 +946,22 @@
 																	<v8:content>Укажите наименование и заполните остальные реквизиты по данным государственных реестров</v8:content>
 																</v8:item>
 															</InputHint>
-															<ContextMenu name="НаименованиеСокращенноеКонтекстноеМеню" id="19" />
-															<ExtendedTooltip name="НаименованиеСокращенноеРасширеннаяПодсказка" id="41" />
+															<ContextMenu name="НаименованиеСокращенноеКонтекстноеМеню" id="19"/>
+															<ExtendedTooltip name="НаименованиеСокращенноеРасширеннаяПодсказка" id="41"/>
 														</InputField>
 														<LabelField name="ПереходКИсторииНаименования" id="334">
 															<TitleLocation>None</TitleLocation>
 															<AutoMaxWidth>false</AutoMaxWidth>
 															<MaxWidth>16</MaxWidth>
-															<ContextMenu name="ПереходКИсторииНаименованияКонтекстноеМеню" id="335" />
-															<ExtendedTooltip name="ПереходКИсторииНаименованияРасширеннаяПодсказка" id="336" />
+															<ContextMenu name="ПереходКИсторииНаименованияКонтекстноеМеню" id="335"/>
+															<ExtendedTooltip name="ПереходКИсторииНаименованияРасширеннаяПодсказка" id="336"/>
 														</LabelField>
 														<Button name="ЗаполнитьПоНаименованиюПоДаннымЕдиныхГосРеестров" id="191">
 															<Type>UsualButton</Type>
 															<Width>3</Width>
 															<AutoMaxWidth>false</AutoMaxWidth>
 															<CommandName>0</CommandName>
-															<ExtendedTooltip name="ЗаполнитьПоНаименованиюПоДаннымЕдиныхГосРеестровРасширеннаяПодсказка" id="192" />
+															<ExtendedTooltip name="ЗаполнитьПоНаименованиюПоДаннымЕдиныхГосРеестровРасширеннаяПодсказка" id="192"/>
 														</Button>
 													</ChildItems>
 												</UsualGroup>
@@ -981,8 +978,8 @@
 													<AutoMaxWidth>false</AutoMaxWidth>
 													<MaxWidth>60</MaxWidth>
 													<Wrap>false</Wrap>
-													<ContextMenu name="НаименованиеКонтекстноеМеню" id="2" />
-													<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="42" />
+													<ContextMenu name="НаименованиеКонтекстноеМеню" id="2"/>
+													<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="42"/>
 												</InputField>
 												<InputField name="НаименованиеМеждународное" id="345">
 													<DataPath>Объект.НаименованиеМеждународное</DataPath>
@@ -994,8 +991,8 @@
 													</Title>
 													<AutoMaxWidth>false</AutoMaxWidth>
 													<MaxWidth>60</MaxWidth>
-													<ContextMenu name="НаименованиеМеждународноеКонтекстноеМеню" id="346" />
-													<ExtendedTooltip name="НаименованиеМеждународноеРасширеннаяПодсказка" id="347" />
+													<ContextMenu name="НаименованиеМеждународноеКонтекстноеМеню" id="346"/>
+													<ExtendedTooltip name="НаименованиеМеждународноеРасширеннаяПодсказка" id="347"/>
 												</InputField>
 												<InputField name="НаименованиеВТранскрипции" id="374">
 													<DataPath>Объект.НаименованиеВТранскрипции</DataPath>
@@ -1008,8 +1005,8 @@
 													</Title>
 													<AutoMaxWidth>false</AutoMaxWidth>
 													<MaxWidth>60</MaxWidth>
-													<ContextMenu name="НаименованиеВТранскрипцииКонтекстноеМеню" id="375" />
-													<ExtendedTooltip name="НаименованиеВТранскрипцииРасширеннаяПодсказка" id="376" />
+													<ContextMenu name="НаименованиеВТранскрипцииКонтекстноеМеню" id="375"/>
+													<ExtendedTooltip name="НаименованиеВТранскрипцииРасширеннаяПодсказка" id="376"/>
 												</InputField>
 											</ChildItems>
 										</UsualGroup>
@@ -1046,16 +1043,16 @@
 													<AutoMaxWidth>false</AutoMaxWidth>
 													<HorizontalStretch>false</HorizontalStretch>
 													<Wrap>false</Wrap>
-													<ContextMenu name="ПартнерКонтекстноеМеню" id="14" />
-													<ExtendedTooltip name="ПартнерРасширеннаяПодсказка" id="45" />
+													<ContextMenu name="ПартнерКонтекстноеМеню" id="14"/>
+													<ExtendedTooltip name="ПартнерРасширеннаяПодсказка" id="45"/>
 												</InputField>
 											</ChildItems>
 										</UsualGroup>
 										<InputField name="Заказчик" id="377">
 											<DataPath>Объект.Заказчик</DataPath>
 											<ExtendedEditMultipleValues>true</ExtendedEditMultipleValues>
-											<ContextMenu name="ЗаказчикКонтекстноеМеню" id="378" />
-											<ExtendedTooltip name="ЗаказчикРасширеннаяПодсказка" id="379" />
+											<ContextMenu name="ЗаказчикКонтекстноеМеню" id="378"/>
+											<ExtendedTooltip name="ЗаказчикРасширеннаяПодсказка" id="379"/>
 										</InputField>
 										<UsualGroup name="ГруппаГоловнойКонтрагент" id="66">
 											<Title>
@@ -1068,7 +1065,7 @@
 											<Behavior>Usual</Behavior>
 											<Representation>None</Representation>
 											<ShowTitle>false</ShowTitle>
-											<ExtendedTooltip name="ГруппаГоловнойКонтрагентРасширеннаяПодсказка" id="67" />
+											<ExtendedTooltip name="ГруппаГоловнойКонтрагентРасширеннаяПодсказка" id="67"/>
 											<ChildItems>
 												<InputField name="ГоловнойКонтрагент" id="68">
 													<DataPath>Объект.ГоловнойКонтрагент</DataPath>
@@ -1076,13 +1073,13 @@
 													<Width>45</Width>
 													<HorizontalStretch>false</HorizontalStretch>
 													<ChoiceHistoryOnInput>DontUse</ChoiceHistoryOnInput>
-													<ContextMenu name="ГоловнойКонтрагентКонтекстноеМеню" id="69" />
-													<ExtendedTooltip name="ГоловнойКонтрагентРасширеннаяПодсказка" id="70" />
+													<ContextMenu name="ГоловнойКонтрагентКонтекстноеМеню" id="69"/>
+													<ExtendedTooltip name="ГоловнойКонтрагентРасширеннаяПодсказка" id="70"/>
 												</InputField>
 												<Button name="ЗаполнитьГоловногоКонтрагента" id="71">
 													<Type>Hyperlink</Type>
 													<CommandName>0</CommandName>
-													<ExtendedTooltip name="ЗаполнитьГоловногоКонтрагентаРасширеннаяПодсказка" id="72" />
+													<ExtendedTooltip name="ЗаполнитьГоловногоКонтрагентаРасширеннаяПодсказка" id="72"/>
 												</Button>
 											</ChildItems>
 										</UsualGroup>
@@ -1098,12 +1095,12 @@
 									<Behavior>Usual</Behavior>
 									<Representation>None</Representation>
 									<ShowTitle>false</ShowTitle>
-									<ExtendedTooltip name="ЛокализацияГруппаСпаркРасширеннаяПодсказка" id="200" />
+									<ExtendedTooltip name="ЛокализацияГруппаСпаркРасширеннаяПодсказка" id="200"/>
 									<ChildItems>
 										<LabelDecoration name="Декорация1СПАРКОтступСлева" id="252">
 											<Width>11</Width>
-											<ContextMenu name="Декорация1СПАРКОтступСлеваКонтекстноеМеню" id="253" />
-											<ExtendedTooltip name="Декорация1СПАРКОтступСлеваРасширеннаяПодсказка" id="254" />
+											<ContextMenu name="Декорация1СПАРКОтступСлеваКонтекстноеМеню" id="253"/>
+											<ExtendedTooltip name="Декорация1СПАРКОтступСлеваРасширеннаяПодсказка" id="254"/>
 										</LabelDecoration>
 										<UsualGroup name="ГруппаИндексыСПАРКРиски" id="239">
 											<Title>
@@ -1116,22 +1113,22 @@
 											<Behavior>Usual</Behavior>
 											<Representation>None</Representation>
 											<ShowTitle>false</ShowTitle>
-											<ExtendedTooltip name="ГруппаИндексыСПАРКРискиРасширеннаяПодсказка" id="240" />
+											<ExtendedTooltip name="ГруппаИндексыСПАРКРискиРасширеннаяПодсказка" id="240"/>
 											<ChildItems>
 												<LabelDecoration name="ДекорацияИндексыСПАРКРиски" id="241">
 													<Height>5</Height>
 													<HorizontalStretch>true</HorizontalStretch>
 													<VerticalAlign>Top</VerticalAlign>
 													<BackColor>style:ToolTipBackColor</BackColor>
-													<ContextMenu name="ДекорацияИндексыСПАРКРискиКонтекстноеМеню" id="242" />
-													<ExtendedTooltip name="ДекорацияИндексыСПАРКРискиРасширеннаяПодсказка" id="243" />
+													<ContextMenu name="ДекорацияИндексыСПАРКРискиКонтекстноеМеню" id="242"/>
+													<ExtendedTooltip name="ДекорацияИндексыСПАРКРискиРасширеннаяПодсказка" id="243"/>
 												</LabelDecoration>
 												<PictureDecoration name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРиски" id="244">
 													<Width>2</Width>
 													<Height>4</Height>
 													<FileDragMode>AsFile</FileDragMode>
-													<ContextMenu name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиКонтекстноеМеню" id="245" />
-													<ExtendedTooltip name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиРасширеннаяПодсказка" id="246" />
+													<ContextMenu name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиКонтекстноеМеню" id="245"/>
+													<ExtendedTooltip name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиРасширеннаяПодсказка" id="246"/>
 												</PictureDecoration>
 											</ChildItems>
 										</UsualGroup>
@@ -1150,7 +1147,7 @@
 							<Behavior>Usual</Behavior>
 							<Representation>None</Representation>
 							<ShowTitle>false</ShowTitle>
-							<ExtendedTooltip name="ЛокализацияГруппаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="74" />
+							<ExtendedTooltip name="ЛокализацияГруппаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="74"/>
 							<ChildItems>
 								<PictureDecoration name="КартинкаПредупреждениеГоловнойКонтрагент" id="75">
 									<Width>2</Width>
@@ -1162,8 +1159,8 @@
 										</v8:item>
 									</Title>
 									<FileDragMode>AsFile</FileDragMode>
-									<ContextMenu name="КартинкаПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="76" />
-									<ExtendedTooltip name="КартинкаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="77" />
+									<ContextMenu name="КартинкаПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="76"/>
+									<ExtendedTooltip name="КартинкаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="77"/>
 								</PictureDecoration>
 								<LabelDecoration name="ПредупреждениеГоловнойКонтрагент" id="78">
 									<AutoMaxWidth>false</AutoMaxWidth>
@@ -1178,8 +1175,8 @@
 										</v8:item>
 									</Title>
 									<VerticalAlign>Center</VerticalAlign>
-									<ContextMenu name="ПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="79" />
-									<ExtendedTooltip name="ПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="80" />
+									<ContextMenu name="ПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="79"/>
+									<ExtendedTooltip name="ПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="80"/>
 								</LabelDecoration>
 							</ChildItems>
 						</UsualGroup>
@@ -1198,8 +1195,8 @@
 							<AutoMaxHeight>false</AutoMaxHeight>
 							<VerticalStretch>true</VerticalStretch>
 							<MultiLine>true</MultiLine>
-							<ContextMenu name="ДополнительнаяИнформацияКонтекстноеМеню" id="23" />
-							<ExtendedTooltip name="ДополнительнаяИнформацияРасширеннаяПодсказка" id="60" />
+							<ContextMenu name="ДополнительнаяИнформацияКонтекстноеМеню" id="23"/>
+							<ExtendedTooltip name="ДополнительнаяИнформацияРасширеннаяПодсказка" id="60"/>
 						</InputField>
 						<InputField name="ТипУчета" id="1000000">
 							<DataPath>Объект.ТипУчета</DataPath>
@@ -1209,8 +1206,8 @@
 									<v8:content>Тип учёта</v8:content>
 								</v8:item>
 							</Title>
-							<ContextMenu name="ТипУчетаКонтекстноеМеню" id="1000001" />
-							<ExtendedTooltip name="ТипУчетаРасширеннаяПодсказка" id="1000002" />
+							<ContextMenu name="ТипУчетаКонтекстноеМеню" id="1000001"/>
+							<ExtendedTooltip name="ТипУчетаРасширеннаяПодсказка" id="1000002"/>
 						</InputField>
 					</ChildItems>
 				</Page>
@@ -1222,7 +1219,7 @@
 						</v8:item>
 					</Title>
 					<HorizontalStretch>true</HorizontalStretch>
-					<ExtendedTooltip name="ГруппаКонтактнаяИнформацияРасширеннаяПодсказка" id="58" />
+					<ExtendedTooltip name="ГруппаКонтактнаяИнформацияРасширеннаяПодсказка" id="58"/>
 				</Page>
 				<Page name="ГруппаДополнительныеРеквизиты" id="24">
 					<Title>
@@ -1232,7 +1229,7 @@
 						</v8:item>
 					</Title>
 					<HorizontalStretch>false</HorizontalStretch>
-					<ExtendedTooltip name="ГруппаДополнительныеРеквизитыРасширеннаяПодсказка" id="56" />
+					<ExtendedTooltip name="ГруппаДополнительныеРеквизитыРасширеннаяПодсказка" id="56"/>
 				</Page>
 			</ChildItems>
 		</Pages>
@@ -1263,7 +1260,7 @@
 						<xr:LoadTransparent>false</xr:LoadTransparent>
 					</Picture>
 					<Representation>Picture</Representation>
-					<ExtendedTooltip name="ПодменюСоздатьНаОснованииРасширеннаяПодсказка" id="338" />
+					<ExtendedTooltip name="ПодменюСоздатьНаОснованииРасширеннаяПодсказка" id="338"/>
 					<ChildItems>
 						<ButtonGroup name="ПодменюСоздатьНаОснованииВажное" id="339">
 							<Title>
@@ -1272,7 +1269,7 @@
 									<v8:content>Создать на основании (Важное)</v8:content>
 								</v8:item>
 							</Title>
-							<ExtendedTooltip name="ПодменюСоздатьНаОснованииВажноеРасширеннаяПодсказка" id="340" />
+							<ExtendedTooltip name="ПодменюСоздатьНаОснованииВажноеРасширеннаяПодсказка" id="340"/>
 						</ButtonGroup>
 						<ButtonGroup name="ПодменюСоздатьНаОснованииОбычное" id="341">
 							<Title>
@@ -1281,7 +1278,7 @@
 									<v8:content>Создать на основании (Обычное)</v8:content>
 								</v8:item>
 							</Title>
-							<ExtendedTooltip name="ПодменюСоздатьНаОснованииОбычноеРасширеннаяПодсказка" id="342" />
+							<ExtendedTooltip name="ПодменюСоздатьНаОснованииОбычноеРасширеннаяПодсказка" id="342"/>
 						</ButtonGroup>
 						<ButtonGroup name="ПодменюСоздатьНаОснованииСмТакже" id="343">
 							<Title>
@@ -1290,7 +1287,7 @@
 									<v8:content>Создать на основании (См. также)</v8:content>
 								</v8:item>
 							</Title>
-							<ExtendedTooltip name="ПодменюСоздатьНаОснованииСмТакжеРасширеннаяПодсказка" id="344" />
+							<ExtendedTooltip name="ПодменюСоздатьНаОснованииСмТакжеРасширеннаяПодсказка" id="344"/>
 						</ButtonGroup>
 					</ChildItems>
 				</Popup>
@@ -1311,7 +1308,7 @@
 						<xr:Ref>CommonPicture.ЗаполнитьФорму</xr:Ref>
 						<xr:LoadTransparent>false</xr:LoadTransparent>
 					</Picture>
-					<ExtendedTooltip name="ПодменюЗаполнитьРасширеннаяПодсказка" id="96" />
+					<ExtendedTooltip name="ПодменюЗаполнитьРасширеннаяПодсказка" id="96"/>
 				</Popup>
 				<Popup name="ПодменюПечать" id="97">
 					<Title>
@@ -1330,7 +1327,7 @@
 						<xr:Ref>StdPicture.Print</xr:Ref>
 						<xr:LoadTransparent>true</xr:LoadTransparent>
 					</Picture>
-					<ExtendedTooltip name="ПодменюПечатьРасширеннаяПодсказка" id="98" />
+					<ExtendedTooltip name="ПодменюПечатьРасширеннаяПодсказка" id="98"/>
 				</Popup>
 				<Popup name="КомандыЭДО" id="348">
 					<Title>
@@ -1339,7 +1336,7 @@
 							<v8:content>ЭДО</v8:content>
 						</v8:item>
 					</Title>
-					<ExtendedTooltip name="КомандыЭДОРасширеннаяПодсказка" id="349" />
+					<ExtendedTooltip name="КомандыЭДОРасширеннаяПодсказка" id="349"/>
 				</Popup>
 				<Popup name="ПодменюОтчеты" id="173">
 					<Title>
@@ -1353,7 +1350,7 @@
 						<xr:LoadTransparent>false</xr:LoadTransparent>
 					</Picture>
 					<Representation>PictureAndText</Representation>
-					<ExtendedTooltip name="ПодменюОтчетыРасширеннаяПодсказка" id="174" />
+					<ExtendedTooltip name="ПодменюОтчетыРасширеннаяПодсказка" id="174"/>
 					<ChildItems>
 						<ButtonGroup name="ПодменюОтчетыВажное" id="175">
 							<Title>
@@ -1362,7 +1359,7 @@
 									<v8:content>Подменю отчеты важное</v8:content>
 								</v8:item>
 							</Title>
-							<ExtendedTooltip name="ПодменюОтчетыВажноеРасширеннаяПодсказка" id="176" />
+							<ExtendedTooltip name="ПодменюОтчетыВажноеРасширеннаяПодсказка" id="176"/>
 						</ButtonGroup>
 						<ButtonGroup name="ПодменюОтчетыПерейти" id="177">
 							<Title>
@@ -1377,7 +1374,7 @@
 									<v8:content>Подменю отчеты важное</v8:content>
 								</v8:item>
 							</ToolTip>
-							<ExtendedTooltip name="ПодменюОтчетыПерейтиРасширеннаяПодсказка" id="178" />
+							<ExtendedTooltip name="ПодменюОтчетыПерейтиРасширеннаяПодсказка" id="178"/>
 						</ButtonGroup>
 						<ButtonGroup name="ПодменюОтчетыСмТакже" id="179">
 							<Title>
@@ -1392,7 +1389,7 @@
 									<v8:content>Подменю отчеты важное</v8:content>
 								</v8:item>
 							</ToolTip>
-							<ExtendedTooltip name="ПодменюОтчетыСмТакжеРасширеннаяПодсказка" id="180" />
+							<ExtendedTooltip name="ПодменюОтчетыСмТакжеРасширеннаяПодсказка" id="180"/>
 						</ButtonGroup>
 					</ChildItems>
 				</Popup>
@@ -1403,13 +1400,13 @@
 							<v8:content>1СПАРК Риски</v8:content>
 						</v8:item>
 					</Title>
-					<ExtendedTooltip name="ПодменюСПАРКРасширеннаяПодсказка" id="251" />
+					<ExtendedTooltip name="ПодменюСПАРКРасширеннаяПодсказка" id="251"/>
 				</Popup>
 				<Button name="ФормаПроверитьКонтрагента" id="195">
 					<Type>CommandBarButton</Type>
 					<CommandName>0</CommandName>
 					<LocationInCommandBar>InAdditionalSubmenu</LocationInCommandBar>
-					<ExtendedTooltip name="ФормаПроверитьКонтрагентаРасширеннаяПодсказка" id="196" />
+					<ExtendedTooltip name="ФормаПроверитьКонтрагентаРасширеннаяПодсказка" id="196"/>
 				</Button>
 			</ChildItems>
 		</AutoCommandBar>
@@ -1422,7 +1419,7 @@
 					</v8:item>
 				</Title>
 				<PagesRepresentation>TabsOnTop</PagesRepresentation>
-				<ExtendedTooltip name="СтраницыФормыРасширеннаяПодсказка" id="184" />
+				<ExtendedTooltip name="СтраницыФормыРасширеннаяПодсказка" id="184"/>
 				<ChildItems>
 					<Page name="СтраницаОсновное" id="185">
 						<Title>
@@ -1431,7 +1428,7 @@
 								<v8:content>Основное</v8:content>
 							</v8:item>
 						</Title>
-						<ExtendedTooltip name="СтраницаОсновноеРасширеннаяПодсказка" id="186" />
+						<ExtendedTooltip name="СтраницаОсновноеРасширеннаяПодсказка" id="186"/>
 						<ChildItems>
 							<UsualGroup name="ГруппаЮрЛицо" id="64">
 								<Title>
@@ -1444,7 +1441,7 @@
 								<Behavior>Usual</Behavior>
 								<Representation>None</Representation>
 								<ShowTitle>false</ShowTitle>
-								<ExtendedTooltip name="ГруппаЮрЛицоРасширеннаяПодсказка" id="65" />
+								<ExtendedTooltip name="ГруппаЮрЛицоРасширеннаяПодсказка" id="65"/>
 								<ChildItems>
 									<InputField name="ВидКонтрагента" id="5">
 										<ToolTip>
@@ -1460,7 +1457,7 @@
 										<ListChoiceMode>true</ListChoiceMode>
 										<ChoiceList>
 											<xr:Item>
-												<xr:Presentation />
+												<xr:Presentation/>
 												<xr:CheckState>0</xr:CheckState>
 												<xr:Value xsi:type="FormChoiceListDesTimeValue">
 													<Presentation>
@@ -1473,7 +1470,7 @@
 												</xr:Value>
 											</xr:Item>
 											<xr:Item>
-												<xr:Presentation />
+												<xr:Presentation/>
 												<xr:CheckState>0</xr:CheckState>
 												<xr:Value xsi:type="FormChoiceListDesTimeValue">
 													<Presentation>
@@ -1486,7 +1483,7 @@
 												</xr:Value>
 											</xr:Item>
 											<xr:Item>
-												<xr:Presentation />
+												<xr:Presentation/>
 												<xr:CheckState>0</xr:CheckState>
 												<xr:Value xsi:type="FormChoiceListDesTimeValue">
 													<Presentation>
@@ -1499,7 +1496,7 @@
 												</xr:Value>
 											</xr:Item>
 											<xr:Item>
-												<xr:Presentation />
+												<xr:Presentation/>
 												<xr:CheckState>0</xr:CheckState>
 												<xr:Value xsi:type="FormChoiceListDesTimeValue">
 													<Presentation>
@@ -1512,7 +1509,7 @@
 												</xr:Value>
 											</xr:Item>
 											<xr:Item>
-												<xr:Presentation />
+												<xr:Presentation/>
 												<xr:CheckState>0</xr:CheckState>
 												<xr:Value xsi:type="FormChoiceListDesTimeValue">
 													<Presentation>
@@ -1525,8 +1522,8 @@
 												</xr:Value>
 											</xr:Item>
 										</ChoiceList>
-										<ContextMenu name="ВидКонтрагентаКонтекстноеМеню" id="6" />
-										<ExtendedTooltip name="ВидКонтрагентаРасширеннаяПодсказка" id="43" />
+										<ContextMenu name="ВидКонтрагентаКонтекстноеМеню" id="6"/>
+										<ExtendedTooltip name="ВидКонтрагентаРасширеннаяПодсказка" id="43"/>
 									</InputField>
 									<UsualGroup name="ЛокализацияНДСПоСтавкам4и2" id="358">
 										<Title>
@@ -1538,15 +1535,15 @@
 										<Behavior>Usual</Behavior>
 										<Representation>None</Representation>
 										<ShowTitle>false</ShowTitle>
-										<ExtendedTooltip name="ЛокализацияНДСПоСтавкам4и2РасширеннаяПодсказка" id="359" />
+										<ExtendedTooltip name="ЛокализацияНДСПоСтавкам4и2РасширеннаяПодсказка" id="359"/>
 										<ChildItems>
 											<CheckBoxField name="НДСПоСтавкам4и2" id="61">
 												<DataPath>Объект.НДСПоСтавкам4и2</DataPath>
 												<Enabled>false</Enabled>
 												<TitleLocation>Right</TitleLocation>
 												<CheckBoxType>Auto</CheckBoxType>
-												<ContextMenu name="НДСПоСтавкам4и2КонтекстноеМеню" id="62" />
-												<ExtendedTooltip name="НДСПоСтавкам4и2РасширеннаяПодсказка" id="63" />
+												<ContextMenu name="НДСПоСтавкам4и2КонтекстноеМеню" id="62"/>
+												<ExtendedTooltip name="НДСПоСтавкам4и2РасширеннаяПодсказка" id="63"/>
 											</CheckBoxField>
 										</ChildItems>
 									</UsualGroup>
@@ -1562,7 +1559,7 @@
 								<Width>85</Width>
 								<HorizontalStretch>false</HorizontalStretch>
 								<PagesRepresentation>None</PagesRepresentation>
-								<ExtendedTooltip name="ГруппаСтраницыДанныхРегистрацииКонтрагентаРасширеннаяПодсказка" id="127" />
+								<ExtendedTooltip name="ГруппаСтраницыДанныхРегистрацииКонтрагентаРасширеннаяПодсказка" id="127"/>
 								<ChildItems>
 									<Page name="ЛокализацияГруппаСтраницаРоссийскогоКонтрагента" id="273">
 										<Title>
@@ -1577,7 +1574,7 @@
 												<v8:content>Данные регистрации в Российской Федерации</v8:content>
 											</v8:item>
 										</ToolTip>
-										<ExtendedTooltip name="ЛокализацияГруппаСтраницаРоссийскогоКонтрагентаРасширеннаяПодсказка" id="274" />
+										<ExtendedTooltip name="ЛокализацияГруппаСтраницаРоссийскогоКонтрагентаРасширеннаяПодсказка" id="274"/>
 										<ChildItems>
 											<UsualGroup name="ГруппаИННКППОКПО" id="275">
 												<Title>
@@ -1592,7 +1589,7 @@
 												<Representation>None</Representation>
 												<ShowTitle>false</ShowTitle>
 												<ThroughAlign>Use</ThroughAlign>
-												<ExtendedTooltip name="ГруппаИННКППОКПОРасширеннаяПодсказка" id="276" />
+												<ExtendedTooltip name="ГруппаИННКППОКПОРасширеннаяПодсказка" id="276"/>
 												<ChildItems>
 													<Pages name="СтраницыИНН" id="277">
 														<Title>
@@ -1602,7 +1599,7 @@
 															</v8:item>
 														</Title>
 														<PagesRepresentation>None</PagesRepresentation>
-														<ExtendedTooltip name="СтраницыИННРасширеннаяПодсказка" id="278" />
+														<ExtendedTooltip name="СтраницыИННРасширеннаяПодсказка" id="278"/>
 														<ChildItems>
 															<Page name="СтраницаИННЮрЛицо" id="279">
 																<Title>
@@ -1637,13 +1634,13 @@
 																				<v8:content>Введите ИНН 10 цифр</v8:content>
 																			</v8:item>
 																		</InputHint>
-																		<ContextMenu name="ИННКонтекстноеМеню" id="282" />
-																		<ExtendedTooltip name="ИННРасширеннаяПодсказка" id="283" />
+																		<ContextMenu name="ИННКонтекстноеМеню" id="282"/>
+																		<ExtendedTooltip name="ИННРасширеннаяПодсказка" id="283"/>
 																	</InputField>
 																	<Button name="ЗаполнитьПоИНН" id="284">
 																		<Type>UsualButton</Type>
 																		<CommandName>0</CommandName>
-																		<ExtendedTooltip name="ЗаполнитьПоИННРасширеннаяПодсказка" id="285" />
+																		<ExtendedTooltip name="ЗаполнитьПоИННРасширеннаяПодсказка" id="285"/>
 																	</Button>
 																	<UsualGroup name="ГруппаКПП" id="326">
 																		<Title>
@@ -1655,7 +1652,7 @@
 																		<Group>Horizontal</Group>
 																		<Behavior>Usual</Behavior>
 																		<ShowTitle>false</ShowTitle>
-																		<ExtendedTooltip name="ГруппаКППРасширеннаяПодсказка" id="327" />
+																		<ExtendedTooltip name="ГруппаКППРасширеннаяПодсказка" id="327"/>
 																		<ChildItems>
 																			<InputField name="КПП" id="286">
 																				<DataPath>Объект.КПП</DataPath>
@@ -1670,16 +1667,16 @@
 																						<v8:content>Введите КПП 9 цифр</v8:content>
 																					</v8:item>
 																				</InputHint>
-																				<ContextMenu name="КППКонтекстноеМеню" id="287" />
-																				<ExtendedTooltip name="КППРасширеннаяПодсказка" id="288" />
+																				<ContextMenu name="КППКонтекстноеМеню" id="287"/>
+																				<ExtendedTooltip name="КППРасширеннаяПодсказка" id="288"/>
 																			</InputField>
 																			<LabelField name="ПереходКИсторииКПП" id="331">
 																				<TitleLocation>None</TitleLocation>
 																				<AutoMaxWidth>false</AutoMaxWidth>
 																				<MaxWidth>15</MaxWidth>
 																				<HorizontalStretch>true</HorizontalStretch>
-																				<ContextMenu name="ПереходКИсторииКППКонтекстноеМеню" id="332" />
-																				<ExtendedTooltip name="ПереходКИсторииКППРасширеннаяПодсказка" id="333" />
+																				<ContextMenu name="ПереходКИсторииКППКонтекстноеМеню" id="332"/>
+																				<ExtendedTooltip name="ПереходКИсторииКППРасширеннаяПодсказка" id="333"/>
 																			</LabelField>
 																		</ChildItems>
 																	</UsualGroup>
@@ -1714,8 +1711,8 @@
 																				<v8:content>Введите ИНН 12 цифр</v8:content>
 																			</v8:item>
 																		</InputHint>
-																		<ContextMenu name="ИННФизЛицоКонтекстноеМеню" id="292" />
-																		<ExtendedTooltip name="ИННФизЛицоРасширеннаяПодсказка" id="293" />
+																		<ContextMenu name="ИННФизЛицоКонтекстноеМеню" id="292"/>
+																		<ExtendedTooltip name="ИННФизЛицоРасширеннаяПодсказка" id="293"/>
 																	</InputField>
 																	<Button name="ЗаполнитьПоИННФизЛицо" id="294">
 																		<Type>UsualButton</Type>
@@ -1724,7 +1721,7 @@
 																			<xr:Ref>CommonPicture.ЗаполнитьФорму</xr:Ref>
 																			<xr:LoadTransparent>false</xr:LoadTransparent>
 																		</Picture>
-																		<ExtendedTooltip name="ЗаполнитьПоИННФизЛицоРасширеннаяПодсказка" id="295" />
+																		<ExtendedTooltip name="ЗаполнитьПоИННФизЛицоРасширеннаяПодсказка" id="295"/>
 																	</Button>
 																</ChildItems>
 															</Page>
@@ -1737,8 +1734,8 @@
 														<Width>13</Width>
 														<HorizontalStretch>false</HorizontalStretch>
 														<Wrap>false</Wrap>
-														<ContextMenu name="КодПоОКПОКонтекстноеМеню" id="297" />
-														<ExtendedTooltip name="КодПоОКПОРасширеннаяПодсказка" id="298" />
+														<ContextMenu name="КодПоОКПОКонтекстноеМеню" id="297"/>
+														<ExtendedTooltip name="КодПоОКПОРасширеннаяПодсказка" id="298"/>
 													</InputField>
 												</ChildItems>
 											</UsualGroup>
@@ -1750,7 +1747,7 @@
 													</v8:item>
 												</Title>
 												<PagesRepresentation>None</PagesRepresentation>
-												<ExtendedTooltip name="СтраницыОГРНРасширеннаяПодсказка" id="363" />
+												<ExtendedTooltip name="СтраницыОГРНРасширеннаяПодсказка" id="363"/>
 												<ChildItems>
 													<Page name="СтраницаОГРНЮрЛицо" id="364">
 														<Title>
@@ -1759,7 +1756,7 @@
 																<v8:content>Страница ОГРН юр. лицо</v8:content>
 															</v8:item>
 														</Title>
-														<ExtendedTooltip name="СтраницаОГРНЮрЛицоРасширеннаяПодсказка" id="365" />
+														<ExtendedTooltip name="СтраницаОГРНЮрЛицоРасширеннаяПодсказка" id="365"/>
 														<ChildItems>
 															<InputField name="ОГРН" id="368">
 																<DataPath>Объект.РегистрационныйНомер</DataPath>
@@ -1777,8 +1774,8 @@
 																		<v8:content>Введите ОГРН 13 цифр</v8:content>
 																	</v8:item>
 																</InputHint>
-																<ContextMenu name="ОГРНКонтекстноеМеню" id="369" />
-																<ExtendedTooltip name="ОГРНРасширеннаяПодсказка" id="370" />
+																<ContextMenu name="ОГРНКонтекстноеМеню" id="369"/>
+																<ExtendedTooltip name="ОГРНРасширеннаяПодсказка" id="370"/>
 															</InputField>
 														</ChildItems>
 													</Page>
@@ -1789,7 +1786,7 @@
 																<v8:content>Страница ОГРН физ. лицо</v8:content>
 															</v8:item>
 														</Title>
-														<ExtendedTooltip name="СтраницаОГРНФизЛицоРасширеннаяПодсказка" id="367" />
+														<ExtendedTooltip name="СтраницаОГРНФизЛицоРасширеннаяПодсказка" id="367"/>
 														<ChildItems>
 															<InputField name="ОГРНИП" id="371">
 																<DataPath>Объект.РегистрационныйНомер</DataPath>
@@ -1807,8 +1804,8 @@
 																		<v8:content>Введите ОГРНИП 15 цифр</v8:content>
 																	</v8:item>
 																</InputHint>
-																<ContextMenu name="ОГРНИПКонтекстноеМеню" id="372" />
-																<ExtendedTooltip name="ОГРНИПРасширеннаяПодсказка" id="373" />
+																<ContextMenu name="ОГРНИПКонтекстноеМеню" id="372"/>
+																<ExtendedTooltip name="ОГРНИПРасширеннаяПодсказка" id="373"/>
 															</InputField>
 														</ChildItems>
 													</Page>
@@ -1825,7 +1822,7 @@
 												<Behavior>Usual</Behavior>
 												<Representation>None</Representation>
 												<ShowTitle>false</ShowTitle>
-												<ExtendedTooltip name="ГруппаРезультатПроверкиКонтрагентовРасширеннаяПодсказка" id="300" />
+												<ExtendedTooltip name="ГруппаРезультатПроверкиКонтрагентовРасширеннаяПодсказка" id="300"/>
 												<ChildItems>
 													<Pages name="СтраницыКартинкиРезультатовПроверкиКонтрагента" id="301">
 														<Title>
@@ -1835,7 +1832,7 @@
 															</v8:item>
 														</Title>
 														<PagesRepresentation>None</PagesRepresentation>
-														<ExtendedTooltip name="СтраницыКартинкиРезультатовПроверкиКонтрагентаРасширеннаяПодсказка" id="302" />
+														<ExtendedTooltip name="СтраницыКартинкиРезультатовПроверкиКонтрагентаРасширеннаяПодсказка" id="302"/>
 														<ChildItems>
 															<Page name="СтраницаКорректныйКонтрагент" id="303">
 																<Title>
@@ -1844,14 +1841,14 @@
 																		<v8:content>Страница корректный контрагент</v8:content>
 																	</v8:item>
 																</Title>
-																<ExtendedTooltip name="СтраницаКорректныйКонтрагентРасширеннаяПодсказка" id="304" />
+																<ExtendedTooltip name="СтраницаКорректныйКонтрагентРасширеннаяПодсказка" id="304"/>
 																<ChildItems>
 																	<LabelDecoration name="ДекорацияКорректныйКонтрагент" id="305">
 																		<Width>3</Width>
 																		<Height>1</Height>
 																		<HorizontalStretch>false</HorizontalStretch>
-																		<ContextMenu name="ДекорацияКорректныйКонтрагентКонтекстноеМеню" id="306" />
-																		<ExtendedTooltip name="ДекорацияКорректныйКонтрагентРасширеннаяПодсказка" id="307" />
+																		<ContextMenu name="ДекорацияКорректныйКонтрагентКонтекстноеМеню" id="306"/>
+																		<ExtendedTooltip name="ДекорацияКорректныйКонтрагентРасширеннаяПодсказка" id="307"/>
 																	</LabelDecoration>
 																</ChildItems>
 															</Page>
@@ -1868,7 +1865,7 @@
 																		<v8:content>Страница корректный контрагент</v8:content>
 																	</v8:item>
 																</ToolTip>
-																<ExtendedTooltip name="СтраницаНеДействующийКонтрагентРасширеннаяПодсказка" id="309" />
+																<ExtendedTooltip name="СтраницаНеДействующийКонтрагентРасширеннаяПодсказка" id="309"/>
 																<ChildItems>
 																	<PictureDecoration name="ДекорацияКартинкаНеДействующийКонтрагент" id="310">
 																		<Width>3</Width>
@@ -1880,8 +1877,8 @@
 																			</v8:item>
 																		</Title>
 																		<FileDragMode>AsFile</FileDragMode>
-																		<ContextMenu name="ДекорацияКартинкаНеДействующийКонтрагентКонтекстноеМеню" id="311" />
-																		<ExtendedTooltip name="ДекорацияКартинкаНеДействующийКонтрагентРасширеннаяПодсказка" id="312" />
+																		<ContextMenu name="ДекорацияКартинкаНеДействующийКонтрагентКонтекстноеМеню" id="311"/>
+																		<ExtendedTooltip name="ДекорацияКартинкаНеДействующийКонтрагентРасширеннаяПодсказка" id="312"/>
 																	</PictureDecoration>
 																</ChildItems>
 															</Page>
@@ -1892,7 +1889,7 @@
 																		<v8:content>Страница контрагент не достаточно данных</v8:content>
 																	</v8:item>
 																</Title>
-																<ExtendedTooltip name="СтраницаКонтрагентНеДостаточноДанныхРасширеннаяПодсказка" id="314" />
+																<ExtendedTooltip name="СтраницаКонтрагентНеДостаточноДанныхРасширеннаяПодсказка" id="314"/>
 																<ChildItems>
 																	<PictureDecoration name="ДекорацияКартинкаНедостаточноДанныхКонтрагент" id="315">
 																		<Width>3</Width>
@@ -1904,8 +1901,8 @@
 																			</v8:item>
 																		</Title>
 																		<FileDragMode>AsFile</FileDragMode>
-																		<ContextMenu name="ДекорацияКартинкаНедостаточноДанныхКонтрагентКонтекстноеМеню" id="316" />
-																		<ExtendedTooltip name="ДекорацияКартинкаНедостаточноДанныхКонтрагентРасширеннаяПодсказка" id="317" />
+																		<ContextMenu name="ДекорацияКартинкаНедостаточноДанныхКонтрагентКонтекстноеМеню" id="316"/>
+																		<ExtendedTooltip name="ДекорацияКартинкаНедостаточноДанныхКонтрагентРасширеннаяПодсказка" id="317"/>
 																	</PictureDecoration>
 																</ChildItems>
 															</Page>
@@ -1922,7 +1919,7 @@
 																		<v8:content>Страница корректный контрагент</v8:content>
 																	</v8:item>
 																</ToolTip>
-																<ExtendedTooltip name="СтраницаНеКорректныйКонтрагентРасширеннаяПодсказка" id="319" />
+																<ExtendedTooltip name="СтраницаНеКорректныйКонтрагентРасширеннаяПодсказка" id="319"/>
 																<ChildItems>
 																	<PictureDecoration name="ДекорацияКартинкаНеКорректныйКонтрагент" id="320">
 																		<Width>3</Width>
@@ -1934,8 +1931,8 @@
 																			</v8:item>
 																		</Title>
 																		<FileDragMode>AsFile</FileDragMode>
-																		<ContextMenu name="ДекорацияКартинкаНеКорректныйКонтрагентКонтекстноеМеню" id="321" />
-																		<ExtendedTooltip name="ДекорацияКартинкаНеКорректныйКонтрагентРасширеннаяПодсказка" id="322" />
+																		<ContextMenu name="ДекорацияКартинкаНеКорректныйКонтрагентКонтекстноеМеню" id="321"/>
+																		<ExtendedTooltip name="ДекорацияКартинкаНеКорректныйКонтрагентРасширеннаяПодсказка" id="322"/>
 																	</PictureDecoration>
 																</ChildItems>
 															</Page>
@@ -1946,8 +1943,8 @@
 														<HorizontalAlign>Left</HorizontalAlign>
 														<Width>75</Width>
 														<HorizontalStretch>false</HorizontalStretch>
-														<ContextMenu name="РезультатПроверкиКонтрагентаКонтекстноеМеню" id="324" />
-														<ExtendedTooltip name="РезультатПроверкиКонтрагентаРасширеннаяПодсказка" id="325" />
+														<ContextMenu name="РезультатПроверкиКонтрагентаКонтекстноеМеню" id="324"/>
+														<ExtendedTooltip name="РезультатПроверкиКонтрагентаРасширеннаяПодсказка" id="325"/>
 													</LabelField>
 												</ChildItems>
 											</UsualGroup>
@@ -1964,7 +1961,7 @@
 										<Group>Horizontal</Group>
 										<ShowTitle>false</ShowTitle>
 										<ExtendedTooltip name="ГруппаСтраницаИностраннойРегистрацииРасширеннаяПодсказка" id="256">
-											<Title formatted="true" />
+											<Title formatted="true"/>
 										</ExtendedTooltip>
 										<ChildItems>
 											<UsualGroup name="ГруппаСтранаРегистрацииНалоговыйНомер" id="257">
@@ -1979,7 +1976,7 @@
 												<Representation>None</Representation>
 												<United>false</United>
 												<ShowTitle>false</ShowTitle>
-												<ExtendedTooltip name="ГруппаСтранаРегистрацииНалоговыйНомерРасширеннаяПодсказка" id="258" />
+												<ExtendedTooltip name="ГруппаСтранаРегистрацииНалоговыйНомерРасширеннаяПодсказка" id="258"/>
 												<ChildItems>
 													<InputField name="СтранаРегистрации" id="259">
 														<DataPath>Объект.СтранаРегистрации</DataPath>
@@ -1991,8 +1988,8 @@
 														</Title>
 														<Width>22</Width>
 														<HorizontalStretch>false</HorizontalStretch>
-														<ContextMenu name="СтранаРегистрацииКонтекстноеМеню" id="260" />
-														<ExtendedTooltip name="СтранаРегистрацииРасширеннаяПодсказка" id="261" />
+														<ContextMenu name="СтранаРегистрацииКонтекстноеМеню" id="260"/>
+														<ExtendedTooltip name="СтранаРегистрацииРасширеннаяПодсказка" id="261"/>
 													</InputField>
 													<InputField name="НалоговыйНомер" id="262">
 														<DataPath>Объект.НалоговыйНомер</DataPath>
@@ -2017,8 +2014,8 @@
 																<v8:content>Налоговый номер в стране регистрации</v8:content>
 															</v8:item>
 														</InputHint>
-														<ContextMenu name="НалоговыйНомерКонтекстноеМеню" id="263" />
-														<ExtendedTooltip name="НалоговыйНомерРасширеннаяПодсказка" id="264" />
+														<ContextMenu name="НалоговыйНомерКонтекстноеМеню" id="263"/>
+														<ExtendedTooltip name="НалоговыйНомерРасширеннаяПодсказка" id="264"/>
 													</InputField>
 												</ChildItems>
 											</UsualGroup>
@@ -2034,7 +2031,7 @@
 												<Representation>None</Representation>
 												<United>false</United>
 												<ShowTitle>false</ShowTitle>
-												<ExtendedTooltip name="ГруппаРегистрационныйНомерИННКППРасширеннаяПодсказка" id="266" />
+												<ExtendedTooltip name="ГруппаРегистрационныйНомерИННКППРасширеннаяПодсказка" id="266"/>
 												<ChildItems>
 													<InputField name="РегистрационныйНомер" id="267">
 														<DataPath>Объект.РегистрационныйНомер</DataPath>
@@ -2060,8 +2057,8 @@
 																<v8:content>Регистрационный номер в стране регистрации</v8:content>
 															</v8:item>
 														</InputHint>
-														<ContextMenu name="РегистрационныйНомерКонтекстноеМеню" id="268" />
-														<ExtendedTooltip name="РегистрационныйНомерРасширеннаяПодсказка" id="269" />
+														<ContextMenu name="РегистрационныйНомерКонтекстноеМеню" id="268"/>
+														<ExtendedTooltip name="РегистрационныйНомерРасширеннаяПодсказка" id="269"/>
 													</InputField>
 													<UsualGroup name="ГруппаИНН" id="360">
 														<Title>
@@ -2075,14 +2072,14 @@
 														<Representation>None</Representation>
 														<ShowTitle>false</ShowTitle>
 														<ThroughAlign>DontUse</ThroughAlign>
-														<ExtendedTooltip name="ГруппаИННРасширеннаяПодсказка" id="361" />
+														<ExtendedTooltip name="ГруппаИННРасширеннаяПодсказка" id="361"/>
 														<ChildItems>
 															<InputField name="ИННИностранногоКонтрагента" id="270">
 																<DataPath>Объект.ИНН</DataPath>
 																<Width>14</Width>
 																<HorizontalStretch>false</HorizontalStretch>
-																<ContextMenu name="ИННИностранногоКонтрагентаКонтекстноеМеню" id="271" />
-																<ExtendedTooltip name="ИННИностранногоКонтрагентаРасширеннаяПодсказка" id="272" />
+																<ContextMenu name="ИННИностранногоКонтрагентаКонтекстноеМеню" id="271"/>
+																<ExtendedTooltip name="ИННИностранногоКонтрагентаРасширеннаяПодсказка" id="272"/>
 															</InputField>
 															<UsualGroup name="ЛокализацияГруппаИННКПП" id="356">
 																<Title>
@@ -2095,21 +2092,21 @@
 																<Behavior>Usual</Behavior>
 																<Representation>None</Representation>
 																<ShowTitle>false</ShowTitle>
-																<ExtendedTooltip name="ЛокализацияГруппаИННКППРасширеннаяПодсказка" id="357" />
+																<ExtendedTooltip name="ЛокализацияГруппаИННКППРасширеннаяПодсказка" id="357"/>
 																<ChildItems>
 																	<InputField name="КППИностранногоКонтрагента" id="350">
 																		<DataPath>Объект.КПП</DataPath>
 																		<AutoMaxWidth>false</AutoMaxWidth>
 																		<MaxWidth>14</MaxWidth>
 																		<HorizontalStretch>false</HorizontalStretch>
-																		<ContextMenu name="КППИностранногоКонтрагентаКонтекстноеМеню" id="351" />
-																		<ExtendedTooltip name="КППИностранногоКонтрагентаРасширеннаяПодсказка" id="352" />
+																		<ContextMenu name="КППИностранногоКонтрагентаКонтекстноеМеню" id="351"/>
+																		<ExtendedTooltip name="КППИностранногоКонтрагентаРасширеннаяПодсказка" id="352"/>
 																	</InputField>
 																	<LabelField name="ПереходКИсторииКППИностранногоКонтрагента" id="353">
 																		<TitleLocation>None</TitleLocation>
 																		<MaxWidth>15</MaxWidth>
-																		<ContextMenu name="ПереходКИсторииКППИностранногоКонтрагентаКонтекстноеМеню" id="354" />
-																		<ExtendedTooltip name="ПереходКИсторииКППИностранногоКонтрагентаРасширеннаяПодсказка" id="355" />
+																		<ContextMenu name="ПереходКИсторииКППИностранногоКонтрагентаКонтекстноеМеню" id="354"/>
+																		<ExtendedTooltip name="ПереходКИсторииКППИностранногоКонтрагентаРасширеннаяПодсказка" id="355"/>
 																	</LabelField>
 																</ChildItems>
 															</UsualGroup>
@@ -2133,7 +2130,7 @@
 								<Representation>None</Representation>
 								<ShowTitle>false</ShowTitle>
 								<ThroughAlign>Use</ThroughAlign>
-								<ExtendedTooltip name="ГруппаПартнерНаименованиеРасширеннаяПодсказка" id="238" />
+								<ExtendedTooltip name="ГруппаПартнерНаименованиеРасширеннаяПодсказка" id="238"/>
 								<ChildItems>
 									<UsualGroup name="ГруппаНаименованияПартнер" id="197">
 										<Title>
@@ -2146,7 +2143,7 @@
 										<Behavior>Usual</Behavior>
 										<Representation>None</Representation>
 										<ShowTitle>false</ShowTitle>
-										<ExtendedTooltip name="ГруппаНаименованияПартнерРасширеннаяПодсказка" id="198" />
+										<ExtendedTooltip name="ГруппаНаименованияПартнерРасширеннаяПодсказка" id="198"/>
 										<ChildItems>
 											<UsualGroup name="ГруппаНаименования" id="187">
 												<Title>
@@ -2156,11 +2153,11 @@
 													</v8:item>
 												</Title>
 												<TitleTextColor>style:FormTextColor</TitleTextColor>
-												<TitleFont ref="style:NormalTextFont" bold="true" italic="false" underline="false" strikeout="false" kind="StyleItem" />
+												<TitleFont ref="style:NormalTextFont" bold="true" italic="false" underline="false" strikeout="false" kind="StyleItem"/>
 												<Group>Vertical</Group>
 												<Behavior>Usual</Behavior>
 												<Representation>None</Representation>
-												<ExtendedTooltip name="ГруппаНаименованияРасширеннаяПодсказка" id="188" />
+												<ExtendedTooltip name="ГруппаНаименованияРасширеннаяПодсказка" id="188"/>
 												<ChildItems>
 													<UsualGroup name="ГруппаНаименованиеЛево" id="189">
 														<Title>
@@ -2173,7 +2170,7 @@
 														<Behavior>Usual</Behavior>
 														<Representation>None</Representation>
 														<ShowTitle>false</ShowTitle>
-														<ExtendedTooltip name="ГруппаНаименованиеЛевоРасширеннаяПодсказка" id="190" />
+														<ExtendedTooltip name="ГруппаНаименованиеЛевоРасширеннаяПодсказка" id="190"/>
 														<ChildItems>
 															<InputField name="НаименованиеСокращенное" id="18">
 																<DataPath>Объект.НаименованиеПолное</DataPath>
@@ -2193,22 +2190,22 @@
 																		<v8:content>Укажите наименование и заполните остальные реквизиты по данным государственных реестров</v8:content>
 																	</v8:item>
 																</InputHint>
-																<ContextMenu name="НаименованиеСокращенноеКонтекстноеМеню" id="19" />
-																<ExtendedTooltip name="НаименованиеСокращенноеРасширеннаяПодсказка" id="41" />
+																<ContextMenu name="НаименованиеСокращенноеКонтекстноеМеню" id="19"/>
+																<ExtendedTooltip name="НаименованиеСокращенноеРасширеннаяПодсказка" id="41"/>
 															</InputField>
 															<LabelField name="ПереходКИсторииНаименования" id="334">
 																<TitleLocation>None</TitleLocation>
 																<AutoMaxWidth>false</AutoMaxWidth>
 																<MaxWidth>16</MaxWidth>
-																<ContextMenu name="ПереходКИсторииНаименованияКонтекстноеМеню" id="335" />
-																<ExtendedTooltip name="ПереходКИсторииНаименованияРасширеннаяПодсказка" id="336" />
+																<ContextMenu name="ПереходКИсторииНаименованияКонтекстноеМеню" id="335"/>
+																<ExtendedTooltip name="ПереходКИсторииНаименованияРасширеннаяПодсказка" id="336"/>
 															</LabelField>
 															<Button name="ЗаполнитьПоНаименованиюПоДаннымЕдиныхГосРеестров" id="191">
 																<Type>UsualButton</Type>
 																<Width>3</Width>
 																<AutoMaxWidth>false</AutoMaxWidth>
 																<CommandName>0</CommandName>
-																<ExtendedTooltip name="ЗаполнитьПоНаименованиюПоДаннымЕдиныхГосРеестровРасширеннаяПодсказка" id="192" />
+																<ExtendedTooltip name="ЗаполнитьПоНаименованиюПоДаннымЕдиныхГосРеестровРасширеннаяПодсказка" id="192"/>
 															</Button>
 														</ChildItems>
 													</UsualGroup>
@@ -2225,8 +2222,8 @@
 														<AutoMaxWidth>false</AutoMaxWidth>
 														<MaxWidth>60</MaxWidth>
 														<Wrap>false</Wrap>
-														<ContextMenu name="НаименованиеКонтекстноеМеню" id="2" />
-														<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="42" />
+														<ContextMenu name="НаименованиеКонтекстноеМеню" id="2"/>
+														<ExtendedTooltip name="НаименованиеРасширеннаяПодсказка" id="42"/>
 													</InputField>
 													<InputField name="НаименованиеМеждународное" id="345">
 														<DataPath>Объект.НаименованиеМеждународное</DataPath>
@@ -2238,8 +2235,8 @@
 														</Title>
 														<AutoMaxWidth>false</AutoMaxWidth>
 														<MaxWidth>60</MaxWidth>
-														<ContextMenu name="НаименованиеМеждународноеКонтекстноеМеню" id="346" />
-														<ExtendedTooltip name="НаименованиеМеждународноеРасширеннаяПодсказка" id="347" />
+														<ContextMenu name="НаименованиеМеждународноеКонтекстноеМеню" id="346"/>
+														<ExtendedTooltip name="НаименованиеМеждународноеРасширеннаяПодсказка" id="347"/>
 													</InputField>
 													<InputField name="НаименованиеВТранскрипции" id="374">
 														<DataPath>Объект.НаименованиеВТранскрипции</DataPath>
@@ -2252,8 +2249,8 @@
 														</Title>
 														<AutoMaxWidth>false</AutoMaxWidth>
 														<MaxWidth>60</MaxWidth>
-														<ContextMenu name="НаименованиеВТранскрипцииКонтекстноеМеню" id="375" />
-														<ExtendedTooltip name="НаименованиеВТранскрипцииРасширеннаяПодсказка" id="376" />
+														<ContextMenu name="НаименованиеВТранскрипцииКонтекстноеМеню" id="375"/>
+														<ExtendedTooltip name="НаименованиеВТранскрипцииРасширеннаяПодсказка" id="376"/>
 													</InputField>
 												</ChildItems>
 											</UsualGroup>
@@ -2290,8 +2287,8 @@
 														<AutoMaxWidth>false</AutoMaxWidth>
 														<HorizontalStretch>false</HorizontalStretch>
 														<Wrap>false</Wrap>
-														<ContextMenu name="ПартнерКонтекстноеМеню" id="14" />
-														<ExtendedTooltip name="ПартнерРасширеннаяПодсказка" id="45" />
+														<ContextMenu name="ПартнерКонтекстноеМеню" id="14"/>
+														<ExtendedTooltip name="ПартнерРасширеннаяПодсказка" id="45"/>
 													</InputField>
 												</ChildItems>
 											</UsualGroup>
@@ -2306,7 +2303,7 @@
 												<Behavior>Usual</Behavior>
 												<Representation>None</Representation>
 												<ShowTitle>false</ShowTitle>
-												<ExtendedTooltip name="ГруппаГоловнойКонтрагентРасширеннаяПодсказка" id="67" />
+												<ExtendedTooltip name="ГруппаГоловнойКонтрагентРасширеннаяПодсказка" id="67"/>
 												<ChildItems>
 													<InputField name="ГоловнойКонтрагент" id="68">
 														<DataPath>Объект.ГоловнойКонтрагент</DataPath>
@@ -2314,13 +2311,13 @@
 														<Width>45</Width>
 														<HorizontalStretch>false</HorizontalStretch>
 														<ChoiceHistoryOnInput>DontUse</ChoiceHistoryOnInput>
-														<ContextMenu name="ГоловнойКонтрагентКонтекстноеМеню" id="69" />
-														<ExtendedTooltip name="ГоловнойКонтрагентРасширеннаяПодсказка" id="70" />
+														<ContextMenu name="ГоловнойКонтрагентКонтекстноеМеню" id="69"/>
+														<ExtendedTooltip name="ГоловнойКонтрагентРасширеннаяПодсказка" id="70"/>
 													</InputField>
 													<Button name="ЗаполнитьГоловногоКонтрагента" id="71">
 														<Type>Hyperlink</Type>
 														<CommandName>0</CommandName>
-														<ExtendedTooltip name="ЗаполнитьГоловногоКонтрагентаРасширеннаяПодсказка" id="72" />
+														<ExtendedTooltip name="ЗаполнитьГоловногоКонтрагентаРасширеннаяПодсказка" id="72"/>
 													</Button>
 												</ChildItems>
 											</UsualGroup>
@@ -2336,12 +2333,12 @@
 										<Behavior>Usual</Behavior>
 										<Representation>None</Representation>
 										<ShowTitle>false</ShowTitle>
-										<ExtendedTooltip name="ЛокализацияГруппаСпаркРасширеннаяПодсказка" id="200" />
+										<ExtendedTooltip name="ЛокализацияГруппаСпаркРасширеннаяПодсказка" id="200"/>
 										<ChildItems>
 											<LabelDecoration name="Декорация1СПАРКОтступСлева" id="252">
 												<Width>11</Width>
-												<ContextMenu name="Декорация1СПАРКОтступСлеваКонтекстноеМеню" id="253" />
-												<ExtendedTooltip name="Декорация1СПАРКОтступСлеваРасширеннаяПодсказка" id="254" />
+												<ContextMenu name="Декорация1СПАРКОтступСлеваКонтекстноеМеню" id="253"/>
+												<ExtendedTooltip name="Декорация1СПАРКОтступСлеваРасширеннаяПодсказка" id="254"/>
 											</LabelDecoration>
 											<UsualGroup name="ГруппаИндексыСПАРКРиски" id="239">
 												<Title>
@@ -2354,22 +2351,22 @@
 												<Behavior>Usual</Behavior>
 												<Representation>None</Representation>
 												<ShowTitle>false</ShowTitle>
-												<ExtendedTooltip name="ГруппаИндексыСПАРКРискиРасширеннаяПодсказка" id="240" />
+												<ExtendedTooltip name="ГруппаИндексыСПАРКРискиРасширеннаяПодсказка" id="240"/>
 												<ChildItems>
 													<LabelDecoration name="ДекорацияИндексыСПАРКРиски" id="241">
 														<Height>5</Height>
 														<HorizontalStretch>true</HorizontalStretch>
 														<VerticalAlign>Top</VerticalAlign>
 														<BackColor>style:ToolTipBackColor</BackColor>
-														<ContextMenu name="ДекорацияИндексыСПАРКРискиКонтекстноеМеню" id="242" />
-														<ExtendedTooltip name="ДекорацияИндексыСПАРКРискиРасширеннаяПодсказка" id="243" />
+														<ContextMenu name="ДекорацияИндексыСПАРКРискиКонтекстноеМеню" id="242"/>
+														<ExtendedTooltip name="ДекорацияИндексыСПАРКРискиРасширеннаяПодсказка" id="243"/>
 													</LabelDecoration>
 													<PictureDecoration name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРиски" id="244">
 														<Width>2</Width>
 														<Height>4</Height>
 														<FileDragMode>AsFile</FileDragMode>
-														<ContextMenu name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиКонтекстноеМеню" id="245" />
-														<ExtendedTooltip name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиРасширеннаяПодсказка" id="246" />
+														<ContextMenu name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиКонтекстноеМеню" id="245"/>
+														<ExtendedTooltip name="КартинкаОжиданиеЗагрузкиИндексовСПАРКРискиРасширеннаяПодсказка" id="246"/>
 													</PictureDecoration>
 												</ChildItems>
 											</UsualGroup>
@@ -2388,7 +2385,7 @@
 								<Behavior>Usual</Behavior>
 								<Representation>None</Representation>
 								<ShowTitle>false</ShowTitle>
-								<ExtendedTooltip name="ЛокализацияГруппаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="74" />
+								<ExtendedTooltip name="ЛокализацияГруппаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="74"/>
 								<ChildItems>
 									<PictureDecoration name="КартинкаПредупреждениеГоловнойКонтрагент" id="75">
 										<Width>2</Width>
@@ -2400,8 +2397,8 @@
 											</v8:item>
 										</Title>
 										<FileDragMode>AsFile</FileDragMode>
-										<ContextMenu name="КартинкаПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="76" />
-										<ExtendedTooltip name="КартинкаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="77" />
+										<ContextMenu name="КартинкаПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="76"/>
+										<ExtendedTooltip name="КартинкаПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="77"/>
 									</PictureDecoration>
 									<LabelDecoration name="ПредупреждениеГоловнойКонтрагент" id="78">
 										<AutoMaxWidth>false</AutoMaxWidth>
@@ -2416,8 +2413,8 @@
 											</v8:item>
 										</Title>
 										<VerticalAlign>Center</VerticalAlign>
-										<ContextMenu name="ПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="79" />
-										<ExtendedTooltip name="ПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="80" />
+										<ContextMenu name="ПредупреждениеГоловнойКонтрагентКонтекстноеМеню" id="79"/>
+										<ExtendedTooltip name="ПредупреждениеГоловнойКонтрагентРасширеннаяПодсказка" id="80"/>
 									</LabelDecoration>
 								</ChildItems>
 							</UsualGroup>
@@ -2436,8 +2433,8 @@
 								<AutoMaxHeight>false</AutoMaxHeight>
 								<VerticalStretch>true</VerticalStretch>
 								<MultiLine>true</MultiLine>
-								<ContextMenu name="ДополнительнаяИнформацияКонтекстноеМеню" id="23" />
-								<ExtendedTooltip name="ДополнительнаяИнформацияРасширеннаяПодсказка" id="60" />
+								<ContextMenu name="ДополнительнаяИнформацияКонтекстноеМеню" id="23"/>
+								<ExtendedTooltip name="ДополнительнаяИнформацияРасширеннаяПодсказка" id="60"/>
 							</InputField>
 						</ChildItems>
 					</Page>
@@ -2449,7 +2446,7 @@
 							</v8:item>
 						</Title>
 						<HorizontalStretch>true</HorizontalStretch>
-						<ExtendedTooltip name="ГруппаКонтактнаяИнформацияРасширеннаяПодсказка" id="58" />
+						<ExtendedTooltip name="ГруппаКонтактнаяИнформацияРасширеннаяПодсказка" id="58"/>
 					</Page>
 					<Page name="ГруппаДополнительныеРеквизиты" id="24">
 						<Title>
@@ -2459,7 +2456,7 @@
 							</v8:item>
 						</Title>
 						<HorizontalStretch>false</HorizontalStretch>
-						<ExtendedTooltip name="ГруппаДополнительныеРеквизитыРасширеннаяПодсказка" id="56" />
+						<ExtendedTooltip name="ГруппаДополнительныеРеквизитыРасширеннаяПодсказка" id="56"/>
 					</Page>
 				</ChildItems>
 			</Pages>

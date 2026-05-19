@@ -166,9 +166,7 @@
 											<UpdateOnDataChange>Auto</UpdateOnDataChange>
 											<AllowGettingCurrentRowURL>true</AllowGettingCurrentRowURL>
 											<ContextMenu name="СписокОшибочныеОперацииКонтекстноеМеню" id="218"/>
-											<AutoCommandBar name="СписокОшибочныеОперацииКоманднаяПанель" id="219">
-												<ChildItems/>
-											</AutoCommandBar>
+											<AutoCommandBar name="СписокОшибочныеОперацииКоманднаяПанель" id="219"/>
 											<ExtendedTooltip name="СписокОшибочныеОперацииРасширеннаяПодсказка" id="220"/>
 											<SearchStringAddition name="СписокОшибочныеОперацииСтрокаПоиска" id="221">
 												<AdditionSource>
@@ -563,7 +561,6 @@
 											<ContextMenu name="ВсеОперацииКонтекстноеМеню" id="357"/>
 											<AutoCommandBar name="ВсеОперацииКоманднаяПанель" id="358">
 												<ChildItems>
-
 													<Popup name="ОтборПоСтатусу" id="425">
 														<Title>
 															<v8:item>

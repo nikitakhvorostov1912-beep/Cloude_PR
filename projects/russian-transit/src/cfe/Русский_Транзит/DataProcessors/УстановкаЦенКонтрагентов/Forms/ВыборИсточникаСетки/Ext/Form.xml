@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
 	<Title>
 		<v8:item>
@@ -13,15 +13,15 @@
 		<ChildItems>
 			<Button name="КнопкаВыбрать" id="10">
 				<Type>CommandBarButton</Type>
+				<Representation>PictureAndText</Representation>
 				<DefaultButton>true</DefaultButton>
 				<CommandName>Form.Command.Выбрать</CommandName>
-				<Representation>PictureAndText</Representation>
 				<ExtendedTooltip name="КнопкаВыбратьПодсказка" id="11"/>
 			</Button>
 			<Button name="КнопкаОтмена" id="12">
 				<Type>CommandBarButton</Type>
-				<CommandName>Form.StandardCommand.Close</CommandName>
 				<Representation>PictureAndText</Representation>
+				<CommandName>Form.StandardCommand.Close</CommandName>
 				<ExtendedTooltip name="КнопкаОтменаПодсказка" id="13"/>
 			</Button>
 		</ChildItems>
@@ -29,28 +29,22 @@
 	<Events>
 		<Event name="OnCreateAtServer">ПриСозданииНаСервере</Event>
 	</Events>
-	<Parameters>
-		<Parameter name="СтруктураНастроек">
-			<Type>
-				<v8:Type>v8:Structure</v8:Type>
-			</Type>
-		</Parameter>
-	</Parameters>
 	<ChildItems>
 		<Table name="ТаблицаИсточников" id="1">
+			<CommandBarLocation>None</CommandBarLocation>
+			<Height>8</Height>
+			<AutoMaxHeight>false</AutoMaxHeight>
+			<DataPath>ТаблицаИсточников</DataPath>
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
 					<v8:content>Контрагенты с тарифной сеткой</v8:content>
 				</v8:item>
 			</Title>
-			<DataPath>ТаблицаИсточников</DataPath>
-			<Height>8</Height>
-			<AutoMaxHeight>false</AutoMaxHeight>
-			<CommandBarLocation>None</CommandBarLocation>
 			<SearchStringLocation>None</SearchStringLocation>
 			<ViewStatusLocation>None</ViewStatusLocation>
 			<SearchControlLocation>None</SearchControlLocation>
+			<RowFilter xsi:nil="true"/>
 			<ContextMenu name="ТаблицаИсточниковКонтекстноеМеню" id="2"/>
 			<AutoCommandBar name="ТаблицаИсточниковКоманднаяПанель" id="3"/>
 			<ExtendedTooltip name="ТаблицаИсточниковПодсказка" id="4"/>
@@ -79,12 +73,13 @@
 				<ExtendedTooltip name="ТаблицаИсточниковУправлениеПоискомПодсказка" id="72"/>
 			</SearchControlAddition>
 			<Events>
-				<Event name="OnActivateRow">ТаблицаИсточниковПриАктивизацииСтроки</Event>
 				<Event name="Selection">ТаблицаИсточниковВыбор</Event>
+				<Event name="OnActivateRow">ТаблицаИсточниковПриАктивизацииСтроки</Event>
 			</Events>
 			<ChildItems>
 				<InputField name="ТаблицаИсточниковНаименование" id="20">
 					<DataPath>ТаблицаИсточников.Наименование</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -92,12 +87,12 @@
 						</v8:item>
 					</Title>
 					<Width>40</Width>
-					<ReadOnly>true</ReadOnly>
 					<ContextMenu name="ТаблицаИсточниковНаименованиеКонтекстноеМеню" id="21"/>
 					<ExtendedTooltip name="ТаблицаИсточниковНаименованиеПодсказка" id="22"/>
 				</InputField>
 				<InputField name="ТаблицаИсточниковКолвоСтрок" id="23">
 					<DataPath>ТаблицаИсточников.КолвоСтрок</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -106,12 +101,12 @@
 					</Title>
 					<Width>6</Width>
 					<HorizontalStretch>false</HorizontalStretch>
-					<ReadOnly>true</ReadOnly>
 					<ContextMenu name="ТаблицаИсточниковКолвоСтрокКонтекстноеМеню" id="24"/>
 					<ExtendedTooltip name="ТаблицаИсточниковКолвоСтрокПодсказка" id="25"/>
 				</InputField>
 				<InputField name="ТаблицаИсточниковДатаУстановки" id="26">
 					<DataPath>ТаблицаИсточников.ДатаУстановки</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -120,7 +115,6 @@
 					</Title>
 					<Width>12</Width>
 					<HorizontalStretch>false</HorizontalStretch>
-					<ReadOnly>true</ReadOnly>
 					<Format>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -170,6 +164,7 @@
 						<v8:Type>xs:string</v8:Type>
 						<v8:StringQualifiers>
 							<v8:Length>150</v8:Length>
+							<v8:AllowedLength>Fixed</v8:AllowedLength>
 						</v8:StringQualifiers>
 					</Type>
 				</Column>
@@ -231,4 +226,11 @@
 			<CurrentRowUse>DontUse</CurrentRowUse>
 		</Command>
 	</Commands>
+	<Parameters>
+		<Parameter name="СтруктураНастроек">
+			<Type>
+				<v8:Type>v8:Structure</v8:Type>
+			</Type>
+		</Parameter>
+	</Parameters>
 </Form>

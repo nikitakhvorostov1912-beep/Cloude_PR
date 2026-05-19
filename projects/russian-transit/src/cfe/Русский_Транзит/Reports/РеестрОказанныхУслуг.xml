@@ -34,7 +34,6 @@
 			<Explanation/>
 		</Properties>
 		<ChildObjects>
-			<Form>ФормаОтчета</Form>
 			<Template>РеестрОказанныхУслуг</Template>
 		</ChildObjects>
 	</Report>

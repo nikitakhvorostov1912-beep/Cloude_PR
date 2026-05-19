@@ -5,26 +5,26 @@
 		<ChildItems>
 			<Button name="Расш1_ФильтрВсе" id="200">
 				<Type>UsualButton</Type>
-				<CommandName>Form.Command.Расш1_ФильтрВсе</CommandName>
 				<Representation>PictureAndText</Representation>
+				<CommandName>Form.Command.Расш1_ФильтрВсе</CommandName>
 				<ExtendedTooltip name="Расш1_ФильтрВсеРасширеннаяПодсказка" id="201"/>
 			</Button>
 			<Button name="Расш1_ФильтрДДПАвто" id="202">
 				<Type>UsualButton</Type>
-				<CommandName>Form.Command.Расш1_ФильтрДДПАвто</CommandName>
 				<Representation>PictureAndText</Representation>
+				<CommandName>Form.Command.Расш1_ФильтрДДПАвто</CommandName>
 				<ExtendedTooltip name="Расш1_ФильтрДДПАвтоРасширеннаяПодсказка" id="203"/>
 			</Button>
 			<Button name="Расш1_ФильтрТДФайл" id="204">
 				<Type>UsualButton</Type>
-				<CommandName>Form.Command.Расш1_ФильтрТДФайл</CommandName>
 				<Representation>PictureAndText</Representation>
+				<CommandName>Form.Command.Расш1_ФильтрТДФайл</CommandName>
 				<ExtendedTooltip name="Расш1_ФильтрТДФайлРасширеннаяПодсказка" id="205"/>
 			</Button>
 			<Button name="Расш1_ФильтрБезТипа" id="206">
 				<Type>UsualButton</Type>
-				<CommandName>Form.Command.Расш1_ФильтрБезТипа</CommandName>
 				<Representation>PictureAndText</Representation>
+				<CommandName>Form.Command.Расш1_ФильтрБезТипа</CommandName>
 				<ExtendedTooltip name="Расш1_ФильтрБезТипаРасширеннаяПодсказка" id="207"/>
 			</Button>
 		</ChildItems>
@@ -138,9 +138,6 @@
 				</LabelField>
 				<LabelField name="Расш1_ВидОперации" id="210">
 					<DataPath>Список.ВидОперации</DataPath>
-					<UserVisible>
-						<xr:Common>true</xr:Common>
-					</UserVisible>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>

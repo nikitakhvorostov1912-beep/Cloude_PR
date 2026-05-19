@@ -15,24 +15,6 @@
 		</right>
 	</object>
 	<object>
-		<name>DataProcessor.ЗагрузкаРееструТД</name>
-		<right>
-			<name>Use</name>
-			<value>true</value>
-		</right>
-		<right>
-			<name>View</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
-		<name>Enum.ВидыОперацийПоручительства</name>
-		<right>
-			<name>Read</name>
-			<value>true</value>
-		</right>
-	</object>
-	<object>
 		<name>Document.ОперацияПоПоручительству</name>
 		<right>
 			<name>Read</name>

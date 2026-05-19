@@ -2,7 +2,7 @@
 <PredefinedData xmlns="http://v8.1c.ru/8.3/xcf/predef" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CatalogPredefinedItems" version="2.20">
 	<Item id="755e70f0-c89d-4cb7-b6d4-019e0fad0b2e">
 		<Name>АвтодорожныйТранспорт</Name>
-		<Code>31</Code>
+		<Code/>
 		<Description>Автодорожный транспорт</Description>
 		<IsFolder>false</IsFolder>
 		<ExtensionState>Native</ExtensionState>
@@ -51,7 +51,7 @@
 	</Item>
 	<Item id="6c725bd3-d2d9-425c-b3da-7a021f704eb4">
 		<Name>Прицеп</Name>
-		<Code>32 </Code>
+		<Code/>
 		<Description>Прицеп/Полуприцеп</Description>
 		<IsFolder>false</IsFolder>
 		<ExtensionState>Native</ExtensionState>
@@ -65,7 +65,7 @@
 	</Item>
 	<Item id="e154cee9-f011-407c-a05c-0f00314af9fc">
 		<Name>СамоходноеТС</Name>
-		<Code>90</Code>
+		<Code/>
 		<Description>Самоходное ТС</Description>
 		<IsFolder>false</IsFolder>
 		<ExtensionState>Native</ExtensionState>

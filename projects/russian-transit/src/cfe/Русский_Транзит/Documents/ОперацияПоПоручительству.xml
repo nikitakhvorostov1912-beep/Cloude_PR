@@ -2603,12 +2603,7 @@
 					<FillValue xsi:nil="true"/>
 					<FillChecking>DontCheck</FillChecking>
 					<ChoiceFoldersAndItems>Items</ChoiceFoldersAndItems>
-					<ChoiceParameterLinks>
-						<v8:Link>
-							<v8:Field>Document.ОперацияПоПоручительству.Attribute.Контрагент</v8:Field>
-							<v8:DataPath>Owner</v8:DataPath>
-						</v8:Link>
-					</ChoiceParameterLinks>
+					<ChoiceParameterLinks/>
 					<ChoiceParameters/>
 					<QuickChoice>Auto</QuickChoice>
 					<CreateOnInput>Auto</CreateOnInput>
@@ -2631,7 +2626,7 @@
 					</Synonym>
 					<Comment>Источник документа: ДДПАвто (автозагрузка из API Сигмы) или ТДФайл (ручная загрузка файла Владимира)</Comment>
 					<Type>
-						<v8:Type>EnumRef.ВидыОперацийПоручительства</v8:Type>
+						<v8:Type>cfg:EnumRef.ВидыОперацийПоручительства</v8:Type>
 					</Type>
 					<PasswordMode>false</PasswordMode>
 					<Format/>

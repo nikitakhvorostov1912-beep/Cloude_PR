@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Form xmlns="http://v8.1c.ru/8.3/xcf/logform" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:dcscor="http://v8.1c.ru/8.1/data-composition-system/core" xmlns:dcssch="http://v8.1c.ru/8.1/data-composition-system/schema" xmlns:dcsset="http://v8.1c.ru/8.1/data-composition-system/settings" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.20">
 	<Title>
 		<v8:item>
@@ -12,25 +12,6 @@
 		<Autofill>false</Autofill>
 	</AutoCommandBar>
 	<ChildItems>
-		<UsualGroup name="ГруппаБаннер" id="300">
-			<Group>Vertical</Group>
-			<Representation>WeakSeparation</Representation>
-			<ShowTitle>false</ShowTitle>
-			<ExtendedTooltip name="ГруппаБаннерРасширеннаяПодсказка" id="301"/>
-			<ChildItems>
-				<Decoration name="НадписьОписание" id="304">
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Загрузка реестра ТД из Сигмы. Сравнивает CSV «Отчёт по журналу ЭТД» с документами «Операция по поручительству» в 1С. Существующие документы помечает «Комплекс» и обогащает (контрагент, статус, коды ТНВЭД). Для ТД без пары создаёт новые документы как «Только ТД» (черновики, без проведения).</v8:content>
-						</v8:item>
-					</Title>
-					<Type>Label</Type>
-					<HorizontalStretch>true</HorizontalStretch>
-					<ExtendedTooltip name="НадписьОписаниеРасширеннаяПодсказка" id="305"/>
-				</Decoration>
-			</ChildItems>
-		</UsualGroup>
 		<UsualGroup name="ГруппаФайл" id="4">
 			<Group>Horizontal</Group>
 			<ExtendedTooltip name="ГруппаФайлРасширеннаяПодсказка" id="5"/>
@@ -43,6 +24,12 @@
 							<v8:content>Файл реестра ЭТД</v8:content>
 						</v8:item>
 					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>CSV-файл «Отчёт по журналу ЭТД» из Сигмы. Кодировка cp1251, разделитель «;», 105 колонок.</v8:content>
+						</v8:item>
+					</ToolTip>
 					<HorizontalStretch>true</HorizontalStretch>
 					<ChoiceButton>true</ChoiceButton>
 					<ClearButton>true</ClearButton>
@@ -52,12 +39,6 @@
 							<v8:content>Нажмите кнопку справа, чтобы выбрать CSV-файл</v8:content>
 						</v8:item>
 					</InputHint>
-					<ToolTip>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>CSV-файл «Отчёт по журналу ЭТД» из Сигмы. Кодировка cp1251, разделитель «;», 105 колонок.</v8:content>
-						</v8:item>
-					</ToolTip>
 					<ContextMenu name="ФайлCSVКонтекстноеМеню" id="7"/>
 					<ExtendedTooltip name="ФайлCSVРасширеннаяПодсказка" id="8"/>
 					<Events>
@@ -72,13 +53,13 @@
 			<ChildItems>
 				<InputField name="ПериодС" id="102">
 					<DataPath>Объект.ПериодС</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Период с</v8:content>
 						</v8:item>
 					</Title>
-					<ReadOnly>true</ReadOnly>
 					<ToolTip>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -90,13 +71,13 @@
 				</InputField>
 				<InputField name="ПериодПо" id="105">
 					<DataPath>Объект.ПериодПо</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Период по</v8:content>
 						</v8:item>
 					</Title>
-					<ReadOnly>true</ReadOnly>
 					<ToolTip>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -113,20 +94,29 @@
 			<ExtendedTooltip name="ГруппаКомандыРасширеннаяПодсказка" id="10"/>
 			<ChildItems>
 				<Button name="КнопкаПрочитатьCSV" id="11">
-					<CommandName>Form.Command.ПрочитатьCSV</CommandName>
-					<DefaultButton>true</DefaultButton>
+					<Type>UsualButton</Type>
 					<Representation>PictureAndText</Representation>
+					<DefaultButton>true</DefaultButton>
+					<CommandName>Form.Command.ПрочитатьCSV</CommandName>
 					<ExtendedTooltip name="КнопкаПрочитатьCSVРасширеннаяПодсказка" id="12"/>
 				</Button>
 				<Button name="КнопкаПрименить" id="13">
-					<CommandName>Form.Command.Применить</CommandName>
+					<Type>UsualButton</Type>
 					<Representation>PictureAndText</Representation>
+					<CommandName>Form.Command.Применить</CommandName>
 					<ExtendedTooltip name="КнопкаПрименитьРасширеннаяПодсказка" id="14"/>
 				</Button>
 				<Button name="КнопкаИнструкция" id="200">
-					<CommandName>Form.Command.ПоказатьИнструкцию</CommandName>
+					<Type>UsualButton</Type>
 					<Representation>Text</Representation>
+					<CommandName>Form.Command.ПоказатьИнструкцию</CommandName>
 					<ExtendedTooltip name="КнопкаИнструкцияРасширеннаяПодсказка" id="201"/>
+				</Button>
+				<Button name="КнопкаУдалитьСозданныеТД" id="210">
+					<Type>UsualButton</Type>
+					<Representation>Text</Representation>
+					<CommandName>Form.Command.УдалитьСозданныеТД</CommandName>
+					<ExtendedTooltip name="КнопкаУдалитьСозданныеТДРасширеннаяПодсказка" id="211"/>
 				</Button>
 			</ChildItems>
 		</UsualGroup>
@@ -181,6 +171,57 @@
 					<ContextMenu name="СтрокНовыеТДКонтекстноеМеню" id="24"/>
 					<ExtendedTooltip name="СтрокНовыеТДРасширеннаяПодсказка" id="25"/>
 				</LabelField>
+				<LabelField name="СтрокДублейВБД" id="400">
+					<DataPath>Объект.СтрокДублейВБД</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Дублей в БД</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Один НомерГТД встречается в БД больше одного раза. Использован первый по дате — см. журнал регистрации</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="СтрокДублейВБДКонтекстноеМеню" id="401"/>
+					<ExtendedTooltip name="СтрокДублейВБДРасширеннаяПодсказка" id="402"/>
+				</LabelField>
+				<LabelField name="СтрокКонтрагентыНайдено" id="410">
+					<DataPath>Объект.СтрокКонтрагентыНайдено</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Контрагенты найдены</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Строк, где контрагент определён по email/ИНН/подразделению</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="СтрокКонтрагентыНайденоКонтекстноеМеню" id="411"/>
+					<ExtendedTooltip name="СтрокКонтрагентыНайденоРасширеннаяПодсказка" id="412"/>
+				</LabelField>
+				<LabelField name="СтрокКонтрагентыПусто" id="420">
+					<DataPath>Объект.СтрокКонтрагентыПусто</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Контрагенты пусто</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Строк без определённого контрагента — потребуют ручной привязки</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="СтрокКонтрагентыПустоКонтекстноеМеню" id="421"/>
+					<ExtendedTooltip name="СтрокКонтрагентыПустоРасширеннаяПодсказка" id="422"/>
+				</LabelField>
 			</ChildItems>
 		</UsualGroup>
 		<UsualGroup name="ГруппаФильтры" id="120">
@@ -190,31 +231,72 @@
 			<ExtendedTooltip name="ГруппаФильтрыРасширеннаяПодсказка" id="121"/>
 			<ChildItems>
 				<Button name="КнопкаФильтрВсе" id="122">
-					<CommandName>Form.Command.ФильтрВсе</CommandName>
+					<Type>UsualButton</Type>
 					<Representation>Text</Representation>
-					<DefaultButton>false</DefaultButton>
+					<CommandName>Form.Command.ФильтрВсе</CommandName>
 					<ExtendedTooltip name="КнопкаФильтрВсеРасширеннаяПодсказка" id="123"/>
 				</Button>
 				<Button name="КнопкаФильтрКомплекс" id="124">
-					<CommandName>Form.Command.ФильтрКомплекс</CommandName>
+					<Type>UsualButton</Type>
 					<Representation>Text</Representation>
+					<CommandName>Form.Command.ФильтрКомплекс</CommandName>
 					<ExtendedTooltip name="КнопкаФильтрКомплексРасширеннаяПодсказка" id="125"/>
 				</Button>
 				<Button name="КнопкаФильтрНоваяТД" id="126">
-					<CommandName>Form.Command.ФильтрНоваяТД</CommandName>
+					<Type>UsualButton</Type>
 					<Representation>Text</Representation>
+					<CommandName>Form.Command.ФильтрНоваяТД</CommandName>
 					<ExtendedTooltip name="КнопкаФильтрНоваяТДРасширеннаяПодсказка" id="127"/>
+				</Button>
+				<Button name="КнопкаФильтрНовыйКомлекс" id="430">
+					<Type>UsualButton</Type>
+					<Representation>Text</Representation>
+					<CommandName>Form.Command.ФильтрНовыйКомлекс</CommandName>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Новый комплекс</v8:content>
+						</v8:item>
+					</Title>
+					<ExtendedTooltip name="КнопкаФильтрНовыйКомлексРасширеннаяПодсказка" id="431"/>
 				</Button>
 			</ChildItems>
 		</UsualGroup>
 		<Table name="Предложения" id="32">
+			<MaxHeight>7</MaxHeight>
+			<HeightInTableRows>10</HeightInTableRows>
+			<HeightControlVariant>UseContentHeight</HeightControlVariant>
+			<AutoMaxRowsCount>false</AutoMaxRowsCount>
+			<MaxRowsCount>9</MaxRowsCount>
 			<DataPath>Объект.ПредложенияКлассификации</DataPath>
-			<HeightInTableRows>20</HeightInTableRows>
+			<RowFilter xsi:nil="true"/>
 			<ContextMenu name="ПредложенияКонтекстноеМеню" id="33"/>
 			<AutoCommandBar name="ПредложенияКоманднаяПанель" id="34"/>
-			<SearchStringAddition name="ПредложенияСтрокаПоиска" id="35"/>
-			<ViewStatusAddition name="ПредложенияСостояниеПросмотра" id="36"/>
-			<SearchControlAddition name="ПредложенияУправлениеПоиском" id="37"/>
+			<ExtendedTooltip name="ПредложенияРасширеннаяПодсказка" id="423"/>
+			<SearchStringAddition name="ПредложенияСтрокаПоиска" id="35">
+				<AdditionSource>
+					<Item>Предложения</Item>
+					<Type>SearchStringRepresentation</Type>
+				</AdditionSource>
+				<ContextMenu name="ПредложенияСтрокаПоискаКонтекстноеМеню" id="424"/>
+				<ExtendedTooltip name="ПредложенияСтрокаПоискаРасширеннаяПодсказка" id="425"/>
+			</SearchStringAddition>
+			<ViewStatusAddition name="ПредложенияСостояниеПросмотра" id="36">
+				<AdditionSource>
+					<Item>Предложения</Item>
+					<Type>ViewStatusRepresentation</Type>
+				</AdditionSource>
+				<ContextMenu name="ПредложенияСостояниеПросмотраКонтекстноеМеню" id="426"/>
+				<ExtendedTooltip name="ПредложенияСостояниеПросмотраРасширеннаяПодсказка" id="427"/>
+			</ViewStatusAddition>
+			<SearchControlAddition name="ПредложенияУправлениеПоиском" id="37">
+				<AdditionSource>
+					<Item>Предложения</Item>
+					<Type>SearchControl</Type>
+				</AdditionSource>
+				<ContextMenu name="ПредложенияУправлениеПоискомКонтекстноеМеню" id="428"/>
+				<ExtendedTooltip name="ПредложенияУправлениеПоискомРасширеннаяПодсказка" id="429"/>
+			</SearchControlAddition>
 			<ChildItems>
 				<CheckBoxField name="ПредложенияВыбрать" id="38">
 					<DataPath>Объект.ПредложенияКлассификации.Выбрать</DataPath>
@@ -224,20 +306,56 @@
 							<v8:content>✓</v8:content>
 						</v8:item>
 					</Title>
+					<CheckBoxType>Auto</CheckBoxType>
 					<ContextMenu name="ПредложенияВыбратьКонтекстноеМеню" id="39"/>
 					<ExtendedTooltip name="ПредложенияВыбратьРасширеннаяПодсказка" id="40"/>
 				</CheckBoxField>
 				<InputField name="ПредложенияКатегория" id="41">
 					<DataPath>Объект.ПредложенияКлассификации.Категория</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Категория</v8:content>
 						</v8:item>
 					</Title>
-					<ReadOnly>true</ReadOnly>
 					<ContextMenu name="ПредложенияКатегорияКонтекстноеМеню" id="42"/>
 					<ExtendedTooltip name="ПредложенияКатегорияРасширеннаяПодсказка" id="43"/>
+				</InputField>
+				<InputField name="ПредложенияСсылкаДокумент" id="62">
+					<DataPath>Объект.ПредложенияКлассификации.СсылкаДокумент</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Документ</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Найденный документ ОПП в 1С (для категории Комплекс). Кликните чтобы открыть.</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПредложенияСсылкаДокументКонтекстноеМеню" id="63"/>
+					<ExtendedTooltip name="ПредложенияСсылкаДокументРасширеннаяПодсказка" id="64"/>
+				</InputField>
+				<InputField name="ПредложенияКонтрагент" id="160">
+					<DataPath>Объект.ПредложенияКлассификации.Контрагент</DataPath>
+					<ReadOnly>true</ReadOnly>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Контрагент</v8:content>
+						</v8:item>
+					</Title>
+					<ToolTip>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Найденный контрагент. Если пусто — не сопоставлен (см. колонку «Источник»).</v8:content>
+						</v8:item>
+					</ToolTip>
+					<ContextMenu name="ПредложенияКонтрагентКонтекстноеМеню" id="161"/>
+					<ExtendedTooltip name="ПредложенияКонтрагентРасширеннаяПодсказка" id="162"/>
 				</InputField>
 				<InputField name="ПредложенияРегНомерТД" id="44">
 					<DataPath>Объект.ПредложенияКлассификации.РегНомерТД</DataPath>
@@ -296,13 +414,13 @@
 				</InputField>
 				<InputField name="ПредложенияСтатусПроцесса" id="180">
 					<DataPath>Объект.ПредложенияКлассификации.СтатусПроцесса</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Статус</v8:content>
 						</v8:item>
 					</Title>
-					<ReadOnly>true</ReadOnly>
 					<ToolTip>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
@@ -323,23 +441,6 @@
 					<ContextMenu name="ПредложенияКоличествоКодовТНВЭДКонтекстноеМеню" id="60"/>
 					<ExtendedTooltip name="ПредложенияКоличествоКодовТНВЭДРасширеннаяПодсказка" id="61"/>
 				</InputField>
-				<InputField name="ПредложенияСсылкаДокумент" id="62">
-					<DataPath>Объект.ПредложенияКлассификации.СсылкаДокумент</DataPath>
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Документ</v8:content>
-						</v8:item>
-					</Title>
-					<ToolTip>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Найденный документ ОПП в 1С (для категории Комплекс). Кликните чтобы открыть.</v8:content>
-						</v8:item>
-					</ToolTip>
-					<ContextMenu name="ПредложенияСсылкаДокументКонтекстноеМеню" id="63"/>
-					<ExtendedTooltip name="ПредложенияСсылкаДокументРасширеннаяПодсказка" id="64"/>
-				</InputField>
 				<InputField name="ПредложенияИННПолучателя" id="65">
 					<DataPath>Объект.ПредложенияКлассификации.ИННПолучателя</DataPath>
 					<Title>
@@ -351,51 +452,15 @@
 					<ContextMenu name="ПредложенияИННПолучателяКонтекстноеМеню" id="66"/>
 					<ExtendedTooltip name="ПредложенияИННПолучателяРасширеннаяПодсказка" id="67"/>
 				</InputField>
-				<InputField name="ПредложенияКонтрагент" id="160">
-					<DataPath>Объект.ПредложенияКлассификации.Контрагент</DataPath>
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Контрагент</v8:content>
-						</v8:item>
-					</Title>
-					<ReadOnly>true</ReadOnly>
-					<ToolTip>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Найденный контрагент. Если пусто — не сопоставлен (см. колонку «Источник»).</v8:content>
-						</v8:item>
-					</ToolTip>
-					<ContextMenu name="ПредложенияКонтрагентКонтекстноеМеню" id="161"/>
-					<ExtendedTooltip name="ПредложенияКонтрагентРасширеннаяПодсказка" id="162"/>
-				</InputField>
-				<InputField name="ПредложенияИсточникКонтрагента" id="190">
-					<DataPath>Объект.ПредложенияКлассификации.ИсточникКонтрагента</DataPath>
-					<Title>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Источник</v8:content>
-						</v8:item>
-					</Title>
-					<ReadOnly>true</ReadOnly>
-					<ToolTip>
-						<v8:item>
-							<v8:lang>ru</v8:lang>
-							<v8:content>Как контрагент был найден: Email / ИНН / Подразделение / Из БД / пусто.</v8:content>
-						</v8:item>
-					</ToolTip>
-					<ContextMenu name="ПредложенияИсточникКонтрагентаКонтекстноеМеню" id="191"/>
-					<ExtendedTooltip name="ПредложенияИсточникКонтрагентаРасширеннаяПодсказка" id="192"/>
-				</InputField>
 				<InputField name="ПредложенияКомментарий" id="170">
 					<DataPath>Объект.ПредложенияКлассификации.Комментарий</DataPath>
+					<ReadOnly>true</ReadOnly>
 					<Title>
 						<v8:item>
 							<v8:lang>ru</v8:lang>
 							<v8:content>Комментарий</v8:content>
 						</v8:item>
 					</Title>
-					<ReadOnly>true</ReadOnly>
 					<ContextMenu name="ПредложенияКомментарийКонтекстноеМеню" id="171"/>
 					<ExtendedTooltip name="ПредложенияКомментарийРасширеннаяПодсказка" id="172"/>
 				</InputField>
@@ -409,6 +474,129 @@
 					</Title>
 					<ContextMenu name="ПредложенияПримечаниеКонтекстноеМеню" id="69"/>
 					<ExtendedTooltip name="ПредложенияПримечаниеРасширеннаяПодсказка" id="70"/>
+				</InputField>
+				<InputField name="ПредложенияНомерТрансДок" id="300">
+					<DataPath>Объект.ПредложенияКлассификации.НомерТрансДок</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Трансп. док</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияНомерТрансДокКонтекстноеМеню" id="302"/>
+					<ExtendedTooltip name="ПредложенияНомерТрансДокРасширеннаяПодсказка" id="301"/>
+				</InputField>
+				<InputField name="ПредложенияКодТОНазначения" id="305">
+					<DataPath>Объект.ПредложенияКлассификации.КодТОНазначения</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Код назн.</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияКодТОНазначенияКонтекстноеМеню" id="307"/>
+					<ExtendedTooltip name="ПредложенияКодТОНазначенияРасширеннаяПодсказка" id="306"/>
+				</InputField>
+				<InputField name="ПредложенияНаимТОНазначения" id="310">
+					<DataPath>Объект.ПредложенияКлассификации.НаимТОНазначения</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Назначение</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияНаимТОНазначенияКонтекстноеМеню" id="312"/>
+					<ExtendedTooltip name="ПредложенияНаимТОНазначенияРасширеннаяПодсказка" id="311"/>
+				</InputField>
+				<InputField name="ПредложенияКодТОТД" id="315">
+					<DataPath>Объект.ПредложенияКлассификации.КодТОТД</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Код отпр.</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияКодТОТДКонтекстноеМеню" id="317"/>
+					<ExtendedTooltip name="ПредложенияКодТОТДРасширеннаяПодсказка" id="316"/>
+				</InputField>
+				<InputField name="ПредложенияКодВалюты" id="320">
+					<DataPath>Объект.ПредложенияКлассификации.КодВалюты</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Валюта</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияКодВалютыКонтекстноеМеню" id="322"/>
+					<ExtendedTooltip name="ПредложенияКодВалютыРасширеннаяПодсказка" id="321"/>
+				</InputField>
+				<InputField name="ПредложенияСтоимостьТоваров" id="325">
+					<DataPath>Объект.ПредложенияКлассификации.СтоимостьТоваров</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Стоимость</v8:content>
+						</v8:item>
+					</Title>
+					<HeaderHorizontalAlign>Right</HeaderHorizontalAlign>
+					<ContextMenu name="ПредложенияСтоимостьТоваровКонтекстноеМеню" id="327"/>
+					<ExtendedTooltip name="ПредложенияСтоимостьТоваровРасширеннаяПодсказка" id="326"/>
+				</InputField>
+				<InputField name="ПредложенияРазмерПоручительства" id="330">
+					<DataPath>Объект.ПредложенияКлассификации.РазмерПоручительства</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Размер пор.</v8:content>
+						</v8:item>
+					</Title>
+					<HeaderHorizontalAlign>Right</HeaderHorizontalAlign>
+					<ContextMenu name="ПредложенияРазмерПоручительстваКонтекстноеМеню" id="332"/>
+					<ExtendedTooltip name="ПредложенияРазмерПоручительстваРасширеннаяПодсказка" id="331"/>
+				</InputField>
+				<InputField name="ПредложенияФИОВодителя" id="335">
+					<DataPath>Объект.ПредложенияКлассификации.ФИОВодителя</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Водитель</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияФИОВодителяКонтекстноеМеню" id="337"/>
+					<ExtendedTooltip name="ПредложенияФИОВодителяРасширеннаяПодсказка" id="336"/>
+				</InputField>
+				<InputField name="ПредложенияСрокДоставки" id="340">
+					<DataPath>Объект.ПредложенияКлассификации.СрокДоставки</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Срок</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияСрокДоставкиКонтекстноеМеню" id="342"/>
+					<ExtendedTooltip name="ПредложенияСрокДоставкиРасширеннаяПодсказка" id="341"/>
+				</InputField>
+				<InputField name="ПредложенияДатаЗавершенияТранзита" id="345">
+					<DataPath>Объект.ПредложенияКлассификации.ДатаЗавершенияТранзита</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Завершён</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияДатаЗавершенияТранзитаКонтекстноеМеню" id="347"/>
+					<ExtendedTooltip name="ПредложенияДатаЗавершенияТранзитаРасширеннаяПодсказка" id="346"/>
+				</InputField>
+				<InputField name="ПредложенияНаимПоручителя" id="350">
+					<DataPath>Объект.ПредложенияКлассификации.НаимПоручителя</DataPath>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Поручитель</v8:content>
+						</v8:item>
+					</Title>
+					<ContextMenu name="ПредложенияНаимПоручителяКонтекстноеМеню" id="352"/>
+					<ExtendedTooltip name="ПредложенияНаимПоручителяРасширеннаяПодсказка" id="351"/>
 				</InputField>
 			</ChildItems>
 		</Table>
@@ -511,6 +699,36 @@
 				</v8:item>
 			</ToolTip>
 			<Action>ПоказатьИнструкцию</Action>
+		</Command>
+		<Command name="УдалитьСозданныеТД" id="212">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Удалить созданные ТД</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Пометить на удаление все ОПП с видом операции «ТД — ручная загрузка» (созданные через эту обработку)</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>УдалитьСозданныеТД</Action>
+		</Command>
+		<Command name="ФильтрНовыйКомлекс" id="1">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Фильтр новый комлекс</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Фильтр новый комлекс</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>ФильтрНовыйКомлекс</Action>
 		</Command>
 	</Commands>
 </Form>

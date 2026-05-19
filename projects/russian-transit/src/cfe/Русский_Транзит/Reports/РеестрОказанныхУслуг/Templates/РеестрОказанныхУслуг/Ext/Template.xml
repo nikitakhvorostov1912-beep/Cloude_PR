@@ -154,8 +154,10 @@
 ИЗ
 	Документ.ОперацияПоПоручительству КАК ОперацияПоПоручительству
 ГДЕ
-	(&amp;Контрагент = ЗНАЧЕНИЕ(Справочник.Контрагенты.ПустаяСсылка) ИЛИ ОперацияПоПоручительству.Контрагент = &amp;Контрагент)
-{Где ОперацияПоПоручительству.Дата Между &amp;НачалоПериода И &amp;КонецПериода}	</query>
+	(&amp;Контрагент = ЗНАЧЕНИЕ(Справочник.Контрагенты.ПустаяСсылка)
+			ИЛИ ОперацияПоПоручительству.Контрагент = &amp;Контрагент)
+{ГДЕ
+	(ОперацияПоПоручительству.Дата МЕЖДУ &amp;НачалоПериода И &amp;КонецПериода)}</query>
 	</dataSet>
 	<totalField>
 		<dataPath>ОплатыУслуг.Сумма</dataPath>
@@ -181,23 +183,6 @@
 		<value xsi:type="v8:StandardPeriod">
 			<v8:variant xsi:type="v8:StandardPeriodVariant">LastMonth</v8:variant>
 		</value>
-		<useRestriction>false</useRestriction>
-	</parameter>
-	<parameter>
-		<name>Дата</name>
-		<title xsi:type="v8:LocalStringType">
-			<v8:item>
-				<v8:lang>ru</v8:lang>
-				<v8:content>Дата</v8:content>
-			</v8:item>
-		</title>
-		<valueType>
-			<v8:Type>xs:dateTime</v8:Type>
-			<v8:DateQualifiers>
-				<v8:DateFractions>DateTime</v8:DateFractions>
-			</v8:DateQualifiers>
-		</valueType>
-		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
 		<useRestriction>false</useRestriction>
 	</parameter>
 	<parameter>
@@ -229,7 +214,8 @@
 			</v8:DateQualifiers>
 		</valueType>
 		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>false</useRestriction>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Период.ДатаОкончания</expression>
 	</parameter>
 	<parameter>
 		<name>НачалоПериода</name>
@@ -246,7 +232,8 @@
 			</v8:DateQualifiers>
 		</valueType>
 		<value xsi:type="xs:dateTime">0001-01-01T00:00:00</value>
-		<useRestriction>false</useRestriction>
+		<useRestriction>true</useRestriction>
+		<expression>&amp;Период.ДатаНачала</expression>
 	</parameter>
 	<settingsVariant>
 		<dcsset:name>Основной</dcsset:name>
@@ -325,9 +312,11 @@
 			</dcsset:filter>
 			<dcsset:dataParameters>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
+					<dcscor:use>false</dcscor:use>
 					<dcscor:parameter>Период</dcscor:parameter>
 					<dcscor:value xsi:type="v8:StandardPeriod">
-						<v8:variant xsi:type="v8:StandardPeriodVariant">LastMonth</v8:variant></dcscor:value>
+						<v8:variant xsi:type="v8:StandardPeriodVariant">LastMonth</v8:variant>
+					</dcscor:value>
 					<dcsset:userSettingID>11e647c7-d90f-4d69-9c51-154db98f4c88</dcsset:userSettingID>
 					<dcsset:userSettingPresentation xsi:type="v8:LocalStringType">
 						<v8:item>
@@ -335,12 +324,6 @@
 							<v8:content>Период отчета</v8:content>
 						</v8:item>
 					</dcsset:userSettingPresentation>
-				</dcscor:item>
-				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
-					<dcscor:parameter>Дата</dcscor:parameter>
-					<dcscor:value xsi:type="v8:StandardBeginningDate">
-						<v8:variant xsi:type="v8:StandardBeginningDateVariant">BeginningOfThisDay</v8:variant>
-					</dcscor:value>
 				</dcscor:item>
 			</dcsset:dataParameters>
 			<dcsset:conditionalAppearance>
@@ -367,7 +350,7 @@
 			<dcsset:outputParameters>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:parameter>МакетОформления</dcscor:parameter>
-					<dcscor:value xsi:type="xs:string">Main</dcscor:value>
+					<dcscor:value xsi:type="xs:string">Основной</dcscor:value>
 				</dcscor:item>
 				<dcscor:item xsi:type="dcsset:SettingsParameterValue">
 					<dcscor:use>false</dcscor:use>

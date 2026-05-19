@@ -13,9 +13,9 @@
 			<Global>false</Global>
 			<ClientManagedApplication>true</ClientManagedApplication>
 			<Server>true</Server>
-			<ExternalConnection>true</ExternalConnection>
-			<ClientOrdinaryApplication>true</ClientOrdinaryApplication>
-			<ServerCall>false</ServerCall>
+			<ExternalConnection>false</ExternalConnection>
+			<ClientOrdinaryApplication>false</ClientOrdinaryApplication>
+			<ServerCall>true</ServerCall>
 			<Privileged>false</Privileged>
 			<ReturnValuesReuse>DontUse</ReturnValuesReuse>
 		</Properties>

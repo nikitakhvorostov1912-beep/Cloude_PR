@@ -4908,17 +4908,6 @@
 		</right>
 	</object>
 	<object>
-		<name>InformationRegister.ТарифыОформленияТД.Dimension.ТипОперации</name>
-		<right>
-			<name>View</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
 		<name>DataProcessor.АРМ.Attribute.Контрагент</name>
 		<right>
 			<name>View</name>
@@ -5133,17 +5122,6 @@
 	</object>
 	<object>
 		<name>Catalog.Контрагенты.StandardAttribute.Code</name>
-		<right>
-			<name>View</name>
-			<value>false</value>
-		</right>
-		<right>
-			<name>Edit</name>
-			<value>false</value>
-		</right>
-	</object>
-	<object>
-		<name>InformationRegister.ТарифыОформленияТД.Dimension.Договор</name>
 		<right>
 			<name>View</name>
 			<value>false</value>
