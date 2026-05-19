@@ -266,6 +266,18 @@
 					</Title>
 					<ExtendedTooltip name="КнопкаФильтрНовыйКомплексРасширеннаяПодсказка" id="431"/>
 				</Button>
+				<Button name="КнопкаФильтрНестандартныйФормат" id="440">
+					<Type>UsualButton</Type>
+					<Representation>Text</Representation>
+					<CommandName>Form.Command.ФильтрНестандартныйФормат</CommandName>
+					<Title>
+						<v8:item>
+							<v8:lang>ru</v8:lang>
+							<v8:content>Нестандартный формат</v8:content>
+						</v8:item>
+					</Title>
+					<ExtendedTooltip name="КнопкаФильтрНестандартныйФорматРасширеннаяПодсказка" id="441"/>
+				</Button>
 			</ChildItems>
 		</UsualGroup>
 		<Table name="Предложения" id="32">
@@ -740,16 +752,31 @@
 			<Title>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Фильтр новый комлекс</v8:content>
+					<v8:content>Фильтр новый комплекс</v8:content>
 				</v8:item>
 			</Title>
 			<ToolTip>
 				<v8:item>
 					<v8:lang>ru</v8:lang>
-					<v8:content>Фильтр новый комлекс</v8:content>
+					<v8:content>Фильтр новый комплекс</v8:content>
 				</v8:item>
 			</ToolTip>
 			<Action>ФильтрНовыйКомплекс</Action>
+		</Command>
+		<Command name="ФильтрНестандартныйФормат" id="442">
+			<Title>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Фильтр нестандартный формат</v8:content>
+				</v8:item>
+			</Title>
+			<ToolTip>
+				<v8:item>
+					<v8:lang>ru</v8:lang>
+					<v8:content>Показать только строки где Рег.№ ТД или Номер ДДП не соответствует формату \d{8}/\d{6}/\d{7} (например «УИН 3925377» или «10000/0355B»)</v8:content>
+				</v8:item>
+			</ToolTip>
+			<Action>ФильтрНестандартныйФормат</Action>
 		</Command>
 	</Commands>
 </Form>
