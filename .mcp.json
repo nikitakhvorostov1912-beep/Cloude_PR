@@ -43,7 +43,12 @@
     "1c-transit": {
       "type": "http",
       "url": "http://127.0.0.1:6010/mcp",
-      "description": "MCP Toolkit embedded server (port 6010). Runs INSIDE thin client on ut_rt_copy: открыть tools/MCP_Toolkit_v1.7.0.epf → Подключение → Запустить сервер. Provides execute_query, execute_code, get_metadata and more for live database access. Format: TOON."
+      "description": "MCP Toolkit embedded server (port 6010, default). Runs INSIDE thin client on ut_rt_copy: открыть tools/MCP_Toolkit_v1.7.0.epf → Подключение → Запустить сервер. Provides execute_query, execute_code, get_metadata and more for live database access. Format: TOON."
+    },
+    "1c-transit-6005": {
+      "type": "http",
+      "url": "http://127.0.0.1:6005/mcp",
+      "description": "MCP Toolkit embedded server на альтернативном порту 6005 (на случай если 6010 занят). Те же tools execute_query, execute_code, get_metadata."
     },
     "bsl-context": {
       "type": "stdio",
